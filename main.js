@@ -55,22 +55,6 @@ var DEFAULT_SETTINGS = {
   enableAutoPaste: false
 };
 
-// src/services/storage-service.ts
-var StorageService = class _StorageService {
-  constructor(app) {
-    this.app = app;
-  }
-  /**
-   * 获取存储服务的实例
-   */
-  static getInstance(app) {
-    if (!_StorageService.instance) {
-      _StorageService.instance = new _StorageService(app);
-    }
-    return _StorageService.instance;
-  }
-};
-
 // src/services/cloudflare-service.ts
 var import_obsidian = require("obsidian");
 var path = __toESM(require("path"));
@@ -392,7 +376,7 @@ var ImageService = class {
   }
   /**
    * 生成唯一文件名
-   * 使用UUID生成唯一名称，比时间戳更可靠
+   * 使用UUID生成唯一名称
    */
   generateUniqueFileName(originalPath) {
     const extension = path3.extname(originalPath);
@@ -660,6 +644,16 @@ var PasteHandler = class {
     };
     return mimeMap[mime] || ".png";
   }
+  /**
+   * 调试方法：检查服务是否正常运行
+   */
+  debugStatus() {
+    console.log("PasteHandler\u72B6\u6001\u68C0\u67E5:");
+    console.log("- \u4E8B\u4EF6\u5F15\u7528\u6570\u91CF:", this.eventRefs.length);
+    console.log("- \u5B58\u50A8\u63D0\u4F9B\u8005:", this.storageProvider ? "\u5DF2\u52A0\u8F7D" : "\u672A\u52A0\u8F7D");
+    new import_obsidian5.Notice("PasteHandler\u72B6\u6001\u68C0\u67E5\u5B8C\u6210\uFF0C\u8BF7\u67E5\u770B\u63A7\u5236\u53F0", 3e3);
+    this.logger.info("\u6267\u884C\u4E86\u72B6\u6001\u68C0\u67E5");
+  }
 };
 
 // src/services/current-file-uploader.ts
@@ -669,10 +663,9 @@ var CurrentFileUploader = class {
   /**
    * 构造函数
    */
-  constructor(app, storageProvider, mapping = {}) {
+  constructor(app, storageProvider) {
     this.app = app;
     this.storageProvider = storageProvider;
-    this.mapping = mapping;
     this.retryConfig = {
       maxRetries: 3,
       delayMs: 1e3
@@ -743,13 +736,7 @@ var CurrentFileUploader = class {
         continue;
       }
       const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
-      if (!this.mapping[absolutePath]) {
-        if (await this.app.vault.adapter.exists(absolutePath)) {
-          imagePathsToUpload.add(absolutePath);
-        } else {
-          this.logger.warn(`\u56FE\u7247\u6587\u4EF6\u4E0D\u5B58\u5728\uFF1A${absolutePath}`);
-        }
-      }
+      imagePathsToUpload.add(absolutePath);
     }
     return imagePathsToUpload;
   }
@@ -863,7 +850,7 @@ var CurrentFileUploader = class {
         continue;
       }
       const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
-      const newImageUrl = uploadResults[absolutePath] || (this.mapping[absolutePath] ? this.storageProvider.getFileUrl(this.mapping[absolutePath]) : null);
+      const newImageUrl = uploadResults[absolutePath];
       if (newImageUrl) {
         newContent += content.substring(lastIndex, match.index);
         newContent += `![${altText}](${newImageUrl})`;
@@ -970,7 +957,6 @@ var CloudflareImagesUploader = class extends import_obsidian8.Plugin {
   constructor() {
     super(...arguments);
     this.settings = DEFAULT_SETTINGS;
-    this.mapping = {};
   }
   /**
    * 插件加载
@@ -979,11 +965,10 @@ var CloudflareImagesUploader = class extends import_obsidian8.Plugin {
     this.logger = Logger.getInstance();
     this.logger.info("\u52A0\u8F7D Cloudflare Images Uploader \u63D2\u4EF6");
     await this.loadSettings();
-    this.storageService = StorageService.getInstance(this.app);
     this.storageProvider = this.createStorageProvider();
     this.imageService = new ImageService(this.app, this.storageProvider);
     this.pasteHandler = new PasteHandler(this.app, this.storageProvider, this);
-    this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider, this.mapping);
+    this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider);
     this.addSettingTab(new SettingsTab(this.app, this));
     this.addCommand({
       id: "upload-images-to-cloudflare",
@@ -1009,7 +994,7 @@ var CloudflareImagesUploader = class extends import_obsidian8.Plugin {
         if (currentProvider.getType() !== this.storageProvider.getType()) {
           this.storageProvider = currentProvider;
           this.imageService = new ImageService(this.app, this.storageProvider);
-          this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider, this.mapping);
+          this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider);
         }
         if (this.settings.enableAutoPaste) {
           this.pasteHandler.registerPasteEvent();
@@ -1047,7 +1032,7 @@ var CloudflareImagesUploader = class extends import_obsidian8.Plugin {
   handleSettingsChange() {
     this.storageProvider = this.createStorageProvider();
     this.imageService = new ImageService(this.app, this.storageProvider);
-    this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider, this.mapping);
+    this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider);
     if (this.settings.enableAutoPaste) {
       this.pasteHandler.registerPasteEvent();
       this.logger.info("\u5DF2\u542F\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20\u529F\u80FD");
@@ -1086,7 +1071,6 @@ var CloudflareImagesUploader = class extends import_obsidian8.Plugin {
         return;
       }
       const newMappings = await this.imageService.uploadImages(Array.from(imagePathsToUpload));
-      Object.assign(this.mapping, newMappings);
       this.imageService = new ImageService(this.app, this.storageProvider);
       await this.imageService.updateNotes(newMappings);
       this.logger.notify("\u56FE\u7247\u5904\u7406\u5B8C\u6210", 3e3);
@@ -1107,7 +1091,6 @@ var CloudflareImagesUploader = class extends import_obsidian8.Plugin {
       const result = await this.currentFileUploader.processCurrentFile();
       if (result) {
         if (result.totalImages > 0) {
-          Object.assign(this.mapping, result.newMappings);
           this.logger.notify(`\u5904\u7406\u5B8C\u6210: \u6210\u529F\u4E0A\u4F20 ${result.successCount} \u5F20\u56FE\u7247, \u5931\u8D25 ${result.failureCount} \u5F20`, 3e3);
         } else {
           this.logger.notify("\u5F53\u524D\u7B14\u8BB0\u4E2D\u6CA1\u6709\u9700\u8981\u4E0A\u4F20\u7684\u56FE\u7247", 3e3);
