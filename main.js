@@ -728,17 +728,43 @@ var CurrentFileUploader = class {
   async findImagesInFile(file) {
     const imagePathsToUpload = /* @__PURE__ */ new Set();
     const content = await this.app.vault.cachedRead(file);
-    const regex = /!\[([^\]]*)\]\(([^)]*)\)/g;
-    let match;
-    while ((match = regex.exec(content)) !== null) {
-      const imagePath = match[2];
-      if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+    const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
+    let standardMatch;
+    while ((standardMatch = standardRegex.exec(content)) !== null) {
+      const imagePath = standardMatch[2];
+      if (imagePath.startsWith("http://") || imagePath.startsWith("https://") || imagePath.startsWith("pasted-image-")) {
         continue;
       }
       const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
-      imagePathsToUpload.add(absolutePath);
+      if (await this.fileExists(absolutePath)) {
+        imagePathsToUpload.add(absolutePath);
+      } else {
+        this.logger.warn(`\u56FE\u7247\u6587\u4EF6\u4E0D\u5B58\u5728\uFF1A${absolutePath}`);
+      }
+    }
+    const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
+    let obsidianMatch;
+    while ((obsidianMatch = obsidianRegex.exec(content)) !== null) {
+      const imagePath = obsidianMatch[1];
+      const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
+      if (await this.fileExists(absolutePath)) {
+        imagePathsToUpload.add(absolutePath);
+      } else {
+        this.logger.warn(`\u56FE\u7247\u6587\u4EF6\u4E0D\u5B58\u5728\uFF1A${absolutePath}`);
+      }
     }
     return imagePathsToUpload;
+  }
+  /**
+   * 检查文件是否存在
+   */
+  async fileExists(path5) {
+    try {
+      return await this.app.vault.adapter.exists(path5);
+    } catch (error) {
+      this.logger.error(`\u68C0\u67E5\u6587\u4EF6\u662F\u5426\u5B58\u5728\u65F6\u51FA\u9519: ${path5}`, error);
+      return false;
+    }
   }
   /**
    * 解析图片绝对路径
@@ -838,28 +864,53 @@ var CurrentFileUploader = class {
   async updateFileLinks(file, uploadResults) {
     const content = await this.app.vault.cachedRead(file);
     let modified = false;
-    const regex = /!\[([^\]]*)\]\(([^)]*)\)/g;
-    let match;
+    let newContent = content;
+    const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
+    let standardMatch;
     let lastIndex = 0;
-    let newContent = "";
-    while ((match = regex.exec(content)) !== null) {
-      const fullMatch = match[0];
-      const altText = match[1];
-      const imagePath = match[2];
-      if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+    let standardNewContent = "";
+    while ((standardMatch = standardRegex.exec(content)) !== null) {
+      const fullMatch = standardMatch[0];
+      const altText = standardMatch[1];
+      const imagePath = standardMatch[2];
+      if (imagePath.startsWith("http://") || imagePath.startsWith("https://") || imagePath.startsWith("pasted-image-")) {
         continue;
       }
       const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
       const newImageUrl = uploadResults[absolutePath];
       if (newImageUrl) {
-        newContent += content.substring(lastIndex, match.index);
-        newContent += `![${altText}](${newImageUrl})`;
-        lastIndex = match.index + fullMatch.length;
+        standardNewContent += content.substring(lastIndex, standardMatch.index);
+        standardNewContent += `![${altText}](${newImageUrl})`;
+        lastIndex = standardMatch.index + fullMatch.length;
         modified = true;
       }
     }
     if (modified) {
-      newContent += content.substring(lastIndex);
+      standardNewContent += content.substring(lastIndex);
+      newContent = standardNewContent;
+    }
+    modified = false;
+    const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
+    let obsidianMatch;
+    lastIndex = 0;
+    let obsidianNewContent = "";
+    while ((obsidianMatch = obsidianRegex.exec(newContent)) !== null) {
+      const fullMatch = obsidianMatch[0];
+      const imagePath = obsidianMatch[1];
+      const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
+      const newImageUrl = uploadResults[absolutePath];
+      if (newImageUrl) {
+        obsidianNewContent += newContent.substring(lastIndex, obsidianMatch.index);
+        obsidianNewContent += `![${path4.basename(imagePath, path4.extname(imagePath))}](${newImageUrl})`;
+        lastIndex = obsidianMatch.index + fullMatch.length;
+        modified = true;
+      }
+    }
+    if (modified) {
+      obsidianNewContent += newContent.substring(lastIndex);
+      newContent = obsidianNewContent;
+    }
+    if (newContent !== content) {
       await this.app.vault.modify(file, newContent);
     }
   }

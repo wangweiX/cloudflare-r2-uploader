@@ -114,25 +114,55 @@ export class CurrentFileUploader {
         const imagePathsToUpload = new Set<string>();
         const content = await this.app.vault.cachedRead(file);
 
-        // 查找所有图片链接
-        const regex = /!\[([^\]]*)\]\(([^)]*)\)/g;
-        let match;
+        // 查找所有标准格式的图片链接 ![alt](path)
+        const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
+        let standardMatch;
+        while ((standardMatch = standardRegex.exec(content)) !== null) {
+            const imagePath = standardMatch[2];
 
-        while ((match = regex.exec(content)) !== null) {
-            const imagePath = match[2];
-
-            // 跳过已经是网络图片的链接
-            if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+            // 跳过已经是网络图片的链接和临时占位符
+            if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || 
+                imagePath.startsWith('pasted-image-')) {
                 continue;
             }
 
             // 解析绝对路径
             const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
+            if (await this.fileExists(absolutePath)) {
+                imagePathsToUpload.add(absolutePath);
+            } else {
+                this.logger.warn(`图片文件不存在：${absolutePath}`);
+            }
+        }
 
-            imagePathsToUpload.add(absolutePath);
+        // 查找所有 Obsidian 内部链接格式的图片 ![[path]]
+        const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
+        let obsidianMatch;
+        while ((obsidianMatch = obsidianRegex.exec(content)) !== null) {
+            const imagePath = obsidianMatch[1];
+            
+            // 解析绝对路径
+            const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
+            if (await this.fileExists(absolutePath)) {
+                imagePathsToUpload.add(absolutePath);
+            } else {
+                this.logger.warn(`图片文件不存在：${absolutePath}`);
+            }
         }
 
         return imagePathsToUpload;
+    }
+
+    /**
+     * 检查文件是否存在
+     */
+    private async fileExists(path: string): Promise<boolean> {
+        try {
+            return await this.app.vault.adapter.exists(path);
+        } catch (error) {
+            this.logger.error(`检查文件是否存在时出错: ${path}`, error);
+            return false;
+        }
     }
 
     /**
@@ -272,18 +302,22 @@ export class CurrentFileUploader {
     private async updateFileLinks(file: TFile, uploadResults: Record<string, string>): Promise<void> {
         const content = await this.app.vault.cachedRead(file);
         let modified = false;
+        let newContent = content;
 
-        const regex = /!\[([^\]]*)\]\(([^)]*)\)/g;
-        let match;
+        // 处理标准格式的图片链接 ![alt](path)
+        const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
+        let standardMatch;
         let lastIndex = 0;
-        let newContent = '';
+        let standardNewContent = '';
 
-        while ((match = regex.exec(content)) !== null) {
-            const fullMatch = match[0];
-            const altText = match[1];
-            const imagePath = match[2];
+        while ((standardMatch = standardRegex.exec(content)) !== null) {
+            const fullMatch = standardMatch[0];
+            const altText = standardMatch[1];
+            const imagePath = standardMatch[2];
 
-            if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+            // 跳过网络图片和临时占位符
+            if (imagePath.startsWith('http://') || imagePath.startsWith('https://') ||
+                imagePath.startsWith('pasted-image-')) {
                 continue;
             }
 
@@ -292,18 +326,54 @@ export class CurrentFileUploader {
 
             if (newImageUrl) {
                 // 添加匹配前的内容
-                newContent += content.substring(lastIndex, match.index);
+                standardNewContent += content.substring(lastIndex, standardMatch.index);
                 // 添加替换后的图片标记
-                newContent += `![${altText}](${newImageUrl})`;
+                standardNewContent += `![${altText}](${newImageUrl})`;
 
-                lastIndex = match.index + fullMatch.length;
+                lastIndex = standardMatch.index + fullMatch.length;
                 modified = true;
             }
         }
 
         if (modified) {
             // 添加剩余内容
-            newContent += content.substring(lastIndex);
+            standardNewContent += content.substring(lastIndex);
+            newContent = standardNewContent;
+        }
+
+        // 处理 Obsidian 内部链接格式的图片 ![[path]]
+        modified = false;
+        const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
+        let obsidianMatch;
+        lastIndex = 0;
+        let obsidianNewContent = '';
+
+        while ((obsidianMatch = obsidianRegex.exec(newContent)) !== null) {
+            const fullMatch = obsidianMatch[0];
+            const imagePath = obsidianMatch[1];
+            
+            const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
+            const newImageUrl = uploadResults[absolutePath];
+
+            if (newImageUrl) {
+                // 添加匹配前的内容
+                obsidianNewContent += newContent.substring(lastIndex, obsidianMatch.index);
+                // 添加替换后的图片标记（转换为标准 Markdown 格式）
+                obsidianNewContent += `![${path.basename(imagePath, path.extname(imagePath))}](${newImageUrl})`;
+
+                lastIndex = obsidianMatch.index + fullMatch.length;
+                modified = true;
+            }
+        }
+
+        if (modified) {
+            // 添加剩余内容
+            obsidianNewContent += newContent.substring(lastIndex);
+            newContent = obsidianNewContent;
+        }
+
+        // 只有当内容被修改时才写入文件
+        if (newContent !== content) {
             // 写入文件
             await this.app.vault.modify(file, newContent);
         }
