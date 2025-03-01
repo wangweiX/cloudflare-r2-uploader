@@ -1,6 +1,5 @@
 import {addIcon, Plugin} from 'obsidian';
 import {DEFAULT_SETTINGS, PluginSettings} from '../models/settings';
-import {StorageService} from '../services/storage-service';
 import {CloudflareImagesService} from '../services/cloudflare-service';
 import {R2Service} from '../services/r2-service';
 import {ImageService} from '../services/image-service';
@@ -14,11 +13,11 @@ import {StorageProvider, StorageProviderType} from '../models/storage-provider';
 const UPLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>`;
 
 /**
- * 插件主类 - 使用外观模式组织各个模块
+ * 插件主类
  */
 export class CloudflareImagesUploader extends Plugin {
     public settings: PluginSettings = DEFAULT_SETTINGS;
-    private storageService!: StorageService; // 使用!表示该属性会在onload中初始化
+    // private storageService!: StorageService; // 使用!表示该属性会在onload中初始化
     private storageProvider!: StorageProvider;
     private imageService!: ImageService;
     private pasteHandler!: PasteHandler;
@@ -37,7 +36,7 @@ export class CloudflareImagesUploader extends Plugin {
         await this.loadSettings();
 
         // 初始化服务
-        this.storageService = StorageService.getInstance(this.app);
+        // this.storageService = StorageService.getInstance(this.app);
         this.storageProvider = this.createStorageProvider();
         this.imageService = new ImageService(this.app, this.storageProvider);
         this.pasteHandler = new PasteHandler(this.app, this.storageProvider, this);
@@ -211,9 +210,6 @@ export class CloudflareImagesUploader extends Plugin {
 
             if (result) {
                 if (result.totalImages > 0) {
-                    // 更新映射
-                    Object.assign(this.mapping, result.newMappings);
-
                     this.logger.notify(`处理完成: 成功上传 ${result.successCount} 张图片, 失败 ${result.failureCount} 张`, 3000);
                 } else {
                     this.logger.notify('当前笔记中没有需要上传的图片', 3000);
