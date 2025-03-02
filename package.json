@@ -7,6 +7,7 @@
         "dev": "node esbuild.config.mjs",
         "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
         "test": "echo \"Error: no test specified\" && exit 1",
+        "test:r2": "ts-node src/test/r2-service-test.ts",
         "package": "node package-obsidian.js"
     },
     "keywords": [
@@ -25,10 +26,12 @@
         "builtin-modules": "^3.3.0",
         "esbuild": "^0.18.0",
         "obsidian": "latest",
+        "ts-node": "^10.9.2",
         "typescript": "^5.0.0"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.758.0",
+        "@aws-sdk/node-http-handler": "^3.370.0",
         "@aws-sdk/s3-request-presigner": "^3.758.0",
         "@types/uuid": "^10.0.0",
         "uuid": "^11.1.0"
