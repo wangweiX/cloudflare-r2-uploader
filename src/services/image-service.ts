@@ -1,6 +1,5 @@
 import {App, Notice} from 'obsidian';
 import * as path from 'path';
-import {v4 as uuidv4} from 'uuid';
 import {StorageProvider} from '../models/storage-provider';
 import {Logger} from '../utils/logger';
 

@@ -1,6 +1,5 @@
 import {App, Notice, TFile} from 'obsidian';
 import * as path from 'path';
-import {v4 as uuidv4} from 'uuid';
 import {StorageProvider} from '../models/storage-provider';
 import {Logger} from '../utils/logger';
 
@@ -73,13 +72,13 @@ export class CurrentFileUploader {
             }
 
             this.logger.info(`找到 ${imagesToUpload.size} 张图片需要上传.`);
-            
+
             // 打印所有识别到的图片地址
             this.logger.info('图片地址列表:');
             Array.from(imagesToUpload).forEach((imagePath, index) => {
                 this.logger.info(`[${index + 1}] ${imagePath}`);
             });
-            
+
             new Notice(`找到 ${imagesToUpload.size} 张图片需要上传`, 2000);
 
             // 上传图片
@@ -118,7 +117,7 @@ export class CurrentFileUploader {
             const imagePath = standardMatch[2];
 
             // 跳过已经是网络图片的链接和临时占位符
-            if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || 
+            if (imagePath.startsWith('http://') || imagePath.startsWith('https://') ||
                 imagePath.startsWith('pasted-image-')) {
                 continue;
             }
@@ -137,7 +136,7 @@ export class CurrentFileUploader {
         let obsidianMatch;
         while ((obsidianMatch = obsidianRegex.exec(content)) !== null) {
             const imagePath = obsidianMatch[1];
-            
+
             // 解析绝对路径
             const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
             if (await this.fileExists(absolutePath)) {
@@ -345,7 +344,7 @@ export class CurrentFileUploader {
         while ((obsidianMatch = obsidianRegex.exec(newContent)) !== null) {
             const fullMatch = obsidianMatch[0];
             const imagePath = obsidianMatch[1];
-            
+
             const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
             const newImageUrl = uploadResults[absolutePath];
 
