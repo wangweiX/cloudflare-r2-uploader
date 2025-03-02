@@ -16,6 +16,9 @@ export interface R2Config {
   apiToken: string;
   bucket: string;
   customDomain?: string;
+  // S3 API 访问凭证
+  accessKeyId?: string;
+  secretAccessKey?: string;
 }
 
 /**

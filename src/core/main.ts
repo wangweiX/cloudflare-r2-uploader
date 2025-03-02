@@ -17,7 +17,6 @@ const UPLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
  */
 export class CloudflareImagesUploader extends Plugin {
     public settings: PluginSettings = DEFAULT_SETTINGS;
-    // private storageService!: StorageService; // 使用!表示该属性会在onload中初始化
     private storageProvider!: StorageProvider;
     private imageService!: ImageService;
     private pasteHandler!: PasteHandler;
@@ -36,7 +35,6 @@ export class CloudflareImagesUploader extends Plugin {
         await this.loadSettings();
 
         // 初始化服务
-        // this.storageService = StorageService.getInstance(this.app);
         this.storageProvider = this.createStorageProvider();
         this.imageService = new ImageService(this.app, this.storageProvider);
         this.pasteHandler = new PasteHandler(this.app, this.storageProvider, this);

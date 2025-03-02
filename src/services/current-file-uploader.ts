@@ -82,7 +82,14 @@ export class CurrentFileUploader {
                 };
             }
 
-            this.logger.info(`找到 ${imagesToUpload.size} 张图片需要上传`);
+            this.logger.info(`找到 ${imagesToUpload.size} 张图片需要上传.`);
+            
+            // 打印所有识别到的图片地址
+            this.logger.info('图片地址列表:');
+            Array.from(imagesToUpload).forEach((imagePath, index) => {
+                this.logger.info(`[${index + 1}] ${imagePath}`);
+            });
+            
             new Notice(`找到 ${imagesToUpload.size} 张图片需要上传`, 2000);
 
             // 上传图片
@@ -194,10 +201,10 @@ export class CurrentFileUploader {
     ): Promise<{ success: boolean; imageUrl?: string }> {
         try {
             // 生成唯一文件名
-            const uniqueFileName = this.generateUniqueFileName(imagePath);
+            // const uniqueFileName = this.generateUniqueFileName(imagePath);
 
             // 上传图片
-            const result = await this.storageProvider.uploadFile(uniqueFileName, fileContent);
+            const result = await this.storageProvider.uploadFile(imagePath, fileContent);
 
             if (result.success && result.imageId) {
                 const imageUrl = this.storageProvider.getFileUrl(result.imageId);

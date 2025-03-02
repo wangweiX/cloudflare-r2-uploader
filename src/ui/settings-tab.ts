@@ -144,5 +144,34 @@ export class SettingsTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         })
       );
+
+    containerEl.createEl('h4', { text: 'S3 API 凭证（可选，用于解决 CORS 问题）' });
+    containerEl.createEl('p', { 
+      text: '如果使用 API 令牌上传遇到 CORS 问题，可以改用 S3 API 凭证上传。请在 Cloudflare R2 控制面板创建 API 令牌，并填入以下字段。' 
+    });
+
+    new Setting(containerEl)
+      .setName('Access Key ID')
+      .setDesc('S3 API Access Key ID')
+      .addText(text => text
+        .setPlaceholder('输入 Access Key ID')
+        .setValue(this.plugin.settings.r2Settings.accessKeyId || '')
+        .onChange(async (value) => {
+          this.plugin.settings.r2Settings.accessKeyId = value || undefined;
+          await this.plugin.saveSettings();
+        })
+      );
+
+    new Setting(containerEl)
+      .setName('Secret Access Key')
+      .setDesc('S3 API Secret Access Key')
+      .addText(text => text
+        .setPlaceholder('输入 Secret Access Key')
+        .setValue(this.plugin.settings.r2Settings.secretAccessKey || '')
+        .onChange(async (value) => {
+          this.plugin.settings.r2Settings.secretAccessKey = value || undefined;
+          await this.plugin.saveSettings();
+        })
+      );
   }
 } 
