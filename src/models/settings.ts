@@ -17,6 +17,8 @@ export interface PluginSettings {
     apiToken: string;
     bucket: string;
     customDomain?: string;
+    accessKeyId?: string;
+    secretAccessKey?: string;
   };
   
   // 自动上传设置
@@ -33,7 +35,9 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   r2Settings: {
     accountId: "",
     apiToken: "", 
-    bucket: ""
+    bucket: "",
+    accessKeyId: "",
+    secretAccessKey: ""
   },
   enableAutoPaste: false
 }; 
