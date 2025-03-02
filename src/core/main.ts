@@ -1,13 +1,12 @@
 import {addIcon, Plugin} from 'obsidian';
 import {DEFAULT_SETTINGS, PluginSettings} from '../models/settings';
-import {CloudflareImagesService} from '../services/cloudflare-service';
-import {R2Service} from '../services/r2-service';
+import {CloudflareWorkerService} from '../services/worker-service';
 import {ImageService} from '../services/image-service';
 import {PasteHandler} from '../services/paste-handler';
 import {CurrentFileUploader} from '../services/current-file-uploader';
 import {SettingsTab} from '../ui/settings-tab';
 import {Logger} from '../utils/logger';
-import {StorageProvider, StorageProviderType} from '../models/storage-provider';
+import {StorageProvider} from '../models/storage-provider';
 
 // 上传当前文件按钮的图标
 const UPLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>`;
@@ -142,16 +141,8 @@ export class CloudflareImagesUploader extends Plugin {
      * 创建存储提供者
      */
     private createStorageProvider(): StorageProvider {
-        switch (this.settings.storageProvider) {
-            case StorageProviderType.CLOUDFLARE_IMAGES:
-                return new CloudflareImagesService(this.settings);
-            case StorageProviderType.CLOUDFLARE_R2:
-                return new R2Service(this.settings.r2Settings);
-            default:
-                this.logger.error(`未知的存储提供者类型: ${this.settings.storageProvider}`);
-                // 默认返回Cloudflare Images服务
-                return new CloudflareImagesService(this.settings);
-        }
+        // 只支持Worker存储提供者
+        return new CloudflareWorkerService(this.settings);
     }
 
     /**
@@ -223,19 +214,11 @@ export class CloudflareImagesUploader extends Plugin {
      * 验证设置
      */
     private validateSettings(): boolean {
-        if (this.settings.storageProvider === StorageProviderType.CLOUDFLARE_IMAGES) {
-            if (!this.settings.accountId || !this.settings.apiToken) {
-                this.logger.notify('请先在插件设置中输入 Cloudflare 账户 ID 和 API 令牌。', 5000);
-                return false;
-            }
-        } else if (this.settings.storageProvider === StorageProviderType.CLOUDFLARE_R2) {
-            const {accountId, apiToken, bucket} = this.settings.r2Settings;
-            if (!accountId || !apiToken || !bucket) {
-                this.logger.notify('请先在插件设置中完成 Cloudflare R2 的配置。', 5000);
-                return false;
-            }
+        const {workerUrl, apiKey} = this.settings.workerSettings;
+        if (!workerUrl || !apiKey) {
+            this.logger.notify('请先在插件设置中完成 Cloudflare Worker 的配置。', 5000);
+            return false;
         }
-
         return true;
     }
 } 

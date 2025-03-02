@@ -43,16 +43,6 @@ export class CurrentFileUploader {
     }
 
     /**
-     * 生成唯一文件名
-     * 使用UUID生成唯一名称，比时间戳更可靠
-     */
-    private generateUniqueFileName(originalPath: string): string {
-        const extension = path.extname(originalPath);
-        const baseName = path.basename(originalPath, extension);
-        return `${baseName}-${uuidv4()}${extension}`;
-    }
-
-    /**
      * 处理当前活动文件中的图片
      * @returns 处理结果，包含图片总数、成功数、失败数和新的映射记录
      */
@@ -200,9 +190,6 @@ export class CurrentFileUploader {
         retryCount = 0
     ): Promise<{ success: boolean; imageUrl?: string }> {
         try {
-            // 生成唯一文件名
-            // const uniqueFileName = this.generateUniqueFileName(imagePath);
-
             // 上传图片
             const result = await this.storageProvider.uploadFile(imagePath, fileContent);
 

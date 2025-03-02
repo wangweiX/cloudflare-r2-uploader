@@ -46,16 +46,6 @@ export class ImageService {
     }
 
     /**
-     * 生成唯一文件名
-     * 使用UUID生成唯一名称
-     */
-    private generateUniqueFileName(originalPath: string): string {
-        const extension = path.extname(originalPath);
-        const baseName = path.basename(originalPath, extension);
-        return `${baseName}-${uuidv4()}${extension}`;
-    }
-
-    /**
      * 延迟函数 - 用于重试间隔
      */
     private delay(ms: number): Promise<void> {
@@ -71,11 +61,8 @@ export class ImageService {
         retryCount = 0
     ): Promise<{ success: boolean; imageUrl?: string }> {
         try {
-            // 生成唯一文件名
-            const uniqueFileName = this.generateUniqueFileName(imagePath);
-
             // 上传图片
-            const result = await this.storageProvider.uploadFile(uniqueFileName, fileContent);
+            const result = await this.storageProvider.uploadFile(imagePath, fileContent);
 
             if (result.success && result.imageId) {
                 const imageUrl = this.storageProvider.getFileUrl(result.imageId);
