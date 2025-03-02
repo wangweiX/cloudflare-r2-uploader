@@ -1,13 +1,12 @@
-import {Notice} from 'obsidian';
+import {Notice, requestUrl, RequestUrlParam} from 'obsidian';
 import * as path from 'path';
 import {v4 as uuidv4} from 'uuid';
 import {PutObjectCommand, S3Client} from '@aws-sdk/client-s3';
+import {getSignedUrl} from '@aws-sdk/s3-request-presigner';
 import {UploadResult} from '../models/cloudflare';
 import {R2Config, StorageProvider, StorageProviderType} from '../models/storage-provider';
 import {Logger} from '../utils/logger';
-// 删除未安装的中间件相关导入
-// import {HttpRequest} from '@aws-sdk/protocol-http';
-// import {Middleware, MiddlewareStack} from '@aws-sdk/smithy-client';
+import {NodeHttpHandler} from '@aws-sdk/node-http-handler';
 
 /**
  * Cloudflare R2服务 - 负责处理与Cloudflare R2存储的通信
@@ -41,9 +40,14 @@ export class R2Service implements StorageProvider {
             },
             // 添加自定义配置以处理 CORS 问题
             forcePathStyle: true, // 使用路径样式而不是虚拟主机样式
+            // 添加以下配置尝试解决连接问题
+            requestHandler: new NodeHttpHandler({
+                connectionTimeout: 5000,  // 5秒连接超时
+                socketTimeout: 10000      // 10秒socket超时
+            })
         });
 
-        // 检查是否已配置 CORS
+        // 检查配置
         this.checkR2Configuration();
     }
 
@@ -51,12 +55,9 @@ export class R2Service implements StorageProvider {
      * 检查 R2 配置并提供帮助
      */
     private checkR2Configuration() {
-        // 提示用户确认 CORS 配置
+        // 提示用户确认配置
         this.logger.info('检查 R2 配置...');
-        this.logger.info('请确保您已在 Cloudflare R2 控制面板中配置了 CORS 策略');
-        
-        // 提示用户查看 CORS 配置帮助
-        this.logCorsConfigHelp();
+        this.logger.info('已启用多种上传策略，将自动尝试最佳上传方式');
     }
 
     /**
@@ -67,7 +68,7 @@ export class R2Service implements StorageProvider {
     }
 
     /**
-     * 上传文件到R2存储桶
+     * 使用多种策略上传文件到R2存储桶
      */
     public async uploadFile(filePath: string, fileContent: ArrayBuffer): Promise<UploadResult> {
         try {
@@ -79,10 +80,9 @@ export class R2Service implements StorageProvider {
             const uniqueId = uuidv4();
             const objectKey = `images/${uniqueId}${fileExt}`;
 
-            // 使用 AWS SDK 上传
-            this.logger.info(`开始使用 S3 API 上传文件 filePath: ${filePath}`);
-            this.logger.info(`开始使用 S3 API 上传文件 fileName: ${fileName}`);
-            this.logger.info(`开始使用 S3 API 上传文件 objectKey: ${objectKey}`);
+            this.logger.info(`开始上传文件 filePath: ${filePath}`);
+            this.logger.info(`开始上传文件 fileName: ${fileName}`);
+            this.logger.info(`开始上传文件 objectKey: ${objectKey}`);
 
             // 判断是否提供了 S3 API 凭证
             const hasS3Credentials = !!(this.config.accessKeyId && this.config.secretAccessKey);
@@ -91,43 +91,48 @@ export class R2Service implements StorageProvider {
                 throw new Error('未提供 S3 API 凭证');
             }
 
-            // 将 ArrayBuffer 转换为 Uint8Array
-            const fileBuffer = new Uint8Array(fileContent);
+            // 尝试所有上传方法，直到成功
+            // 顺序：1. Obsidian requestUrl API, 2. 预签名URL, 3. 直接上传
+            try {
+                // 尝试使用 Obsidian requestUrl API 上传
+                return await this.uploadWithObsidian(objectKey, fileName, filePath, fileContent, fileExt);
+            } catch (obsidianError) {
+                this.logger.warn(`Obsidian API 上传失败，尝试预签名 URL: ${(obsidianError as Error).message}`);
 
-            // 使用 AWS SDK 创建上传命令 - 添加额外的参数来处理 CORS
-            const command = new PutObjectCommand({
-                Bucket: this.config.bucket,
-                Key: objectKey,
-                Body: fileBuffer, // 使用 Uint8Array 格式的数据
-                ContentType: this.getMimeType(fileExt),
-                // 添加 Metadata 以设置特定的 CORS 相关信息
-                Metadata: {
-                    'x-amz-meta-origin': 'app://obsidian.md',
-                    'x-amz-meta-app': 'obsidian-cloudflare-uploader'
+                try {
+                    // 尝试预签名 URL 上传
+                    return await this.uploadWithPresignedUrl(objectKey, fileName, filePath, fileContent, fileExt);
+                } catch (presignedUrlError) {
+                    // 如果预签名 URL 方法失败，记录错误并尝试直接上传方法
+                    this.logger.warn(`预签名 URL 上传失败，尝试直接上传: ${(presignedUrlError as Error).message}`);
+                    return await this.uploadDirectly(objectKey, fileName, filePath, fileContent, fileExt);
+                }
+            }
+
+        } catch (error) {
+            // 增强错误日志
+            this.logger.error(`上传失败详细信息:`, {
+                error: (error as Error).message,
+                stack: (error as Error).stack,
+                config: {
+                    accountId: this.config.accountId,
+                    bucket: this.config.bucket,
+                    // 不要记录完整的访问密钥，只记录前几个字符
+                    accessKeyIdPrefix: this.config.accessKeyId?.substring(0, 4) + '***',
+                    hasSecretKey: !!this.config.secretAccessKey
                 }
             });
 
-            // 执行上传
-            await this.s3Client.send(command);
-
-            this.logger.info(`文件上传到R2成功: ${fileName} -> ${objectKey}`);
-            return {
-                success: true,
-                localPath: filePath,
-                imageId: objectKey
-            };
-
-        } catch (error) {
             this.logger.error(`处理文件时出错 ${filePath}:`, error);
-            
-            // 检查是否为 CORS 相关错误
+
+            // 检查是否为特定错误类型
             const errorMsg = (error as Error).message;
-            if (errorMsg.includes('CORS')) {
-                this.logger.error('可能存在 CORS 配置问题，请检查 R2 存储桶的 CORS 设置');
-                new Notice(`CORS 错误: 请确保已为 R2 存储桶配置正确的 CORS 策略`, 5000);
-                
-                // 提供配置 CORS 的帮助信息
-                this.logCorsConfigHelp();
+            if (errorMsg.includes('SSL') || errorMsg.includes('TLS') || errorMsg.includes('CIPHER_MISMATCH')) {
+                this.logger.error('SSL/TLS 连接错误，请检查您的网络连接和 Cloudflare 配置');
+                new Notice(`SSL 错误: 无法安全连接到 Cloudflare R2，请检查您的网络设置`, 5000);
+            } else if (errorMsg.includes('CORS')) {
+                this.logger.error('CORS 问题');
+                new Notice(`CORS 错误: 请联系插件开发者`, 5000);
             } else {
                 new Notice(`处理文件出错: ${path.basename(filePath)}`, 3000);
             }
@@ -137,6 +142,197 @@ export class R2Service implements StorageProvider {
                 localPath: filePath,
                 error: (error as Error).message
             };
+        }
+    }
+
+    /**
+     * 使用 Obsidian requestUrl API 上传文件（最优先尝试）
+     * 这种方法可以绕过浏览器的 CORS 和 SSL 限制
+     * @private
+     */
+    private async uploadWithObsidian(
+        objectKey: string,
+        fileName: string,
+        filePath: string,
+        fileContent: ArrayBuffer,
+        fileExt: string
+    ): Promise<UploadResult> {
+        this.logger.info(`尝试使用 Obsidian API 上传: ${fileName} -> ${objectKey}`);
+
+        // 生成预签名URL
+        const presignedUrl = await this.getPresignedUrl(
+            objectKey,
+            'put',
+            900, // 15分钟
+            this.getMimeType(fileExt)
+        );
+
+        // 将 ArrayBuffer 转换为 Uint8Array
+        const fileBuffer = new Uint8Array(fileContent);
+
+        // 准备请求参数
+        const requestParams: RequestUrlParam = {
+            url: presignedUrl,
+            method: 'PUT',
+            headers: {
+                'Content-Type': this.getMimeType(fileExt)
+            },
+            body: fileBuffer
+        };
+
+        // 使用 Obsidian requestUrl API 发送请求
+        const response = await requestUrl(requestParams);
+
+        // 检查响应状态
+        if (response.status < 200 || response.status >= 300) {
+            throw new Error(`Obsidian API 上传失败，状态码: ${response.status}`);
+        }
+
+        this.logger.info(`文件通过 Obsidian API 上传成功: ${fileName} -> ${objectKey}`);
+
+        return {
+            success: true,
+            localPath: filePath,
+            imageId: objectKey
+        };
+    }
+
+    /**
+     * 使用预签名 URL 上传文件（次优先）
+     * @private
+     */
+    private async uploadWithPresignedUrl(
+        objectKey: string,
+        fileName: string,
+        filePath: string,
+        fileContent: ArrayBuffer,
+        fileExt: string
+    ): Promise<UploadResult> {
+        this.logger.info(`尝试使用预签名 URL 上传: ${fileName} -> ${objectKey}`);
+
+        // 创建用于生成预签名URL的命令
+        const command = new PutObjectCommand({
+            Bucket: this.config.bucket,
+            Key: objectKey,
+            ContentType: this.getMimeType(fileExt)
+        });
+
+        // 生成预签名URL (有效期15分钟)
+        const presignedUrl = await getSignedUrl(this.s3Client, command, {
+            expiresIn: 900 // 15分钟(秒数)
+        });
+
+        this.logger.info(`已生成预签名URL，准备上传...`);
+
+        // 将 ArrayBuffer 转换为 Uint8Array
+        const fileBuffer = new Uint8Array(fileContent);
+
+        try {
+            // 添加自定义 fetch 选项以尝试解决 SSL/TLS 问题
+            // 注意：这些选项在某些浏览器环境下可能无效，但值得尝试
+            const fetchOptions: RequestInit = {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': this.getMimeType(fileExt)
+                },
+                body: fileBuffer,
+                mode: 'cors',
+                cache: 'no-cache',
+                redirect: 'follow',
+                // 在某些环境下，可能会使用一些非标准的 fetch 选项
+                // 例如 Electron 环境中可能支持一些额外选项
+                // @ts-ignore
+                credentials: 'omit',
+                // @ts-ignore
+                rejectUnauthorized: false // 尝试忽略 SSL 错误，在某些环境下有效
+            };
+
+            // 使用预签名URL上传文件
+            const response = await fetch(presignedUrl, fetchOptions);
+
+            if (!response.ok) {
+                throw new Error(`预签名URL上传失败，状态码: ${response.status}, 原因: ${await response.text()}`);
+            }
+
+            this.logger.info(`文件通过预签名URL上传成功: ${fileName} -> ${objectKey}`);
+            return {
+                success: true,
+                localPath: filePath,
+                imageId: objectKey
+            };
+        } catch (error) {
+            // 检测特定的 SSL 错误
+            const errorMsg = (error as Error).message;
+            if (errorMsg.includes('ERR_SSL_VERSION_OR_CIPHER_MISMATCH')) {
+                throw new Error(`SSL 版本或加密套件不匹配: ${errorMsg}`);
+            }
+            throw error;
+        }
+    }
+
+    /**
+     * 直接使用 AWS SDK 上传文件（最后尝试）
+     * @private
+     */
+    private async uploadDirectly(
+        objectKey: string,
+        fileName: string,
+        filePath: string,
+        fileContent: ArrayBuffer,
+        fileExt: string
+    ): Promise<UploadResult> {
+        this.logger.info(`尝试使用直接上传方法: ${fileName} -> ${objectKey}`);
+
+        // 将 ArrayBuffer 转换为 Uint8Array
+        const fileBuffer = new Uint8Array(fileContent);
+
+        // 使用 AWS SDK 创建上传命令
+        const command = new PutObjectCommand({
+            Bucket: this.config.bucket,
+            Key: objectKey,
+            Body: fileBuffer,
+            ContentType: this.getMimeType(fileExt)
+        });
+
+        // 执行上传
+        await this.s3Client.send(command);
+
+        this.logger.info(`文件直接上传成功: ${fileName} -> ${objectKey}`);
+        return {
+            success: true,
+            localPath: filePath,
+            imageId: objectKey
+        };
+    }
+
+    /**
+     * 生成预签名URL (公共方法，可在其他场景使用)
+     * @param objectKey 对象键
+     * @param operation 操作类型 ('put' | 'get')
+     * @param expiresIn 过期时间(秒)
+     * @param contentType 内容类型
+     */
+    public async getPresignedUrl(
+        objectKey: string,
+        operation: 'put' | 'get' = 'get',
+        expiresIn: number = 3600,
+        contentType?: string
+    ): Promise<string> {
+        try {
+            const command = new PutObjectCommand({
+                Bucket: this.config.bucket,
+                Key: objectKey,
+                ContentType: contentType
+            });
+
+            const presignedUrl = await getSignedUrl(this.s3Client, command, {
+                expiresIn: expiresIn
+            });
+
+            return presignedUrl;
+        } catch (error) {
+            this.logger.error(`生成预签名URL出错:`, error);
+            throw error;
         }
     }
 
@@ -172,31 +368,5 @@ export class R2Service implements StorageProvider {
         };
 
         return mimeMap[ext.toLowerCase()] || 'application/octet-stream';
-    }
-
-    /**
-     * 提供 CORS 配置帮助信息
-     * 用于指导用户如何在 Cloudflare R2 中配置 CORS
-     */
-    private logCorsConfigHelp(): void {
-        this.logger.info('==========================================================');
-        this.logger.info('CORS 配置帮助');
-        this.logger.info('==========================================================');
-        this.logger.info('请在 Cloudflare R2 中为您的存储桶配置以下 CORS 策略:');
-        this.logger.info(`
-[
-  {
-    "AllowedOrigins": ["*"],
-    "AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
-    "AllowedHeaders": ["*"],
-    "MaxAgeSeconds": 3000
-  }
-]`);
-        this.logger.info('或者，为了更安全的配置，您可以将 AllowedOrigins 设置为:');
-        this.logger.info('["app://obsidian.md", "https://your-public-domain.com"]');
-        this.logger.info('==========================================================');
-        this.logger.info('关于 CORS 配置的更多信息，请访问:');
-        this.logger.info('https://developers.cloudflare.com/r2/buckets/cors/');
-        this.logger.info('==========================================================');
     }
 } 

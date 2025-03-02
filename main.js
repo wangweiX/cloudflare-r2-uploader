@@ -2649,9 +2649,9 @@ var AlgorithmId;
 
 // node_modules/@smithy/types/dist-es/http.js
 var FieldPosition;
-(function(FieldPosition2) {
-  FieldPosition2[FieldPosition2["HEADER"] = 0] = "HEADER";
-  FieldPosition2[FieldPosition2["TRAILER"] = 1] = "TRAILER";
+(function(FieldPosition3) {
+  FieldPosition3[FieldPosition3["HEADER"] = 0] = "HEADER";
+  FieldPosition3[FieldPosition3["TRAILER"] = 1] = "TRAILER";
 })(FieldPosition || (FieldPosition = {}));
 
 // node_modules/@smithy/types/dist-es/middleware.js
@@ -12226,6 +12226,156 @@ var PutObjectCommand = class extends Command.classBuilder().ep({
 }).s("AmazonS3", "PutObject", {}).n("S3Client", "PutObjectCommand").f(PutObjectRequestFilterSensitiveLog, PutObjectOutputFilterSensitiveLog).ser(se_PutObjectCommand).de(de_PutObjectCommand).build() {
 };
 
+// node_modules/@aws-sdk/util-format-url/dist-es/index.js
+function formatUrl(request) {
+  const { port, query } = request;
+  let { protocol, path: path5, hostname } = request;
+  if (protocol && protocol.slice(-1) !== ":") {
+    protocol += ":";
+  }
+  if (port) {
+    hostname += `:${port}`;
+  }
+  if (path5 && path5.charAt(0) !== "/") {
+    path5 = `/${path5}`;
+  }
+  let queryString = query ? buildQueryString(query) : "";
+  if (queryString && queryString[0] !== "?") {
+    queryString = `?${queryString}`;
+  }
+  let auth = "";
+  if (request.username != null || request.password != null) {
+    const username = request.username ?? "";
+    const password = request.password ?? "";
+    auth = `${username}:${password}@`;
+  }
+  let fragment = "";
+  if (request.fragment) {
+    fragment = `#${request.fragment}`;
+  }
+  return `${protocol}//${auth}${hostname}${path5}${queryString}${fragment}`;
+}
+
+// node_modules/@aws-sdk/s3-request-presigner/dist-es/constants.js
+var UNSIGNED_PAYLOAD2 = "UNSIGNED-PAYLOAD";
+var SHA256_HEADER2 = "X-Amz-Content-Sha256";
+
+// node_modules/@aws-sdk/s3-request-presigner/dist-es/presigner.js
+var S3RequestPresigner = class {
+  constructor(options) {
+    __publicField(this, "signer");
+    const resolvedOptions = {
+      service: options.signingName || options.service || "s3",
+      uriEscapePath: options.uriEscapePath || false,
+      applyChecksum: options.applyChecksum || false,
+      ...options
+    };
+    this.signer = new SignatureV4MultiRegion(resolvedOptions);
+  }
+  presign(requestToSign, { unsignableHeaders = /* @__PURE__ */ new Set(), hoistableHeaders = /* @__PURE__ */ new Set(), unhoistableHeaders = /* @__PURE__ */ new Set(), ...options } = {}) {
+    this.prepareRequest(requestToSign, {
+      unsignableHeaders,
+      unhoistableHeaders,
+      hoistableHeaders
+    });
+    return this.signer.presign(requestToSign, {
+      expiresIn: 900,
+      unsignableHeaders,
+      unhoistableHeaders,
+      ...options
+    });
+  }
+  presignWithCredentials(requestToSign, credentials, { unsignableHeaders = /* @__PURE__ */ new Set(), hoistableHeaders = /* @__PURE__ */ new Set(), unhoistableHeaders = /* @__PURE__ */ new Set(), ...options } = {}) {
+    this.prepareRequest(requestToSign, {
+      unsignableHeaders,
+      unhoistableHeaders,
+      hoistableHeaders
+    });
+    return this.signer.presignWithCredentials(requestToSign, credentials, {
+      expiresIn: 900,
+      unsignableHeaders,
+      unhoistableHeaders,
+      ...options
+    });
+  }
+  prepareRequest(requestToSign, { unsignableHeaders = /* @__PURE__ */ new Set(), unhoistableHeaders = /* @__PURE__ */ new Set(), hoistableHeaders = /* @__PURE__ */ new Set() } = {}) {
+    unsignableHeaders.add("content-type");
+    Object.keys(requestToSign.headers).map((header) => header.toLowerCase()).filter((header) => header.startsWith("x-amz-server-side-encryption")).forEach((header) => {
+      if (!hoistableHeaders.has(header)) {
+        unhoistableHeaders.add(header);
+      }
+    });
+    requestToSign.headers[SHA256_HEADER2] = UNSIGNED_PAYLOAD2;
+    const currentHostHeader = requestToSign.headers.host;
+    const port = requestToSign.port;
+    const expectedHostHeader = `${requestToSign.hostname}${requestToSign.port != null ? ":" + port : ""}`;
+    if (!currentHostHeader || currentHostHeader === requestToSign.hostname && requestToSign.port != null) {
+      requestToSign.headers.host = expectedHostHeader;
+    }
+  }
+};
+
+// node_modules/@aws-sdk/s3-request-presigner/dist-es/getSignedUrl.js
+var getSignedUrl = async (client, command, options = {}) => {
+  let s3Presigner;
+  let region;
+  if (typeof client.config.endpointProvider === "function") {
+    const endpointV2 = await getEndpointFromInstructions(command.input, command.constructor, client.config);
+    const authScheme = endpointV2.properties?.authSchemes?.[0];
+    if (authScheme?.name === "sigv4a") {
+      region = authScheme?.signingRegionSet?.join(",");
+    } else {
+      region = authScheme?.signingRegion;
+    }
+    s3Presigner = new S3RequestPresigner({
+      ...client.config,
+      signingName: authScheme?.signingName,
+      region: async () => region
+    });
+  } else {
+    s3Presigner = new S3RequestPresigner(client.config);
+  }
+  const presignInterceptMiddleware = (next, context) => async (args) => {
+    const { request } = args;
+    if (!HttpRequest.isInstance(request)) {
+      throw new Error("Request to be presigned is not an valid HTTP request.");
+    }
+    delete request.headers["amz-sdk-invocation-id"];
+    delete request.headers["amz-sdk-request"];
+    delete request.headers["x-amz-user-agent"];
+    let presigned2;
+    const presignerOptions = {
+      ...options,
+      signingRegion: options.signingRegion ?? context["signing_region"] ?? region,
+      signingService: options.signingService ?? context["signing_service"]
+    };
+    if (context.s3ExpressIdentity) {
+      presigned2 = await s3Presigner.presignWithCredentials(request, context.s3ExpressIdentity, presignerOptions);
+    } else {
+      presigned2 = await s3Presigner.presign(request, presignerOptions);
+    }
+    return {
+      response: {},
+      output: {
+        $metadata: { httpStatusCode: 200 },
+        presigned: presigned2
+      }
+    };
+  };
+  const middlewareName = "presignInterceptMiddleware";
+  const clientStack = client.middlewareStack.clone();
+  clientStack.addRelativeTo(presignInterceptMiddleware, {
+    name: middlewareName,
+    relation: "before",
+    toMiddleware: "awsAuthMiddleware",
+    override: true
+  });
+  const handler = command.resolveMiddleware(clientStack, client.config, {});
+  const { output } = await handler({ input: command.input });
+  const { presigned } = output;
+  return formatUrl(presigned);
+};
+
 // src/utils/logger.ts
 var import_obsidian2 = require("obsidian");
 var Logger = class _Logger {
@@ -12290,6 +12440,309 @@ var Logger = class _Logger {
   }
 };
 
+// node_modules/@aws-sdk/protocol-http/dist-es/FieldPosition.js
+var FieldPosition2;
+(function(FieldPosition3) {
+  FieldPosition3[FieldPosition3["HEADER"] = 0] = "HEADER";
+  FieldPosition3[FieldPosition3["TRAILER"] = 1] = "TRAILER";
+})(FieldPosition2 || (FieldPosition2 = {}));
+
+// node_modules/@aws-sdk/protocol-http/dist-es/httpResponse.js
+var HttpResponse2 = class {
+  constructor(options) {
+    this.statusCode = options.statusCode;
+    this.reason = options.reason;
+    this.headers = options.headers || {};
+    this.body = options.body;
+  }
+  static isInstance(response) {
+    if (!response)
+      return false;
+    const resp = response;
+    return typeof resp.statusCode === "number" && typeof resp.headers === "object";
+  }
+};
+
+// node_modules/@aws-sdk/util-uri-escape/dist-es/escape-uri.js
+var escapeUri2 = (uri) => encodeURIComponent(uri).replace(/[!'()*]/g, hexEncode2);
+var hexEncode2 = (c2) => `%${c2.charCodeAt(0).toString(16).toUpperCase()}`;
+
+// node_modules/@aws-sdk/querystring-builder/dist-es/index.js
+function buildQueryString2(query) {
+  const parts = [];
+  for (let key of Object.keys(query).sort()) {
+    const value = query[key];
+    key = escapeUri2(key);
+    if (Array.isArray(value)) {
+      for (let i2 = 0, iLen = value.length; i2 < iLen; i2++) {
+        parts.push(`${key}=${escapeUri2(value[i2])}`);
+      }
+    } else {
+      let qsEntry = key;
+      if (value || typeof value === "string") {
+        qsEntry += `=${escapeUri2(value)}`;
+      }
+      parts.push(qsEntry);
+    }
+  }
+  return parts.join("&");
+}
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/node-http-handler.js
+var import_http = require("http");
+var import_https = require("https");
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/constants.js
+var NODEJS_TIMEOUT_ERROR_CODES2 = ["ECONNRESET", "EPIPE", "ETIMEDOUT"];
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/get-transformed-headers.js
+var getTransformedHeaders = (headers) => {
+  const transformedHeaders = {};
+  for (const name of Object.keys(headers)) {
+    const headerValues = headers[name];
+    transformedHeaders[name] = Array.isArray(headerValues) ? headerValues.join(",") : headerValues;
+  }
+  return transformedHeaders;
+};
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/set-connection-timeout.js
+var setConnectionTimeout = (request, reject, timeoutInMs = 0) => {
+  if (!timeoutInMs) {
+    return;
+  }
+  const timeoutId = setTimeout(() => {
+    request.destroy();
+    reject(Object.assign(new Error(`Socket timed out without establishing a connection within ${timeoutInMs} ms`), {
+      name: "TimeoutError"
+    }));
+  }, timeoutInMs);
+  request.on("socket", (socket) => {
+    if (socket.connecting) {
+      socket.on("connect", () => {
+        clearTimeout(timeoutId);
+      });
+    } else {
+      clearTimeout(timeoutId);
+    }
+  });
+};
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/set-socket-keep-alive.js
+var setSocketKeepAlive = (request, { keepAlive, keepAliveMsecs }) => {
+  if (keepAlive !== true) {
+    return;
+  }
+  request.on("socket", (socket) => {
+    socket.setKeepAlive(keepAlive, keepAliveMsecs || 0);
+  });
+};
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/set-socket-timeout.js
+var setSocketTimeout = (request, reject, timeoutInMs = 0) => {
+  request.setTimeout(timeoutInMs, () => {
+    request.destroy();
+    reject(Object.assign(new Error(`Connection timed out after ${timeoutInMs} ms`), { name: "TimeoutError" }));
+  });
+};
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/write-request-body.js
+var import_stream = require("stream");
+var MIN_WAIT_TIME = 1e3;
+async function writeRequestBody(httpRequest, request, maxContinueTimeoutMs = MIN_WAIT_TIME) {
+  const headers = request.headers ?? {};
+  const expect = headers["Expect"] || headers["expect"];
+  let timeoutId = -1;
+  let hasError = false;
+  if (expect === "100-continue") {
+    await Promise.race([
+      new Promise((resolve) => {
+        timeoutId = Number(setTimeout(resolve, Math.max(MIN_WAIT_TIME, maxContinueTimeoutMs)));
+      }),
+      new Promise((resolve) => {
+        httpRequest.on("continue", () => {
+          clearTimeout(timeoutId);
+          resolve();
+        });
+        httpRequest.on("error", () => {
+          hasError = true;
+          clearTimeout(timeoutId);
+          resolve();
+        });
+      })
+    ]);
+  }
+  if (!hasError) {
+    writeBody(httpRequest, request.body);
+  }
+}
+function writeBody(httpRequest, body) {
+  if (body instanceof import_stream.Readable) {
+    body.pipe(httpRequest);
+  } else if (body) {
+    httpRequest.end(Buffer.from(body));
+  } else {
+    httpRequest.end();
+  }
+}
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/node-http-handler.js
+var NodeHttpHandler = class {
+  constructor(options) {
+    this.metadata = { handlerProtocol: "http/1.1" };
+    this.configProvider = new Promise((resolve, reject) => {
+      if (typeof options === "function") {
+        options().then((_options) => {
+          resolve(this.resolveDefaultConfig(_options));
+        }).catch(reject);
+      } else {
+        resolve(this.resolveDefaultConfig(options));
+      }
+    });
+  }
+  resolveDefaultConfig(options) {
+    const { requestTimeout: requestTimeout2, connectionTimeout, socketTimeout, httpAgent, httpsAgent } = options || {};
+    const keepAlive = true;
+    const maxSockets = 50;
+    return {
+      connectionTimeout,
+      requestTimeout: requestTimeout2 ?? socketTimeout,
+      httpAgent: httpAgent || new import_http.Agent({ keepAlive, maxSockets }),
+      httpsAgent: httpsAgent || new import_https.Agent({ keepAlive, maxSockets })
+    };
+  }
+  destroy() {
+    this.config?.httpAgent?.destroy();
+    this.config?.httpsAgent?.destroy();
+  }
+  async handle(request, { abortSignal } = {}) {
+    if (!this.config) {
+      this.config = await this.configProvider;
+    }
+    return new Promise((_resolve, _reject) => {
+      let writeRequestBodyPromise = void 0;
+      const resolve = async (arg) => {
+        await writeRequestBodyPromise;
+        _resolve(arg);
+      };
+      const reject = async (arg) => {
+        await writeRequestBodyPromise;
+        _reject(arg);
+      };
+      if (!this.config) {
+        throw new Error("Node HTTP request handler config is not resolved");
+      }
+      if (abortSignal?.aborted) {
+        const abortError = new Error("Request aborted");
+        abortError.name = "AbortError";
+        reject(abortError);
+        return;
+      }
+      const isSSL = request.protocol === "https:";
+      const queryString = buildQueryString2(request.query || {});
+      let auth = void 0;
+      if (request.username != null || request.password != null) {
+        const username = request.username ?? "";
+        const password = request.password ?? "";
+        auth = `${username}:${password}`;
+      }
+      let path5 = request.path;
+      if (queryString) {
+        path5 += `?${queryString}`;
+      }
+      if (request.fragment) {
+        path5 += `#${request.fragment}`;
+      }
+      const nodeHttpsOptions = {
+        headers: request.headers,
+        host: request.hostname,
+        method: request.method,
+        path: path5,
+        port: request.port,
+        agent: isSSL ? this.config.httpsAgent : this.config.httpAgent,
+        auth
+      };
+      const requestFunc = isSSL ? import_https.request : import_http.request;
+      const req = requestFunc(nodeHttpsOptions, (res) => {
+        const httpResponse = new HttpResponse2({
+          statusCode: res.statusCode || -1,
+          reason: res.statusMessage,
+          headers: getTransformedHeaders(res.headers),
+          body: res
+        });
+        resolve({ response: httpResponse });
+      });
+      req.on("error", (err) => {
+        if (NODEJS_TIMEOUT_ERROR_CODES2.includes(err.code)) {
+          reject(Object.assign(err, { name: "TimeoutError" }));
+        } else {
+          reject(err);
+        }
+      });
+      setConnectionTimeout(req, reject, this.config.connectionTimeout);
+      setSocketTimeout(req, reject, this.config.requestTimeout);
+      if (abortSignal) {
+        abortSignal.onabort = () => {
+          req.abort();
+          const abortError = new Error("Request aborted");
+          abortError.name = "AbortError";
+          reject(abortError);
+        };
+      }
+      const httpAgent = nodeHttpsOptions.agent;
+      if (typeof httpAgent === "object" && "keepAlive" in httpAgent) {
+        setSocketKeepAlive(req, {
+          keepAlive: httpAgent.keepAlive,
+          keepAliveMsecs: httpAgent.keepAliveMsecs
+        });
+      }
+      writeRequestBodyPromise = writeRequestBody(req, request, this.config.requestTimeout).catch(_reject);
+    });
+  }
+};
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/node-http2-handler.js
+var import_http22 = require("http2");
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/node-http2-connection-manager.js
+var import_http2 = __toESM(require("http2"));
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/node-http2-connection-pool.js
+var NodeHttp2ConnectionPool = class {
+  constructor(sessions) {
+    this.sessions = [];
+    this.sessions = sessions ?? [];
+  }
+  poll() {
+    if (this.sessions.length > 0) {
+      return this.sessions.shift();
+    }
+  }
+  offerLast(session) {
+    this.sessions.push(session);
+  }
+  contains(session) {
+    return this.sessions.includes(session);
+  }
+  remove(session) {
+    this.sessions = this.sessions.filter((s2) => s2 !== session);
+  }
+  [Symbol.iterator]() {
+    return this.sessions[Symbol.iterator]();
+  }
+  destroy(connection) {
+    for (const session of this.sessions) {
+      if (session === connection) {
+        if (!session.destroyed) {
+          session.destroy();
+        }
+      }
+    }
+  }
+};
+
+// node_modules/@aws-sdk/node-http-handler/dist-es/stream-collector/collector.js
+var import_stream2 = require("stream");
+
 // src/services/r2-service.ts
 var R2Service = class {
   /**
@@ -12312,8 +12765,15 @@ var R2Service = class {
         secretAccessKey: config.secretAccessKey || ""
       },
       // 添加自定义配置以处理 CORS 问题
-      forcePathStyle: true
+      forcePathStyle: true,
       // 使用路径样式而不是虚拟主机样式
+      // 添加以下配置尝试解决连接问题
+      requestHandler: new NodeHttpHandler({
+        connectionTimeout: 5e3,
+        // 5秒连接超时
+        socketTimeout: 1e4
+        // 10秒socket超时
+      })
     });
     this.checkR2Configuration();
   }
@@ -12322,8 +12782,7 @@ var R2Service = class {
    */
   checkR2Configuration() {
     this.logger.info("\u68C0\u67E5 R2 \u914D\u7F6E...");
-    this.logger.info("\u8BF7\u786E\u4FDD\u60A8\u5DF2\u5728 Cloudflare R2 \u63A7\u5236\u9762\u677F\u4E2D\u914D\u7F6E\u4E86 CORS \u7B56\u7565");
-    this.logCorsConfigHelp();
+    this.logger.info("\u5DF2\u542F\u7528\u591A\u79CD\u4E0A\u4F20\u7B56\u7565\uFF0C\u5C06\u81EA\u52A8\u5C1D\u8BD5\u6700\u4F73\u4E0A\u4F20\u65B9\u5F0F");
   }
   /**
    * 获取提供者类型
@@ -12332,7 +12791,7 @@ var R2Service = class {
     return "cloudflare_r2" /* CLOUDFLARE_R2 */;
   }
   /**
-   * 上传文件到R2存储桶
+   * 使用多种策略上传文件到R2存储桶
    */
   async uploadFile(filePath, fileContent) {
     try {
@@ -12340,40 +12799,44 @@ var R2Service = class {
       const fileExt = path2.extname(fileName);
       const uniqueId = v4_default();
       const objectKey = `images/${uniqueId}${fileExt}`;
-      this.logger.info(`\u5F00\u59CB\u4F7F\u7528 S3 API \u4E0A\u4F20\u6587\u4EF6 filePath: ${filePath}`);
-      this.logger.info(`\u5F00\u59CB\u4F7F\u7528 S3 API \u4E0A\u4F20\u6587\u4EF6 fileName: ${fileName}`);
-      this.logger.info(`\u5F00\u59CB\u4F7F\u7528 S3 API \u4E0A\u4F20\u6587\u4EF6 objectKey: ${objectKey}`);
+      this.logger.info(`\u5F00\u59CB\u4E0A\u4F20\u6587\u4EF6 filePath: ${filePath}`);
+      this.logger.info(`\u5F00\u59CB\u4E0A\u4F20\u6587\u4EF6 fileName: ${fileName}`);
+      this.logger.info(`\u5F00\u59CB\u4E0A\u4F20\u6587\u4EF6 objectKey: ${objectKey}`);
       const hasS3Credentials = !!(this.config.accessKeyId && this.config.secretAccessKey);
       if (!hasS3Credentials) {
         throw new Error("\u672A\u63D0\u4F9B S3 API \u51ED\u8BC1");
       }
-      const fileBuffer = new Uint8Array(fileContent);
-      const command = new PutObjectCommand({
-        Bucket: this.config.bucket,
-        Key: objectKey,
-        Body: fileBuffer,
-        // 使用 Uint8Array 格式的数据
-        ContentType: this.getMimeType(fileExt),
-        // 添加 Metadata 以设置特定的 CORS 相关信息
-        Metadata: {
-          "x-amz-meta-origin": "app://obsidian.md",
-          "x-amz-meta-app": "obsidian-cloudflare-uploader"
+      try {
+        return await this.uploadWithObsidian(objectKey, fileName, filePath, fileContent, fileExt);
+      } catch (obsidianError) {
+        this.logger.warn(`Obsidian API \u4E0A\u4F20\u5931\u8D25\uFF0C\u5C1D\u8BD5\u9884\u7B7E\u540D URL: ${obsidianError.message}`);
+        try {
+          return await this.uploadWithPresignedUrl(objectKey, fileName, filePath, fileContent, fileExt);
+        } catch (presignedUrlError) {
+          this.logger.warn(`\u9884\u7B7E\u540D URL \u4E0A\u4F20\u5931\u8D25\uFF0C\u5C1D\u8BD5\u76F4\u63A5\u4E0A\u4F20: ${presignedUrlError.message}`);
+          return await this.uploadDirectly(objectKey, fileName, filePath, fileContent, fileExt);
+        }
+      }
+    } catch (error) {
+      this.logger.error(`\u4E0A\u4F20\u5931\u8D25\u8BE6\u7EC6\u4FE1\u606F:`, {
+        error: error.message,
+        stack: error.stack,
+        config: {
+          accountId: this.config.accountId,
+          bucket: this.config.bucket,
+          // 不要记录完整的访问密钥，只记录前几个字符
+          accessKeyIdPrefix: this.config.accessKeyId?.substring(0, 4) + "***",
+          hasSecretKey: !!this.config.secretAccessKey
         }
       });
-      await this.s3Client.send(command);
-      this.logger.info(`\u6587\u4EF6\u4E0A\u4F20\u5230R2\u6210\u529F: ${fileName} -> ${objectKey}`);
-      return {
-        success: true,
-        localPath: filePath,
-        imageId: objectKey
-      };
-    } catch (error) {
       this.logger.error(`\u5904\u7406\u6587\u4EF6\u65F6\u51FA\u9519 ${filePath}:`, error);
       const errorMsg = error.message;
-      if (errorMsg.includes("CORS")) {
-        this.logger.error("\u53EF\u80FD\u5B58\u5728 CORS \u914D\u7F6E\u95EE\u9898\uFF0C\u8BF7\u68C0\u67E5 R2 \u5B58\u50A8\u6876\u7684 CORS \u8BBE\u7F6E");
-        new import_obsidian3.Notice(`CORS \u9519\u8BEF: \u8BF7\u786E\u4FDD\u5DF2\u4E3A R2 \u5B58\u50A8\u6876\u914D\u7F6E\u6B63\u786E\u7684 CORS \u7B56\u7565`, 5e3);
-        this.logCorsConfigHelp();
+      if (errorMsg.includes("SSL") || errorMsg.includes("TLS") || errorMsg.includes("CIPHER_MISMATCH")) {
+        this.logger.error("SSL/TLS \u8FDE\u63A5\u9519\u8BEF\uFF0C\u8BF7\u68C0\u67E5\u60A8\u7684\u7F51\u7EDC\u8FDE\u63A5\u548C Cloudflare \u914D\u7F6E");
+        new import_obsidian3.Notice(`SSL \u9519\u8BEF: \u65E0\u6CD5\u5B89\u5168\u8FDE\u63A5\u5230 Cloudflare R2\uFF0C\u8BF7\u68C0\u67E5\u60A8\u7684\u7F51\u7EDC\u8BBE\u7F6E`, 5e3);
+      } else if (errorMsg.includes("CORS")) {
+        this.logger.error("CORS \u95EE\u9898");
+        new import_obsidian3.Notice(`CORS \u9519\u8BEF: \u8BF7\u8054\u7CFB\u63D2\u4EF6\u5F00\u53D1\u8005`, 5e3);
       } else {
         new import_obsidian3.Notice(`\u5904\u7406\u6587\u4EF6\u51FA\u9519: ${path2.basename(filePath)}`, 3e3);
       }
@@ -12382,6 +12845,137 @@ var R2Service = class {
         localPath: filePath,
         error: error.message
       };
+    }
+  }
+  /**
+   * 使用 Obsidian requestUrl API 上传文件（最优先尝试）
+   * 这种方法可以绕过浏览器的 CORS 和 SSL 限制
+   * @private
+   */
+  async uploadWithObsidian(objectKey, fileName, filePath, fileContent, fileExt) {
+    this.logger.info(`\u5C1D\u8BD5\u4F7F\u7528 Obsidian API \u4E0A\u4F20: ${fileName} -> ${objectKey}`);
+    const presignedUrl = await this.getPresignedUrl(
+      objectKey,
+      "put",
+      900,
+      // 15分钟
+      this.getMimeType(fileExt)
+    );
+    const fileBuffer = new Uint8Array(fileContent);
+    const requestParams = {
+      url: presignedUrl,
+      method: "PUT",
+      headers: {
+        "Content-Type": this.getMimeType(fileExt)
+      },
+      body: fileBuffer
+    };
+    const response = await (0, import_obsidian3.requestUrl)(requestParams);
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(`Obsidian API \u4E0A\u4F20\u5931\u8D25\uFF0C\u72B6\u6001\u7801: ${response.status}`);
+    }
+    this.logger.info(`\u6587\u4EF6\u901A\u8FC7 Obsidian API \u4E0A\u4F20\u6210\u529F: ${fileName} -> ${objectKey}`);
+    return {
+      success: true,
+      localPath: filePath,
+      imageId: objectKey
+    };
+  }
+  /**
+   * 使用预签名 URL 上传文件（次优先）
+   * @private
+   */
+  async uploadWithPresignedUrl(objectKey, fileName, filePath, fileContent, fileExt) {
+    this.logger.info(`\u5C1D\u8BD5\u4F7F\u7528\u9884\u7B7E\u540D URL \u4E0A\u4F20: ${fileName} -> ${objectKey}`);
+    const command = new PutObjectCommand({
+      Bucket: this.config.bucket,
+      Key: objectKey,
+      ContentType: this.getMimeType(fileExt)
+    });
+    const presignedUrl = await getSignedUrl(this.s3Client, command, {
+      expiresIn: 900
+      // 15分钟(秒数)
+    });
+    this.logger.info(`\u5DF2\u751F\u6210\u9884\u7B7E\u540DURL\uFF0C\u51C6\u5907\u4E0A\u4F20...`);
+    const fileBuffer = new Uint8Array(fileContent);
+    try {
+      const fetchOptions = {
+        method: "PUT",
+        headers: {
+          "Content-Type": this.getMimeType(fileExt)
+        },
+        body: fileBuffer,
+        mode: "cors",
+        cache: "no-cache",
+        redirect: "follow",
+        // 在某些环境下，可能会使用一些非标准的 fetch 选项
+        // 例如 Electron 环境中可能支持一些额外选项
+        // @ts-ignore
+        credentials: "omit",
+        // @ts-ignore
+        rejectUnauthorized: false
+        // 尝试忽略 SSL 错误，在某些环境下有效
+      };
+      const response = await fetch(presignedUrl, fetchOptions);
+      if (!response.ok) {
+        throw new Error(`\u9884\u7B7E\u540DURL\u4E0A\u4F20\u5931\u8D25\uFF0C\u72B6\u6001\u7801: ${response.status}, \u539F\u56E0: ${await response.text()}`);
+      }
+      this.logger.info(`\u6587\u4EF6\u901A\u8FC7\u9884\u7B7E\u540DURL\u4E0A\u4F20\u6210\u529F: ${fileName} -> ${objectKey}`);
+      return {
+        success: true,
+        localPath: filePath,
+        imageId: objectKey
+      };
+    } catch (error) {
+      const errorMsg = error.message;
+      if (errorMsg.includes("ERR_SSL_VERSION_OR_CIPHER_MISMATCH")) {
+        throw new Error(`SSL \u7248\u672C\u6216\u52A0\u5BC6\u5957\u4EF6\u4E0D\u5339\u914D: ${errorMsg}`);
+      }
+      throw error;
+    }
+  }
+  /**
+   * 直接使用 AWS SDK 上传文件（最后尝试）
+   * @private
+   */
+  async uploadDirectly(objectKey, fileName, filePath, fileContent, fileExt) {
+    this.logger.info(`\u5C1D\u8BD5\u4F7F\u7528\u76F4\u63A5\u4E0A\u4F20\u65B9\u6CD5: ${fileName} -> ${objectKey}`);
+    const fileBuffer = new Uint8Array(fileContent);
+    const command = new PutObjectCommand({
+      Bucket: this.config.bucket,
+      Key: objectKey,
+      Body: fileBuffer,
+      ContentType: this.getMimeType(fileExt)
+    });
+    await this.s3Client.send(command);
+    this.logger.info(`\u6587\u4EF6\u76F4\u63A5\u4E0A\u4F20\u6210\u529F: ${fileName} -> ${objectKey}`);
+    return {
+      success: true,
+      localPath: filePath,
+      imageId: objectKey
+    };
+  }
+  /**
+   * 生成预签名URL (公共方法，可在其他场景使用)
+   * @param objectKey 对象键
+   * @param operation 操作类型 ('put' | 'get')
+   * @param expiresIn 过期时间(秒)
+   * @param contentType 内容类型
+   */
+  async getPresignedUrl(objectKey, operation = "get", expiresIn = 3600, contentType) {
+    try {
+      const command = new PutObjectCommand({
+        Bucket: this.config.bucket,
+        Key: objectKey,
+        ContentType: contentType
+      });
+      const presignedUrl = await getSignedUrl(this.s3Client, command, {
+        expiresIn
+      });
+      return presignedUrl;
+    } catch (error) {
+      this.logger.error(`\u751F\u6210\u9884\u7B7E\u540DURL\u51FA\u9519:`, error);
+      throw error;
     }
   }
   /**
@@ -12410,31 +13004,6 @@ var R2Service = class {
       ".md": "text/markdown"
     };
     return mimeMap[ext.toLowerCase()] || "application/octet-stream";
-  }
-  /**
-   * 提供 CORS 配置帮助信息
-   * 用于指导用户如何在 Cloudflare R2 中配置 CORS
-   */
-  logCorsConfigHelp() {
-    this.logger.info("==========================================================");
-    this.logger.info("CORS \u914D\u7F6E\u5E2E\u52A9");
-    this.logger.info("==========================================================");
-    this.logger.info("\u8BF7\u5728 Cloudflare R2 \u4E2D\u4E3A\u60A8\u7684\u5B58\u50A8\u6876\u914D\u7F6E\u4EE5\u4E0B CORS \u7B56\u7565:");
-    this.logger.info(`
-[
-  {
-    "AllowedOrigins": ["*"],
-    "AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
-    "AllowedHeaders": ["*"],
-    "MaxAgeSeconds": 3000
-  }
-]`);
-    this.logger.info("\u6216\u8005\uFF0C\u4E3A\u4E86\u66F4\u5B89\u5168\u7684\u914D\u7F6E\uFF0C\u60A8\u53EF\u4EE5\u5C06 AllowedOrigins \u8BBE\u7F6E\u4E3A:");
-    this.logger.info('["app://obsidian.md", "https://your-public-domain.com"]');
-    this.logger.info("==========================================================");
-    this.logger.info("\u5173\u4E8E CORS \u914D\u7F6E\u7684\u66F4\u591A\u4FE1\u606F\uFF0C\u8BF7\u8BBF\u95EE:");
-    this.logger.info("https://developers.cloudflare.com/r2/buckets/cors/");
-    this.logger.info("==========================================================");
   }
 };
 
