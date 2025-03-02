@@ -48,7 +48,8 @@ var DEFAULT_SETTINGS = {
   workerSettings: {
     workerUrl: "",
     apiKey: "",
-    folderName: ""
+    folderName: "",
+    customDomain: ""
   },
   enableAutoPaste: false
 };
@@ -141,13 +142,32 @@ var CloudflareWorkerService = class {
    */
   async uploadFile(filePath, fileContent) {
     try {
-      const { workerUrl, apiKey, folderName } = this.settings.workerSettings;
+      const { workerUrl, apiKey, folderName, customDomain } = this.settings.workerSettings;
       if (!workerUrl || !apiKey) {
         throw new Error("Worker URL\u6216API Key\u672A\u914D\u7F6E");
       }
       const fileName = path.basename(filePath);
+      const getMimeType = (fileName2) => {
+        const extension = path.extname(fileName2).toLowerCase().replace(".", "");
+        const mimeTypes = {
+          "jpg": "image/jpeg",
+          "jpeg": "image/jpeg",
+          "png": "image/png",
+          "gif": "image/gif",
+          "webp": "image/webp",
+          "pdf": "application/pdf",
+          "txt": "text/plain",
+          "doc": "application/msword",
+          "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "xls": "application/vnd.ms-excel",
+          "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        };
+        return mimeTypes[extension] || "application/octet-stream";
+      };
+      const mimeType = getMimeType(fileName);
+      this.logger.info(`\u4E0A\u4F20\u6587\u4EF6\u7C7B\u578B: ${mimeType}, \u6587\u4EF6\u540D: ${fileName}`);
       const formData = new FormData();
-      const blob = new Blob([fileContent], { type: "application/octet-stream" });
+      const blob = new Blob([fileContent], { type: mimeType });
       formData.append("file", blob, fileName);
       if (folderName) {
         formData.append("folder", folderName);
@@ -156,19 +176,38 @@ var CloudflareWorkerService = class {
       const response = await fetch(workerUrl, {
         method: "POST",
         headers: {
-          "Authorization": apiKey
+          "Authorization": `Bearer ${apiKey}`
         },
         body: formData
       });
       const json = await response.json();
-      if (response.ok && json.success && json.url) {
-        this.logger.info(`\u6587\u4EF6\u4E0A\u4F20\u6210\u529F: ${fileName}, URL: ${json.url}`);
-        return {
-          success: true,
-          localPath: filePath,
-          imageId: json.url
-          // 直接使用返回的URL作为imageId
-        };
+      if (response.ok && json.success) {
+        if (json.path) {
+          const fileIdentifier = json.path;
+          let imageUrl;
+          if (customDomain && customDomain.trim() !== "") {
+            const domainBase = customDomain.startsWith("http") ? customDomain : `https://${customDomain}`;
+            const formattedDomain = domainBase.endsWith("/") ? domainBase : `${domainBase}/`;
+            imageUrl = `${formattedDomain}${fileIdentifier.startsWith("/") ? fileIdentifier.substring(1) : fileIdentifier}`;
+          } else {
+            const baseUrl = new URL(workerUrl);
+            imageUrl = `${baseUrl.origin}/${fileIdentifier.startsWith("/") ? fileIdentifier.substring(1) : fileIdentifier}`;
+          }
+          this.logger.info(`\u6587\u4EF6\u4E0A\u4F20\u6210\u529F: ${fileName}, URL: ${imageUrl}`);
+          return {
+            success: true,
+            localPath: filePath,
+            imageId: imageUrl
+          };
+        } else {
+          this.logger.error(`\u4E0A\u4F20\u6587\u4EF6\u6210\u529F\u4F46\u7F3A\u5C11URL\u4FE1\u606F: ${fileName}`);
+          new import_obsidian2.Notice(`\u4E0A\u4F20\u6587\u4EF6\u6210\u529F\u4F46\u7F3A\u5C11URL\u4FE1\u606F: ${fileName}`, 3e3);
+          return {
+            success: false,
+            localPath: filePath,
+            error: "\u4E0A\u4F20\u6210\u529F\u4F46\u65E0\u6CD5\u83B7\u53D6URL"
+          };
+        }
       } else {
         const errorMessage = json.error || "\u672A\u77E5\u9519\u8BEF";
         this.logger.error(`\u4E0A\u4F20\u6587\u4EF6\u5931\u8D25 ${filePath}: ${errorMessage}`);
@@ -191,7 +230,7 @@ var CloudflareWorkerService = class {
   }
   /**
    * 获取文件URL
-   * 由于Worker上传返回的是完整URL，所以直接返回imageId
+   * 由于构建的imageId已经是完整URL，所以直接返回
    */
   getFileUrl(imageId) {
     return imageId;
@@ -807,6 +846,29 @@ var CurrentFileUploader = class {
 
 // src/ui/settings-tab.ts
 var import_obsidian6 = require("obsidian");
+var wrapTextWithPasswordHide = (text) => {
+  const hider = text.inputEl.insertAdjacentElement(
+    "beforebegin",
+    createSpan()
+  );
+  if (!hider) {
+    return;
+  }
+  (0, import_obsidian6.setIcon)(hider, "eye-off");
+  hider.addEventListener("click", () => {
+    const isText = text.inputEl.getAttribute("type") === "text";
+    if (isText) {
+      (0, import_obsidian6.setIcon)(hider, "eye-off");
+      text.inputEl.setAttribute("type", "password");
+    } else {
+      (0, import_obsidian6.setIcon)(hider, "eye");
+      text.inputEl.setAttribute("type", "text");
+    }
+    text.inputEl.focus();
+  });
+  text.inputEl.setAttribute("type", "password");
+  return text;
+};
 var SettingsTab = class extends import_obsidian6.PluginSettingTab {
   /**
    * 构造函数
@@ -837,19 +899,32 @@ var SettingsTab = class extends import_obsidian6.PluginSettingTab {
     containerEl.createEl("h3", { text: "Cloudflare Worker \u914D\u7F6E" });
     new import_obsidian6.Setting(containerEl).setName("Worker URL").setDesc("\u60A8\u90E8\u7F72\u7684 Cloudflare Worker \u7684 URL").addText(
       (text) => text.setPlaceholder("https://your-worker.your-subdomain.workers.dev").setValue(this.plugin.settings.workerSettings.workerUrl).onChange(async (value) => {
+        if (value && !value.startsWith("https://")) {
+          value = "https://" + value;
+        }
         this.plugin.settings.workerSettings.workerUrl = value;
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian6.Setting(containerEl).setName("API Key").setDesc("Worker \u8BA4\u8BC1\u6240\u9700\u7684 API Key").addText(
-      (text) => text.setPlaceholder("\u8F93\u5165\u60A8\u7684 API Key").setValue(this.plugin.settings.workerSettings.apiKey).onChange(async (value) => {
-        this.plugin.settings.workerSettings.apiKey = value;
+    new import_obsidian6.Setting(containerEl).setName("API Key").setDesc("Worker \u8BA4\u8BC1\u6240\u9700\u7684 API Key").addText((text) => {
+      wrapTextWithPasswordHide(text);
+      text.setPlaceholder("\u8F93\u5165\u60A8\u7684 API Key").setValue(this.plugin.settings.workerSettings.apiKey).onChange(async (value) => {
+        this.plugin.settings.workerSettings.apiKey = value.trim();
         await this.plugin.saveSettings();
-      })
-    );
+      });
+    });
     new import_obsidian6.Setting(containerEl).setName("\u6587\u4EF6\u5939\u540D\u79F0\uFF08\u53EF\u9009\uFF09").setDesc("\u4E0A\u4F20\u6587\u4EF6\u7684\u76EE\u6807\u6587\u4EF6\u5939\uFF0C\u5982\u4E0D\u586B\u5219\u4F7F\u7528 Worker \u9ED8\u8BA4\u8BBE\u7F6E").addText(
       (text) => text.setPlaceholder("images").setValue(this.plugin.settings.workerSettings.folderName || "").onChange(async (value) => {
         this.plugin.settings.workerSettings.folderName = value || void 0;
+        await this.plugin.saveSettings();
+      })
+    );
+    new import_obsidian6.Setting(containerEl).setName("R2 Bucket \u81EA\u5B9A\u4E49\u57DF\u540D\uFF08\u53EF\u9009\uFF09").setDesc("\u60A8\u4E3A R2 Bucket \u914D\u7F6E\u7684\u81EA\u5B9A\u4E49\u57DF\u540D\uFF0C\u5C06\u66FF\u4EE3\u9ED8\u8BA4\u7684 Cloudflare \u57DF\u540D").addText(
+      (text) => text.setPlaceholder("https://images.yourdomain.com").setValue(this.plugin.settings.workerSettings.customDomain || "").onChange(async (value) => {
+        if (value && !value.startsWith("https://")) {
+          value = "https://" + value;
+        }
+        this.plugin.settings.workerSettings.customDomain = value;
         await this.plugin.saveSettings();
       })
     );

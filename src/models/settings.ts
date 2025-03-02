@@ -12,6 +12,7 @@ export interface PluginSettings {
     workerUrl: string;
     apiKey: string;
     folderName?: string;
+    customDomain?: string;
   };
   
   // 自动上传设置
@@ -26,7 +27,8 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   workerSettings: {
     workerUrl: "",
     apiKey: "",
-    folderName: ""
+    folderName: "",
+    customDomain: ""
   },
   enableAutoPaste: false
 }; 

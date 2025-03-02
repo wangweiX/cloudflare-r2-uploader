@@ -31,7 +31,7 @@ export class CloudflareWorkerService implements StorageProvider {
      */
     public async uploadFile(filePath: string, fileContent: ArrayBuffer): Promise<UploadResult> {
         try {
-            const {workerUrl, apiKey, folderName} = this.settings.workerSettings;
+            const {workerUrl, apiKey, folderName, customDomain} = this.settings.workerSettings;
 
             if (!workerUrl || !apiKey) {
                 throw new Error('Worker URL或API Key未配置');
@@ -39,9 +39,32 @@ export class CloudflareWorkerService implements StorageProvider {
 
             const fileName = path.basename(filePath);
 
+            // 根据文件扩展名获取MIME类型
+            const getMimeType = (fileName: string): string => {
+                const extension = path.extname(fileName).toLowerCase().replace('.', '');
+                const mimeTypes: {[key: string]: string} = {
+                    'jpg': 'image/jpeg',
+                    'jpeg': 'image/jpeg',
+                    'png': 'image/png',
+                    'gif': 'image/gif',
+                    'webp': 'image/webp',
+                    'pdf': 'application/pdf',
+                    'txt': 'text/plain',
+                    'doc': 'application/msword',
+                    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'xls': 'application/vnd.ms-excel',
+                    'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                };
+                return mimeTypes[extension] || 'application/octet-stream';
+            };
+
+            // 获取文件的MIME类型
+            const mimeType = getMimeType(fileName);
+            this.logger.info(`上传文件类型: ${mimeType}, 文件名: ${fileName}`);
+
             // 准备表单数据
             const formData = new FormData();
-            const blob = new Blob([fileContent], {type: 'application/octet-stream'});
+            const blob = new Blob([fileContent], {type: mimeType});
             formData.append('file', blob, fileName);
 
             // 如果有文件夹名称，添加到表单数据
@@ -54,21 +77,48 @@ export class CloudflareWorkerService implements StorageProvider {
             const response = await fetch(workerUrl, {
                 method: 'POST',
                 headers: {
-                    'Authorization': apiKey
+                    'Authorization': `Bearer ${apiKey}`
                 },
                 body: formData
             });
-
+            
             // 解析响应
             const json = await response.json();
 
-            if (response.ok && json.success && json.url) {
-                this.logger.info(`文件上传成功: ${fileName}, URL: ${json.url}`);
-                return {
-                    success: true,
-                    localPath: filePath,
-                    imageId: json.url // 直接使用返回的URL作为imageId
-                };
+            if (response.ok && json.success) {
+                if (json.path) {
+                    const fileIdentifier = json.path;
+                    let imageUrl;
+                    
+                    // 如果配置了自定义域名，则使用自定义域名构建URL
+                    if (customDomain && customDomain.trim() !== '') {
+                        // 确保自定义域名是完整的URL
+                        const domainBase = customDomain.startsWith('http') ? customDomain : `https://${customDomain}`;
+                        const formattedDomain = domainBase.endsWith('/') ? domainBase : `${domainBase}/`;
+                        imageUrl = `${formattedDomain}${fileIdentifier.startsWith('/') ? fileIdentifier.substring(1) : fileIdentifier}`;
+                    } else {
+                        // 使用Worker URL作为基础URL
+                        const baseUrl = new URL(workerUrl);
+                        // 构造完整的图片URL
+                        imageUrl = `${baseUrl.origin}/${fileIdentifier.startsWith('/') ? fileIdentifier.substring(1) : fileIdentifier}`;
+                    }
+                    
+                    this.logger.info(`文件上传成功: ${fileName}, URL: ${imageUrl}`);
+                    return {
+                        success: true,
+                        localPath: filePath,
+                        imageId: imageUrl
+                    };
+                }
+                else {
+                    this.logger.error(`上传文件成功但缺少URL信息: ${fileName}`);
+                    new Notice(`上传文件成功但缺少URL信息: ${fileName}`, 3000);
+                    return {
+                        success: false,
+                        localPath: filePath,
+                        error: '上传成功但无法获取URL'
+                    };
+                }
             } else {
                 const errorMessage = json.error || '未知错误';
                 this.logger.error(`上传文件失败 ${filePath}: ${errorMessage}`);
@@ -92,9 +142,9 @@ export class CloudflareWorkerService implements StorageProvider {
 
     /**
      * 获取文件URL
-     * 由于Worker上传返回的是完整URL，所以直接返回imageId
+     * 由于构建的imageId已经是完整URL，所以直接返回
      */
     public getFileUrl(imageId: string): string {
-        return imageId; // Worker服务返回的imageId就是完整URL
+        return imageId; // imageId是完整URL
     }
 } 
