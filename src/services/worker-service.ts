@@ -42,7 +42,7 @@ export class CloudflareWorkerService implements StorageProvider {
             // 根据文件扩展名获取MIME类型
             const getMimeType = (fileName: string): string => {
                 const extension = path.extname(fileName).toLowerCase().replace('.', '');
-                const mimeTypes: {[key: string]: string} = {
+                const mimeTypes: { [key: string]: string } = {
                     'jpg': 'image/jpeg',
                     'jpeg': 'image/jpeg',
                     'png': 'image/png',
@@ -81,7 +81,7 @@ export class CloudflareWorkerService implements StorageProvider {
                 },
                 body: formData
             });
-            
+
             // 解析响应
             const json = await response.json();
 
@@ -89,7 +89,7 @@ export class CloudflareWorkerService implements StorageProvider {
                 if (json.path) {
                     const fileIdentifier = json.path;
                     let imageUrl;
-                    
+
                     // 如果配置了自定义域名，则使用自定义域名构建URL
                     if (customDomain && customDomain.trim() !== '') {
                         // 确保自定义域名是完整的URL
@@ -102,15 +102,14 @@ export class CloudflareWorkerService implements StorageProvider {
                         // 构造完整的图片URL
                         imageUrl = `${baseUrl.origin}/${fileIdentifier.startsWith('/') ? fileIdentifier.substring(1) : fileIdentifier}`;
                     }
-                    
+
                     this.logger.info(`文件上传成功: ${fileName}, URL: ${imageUrl}`);
                     return {
                         success: true,
                         localPath: filePath,
                         imageId: imageUrl
                     };
-                }
-                else {
+                } else {
                     this.logger.error(`上传文件成功但缺少URL信息: ${fileName}`);
                     new Notice(`上传文件成功但缺少URL信息: ${fileName}`, 3000);
                     return {
