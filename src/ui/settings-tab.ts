@@ -68,11 +68,11 @@ export class SettingsTab extends PluginSettingTab {
      */
     private displayCloudflareWorkerSettings(containerEl: HTMLElement): void {
 
-        containerEl.createEl('h3', {text: 'Cloudflare Worker 配置'});
+        containerEl.createEl('h3', {text: 'Cloudflare R2 Worker 配置'});
 
         new Setting(containerEl)
             .setName('Worker URL')
-            .setDesc('您部署的 Cloudflare Worker 的 URL')
+            .setDesc('您部署的 Cloudflare R2 Worker 的 URL')
             .addText(text => text
                 .setPlaceholder('https://your-worker.your-subdomain.workers.dev')
                 .setValue(this.plugin.settings.workerSettings.workerUrl)
