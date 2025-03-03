@@ -1,10 +1,10 @@
 {
-    "id": "cloudflare-images-uploader",
-    "name": "Cloudflare Images Uploader",
-    "version": "1.0.0",
-    "minAppVersion": "0.15.0",
-    "description": "Automatically upload images from your Obsidian notes to Cloudflare Images and update the notes with the cloud URLs.",
-    "author": "Wang Wei",
-    "authorUrl": "",
-    "isDesktopOnly": false
-  }
+  "id": "cloudflare-R2-uploader",
+  "name": "Cloudflare R2 Uploader",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Automatically upload images from your Obsidian notes to Cloudflare Images and update the notes with the cloud URLs.",
+  "author": "Wang Wei",
+  "authorUrl": "",
+  "isDesktopOnly": false
+}
