@@ -48,6 +48,7 @@ var DEFAULT_SETTINGS = {
   workerSettings: {
     workerUrl: "",
     apiKey: "",
+    bucketName: "",
     folderName: "",
     customDomain: ""
   },
@@ -142,7 +143,7 @@ var CloudflareWorkerService = class {
    */
   async uploadFile(filePath, fileContent) {
     try {
-      const { workerUrl, apiKey, folderName, customDomain } = this.settings.workerSettings;
+      const { workerUrl, apiKey, bucketName, folderName, customDomain } = this.settings.workerSettings;
       if (!workerUrl || !apiKey) {
         throw new Error("Worker URL\u6216API Key\u672A\u914D\u7F6E");
       }
@@ -173,7 +174,7 @@ var CloudflareWorkerService = class {
         formData.append("folder", folderName);
       }
       this.logger.info(`\u5F00\u59CB\u4E0A\u4F20\u6587\u4EF6\u5230Worker: ${fileName}`);
-      const response = await fetch(workerUrl, {
+      const response = await fetch(workerUrl + `/api/v1/buckets/${bucketName}/files`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`
@@ -656,55 +657,33 @@ var CurrentFileUploader = class {
    */
   async findImagesInFile(file) {
     const imagePathsToUpload = /* @__PURE__ */ new Set();
+    const tmpImgPaths = /* @__PURE__ */ new Set();
     const content = await this.app.vault.cachedRead(file);
     const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
     let standardMatch;
     while ((standardMatch = standardRegex.exec(content)) !== null) {
       const imagePath = standardMatch[2];
-      if (imagePath.startsWith("http://") || imagePath.startsWith("https://") || imagePath.startsWith("pasted-image-")) {
+      if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
         continue;
       }
-      const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
-      if (await this.fileExists(absolutePath)) {
-        imagePathsToUpload.add(absolutePath);
-      } else {
-        this.logger.warn(`\u56FE\u7247\u6587\u4EF6\u4E0D\u5B58\u5728\uFF1A${absolutePath}`);
-      }
+      tmpImgPaths.add(imagePath);
     }
     const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
     let obsidianMatch;
     while ((obsidianMatch = obsidianRegex.exec(content)) !== null) {
       const imagePath = obsidianMatch[1];
-      const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
-      if (await this.fileExists(absolutePath)) {
-        imagePathsToUpload.add(absolutePath);
-      } else {
-        this.logger.warn(`\u56FE\u7247\u6587\u4EF6\u4E0D\u5B58\u5728\uFF1A${absolutePath}`);
+      tmpImgPaths.add(imagePath);
+    }
+    for (const imagePath of tmpImgPaths) {
+      let absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+      if (absolutePath === "") {
+        this.logger.warn(`\u65E0\u6CD5\u89E3\u6790\u56FE\u7247\u8DEF\u5F84: ${imagePath}`);
+        continue;
       }
+      imagePathsToUpload.add(absolutePath);
+      this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${absolutePath}`);
     }
     return imagePathsToUpload;
-  }
-  /**
-   * 检查文件是否存在
-   */
-  async fileExists(path4) {
-    try {
-      return await this.app.vault.adapter.exists(path4);
-    } catch (error) {
-      this.logger.error(`\u68C0\u67E5\u6587\u4EF6\u662F\u5426\u5B58\u5728\u65F6\u51FA\u9519: ${path4}`, error);
-      return false;
-    }
-  }
-  /**
-   * 解析图片绝对路径
-   */
-  resolveAbsolutePath(notePath, imagePath) {
-    if (imagePath.startsWith("/")) {
-      return imagePath.substring(1);
-    } else {
-      const noteDir = path3.dirname(notePath);
-      return path3.join(noteDir, imagePath);
-    }
   }
   /**
    * 延迟函数 - 用于重试间隔
@@ -801,10 +780,14 @@ var CurrentFileUploader = class {
       const fullMatch = standardMatch[0];
       const altText = standardMatch[1];
       const imagePath = standardMatch[2];
-      if (imagePath.startsWith("http://") || imagePath.startsWith("https://") || imagePath.startsWith("pasted-image-")) {
+      if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
         continue;
       }
-      const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
+      const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+      if (absolutePath === "") {
+        this.logger.warn(`\u65E0\u6CD5\u89E3\u6790\u56FE\u7247\u8DEF\u5F84: ${imagePath}`);
+        continue;
+      }
       const newImageUrl = uploadResults[absolutePath];
       if (newImageUrl) {
         standardNewContent += content.substring(lastIndex, standardMatch.index);
@@ -825,7 +808,11 @@ var CurrentFileUploader = class {
     while ((obsidianMatch = obsidianRegex.exec(newContent)) !== null) {
       const fullMatch = obsidianMatch[0];
       const imagePath = obsidianMatch[1];
-      const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
+      const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+      if (absolutePath === "") {
+        this.logger.warn(`\u65E0\u6CD5\u89E3\u6790\u56FE\u7247\u8DEF\u5F84: ${imagePath}`);
+        continue;
+      }
       const newImageUrl = uploadResults[absolutePath];
       if (newImageUrl) {
         obsidianNewContent += newContent.substring(lastIndex, obsidianMatch.index);
@@ -841,6 +828,46 @@ var CurrentFileUploader = class {
     if (newContent !== content) {
       await this.app.vault.modify(file, newContent);
     }
+  }
+  /**
+   * 将图片的相对路径解析为绝对路径
+   *
+   * 1. 如果图片路径已经是绝对路径，直接返回
+   * 2. 如果图片路径是相对路径，尝试从当前文件所在的目录下查找
+   * 3. 如果当前文件所在的目录下没有找到，尝试从 vault 根目录下查找
+   * 4. 如果 vault 根目录下也没有找到，返回空字符串
+   *
+   * @param filePath 当前文件的路径
+   * @param imagePath 图片的路径（可能是相对路径或绝对路径）
+   * @returns 图片的绝对路径
+   */
+  async resolveAbsolutePath(filePath, imagePath) {
+    if (path3.isAbsolute(imagePath)) {
+      this.logger.info(`\u56FE\u7247\u8DEF\u5F84\u5DF2\u7ECF\u662F\u7EDD\u5BF9\u8DEF\u5F84\uFF1A${imagePath}`);
+      const exists2 = await this.app.vault.adapter.exists(imagePath);
+      if (exists2) {
+        this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${imagePath}`);
+        return imagePath;
+      }
+    }
+    let fileDir = path3.dirname(filePath);
+    let absolutePath = path3.normalize(path3.join(fileDir, imagePath));
+    this.logger.info(`\u5C1D\u8BD5\u4ECE\u5F53\u524D\u6587\u4EF6\u6240\u5728\u7684\u76EE\u5F55\u4E0B\u67E5\u627E\u56FE\u7247\uFF1A${absolutePath}`);
+    let exists = await this.app.vault.adapter.exists(absolutePath);
+    if (exists) {
+      this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${absolutePath}`);
+      return absolutePath;
+    }
+    let vaultPath = this.app.vault.configDir;
+    absolutePath = path3.normalize(path3.join(vaultPath, imagePath));
+    this.logger.info(`\u5C1D\u8BD5\u4ECE vault \u6839\u76EE\u5F55\u4E0B\u67E5\u627E\u56FE\u7247\uFF1A${absolutePath}`);
+    exists = await this.app.vault.adapter.exists(absolutePath);
+    if (exists) {
+      this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${absolutePath}`);
+      return absolutePath;
+    }
+    this.logger.warn(`\u56FE\u7247\u6587\u4EF6\u4E0D\u5B58\u5728\uFF1A${imagePath}`);
+    return "";
   }
 };
 
@@ -896,8 +923,8 @@ var SettingsTab = class extends import_obsidian6.PluginSettingTab {
    * 显示Cloudflare Worker设置
    */
   displayCloudflareWorkerSettings(containerEl) {
-    containerEl.createEl("h3", { text: "Cloudflare Worker \u914D\u7F6E" });
-    new import_obsidian6.Setting(containerEl).setName("Worker URL").setDesc("\u60A8\u90E8\u7F72\u7684 Cloudflare Worker \u7684 URL").addText(
+    containerEl.createEl("h3", { text: "Cloudflare R2 Worker \u914D\u7F6E" });
+    new import_obsidian6.Setting(containerEl).setName("Worker URL").setDesc("\u60A8\u90E8\u7F72\u7684 Cloudflare R2 Worker \u7684 URL").addText(
       (text) => text.setPlaceholder("https://your-worker.your-subdomain.workers.dev").setValue(this.plugin.settings.workerSettings.workerUrl).onChange(async (value) => {
         if (value && !value.startsWith("https://")) {
           value = "https://" + value;
@@ -913,7 +940,13 @@ var SettingsTab = class extends import_obsidian6.PluginSettingTab {
         await this.plugin.saveSettings();
       });
     });
-    new import_obsidian6.Setting(containerEl).setName("\u6587\u4EF6\u5939\u540D\u79F0\uFF08\u53EF\u9009\uFF09").setDesc("\u4E0A\u4F20\u6587\u4EF6\u7684\u76EE\u6807\u6587\u4EF6\u5939\uFF0C\u5982\u4E0D\u586B\u5219\u4F7F\u7528 Worker \u9ED8\u8BA4\u8BBE\u7F6E").addText(
+    new import_obsidian6.Setting(containerEl).setName("\u5B58\u50A8\u6876\u540D\u79F0").setDesc("\u4E0A\u4F20\u6587\u4EF6\u7684\u76EE\u6807\u5B58\u50A8\u6876").addText(
+      (text) => text.setPlaceholder("\u8F93\u5165\u60A8\u7684\u5B58\u50A8\u6876\u540D\u79F0").setValue(this.plugin.settings.workerSettings.bucketName).onChange(async (value) => {
+        this.plugin.settings.workerSettings.bucketName = value;
+        await this.plugin.saveSettings();
+      })
+    );
+    new import_obsidian6.Setting(containerEl).setName("\u6587\u4EF6\u5939\u540D\u79F0\uFF08\u53EF\u9009\uFF09").setDesc("\u4E0A\u4F20\u6587\u4EF6\u7684\u76EE\u6807\u6587\u4EF6\u5939\uFF0C\u5982\u4E0D\u586B\u5219\u9ED8\u8BA4\u5B58\u50A8\u5230\u5B58\u50A8\u6876\u7684\u4E00\u7EA7\u76EE\u5F55\u4E0B").addText(
       (text) => text.setPlaceholder("images").setValue(this.plugin.settings.workerSettings.folderName || "").onChange(async (value) => {
         this.plugin.settings.workerSettings.folderName = value || void 0;
         await this.plugin.saveSettings();
