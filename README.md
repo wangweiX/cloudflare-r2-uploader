@@ -19,7 +19,7 @@
 
 ## 部署 Cloudflare R2 Worker
 
-本插件需要您自行部署 Cloudflare R2 Worker 来处理图片上传。请按照以下步骤操作：
+本插件需要您自行部署 [Cloudflare R2 Worker](https://github.com/wangweiX/cloudflare-r2-worker) 来处理图片上传。请按照以下步骤操作：
 
 ### 前提条件
 
