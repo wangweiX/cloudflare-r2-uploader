@@ -78,8 +78,8 @@ export class SettingsTab extends PluginSettingTab {
                 .setValue(this.plugin.settings.workerSettings.workerUrl)
                 .onChange(async (value) => {
                     // 正则表达式验证 URL 格式
-                    const urlRegex = /^https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&\/=]*$/;
-                    
+                    const domainRegex = /^https:\/\/[-a-zA-Z0-9.]+$/;
+
                     // 去除首尾空格
                     const trimmedValue = value.trim();
 
@@ -91,7 +91,7 @@ export class SettingsTab extends PluginSettingTab {
                     }
 
                     // 验证修改后的 URL 是否符合格式
-                    if (urlRegex.test(trimmedValue)) {
+                    if (domainRegex.test(trimmedValue)) {
                         this.plugin.settings.workerSettings.workerUrl = trimmedValue;
                         await this.plugin.saveSettings();
                     } else {
@@ -223,7 +223,7 @@ export class SettingsTab extends PluginSettingTab {
                     }
                     
                     // 域名格式正则验证
-                    const domainRegex = /^https:\/\/(?:[-a-zA-Z0-9@:%._+~#=]{1,256}\.)+[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&\/=]*$/;
+                    const domainRegex = /^https:\/\/[-a-zA-Z0-9.]+$/;
                     
                     // 验证域名格式
                     if (domainRegex.test(formattedValue)) {
