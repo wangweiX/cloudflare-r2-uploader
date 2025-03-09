@@ -858,8 +858,8 @@ var CurrentFileUploader = class {
       this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${absolutePath}`);
       return absolutePath;
     }
-    let vaultPath = this.app.vault.configDir;
-    absolutePath = path3.normalize(path3.join(vaultPath, imagePath));
+    let vaultPath = this.app.vault.getRoot();
+    absolutePath = path3.normalize(path3.join(vaultPath.path, imagePath));
     this.logger.info(`\u5C1D\u8BD5\u4ECE vault \u6839\u76EE\u5F55\u4E0B\u67E5\u627E\u56FE\u7247\uFF1A${absolutePath}`);
     exists = await this.app.vault.adapter.exists(absolutePath);
     if (exists) {
@@ -926,39 +926,97 @@ var SettingsTab = class extends import_obsidian6.PluginSettingTab {
     containerEl.createEl("h3", { text: "Cloudflare R2 Worker \u914D\u7F6E" });
     new import_obsidian6.Setting(containerEl).setName("Worker URL").setDesc("\u60A8\u90E8\u7F72\u7684 Cloudflare R2 Worker \u7684 URL").addText(
       (text) => text.setPlaceholder("https://your-worker.your-subdomain.workers.dev").setValue(this.plugin.settings.workerSettings.workerUrl).onChange(async (value) => {
-        if (value && !value.startsWith("https://")) {
-          value = "https://" + value;
+        const domainRegex = /^https:\/\/[-a-zA-Z0-9.]+$/;
+        const trimmedValue = value.trim();
+        if (!trimmedValue) {
+          new import_obsidian6.Notice("Worker URL \u4E0D\u80FD\u4E3A\u7A7A");
+          text.setValue(this.plugin.settings.workerSettings.workerUrl);
+          return;
         }
-        this.plugin.settings.workerSettings.workerUrl = value;
-        await this.plugin.saveSettings();
+        if (domainRegex.test(trimmedValue)) {
+          this.plugin.settings.workerSettings.workerUrl = trimmedValue;
+          await this.plugin.saveSettings();
+        } else {
+          new import_obsidian6.Notice("\u8BF7\u8F93\u5165\u6709\u6548\u7684 Worker URL \u5730\u5740\uFF0C\u4F8B\u5982: https://your-worker.your-subdomain.workers.dev");
+          text.setValue(this.plugin.settings.workerSettings.workerUrl);
+        }
       })
     );
     new import_obsidian6.Setting(containerEl).setName("API Key").setDesc("Worker \u8BA4\u8BC1\u6240\u9700\u7684 API Key").addText((text) => {
       wrapTextWithPasswordHide(text);
       text.setPlaceholder("\u8F93\u5165\u60A8\u7684 API Key").setValue(this.plugin.settings.workerSettings.apiKey).onChange(async (value) => {
-        this.plugin.settings.workerSettings.apiKey = value.trim();
-        await this.plugin.saveSettings();
+        const apiKeyRegex = /^[a-zA-Z0-9_\-]+$/;
+        const trimmedValue = value.trim();
+        if (!trimmedValue) {
+          new import_obsidian6.Notice("API Key \u4E0D\u80FD\u4E3A\u7A7A");
+          text.setValue(this.plugin.settings.workerSettings.apiKey);
+          return;
+        }
+        if (apiKeyRegex.test(trimmedValue)) {
+          this.plugin.settings.workerSettings.apiKey = trimmedValue;
+          await this.plugin.saveSettings();
+        } else {
+          new import_obsidian6.Notice("\u8BF7\u8F93\u5165\u6709\u6548\u7684 API Key\uFF0C\u4EC5\u5305\u542B\u5B57\u6BCD\u3001\u6570\u5B57\u3001\u4E0B\u5212\u7EBF\u548C\u77ED\u6A2A\u7EBF");
+          text.setValue(this.plugin.settings.workerSettings.apiKey);
+        }
       });
     });
     new import_obsidian6.Setting(containerEl).setName("\u5B58\u50A8\u6876\u540D\u79F0").setDesc("\u4E0A\u4F20\u6587\u4EF6\u7684\u76EE\u6807\u5B58\u50A8\u6876").addText(
       (text) => text.setPlaceholder("\u8F93\u5165\u60A8\u7684\u5B58\u50A8\u6876\u540D\u79F0").setValue(this.plugin.settings.workerSettings.bucketName).onChange(async (value) => {
-        this.plugin.settings.workerSettings.bucketName = value;
-        await this.plugin.saveSettings();
+        const bucketNameRegex = /^[a-z0-9][a-z0-9\-.]{2,61}[a-z0-9]$/;
+        const trimmedValue = value.trim();
+        if (!trimmedValue) {
+          new import_obsidian6.Notice("\u5B58\u50A8\u6876\u540D\u79F0\u4E0D\u80FD\u4E3A\u7A7A");
+          text.setValue(this.plugin.settings.workerSettings.bucketName);
+          return;
+        }
+        if (bucketNameRegex.test(trimmedValue)) {
+          this.plugin.settings.workerSettings.bucketName = trimmedValue;
+          await this.plugin.saveSettings();
+        } else {
+          new import_obsidian6.Notice("\u5B58\u50A8\u6876\u540D\u79F0\u683C\u5F0F\u65E0\u6548\uFF0C\u53EA\u80FD\u5305\u542B\u5C0F\u5199\u5B57\u6BCD\u3001\u6570\u5B57\u3001\u8FDE\u5B57\u7B26\u548C\u70B9\uFF0C\u957F\u5EA6\u5728 3-63 \u4E2A\u5B57\u7B26\u4E4B\u95F4\uFF0C\u4E14\u4E0D\u80FD\u4EE5\u8FDE\u5B57\u7B26\u6216\u70B9\u5F00\u5934\u6216\u7ED3\u5C3E");
+          text.setValue(this.plugin.settings.workerSettings.bucketName);
+        }
       })
     );
     new import_obsidian6.Setting(containerEl).setName("\u6587\u4EF6\u5939\u540D\u79F0\uFF08\u53EF\u9009\uFF09").setDesc("\u4E0A\u4F20\u6587\u4EF6\u7684\u76EE\u6807\u6587\u4EF6\u5939\uFF0C\u5982\u4E0D\u586B\u5219\u9ED8\u8BA4\u5B58\u50A8\u5230\u5B58\u50A8\u6876\u7684\u4E00\u7EA7\u76EE\u5F55\u4E0B").addText(
-      (text) => text.setPlaceholder("images").setValue(this.plugin.settings.workerSettings.folderName || "").onChange(async (value) => {
-        this.plugin.settings.workerSettings.folderName = value || void 0;
-        await this.plugin.saveSettings();
+      (text) => text.setPlaceholder("\u8BF7\u8F93\u5165\u4E0A\u4F20\u7684\u6587\u4EF6\u5939\u540D\u79F0").setValue(this.plugin.settings.workerSettings.folderName || "").onChange(async (value) => {
+        const trimmedValue = value.trim();
+        if (!trimmedValue) {
+          this.plugin.settings.workerSettings.folderName = void 0;
+          await this.plugin.saveSettings();
+          return;
+        }
+        const folderNameRegex = /^[a-zA-Z0-9_\-\/]+$/;
+        if (folderNameRegex.test(trimmedValue)) {
+          this.plugin.settings.workerSettings.folderName = trimmedValue;
+          await this.plugin.saveSettings();
+        } else {
+          new import_obsidian6.Notice("\u6587\u4EF6\u5939\u540D\u79F0\u683C\u5F0F\u65E0\u6548\uFF0C\u53EA\u80FD\u5305\u542B\u5B57\u6BCD\u3001\u6570\u5B57\u3001\u4E0B\u5212\u7EBF\u3001\u8FDE\u5B57\u7B26\u548C\u659C\u6760");
+          text.setValue(this.plugin.settings.workerSettings.folderName || "");
+        }
       })
     );
     new import_obsidian6.Setting(containerEl).setName("R2 Bucket \u81EA\u5B9A\u4E49\u57DF\u540D\uFF08\u53EF\u9009\uFF09").setDesc("\u60A8\u4E3A R2 Bucket \u914D\u7F6E\u7684\u81EA\u5B9A\u4E49\u57DF\u540D\uFF0C\u5C06\u66FF\u4EE3\u9ED8\u8BA4\u7684 Cloudflare \u57DF\u540D").addText(
       (text) => text.setPlaceholder("https://images.yourdomain.com").setValue(this.plugin.settings.workerSettings.customDomain || "").onChange(async (value) => {
-        if (value && !value.startsWith("https://")) {
-          value = "https://" + value;
+        const trimmedValue = value.trim();
+        if (!trimmedValue) {
+          this.plugin.settings.workerSettings.customDomain = "";
+          await this.plugin.saveSettings();
+          return;
         }
-        this.plugin.settings.workerSettings.customDomain = value;
-        await this.plugin.saveSettings();
+        let formattedValue = trimmedValue;
+        if (!formattedValue.startsWith("https://")) {
+          formattedValue = "https://" + formattedValue;
+        }
+        const domainRegex = /^https:\/\/[-a-zA-Z0-9.]+$/;
+        if (domainRegex.test(formattedValue)) {
+          this.plugin.settings.workerSettings.customDomain = formattedValue;
+          await this.plugin.saveSettings();
+        } else {
+          new import_obsidian6.Notice("\u81EA\u5B9A\u4E49\u57DF\u540D\u683C\u5F0F\u65E0\u6548\uFF0C\u8BF7\u8F93\u5165\u6B63\u786E\u7684\u57DF\u540D\u683C\u5F0F\uFF0C\u4F8B\u5982\uFF1Ahttps://images.yourdomain.com");
+          text.setValue(this.plugin.settings.workerSettings.customDomain || "");
+        }
       })
     );
   }

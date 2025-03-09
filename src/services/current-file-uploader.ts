@@ -386,8 +386,8 @@ export class CurrentFileUploader {
         }
 
         // 尝试从 vault 根目录下查找
-        let vaultPath = this.app.vault.configDir;
-        absolutePath = path.normalize(path.join(vaultPath, imagePath));
+        let vaultPath = this.app.vault.getRoot();
+        absolutePath = path.normalize(path.join(vaultPath.path, imagePath));
         this.logger.info(`尝试从 vault 根目录下查找图片：${absolutePath}`);
         exists = await this.app.vault.adapter.exists(absolutePath);
         if (exists) {
