@@ -118,8 +118,7 @@ export class CurrentFileUploader {
             const imagePath = standardMatch[2];
 
             // 跳过已经是网络图片的链接和临时占位符
-            if (imagePath.startsWith('http://') || imagePath.startsWith('https://') ||
-                imagePath.startsWith('pasted-image-')) {
+            if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
                 continue;
             }
             tmpImgPaths.add(imagePath);
@@ -135,38 +134,13 @@ export class CurrentFileUploader {
 
         // 处理每个找到的图片路径
         for (const imagePath of tmpImgPaths) {
-            let absolutePath;
-            let exists = false;
-
-            // 1. 如果是以 / 开头，表示从 vault 根目录开始的绝对路径
-            if (imagePath.startsWith('/')) {
-                absolutePath = imagePath.substring(1);
-                exists = await this.app.vault.adapter.exists(absolutePath);
-            } else {
-                // 2. 尝试相对于笔记文件的路径
-                const noteDir = path.dirname(file.path);
-                absolutePath = path.join(noteDir, imagePath);
-                exists = await this.app.vault.adapter.exists(absolutePath);
-
-                // 3. 如果在笔记目录下没找到，尝试在 vault 根目录下查找
-                if (!exists) {
-                    try {
-                        const vaultPath = this.app.vault.configDir;
-                        absolutePath = path.join(vaultPath, imagePath);
-                        exists = await this.app.vault.adapter.exists(absolutePath);
-                    } catch (error) {
-                        this.logger.error(`检查文件是否存在时出错: ${imagePath}`, error);
-                    }
-                }
+            let absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+            if (absolutePath === '') {
+                this.logger.warn(`无法解析图片路径: ${imagePath}`);
+                continue;
             }
-
-            // 如果找到图片，添加到上传列表
-            if (exists) {
-                imagePathsToUpload.add(absolutePath);
-                this.logger.info(`找到图片：${absolutePath}`);
-            } else {
-                this.logger.warn(`图片文件不存在：${absolutePath}`);
-            }
+            imagePathsToUpload.add(absolutePath);
+            this.logger.info(`找到图片：${absolutePath}`);
         }
 
         return imagePathsToUpload;
@@ -308,12 +282,15 @@ export class CurrentFileUploader {
             const imagePath = standardMatch[2];
 
             // 跳过网络图片和临时占位符
-            if (imagePath.startsWith('http://') || imagePath.startsWith('https://') ||
-                imagePath.startsWith('pasted-image-')) {
+            if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
                 continue;
             }
 
-            const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
+            const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+            if (absolutePath === '') {
+                this.logger.warn(`无法解析图片路径: ${imagePath}`);
+                continue;
+            }
             const newImageUrl = uploadResults[absolutePath];
 
             if (newImageUrl) {
@@ -344,7 +321,11 @@ export class CurrentFileUploader {
             const fullMatch = obsidianMatch[0];
             const imagePath = obsidianMatch[1];
 
-            const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
+            const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+            if (absolutePath === '') {
+                this.logger.warn(`无法解析图片路径: ${imagePath}`);
+                continue;
+            }
             const newImageUrl = uploadResults[absolutePath];
 
             if (newImageUrl) {
@@ -369,5 +350,46 @@ export class CurrentFileUploader {
             // 写入文件
             await this.app.vault.modify(file, newContent);
         }
+    }
+
+    /**
+     * 将图片的相对路径解析为绝对路径
+     *
+     * 1. 如果图片路径已经是绝对路径，直接返回
+     * 2. 如果图片路径是相对路径，尝试从当前文件所在的目录下查找
+     * 3. 如果当前文件所在的目录下没有找到，尝试从 vault 根目录下查找
+     * 4. 如果 vault 根目录下也没有找到，返回空字符串
+     *
+     * @param filePath 当前文件的路径
+     * @param imagePath 图片的路径（可能是相对路径或绝对路径）
+     * @returns 图片的绝对路径
+     */
+    private async resolveAbsolutePath(filePath: string, imagePath: string): Promise<string> {
+        // 如果图片路径已经是绝对路径，直接返回
+        if (path.isAbsolute(imagePath)) {
+            const exists = await this.app.vault.adapter.exists(imagePath);
+            if (exists) {
+                return imagePath;
+            }
+        }
+
+        // 获取当前文件所在的目录
+        let fileDir = path.dirname(filePath);
+        let absolutePath = path.join(fileDir, imagePath);
+        let exists = await this.app.vault.adapter.exists(absolutePath);
+        if (exists) {
+            return absolutePath;
+        }
+
+        // 尝试从 vault 根目录下查找
+        let vaultPath = this.app.vault.configDir;
+        absolutePath = path.join(vaultPath, imagePath);
+        exists = await this.app.vault.adapter.exists(absolutePath);
+        if (exists) {
+            return absolutePath;
+        }
+
+        this.logger.warn(`图片文件不存在：${imagePath}`);
+        return '';
     }
 } 
