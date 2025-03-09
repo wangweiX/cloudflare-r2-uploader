@@ -367,25 +367,31 @@ export class CurrentFileUploader {
     private async resolveAbsolutePath(filePath: string, imagePath: string): Promise<string> {
         // 如果图片路径已经是绝对路径，直接返回
         if (path.isAbsolute(imagePath)) {
+            this.logger.info(`图片路径已经是绝对路径：${imagePath}`);
             const exists = await this.app.vault.adapter.exists(imagePath);
             if (exists) {
+                this.logger.info(`找到图片：${imagePath}`);
                 return imagePath;
             }
         }
 
         // 获取当前文件所在的目录
         let fileDir = path.dirname(filePath);
-        let absolutePath = path.join(fileDir, imagePath);
+        let absolutePath = path.normalize(path.join(fileDir, imagePath));
+        this.logger.info(`尝试从当前文件所在的目录下查找图片：${absolutePath}`);
         let exists = await this.app.vault.adapter.exists(absolutePath);
         if (exists) {
+            this.logger.info(`找到图片：${absolutePath}`);
             return absolutePath;
         }
 
         // 尝试从 vault 根目录下查找
         let vaultPath = this.app.vault.configDir;
-        absolutePath = path.join(vaultPath, imagePath);
+        absolutePath = path.normalize(path.join(vaultPath, imagePath));
+        this.logger.info(`尝试从 vault 根目录下查找图片：${absolutePath}`);
         exists = await this.app.vault.adapter.exists(absolutePath);
         if (exists) {
+            this.logger.info(`找到图片：${absolutePath}`);
             return absolutePath;
         }
 
