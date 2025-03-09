@@ -31,7 +31,7 @@ export class CloudflareWorkerService implements StorageProvider {
      */
     public async uploadFile(filePath: string, fileContent: ArrayBuffer): Promise<UploadResult> {
         try {
-            const {workerUrl, apiKey, folderName, customDomain} = this.settings.workerSettings;
+            const {workerUrl, apiKey, bucketName, folderName, customDomain} = this.settings.workerSettings;
 
             if (!workerUrl || !apiKey) {
                 throw new Error('Worker URL或API Key未配置');
@@ -74,7 +74,7 @@ export class CloudflareWorkerService implements StorageProvider {
 
             // 发送请求到Worker
             this.logger.info(`开始上传文件到Worker: ${fileName}`);
-            const response = await fetch(workerUrl, {
+            const response = await fetch(workerUrl + `/api/v1/buckets/${bucketName}/files`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${apiKey}`

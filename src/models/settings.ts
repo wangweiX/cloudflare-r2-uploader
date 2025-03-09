@@ -11,6 +11,7 @@ export interface PluginSettings {
   workerSettings: {
     workerUrl: string;
     apiKey: string;
+    bucketName: string;
     folderName?: string;
     customDomain?: string;
   };
@@ -27,6 +28,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   workerSettings: {
     workerUrl: "",
     apiKey: "",
+    bucketName: "",
     folderName: "",
     customDomain: ""
   },

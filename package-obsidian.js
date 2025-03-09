@@ -15,7 +15,7 @@ try {
 }
 
 // 设置相关路径
-const PLUGIN_NAME = 'cloudflare-images-uploader';
+const PLUGIN_NAME = 'cloudflare-r2-uploader';
 const ROOT_DIR = path.resolve(__dirname);
 const BUILD_DIR = path.join(ROOT_DIR, 'build');
 const PACKAGE_DIR = path.join(BUILD_DIR, PLUGIN_NAME);
