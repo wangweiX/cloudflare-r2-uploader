@@ -100,8 +100,20 @@ export class SettingsTab extends PluginSettingTab {
             });
 
         new Setting(containerEl)
+            .setName('存储桶名称')
+            .setDesc('上传文件的目标存储桶')
+            .addText(text => text
+                .setPlaceholder('输入您的存储桶名称')
+                .setValue(this.plugin.settings.workerSettings.bucketName)
+                .onChange(async (value) => {
+                    this.plugin.settings.workerSettings.bucketName = value;
+                    await this.plugin.saveSettings();
+                })
+            );
+
+        new Setting(containerEl)
             .setName('文件夹名称（可选）')
-            .setDesc('上传文件的目标文件夹，如不填则使用 Worker 默认设置')
+            .setDesc('上传文件的目标文件夹，如不填则默认存储到存储桶的一级目录下')
             .addText(text => text
                 .setPlaceholder('images')
                 .setValue(this.plugin.settings.workerSettings.folderName || '')
