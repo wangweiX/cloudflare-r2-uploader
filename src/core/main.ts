@@ -4,6 +4,7 @@ import {CloudflareWorkerService} from '../services/worker-service';
 import {ImageService} from '../services/image-service';
 import {PasteHandler} from '../services/paste-handler';
 import {CurrentFileUploader} from '../services/current-file-uploader';
+import {UploadManager} from '../services/upload-manager';
 import {SettingsTab} from '../ui/settings-tab';
 import {Logger} from '../utils/logger';
 import {StorageProvider} from '../models/storage-provider';
@@ -20,6 +21,7 @@ export class CloudflareImagesUploader extends Plugin {
     private imageService!: ImageService;
     private pasteHandler!: PasteHandler;
     private currentFileUploader!: CurrentFileUploader;
+    private uploadManager!: UploadManager;
     private logger!: Logger;
 
     /**
@@ -33,31 +35,23 @@ export class CloudflareImagesUploader extends Plugin {
         // 初始化设置
         await this.loadSettings();
 
+        // 应用日志配置
+        this.logger.setShowDetailedLogs(this.settings.showDetailedLogs || false);
+        this.logger.setShowProgressNotifications(this.settings.showProgressNotifications ?? true);
+
         // 初始化服务
-        this.storageProvider = this.createStorageProvider();
-        this.imageService = new ImageService(this.app, this.storageProvider);
-        this.pasteHandler = new PasteHandler(this.app, this.storageProvider, this);
-        this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider);
+        this.initializeServices();
 
         // 添加设置选项卡
         this.addSettingTab(new SettingsTab(this.app, this));
 
-        // 添加上传命令
-        this.addCommand({
-            id: 'upload-images-to-cloudflare',
-            name: '上传所有笔记中的图片',
-            callback: () => this.executeUpload(),
-        });
-
-        // 添加上传当前笔记中图片的命令
-        this.addCommand({
-            id: 'upload-current-note-images',
-            name: '上传当前笔记中的图片',
-            callback: () => this.uploadCurrentNoteImages(),
-        });
-
-        // 添加上传当前笔记图片的图标按钮
+        // 注册图标
         addIcon('upload-images', UPLOAD_ICON);
+
+        // 添加命令
+        this.registerCommands();
+
+        // 添加Ribbon图标
         this.addRibbonIcon('upload-images', '上传当前笔记中的图片', () => {
             this.uploadCurrentNoteImages();
         });
@@ -67,29 +61,6 @@ export class CloudflareImagesUploader extends Plugin {
             this.pasteHandler.registerPasteEvent();
             this.logger.info('已启用自动粘贴上传功能');
         }
-
-        // 监听设置更改
-        this.registerEvent(
-            this.app.workspace.on('layout-change', () => {
-                // 在布局变化时检查设置变更
-                const currentProvider = this.createStorageProvider();
-                if (currentProvider.getType() !== this.storageProvider.getType()) {
-                    // 如果存储提供者类型发生变化，则更新各个服务
-                    this.storageProvider = currentProvider;
-                    this.imageService = new ImageService(this.app, this.storageProvider);
-                    this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider);
-                }
-
-                // 处理自动粘贴功能的开关
-                if (this.settings.enableAutoPaste) {
-                    this.pasteHandler.registerPasteEvent();
-                    this.logger.info('已启用自动粘贴上传功能');
-                } else {
-                    this.pasteHandler.unregisterPasteEvent();
-                    this.logger.info('已禁用自动粘贴上传功能');
-                }
-            })
-        );
     }
 
     /**
@@ -98,8 +69,18 @@ export class CloudflareImagesUploader extends Plugin {
     async onunload() {
         this.logger.info('卸载 Cloudflare Images Uploader 插件');
 
+        // 取消所有上传任务
+        if (this.uploadManager) {
+            this.uploadManager.cancelAll();
+        }
+
         // 取消注册事件
-        this.pasteHandler.unregisterPasteEvent();
+        if (this.pasteHandler) {
+            this.pasteHandler.unregisterPasteEvent();
+        }
+
+        // 销毁上传管理器实例
+        UploadManager.destroyInstance();
     }
 
     /**
@@ -119,13 +100,99 @@ export class CloudflareImagesUploader extends Plugin {
     }
 
     /**
+     * 初始化服务
+     */
+    private initializeServices(): void {
+        // 创建存储提供者
+        this.storageProvider = this.createStorageProvider();
+
+        // 创建上传管理器（单例）
+        this.uploadManager = UploadManager.getInstance(
+            this.app,
+            this.storageProvider,
+            {
+                maxConcurrency: this.settings.maxConcurrentUploads || 3,
+                maxRetries: this.settings.maxRetries || 3,
+                retryDelay: this.settings.retryDelay || 1000,
+                maxRetryDelay: this.settings.maxRetryDelay || 30000,
+                timeout: this.settings.uploadTimeout || 60000
+            }
+        );
+        
+        // 设置删除配置
+        this.uploadManager.setDeleteAfterUpload(this.settings.deleteAfterUpload || false);
+
+        // 创建其他服务
+        this.imageService = new ImageService(this.app, this.storageProvider);
+        this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider, this.uploadManager, this.settings);
+        this.pasteHandler = new PasteHandler(this.app, this.storageProvider, this);
+    }
+
+    /**
+     * 注册命令
+     */
+    private registerCommands(): void {
+        // 上传所有笔记中的图片
+        this.addCommand({
+            id: 'upload-images-to-cloudflare',
+            name: '上传所有笔记中的图片',
+            callback: () => this.executeUpload(),
+        });
+
+        // 上传当前笔记中图片
+        this.addCommand({
+            id: 'upload-current-note-images',
+            name: '上传当前笔记中的图片',
+            callback: () => this.uploadCurrentNoteImages(),
+        });
+
+        // 取消所有上传
+        this.addCommand({
+            id: 'cancel-all-uploads',
+            name: '取消所有上传任务',
+            callback: () => {
+                this.uploadManager.cancelAll();
+                this.logger.notify('已取消所有上传任务', 3000);
+            },
+        });
+
+        // 重试失败的上传
+        this.addCommand({
+            id: 'retry-failed-uploads',
+            name: '重试失败的上传任务',
+            callback: () => {
+                this.uploadManager.retryFailed();
+                this.logger.notify('已重新加入失败的任务到队列', 3000);
+            },
+        });
+    }
+
+    /**
      * 处理设置变更
      */
     private handleSettingsChange(): void {
+        // 更新日志配置
+        this.logger.setShowDetailedLogs(this.settings.showDetailedLogs || false);
+        this.logger.setShowProgressNotifications(this.settings.showProgressNotifications ?? true);
+
         // 更新存储提供者
         this.storageProvider = this.createStorageProvider();
+
+        // 更新上传管理器配置
+        this.uploadManager.updateConfig({
+            maxConcurrency: this.settings.maxConcurrentUploads || 3,
+            maxRetries: this.settings.maxRetries || 3,
+            retryDelay: this.settings.retryDelay || 1000,
+            maxRetryDelay: this.settings.maxRetryDelay || 30000,
+            timeout: this.settings.uploadTimeout || 60000
+        });
+        
+        // 更新删除配置
+        this.uploadManager.setDeleteAfterUpload(this.settings.deleteAfterUpload || false);
+
+        // 重新创建服务
         this.imageService = new ImageService(this.app, this.storageProvider);
-        this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider);
+        this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider, this.uploadManager, this.settings);
 
         // 处理自动粘贴功能的开关
         if (this.settings.enableAutoPaste) {
@@ -166,16 +233,11 @@ export class CloudflareImagesUploader extends Plugin {
                 return;
             }
 
-            // 上传图片
-            const newMappings = await this.imageService.uploadImages(Array.from(imagePathsToUpload));
+            // 添加到上传队列
+            const imagePaths = Array.from(imagePathsToUpload);
+            await this.uploadManager.addTasks(imagePaths);
 
-            // 更新图片服务中的映射数据
-            this.imageService = new ImageService(this.app, this.storageProvider);
-
-            // 更新笔记中的链接
-            await this.imageService.updateNotes(newMappings);
-
-            this.logger.notify('图片处理完成', 3000);
+            this.logger.notify(`已添加 ${imagePaths.length} 张图片到上传队列`, 3000);
         } catch (error) {
             this.logger.error('执行上传过程时出错', error);
             this.logger.notify('上传过程中出现错误，请查看控制台日志。', 5000);
@@ -221,4 +283,4 @@ export class CloudflareImagesUploader extends Plugin {
         }
         return true;
     }
-} 
+}

@@ -1,6 +1,6 @@
 {
   "name": "cloudflare-images-uploader",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Automatically upload images from your Obsidian notes to Cloudflare Images and update the notes with the cloud URLs.",
   "main": "main.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "@typescript-eslint/parser": "^5.62.0",
     "archiver": "^7.0.1",
     "builtin-modules": "^3.3.0",
-    "esbuild": "^0.18.0",
+    "esbuild": "^0.25.8",
     "obsidian": "latest",
     "ts-node": "^10.9.2",
     "typescript": "^5.0.0"

@@ -1,10 +1,23 @@
-import {UploadResult} from './cloudflare';
-
 /**
  * 存储提供者类型枚举
  */
 export enum StorageProviderType {
     CLOUDFLARE_WORKER = 'cloudflare_worker'
+}
+
+/**
+ * 上传选项
+ */
+export interface UploadOptions {
+    timeout?: number;  // 超时时间（毫秒）
+}
+
+/**
+ * 上传结果
+ */
+export interface UploadResult {
+    url: string;      // 上传后的URL
+    etag?: string;    // 文件标识
 }
 
 /**
@@ -17,12 +30,16 @@ export interface StorageProvider {
     getType(): StorageProviderType;
 
     /**
-     * 上传文件
+     * 上传图片
+     * @param fileContent 文件内容
+     * @param fileName 文件名
+     * @param onProgress 进度回调 (0-1)
+     * @param options 上传选项
      */
-    uploadFile(filePath: string, fileContent: ArrayBuffer): Promise<UploadResult>;
-
-    /**
-     * 获取文件URL
-     */
-    getFileUrl(fileId: string): string;
+    uploadImage(
+        fileContent: ArrayBuffer, 
+        fileName: string,
+        onProgress?: (progress: number) => void,
+        options?: UploadOptions
+    ): Promise<UploadResult>;
 } 

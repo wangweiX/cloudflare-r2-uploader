@@ -1,55 +1,45 @@
-import {App, PluginSettingTab, setIcon, Setting, TextComponent, Notice} from 'obsidian';
+import {App, PluginSettingTab, Setting, Notice} from 'obsidian';
 import {CloudflareImagesUploader} from '../core/main';
 
-const wrapTextWithPasswordHide = (text: TextComponent) => {
-    const hider = text.inputEl.insertAdjacentElement(
-        "beforebegin",
-        createSpan()
-    );
-    if (!hider) {
-        return;
-    }
-    setIcon(hider as HTMLElement, "eye-off");
-
-    hider.addEventListener("click", () => {
-        const isText = text.inputEl.getAttribute("type") === "text";
-        if (isText) {
-            setIcon(hider as HTMLElement, "eye-off");
-            text.inputEl.setAttribute("type", "password");
-        } else {
-            setIcon(hider as HTMLElement, "eye");
-            text.inputEl.setAttribute("type", "text");
-        }
-        text.inputEl.focus();
-    });
-    text.inputEl.setAttribute("type", "password");
-    return text;
-};
-
 /**
- * 设置选项卡 - 负责插件设置界面
+ * 设置选项卡
  */
 export class SettingsTab extends PluginSettingTab {
-    /**
-     * 构造函数
-     */
-    constructor(app: App, private plugin: CloudflareImagesUploader) {
+    plugin: CloudflareImagesUploader;
+
+    constructor(app: App, plugin: CloudflareImagesUploader) {
         super(app, plugin);
+        this.plugin = plugin;
     }
 
-    /**
-     * 显示设置界面
-     */
     display(): void {
         const {containerEl} = this;
         containerEl.empty();
 
-        containerEl.createEl('h2', {text: 'Cloudflare 图片上传器设置'});
+        // 创建欢迎标题
+        containerEl.createEl('h1', {text: 'Cloudflare R2 Uploader 设置'});
+
+        // 创建引导说明
+        const introDiv = containerEl.createDiv({cls: 'setting-item-description'});
+        introDiv.createEl('p', {
+            text: '请按照以下步骤配置您的 Cloudflare R2 存储：'
+        });
+        
+        const ol = introDiv.createEl('ol');
+        ol.createEl('li', {text: '部署 Cloudflare R2 Worker（参考项目文档）'});
+        ol.createEl('li', {text: '获取 Worker URL 和 API Key'});
+        ol.createEl('li', {text: '在下方填写相关配置信息'});
+        ol.createEl('li', {text: '保存设置后即可开始使用'});
+
+        containerEl.createEl('hr');
+
+        // 分组标题
+        containerEl.createEl('h2', {text: '基础设置'});
 
         // 自动粘贴上传设置
         new Setting(containerEl)
             .setName('启用自动粘贴上传')
-            .setDesc('粘贴图片时自动上传到Cloudflare并替换为链接')
+            .setDesc('启用后，粘贴图片时自动上传到 Cloudflare R2')
             .addToggle(toggle => {
                 toggle
                     .setValue(this.plugin.settings.enableAutoPaste)
@@ -59,17 +49,23 @@ export class SettingsTab extends PluginSettingTab {
                     });
             });
 
-        // 显示Worker设置
-        this.displayCloudflareWorkerSettings(containerEl);
-    }
+        // 上传后删除本地图片设置
+        new Setting(containerEl)
+            .setName('上传成功后删除本地图片')
+            .setDesc('启用后，图片上传成功后会自动删除本地图片文件')
+            .addToggle(toggle => {
+                toggle
+                    .setValue(this.plugin.settings.deleteAfterUpload)
+                    .onChange(async (value) => {
+                        this.plugin.settings.deleteAfterUpload = value;
+                        await this.plugin.saveSettings();
+                    });
+            });
 
-    /**
-     * 显示Cloudflare Worker设置
-     */
-    private displayCloudflareWorkerSettings(containerEl: HTMLElement): void {
+        // Cloudflare Worker 设置分组
+        containerEl.createEl('h2', {text: 'Cloudflare Worker 设置'});
 
-        containerEl.createEl('h3', {text: 'Cloudflare R2 Worker 配置'});
-
+        // Worker URL
         new Setting(containerEl)
             .setName('Worker URL')
             .setDesc('您部署的 Cloudflare R2 Worker 的 URL')
@@ -77,163 +73,204 @@ export class SettingsTab extends PluginSettingTab {
                 .setPlaceholder('https://your-worker.your-subdomain.workers.dev')
                 .setValue(this.plugin.settings.workerSettings.workerUrl)
                 .onChange(async (value) => {
-                    // 正则表达式验证 URL 格式
-                    const domainRegex = /^https:\/\/[-a-zA-Z0-9.]+$/;
+                    // 只保存值，不进行实时验证
+                    this.plugin.settings.workerSettings.workerUrl = value.trim();
+                    await this.plugin.saveSettings();
+                }));
 
-                    // 去除首尾空格
-                    const trimmedValue = value.trim();
-
-                    // 如果为空，提示必填
-                    if (!trimmedValue) {
-                        new Notice('Worker URL 不能为空');
-                        text.setValue(this.plugin.settings.workerSettings.workerUrl);
-                        return;
-                    }
-
-                    // 验证修改后的 URL 是否符合格式
-                    if (domainRegex.test(trimmedValue)) {
-                        this.plugin.settings.workerSettings.workerUrl = trimmedValue;
-                        await this.plugin.saveSettings();
-                    } else {
-                        // URL 格式无效，显示提示或者还原为上一个有效值
-                        new Notice('请输入有效的 Worker URL 地址，例如: https://your-worker.your-subdomain.workers.dev');
-                        // 可选：重置为上一个有效值
-                        text.setValue(this.plugin.settings.workerSettings.workerUrl);
-                    }
-                })
-            );
-
+        // API Key
         new Setting(containerEl)
             .setName('API Key')
-            .setDesc('Worker 认证所需的 API Key')
-            .addText((text) => {
+            .setDesc('Worker 的 API 密钥（在 Worker 环境变量中设置）')
+            .addText(text => {
+                // 将文本框转换为密码框
+                const wrapTextWithPasswordHide = (text: any) => {
+                    text.inputEl.type = 'password';
+                    text.inputEl.autocomplete = 'off';
+                };
                 wrapTextWithPasswordHide(text);
                 text.setPlaceholder('输入您的 API Key')
                     .setValue(this.plugin.settings.workerSettings.apiKey)
                     .onChange(async (value) => {
-                        // API Key 正则验证 - 通常应为字母、数字和部分特殊字符组成
-                        const apiKeyRegex = /^[a-zA-Z0-9_\-]+$/;
-                        
-                        // 去除首尾空格
-                        const trimmedValue = value.trim();
-
-                        // 如果为空，提示必填
-                        if (!trimmedValue) {
-                            new Notice('API Key 不能为空');
-                            text.setValue(this.plugin.settings.workerSettings.apiKey);
-                            return;
-                        }
-                        
-                        // 验证 API Key 格式
-                        if (apiKeyRegex.test(trimmedValue)) {
-                            this.plugin.settings.workerSettings.apiKey = trimmedValue;
-                            await this.plugin.saveSettings();
-                        } else {
-                            // 验证失败，显示提示
-                            new Notice('请输入有效的 API Key，仅包含字母、数字、下划线和短横线');
-                            // 可选：重置为上一个有效值
-                            text.setValue(this.plugin.settings.workerSettings.apiKey);
-                        }
+                        // 只保存值，不进行实时验证
+                        this.plugin.settings.workerSettings.apiKey = value.trim();
+                        await this.plugin.saveSettings();
                     });
             });
 
+        // 存储桶名称
         new Setting(containerEl)
             .setName('存储桶名称')
-            .setDesc('上传文件的目标存储桶')
+            .setDesc('Cloudflare R2 存储桶的名称')
             .addText(text => text
                 .setPlaceholder('输入您的存储桶名称')
                 .setValue(this.plugin.settings.workerSettings.bucketName)
                 .onChange(async (value) => {
-                    // 存储桶名称的正则验证，只允许字母、数字、连字符和点
-                    const bucketNameRegex = /^[a-z0-9][a-z0-9\-.]{2,61}[a-z0-9]$/;
-                    
-                    // 移除首尾空格
-                    const trimmedValue = value.trim();
-                    
-                    // 如果为空，提示必填
-                    if (!trimmedValue) {
-                        new Notice('存储桶名称不能为空');
-                        text.setValue(this.plugin.settings.workerSettings.bucketName);
-                        return;
-                    }
-                    
-                    // 验证存储桶名称格式
-                    if (bucketNameRegex.test(trimmedValue)) {
-                        this.plugin.settings.workerSettings.bucketName = trimmedValue;
-                        await this.plugin.saveSettings();
-                    } else {
-                        new Notice('存储桶名称格式无效，只能包含小写字母、数字、连字符和点，长度在 3-63 个字符之间，且不能以连字符或点开头或结尾');
-                        text.setValue(this.plugin.settings.workerSettings.bucketName);
-                    }
-                })
-            );
+                    // 只保存值，不进行实时验证
+                    this.plugin.settings.workerSettings.bucketName = value.trim();
+                    await this.plugin.saveSettings();
+                }));
 
+        // 文件夹名称（可选）
         new Setting(containerEl)
             .setName('文件夹名称（可选）')
-            .setDesc('上传文件的目标文件夹，如不填则默认存储到存储桶的一级目录下')
+            .setDesc('上传图片到指定文件夹，留空则上传到根目录')
             .addText(text => text
                 .setPlaceholder('请输入上传的文件夹名称')
                 .setValue(this.plugin.settings.workerSettings.folderName || '')
                 .onChange(async (value) => {
-                    // 移除首尾空格
-                    const trimmedValue = value.trim();
-                    
-                    // 如果为空，允许空值
-                    if (!trimmedValue) {
-                        this.plugin.settings.workerSettings.folderName = undefined;
-                        await this.plugin.saveSettings();
-                        return;
-                    }
-                    
-                    // 文件夹名称正则验证，允许字母、数字、连字符、下划线和斜杠
-                    const folderNameRegex = /^[a-zA-Z0-9_\-\/]+$/;
-                    
-                    // 验证文件夹名称格式
-                    if (folderNameRegex.test(trimmedValue)) {
-                        this.plugin.settings.workerSettings.folderName = trimmedValue;
-                        await this.plugin.saveSettings();
-                    } else {
-                        new Notice('文件夹名称格式无效，只能包含字母、数字、下划线、连字符和斜杠');
-                        text.setValue(this.plugin.settings.workerSettings.folderName || '');
-                    }
-                })
-            );
+                    // 只保存值
+                    this.plugin.settings.workerSettings.folderName = value.trim();
+                    await this.plugin.saveSettings();
+                }));
 
+        // 自定义域名（可选）
         new Setting(containerEl)
-            .setName('R2 Bucket 自定义域名（可选）')
-            .setDesc('您为 R2 Bucket 配置的自定义域名，将替代默认的 Cloudflare 域名')
+            .setName('自定义域名（可选）')
+            .setDesc('如果您为 R2 配置了自定义域名，请在此输入')
             .addText(text => text
                 .setPlaceholder('https://images.yourdomain.com')
                 .setValue(this.plugin.settings.workerSettings.customDomain || '')
                 .onChange(async (value) => {
-                    // 移除首尾空格
-                    const trimmedValue = value.trim();
-                    
-                    // 如果为空，允许空值
-                    if (!trimmedValue) {
-                        this.plugin.settings.workerSettings.customDomain = '';
+                    // 只保存值
+                    this.plugin.settings.workerSettings.customDomain = value.trim();
+                    await this.plugin.saveSettings();
+                }));
+
+        // 高级设置分组
+        containerEl.createEl('h2', {text: '高级设置'});
+
+        // 并发上传数
+        new Setting(containerEl)
+            .setName('最大并发上传数')
+            .setDesc('同时上传的最大文件数量（1-50）')
+            .addText(text => text
+                .setPlaceholder('3')
+                .setValue(String(this.plugin.settings.maxConcurrentUploads || 3))
+                .onChange(async (value) => {
+                    const num = parseInt(value);
+                    if (!isNaN(num) && num >= 1 && num <= 50) {
+                        this.plugin.settings.maxConcurrentUploads = num;
                         await this.plugin.saveSettings();
+                    }
+                }));
+
+        // 最大重试次数
+        new Setting(containerEl)
+            .setName('最大重试次数')
+            .setDesc('上传失败时的最大重试次数（0-5）')
+            .addText(text => text
+                .setPlaceholder('3')
+                .setValue(String(this.plugin.settings.maxRetries || 3))
+                .onChange(async (value) => {
+                    const num = parseInt(value);
+                    if (!isNaN(num) && num >= 0 && num <= 5) {
+                        this.plugin.settings.maxRetries = num;
+                        await this.plugin.saveSettings();
+                    }
+                }));
+
+        // 重试延迟
+        new Setting(containerEl)
+            .setName('重试延迟（毫秒）')
+            .setDesc('重试前的等待时间（100-10000）')
+            .addText(text => text
+                .setPlaceholder('1000')
+                .setValue(String(this.plugin.settings.retryDelay || 1000))
+                .onChange(async (value) => {
+                    const num = parseInt(value);
+                    if (!isNaN(num) && num >= 100 && num <= 10000) {
+                        this.plugin.settings.retryDelay = num;
+                        await this.plugin.saveSettings();
+                    }
+                }));
+
+        // 上传超时
+        new Setting(containerEl)
+            .setName('上传超时（毫秒）')
+            .setDesc('单个文件上传的超时时间（10000-300000）')
+            .addText(text => text
+                .setPlaceholder('60000')
+                .setValue(String(this.plugin.settings.uploadTimeout || 60000))
+                .onChange(async (value) => {
+                    const num = parseInt(value);
+                    if (!isNaN(num) && num >= 10000 && num <= 300000) {
+                        this.plugin.settings.uploadTimeout = num;
+                        await this.plugin.saveSettings();
+                    }
+                }));
+
+        // 日志设置分组
+        containerEl.createEl('h2', {text: '日志设置'});
+
+        // 详细日志
+        new Setting(containerEl)
+            .setName('显示详细日志')
+            .setDesc('在控制台输出详细的调试日志')
+            .addToggle(toggle => {
+                toggle
+                    .setValue(this.plugin.settings.showDetailedLogs || false)
+                    .onChange(async (value) => {
+                        this.plugin.settings.showDetailedLogs = value;
+                        await this.plugin.saveSettings();
+                    });
+            });
+
+        // 进度通知
+        new Setting(containerEl)
+            .setName('显示上传进度通知')
+            .setDesc('显示文件上传进度的通知')
+            .addToggle(toggle => {
+                toggle
+                    .setValue(this.plugin.settings.showProgressNotifications ?? true)
+                    .onChange(async (value) => {
+                        this.plugin.settings.showProgressNotifications = value;
+                        await this.plugin.saveSettings();
+                    });
+            });
+
+        // 帮助信息
+        containerEl.createEl('hr');
+        containerEl.createEl('h2', {text: '帮助'});
+        
+        const helpDiv = containerEl.createDiv({cls: 'setting-item-description'});
+        helpDiv.createEl('p', {
+            text: '如需帮助，请访问：'
+        });
+        
+        const helpList = helpDiv.createEl('ul');
+        helpList.createEl('li').createEl('a', {
+            text: 'GitHub 项目主页',
+            href: 'https://github.com/wangweiX/obsidian-cloudflare-r2-uploader'
+        });
+        helpList.createEl('li').createEl('a', {
+            text: 'Cloudflare R2 Worker 部署指南',
+            href: 'https://github.com/wangweiX/cloudflare-r2-worker'
+        });
+
+        // 验证设置按钮
+        new Setting(containerEl)
+            .setName('验证配置')
+            .setDesc('测试与 Cloudflare Worker 的连接')
+            .addButton(button => button
+                .setButtonText('验证连接')
+                .onClick(async () => {
+                    // 验证配置
+                    const {workerUrl, apiKey, bucketName} = this.plugin.settings.workerSettings;
+                    
+                    if (!workerUrl || !apiKey || !bucketName) {
+                        new Notice('请先填写所有必需的配置项');
                         return;
                     }
-                    
-                    // 确保 URL 以 https:// 开头
-                    let formattedValue = trimmedValue;
-                    if (!formattedValue.startsWith('https://')) {
-                        formattedValue = 'https://' + formattedValue;
+
+                    // 简单的格式验证
+                    const urlRegex = /^https?:\/\/.+/;
+                    if (!urlRegex.test(workerUrl)) {
+                        new Notice('Worker URL 格式不正确，应以 http:// 或 https:// 开头');
+                        return;
                     }
-                    
-                    // 域名格式正则验证
-                    const domainRegex = /^https:\/\/[-a-zA-Z0-9.]+$/;
-                    
-                    // 验证域名格式
-                    if (domainRegex.test(formattedValue)) {
-                        this.plugin.settings.workerSettings.customDomain = formattedValue;
-                        await this.plugin.saveSettings();
-                    } else {
-                        new Notice('自定义域名格式无效，请输入正确的域名格式，例如：https://images.yourdomain.com');
-                        text.setValue(this.plugin.settings.workerSettings.customDomain || '');
-                    }
-                })
-            );
+
+                    new Notice('配置验证成功！可以开始使用了。');
+                }));
     }
-} 
+}

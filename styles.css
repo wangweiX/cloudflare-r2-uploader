@@ -1,0 +1,287 @@
+/* 上传状态模态框样式 */
+.upload-status-modal {
+    min-width: 600px;
+    max-width: 800px;
+}
+
+.upload-status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--background-modifier-border);
+    padding-bottom: 0.5rem;
+}
+
+.upload-status-header h2 {
+    margin: 0;
+}
+
+.upload-status-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* 统计信息 */
+.upload-status-stats {
+    margin-bottom: 1.5rem;
+}
+
+.upload-status-stats h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background: var(--background-secondary);
+}
+
+.stat-item.pending {
+    background: var(--background-modifier-warning);
+}
+
+.stat-item.uploading {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.stat-item.completed {
+    background: var(--background-modifier-success);
+}
+
+.stat-item.failed {
+    background: var(--background-modifier-error);
+}
+
+.stat-item.cancelled {
+    background: var(--background-modifier-border);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* 总体进度 */
+.overall-progress {
+    margin-top: 1rem;
+}
+
+.progress-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--background-modifier-border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--interactive-accent);
+    transition: width 0.3s ease;
+}
+
+.progress-info {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.speed-info {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-top: 0.25rem;
+}
+
+/* 任务列表 */
+.upload-task-list h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    opacity: 0.5;
+}
+
+.task-section {
+    margin-bottom: 1rem;
+}
+
+.task-section h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.task-section.collapsed h4::before {
+    content: '▶ ';
+}
+
+.task-section h4::before {
+    content: '▼ ';
+}
+
+.task-section.collapsed .task-container {
+    display: none;
+}
+
+/* 单个任务 */
+.upload-task {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--background-secondary);
+}
+
+.upload-task.uploading {
+    border-color: var(--interactive-accent);
+}
+
+.upload-task.success {
+    border-color: var(--background-modifier-success);
+}
+
+.upload-task.failed {
+    border-color: var(--background-modifier-error);
+}
+
+.upload-task.cancelled {
+    opacity: 0.6;
+}
+
+.task-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.task-name {
+    font-weight: 500;
+}
+
+.task-size {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-left: 0.5rem;
+}
+
+.task-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-badge.pending {
+    background: var(--background-modifier-warning);
+}
+
+.status-badge.uploading,
+.status-badge.retrying {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.status-badge.success {
+    background: var(--background-modifier-success);
+}
+
+.status-badge.failed {
+    background: var(--background-modifier-error);
+}
+
+.status-badge.cancelled {
+    background: var(--background-modifier-border);
+}
+
+.retry-count {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* 任务进度 */
+.task-progress-container {
+    margin: 0.5rem 0;
+}
+
+.task-progress-container .progress-bar {
+    height: 6px;
+}
+
+.task-progress-container .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.task-speed,
+.task-time {
+    opacity: 0.7;
+}
+
+/* 错误和成功信息 */
+.task-error,
+.task-success {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.task-error {
+    color: var(--text-error);
+}
+
+.task-success {
+    color: var(--text-success);
+}
+
+.error-icon,
+.success-icon {
+    font-size: 1rem;
+}
+
+/* 任务操作 */
+.task-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.task-actions button {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.75rem;
+}

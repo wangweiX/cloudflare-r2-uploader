@@ -1,6 +1,17 @@
 import { StorageProviderType } from './storage-provider';
 
 /**
+ * Cloudflare Worker 设置
+ */
+export interface CloudflareWorkerSettings {
+  workerUrl: string;
+  apiKey: string;
+  bucketName: string;
+  folderName?: string;
+  customDomain?: string;
+}
+
+/**
  * 插件设置的数据模型
  */
 export interface PluginSettings {
@@ -8,16 +19,22 @@ export interface PluginSettings {
   storageProvider: StorageProviderType;
   
   // Cloudflare Worker 设置
-  workerSettings: {
-    workerUrl: string;
-    apiKey: string;
-    bucketName: string;
-    folderName?: string;
-    customDomain?: string;
-  };
+  workerSettings: CloudflareWorkerSettings;
   
   // 自动上传设置
   enableAutoPaste: boolean;
+  deleteAfterUpload: boolean;
+
+  // 并发控制设置
+  maxConcurrentUploads?: number;
+  maxRetries?: number;
+  retryDelay?: number;
+  maxRetryDelay?: number;
+  uploadTimeout?: number;
+
+  // 日志和通知设置
+  showDetailedLogs?: boolean;
+  showProgressNotifications?: boolean;
 }
 
 /**
@@ -32,5 +49,13 @@ export const DEFAULT_SETTINGS: PluginSettings = {
     folderName: "",
     customDomain: ""
   },
-  enableAutoPaste: false
+  enableAutoPaste: false,
+  deleteAfterUpload: false,
+  maxConcurrentUploads: 3,
+  maxRetries: 3,
+  retryDelay: 1000,
+  maxRetryDelay: 30000,
+  uploadTimeout: 60000,
+  showDetailedLogs: false,
+  showProgressNotifications: true
 }; 

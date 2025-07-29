@@ -1,6 +1,7 @@
 import {App, Editor, EventRef, MarkdownView, Notice, Plugin} from 'obsidian';
 import {v4 as uuidv4} from 'uuid';
 import {StorageProvider} from '../models/storage-provider';
+import {UploadManager} from './upload-manager';
 import {Logger} from '../utils/logger';
 
 /**
@@ -75,8 +76,9 @@ export class PasteHandler {
         }
 
         const items = evt.clipboardData.items;
-        let hasImages = false;
+        const imagesToProcess: Array<{file: File, type: string}> = [];
 
+        // 先检查是否有图片
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
 
@@ -85,20 +87,21 @@ export class PasteHandler {
                 continue;
             }
 
-            hasImages = true;
-
             const file = item.getAsFile();
-            if (!file) {
-                continue;
+            if (file) {
+                imagesToProcess.push({file, type: item.type});
             }
-
-            // 处理图片上传（异步）
-            await this.processImageUpload(file, editor, item.type);
         }
 
-        // 如果有图片，阻止默认事件处理
-        if (hasImages) {
+        // 如果有图片，立即阻止默认事件处理
+        if (imagesToProcess.length > 0) {
             evt.preventDefault();
+            evt.stopPropagation();
+            
+            // 异步处理图片上传
+            for (const {file, type} of imagesToProcess) {
+                await this.processImageUpload(file, editor, type);
+            }
         }
     }
 
@@ -123,13 +126,17 @@ export class PasteHandler {
             const cursor = editor.getCursor();
             editor.replaceSelection(placeholder);
 
-            // 上传图片
-            const result = await this.storageProvider.uploadFile(filename, arrayBuffer);
+            // 使用新的uploadImage方法上传
+            try {
+                const result = await this.storageProvider.uploadImage(
+                    arrayBuffer,
+                    filename,
+                    undefined,
+                    { timeout: 30000 }
+                );
 
-            if (result.success && result.imageId) {
                 // 上传成功，替换占位符为云端链接
-                const imageUrl = this.storageProvider.getFileUrl(result.imageId);
-                const markdownText = `![${file.name || '图片'}](${imageUrl})`;
+                const markdownText = `![${file.name || '图片'}](${result.url})`;
 
                 // 查找并替换占位符
                 const content = editor.getValue();
@@ -141,42 +148,38 @@ export class PasteHandler {
 
                 this.logger.info(`粘贴图片上传成功: ${filename}`);
                 new Notice('图片上传成功!', 2000);
-            } else {
-                // 上传失败，保留占位符
-                this.logger.error(`粘贴图片上传失败: ${filename}`, result.error);
-                new Notice(`图片上传失败: ${result.error}`, 5000);
+            } catch (error: any) {
+                // 上传失败，移除占位符
+                const content = editor.getValue();
+                const newContent = content.replace(placeholder, '');
+                editor.setValue(newContent);
+                editor.setCursor(cursor);
+
+                const errorMessage = error.message || '未知错误';
+                this.logger.error(`粘贴图片上传失败: ${filename}`, error);
+                new Notice(`图片上传失败: ${errorMessage}`, 5000);
             }
         } catch (error) {
             this.logger.error('处理粘贴图片时出错', error);
-            new Notice('处理粘贴图片时出错: ' + (error as Error).message, 5000);
+            new Notice('处理粘贴图片时出错', 5000);
         }
     }
 
     /**
-     * 从MIME类型获取文件扩展名
+     * 根据MIME类型获取文件扩展名
      */
-    private getExtensionFromMime(mime: string): string {
-        const mimeMap: Record<string, string> = {
+    private getExtensionFromMime(mimeType: string): string {
+        const mimeToExt: { [key: string]: string } = {
             'image/png': '.png',
             'image/jpeg': '.jpg',
             'image/jpg': '.jpg',
             'image/gif': '.gif',
             'image/webp': '.webp',
+            'image/svg+xml': '.svg',
             'image/bmp': '.bmp',
-            'image/svg+xml': '.svg'
+            'image/x-icon': '.ico',
+            'image/tiff': '.tiff'
         };
-
-        return mimeMap[mime] || '.png';
+        return mimeToExt[mimeType] || '.png';
     }
-
-    /**
-     * 调试方法：检查服务是否正常运行
-     */
-    public debugStatus(): void {
-        console.log('PasteHandler状态检查:');
-        console.log('- 事件引用数量:', this.eventRefs.length);
-        console.log('- 存储提供者:', this.storageProvider ? '已加载' : '未加载');
-        new Notice('PasteHandler状态检查完成，请查看控制台', 3000);
-        this.logger.info('执行了状态检查');
-    }
-} 
+}
