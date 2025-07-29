@@ -1,8 +1,7 @@
-import {Notice} from 'obsidian';
 import * as path from 'path';
-import {UploadResult} from '../models/cloudflare';
+import {v4 as uuidv4} from 'uuid';
 import {PluginSettings} from '../models/settings';
-import {StorageProvider, StorageProviderType} from '../models/storage-provider';
+import {StorageProvider, StorageProviderType, UploadOptions, UploadResult} from '../models/storage-provider';
 import {Logger} from '../utils/logger';
 
 /**
@@ -27,9 +26,14 @@ export class CloudflareWorkerService implements StorageProvider {
     }
 
     /**
-     * 上传文件到Cloudflare Worker
+     * 上传图片到Cloudflare Worker
      */
-    public async uploadFile(filePath: string, fileContent: ArrayBuffer): Promise<UploadResult> {
+    public async uploadImage(
+        fileContent: ArrayBuffer,
+        fileName: string,
+        onProgress?: (progress: number) => void,
+        options?: UploadOptions
+    ): Promise<UploadResult> {
         try {
             const {workerUrl, apiKey, bucketName, folderName, customDomain} = this.settings.workerSettings;
 
@@ -37,113 +41,153 @@ export class CloudflareWorkerService implements StorageProvider {
                 throw new Error('Worker URL或API Key未配置');
             }
 
-            const fileName = path.basename(filePath);
-
-            // 根据文件扩展名获取MIME类型
-            const getMimeType = (fileName: string): string => {
-                const extension = path.extname(fileName).toLowerCase().replace('.', '');
-                const mimeTypes: { [key: string]: string } = {
-                    'jpg': 'image/jpeg',
-                    'jpeg': 'image/jpeg',
-                    'png': 'image/png',
-                    'gif': 'image/gif',
-                    'webp': 'image/webp',
-                    'pdf': 'application/pdf',
-                    'txt': 'text/plain',
-                    'doc': 'application/msword',
-                    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    'xls': 'application/vnd.ms-excel',
-                    'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                };
-                return mimeTypes[extension] || 'application/octet-stream';
-            };
+            // 生成唯一文件名防止覆盖
+            const uniqueFileName = this.generateUniqueFileName(fileName);
+            
+            // 构建完整的文件路径
+            // 确保folderName不以/结尾，避免双斜杠
+            const cleanFolderName = folderName ? folderName.replace(/\/$/, '') : '';
+            const filePath = cleanFolderName ? `${cleanFolderName}/${uniqueFileName}` : uniqueFileName;
 
             // 获取文件的MIME类型
-            const mimeType = getMimeType(fileName);
-            this.logger.info(`上传文件类型: ${mimeType}, 文件名: ${fileName}`);
+            const mimeType = this.getMimeType(fileName);
+            this.logger.info(`上传文件: ${fileName} -> ${filePath}, 类型: ${mimeType}`);
 
-            // 准备表单数据
-            const formData = new FormData();
-            const blob = new Blob([fileContent], {type: mimeType});
-            formData.append('file', blob, fileName);
+            // 构建上传URL（使用POST方法）
+            // 对文件路径的各个部分进行编码，但保留/作为路径分隔符
+            const encodedFilePath = filePath.split('/').map(part => encodeURIComponent(part)).join('/');
+            const uploadUrl = `${workerUrl}/api/v1/buckets/${bucketName}/files/${encodedFilePath}`;
+            this.logger.info(`上传URL: ${uploadUrl}`);
 
-            // 如果有文件夹名称，添加到表单数据
-            if (folderName) {
-                formData.append('folder', folderName);
-            }
+            // 创建上传请求
+            const controller = new AbortController();
+            const timeoutId = options?.timeout ? setTimeout(() => controller.abort(), options.timeout) : null;
 
-            // 发送请求到Worker
-            this.logger.info(`开始上传文件到Worker: ${fileName}`);
-            const response = await fetch(workerUrl + `/api/v1/buckets/${bucketName}/files`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`
-                },
-                body: formData
-            });
+            try {
+                // 模拟进度（因为Fetch API不支持上传进度）
+                if (onProgress) {
+                    onProgress(0.1); // 开始上传
+                }
 
-            // 解析响应
-            const json = await response.json();
+                const response = await fetch(uploadUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': mimeType,
+                        'Content-Length': fileContent.byteLength.toString()
+                    },
+                    body: fileContent,
+                    signal: controller.signal
+                });
 
-            if (response.ok && json.success) {
-                if (json.path) {
-                    const fileIdentifier = json.path;
-                    let imageUrl;
+                if (timeoutId) clearTimeout(timeoutId);
 
-                    // 如果配置了自定义域名，则使用自定义域名构建URL
+                // 模拟进度
+                if (onProgress) {
+                    onProgress(0.9); // 上传完成，等待响应
+                }
+
+                // 解析响应
+                const json = await response.json();
+
+                if (response.ok && json.success) {
+                    // 构建访问URL
+                    let imageUrl: string;
                     if (customDomain && customDomain.trim() !== '') {
-                        // 确保自定义域名是完整的URL
+                        // 使用自定义域名
                         const domainBase = customDomain.startsWith('http') ? customDomain : `https://${customDomain}`;
-                        const formattedDomain = domainBase.endsWith('/') ? domainBase : `${domainBase}/`;
-                        imageUrl = `${formattedDomain}${fileIdentifier.startsWith('/') ? fileIdentifier.substring(1) : fileIdentifier}`;
+                        const formattedDomain = domainBase.endsWith('/') ? domainBase.slice(0, -1) : domainBase;
+                        imageUrl = `${formattedDomain}/${filePath}`;
                     } else {
-                        // 使用Worker URL作为基础URL
+                        // 使用Worker URL
                         const baseUrl = new URL(workerUrl);
-                        // 构造完整的图片URL
-                        imageUrl = `${baseUrl.origin}/${fileIdentifier.startsWith('/') ? fileIdentifier.substring(1) : fileIdentifier}`;
+                        imageUrl = `${baseUrl.origin}/${filePath}`;
                     }
 
-                    this.logger.info(`文件上传成功: ${fileName}, URL: ${imageUrl}`);
+                    if (onProgress) {
+                        onProgress(1); // 完成
+                    }
+
+                    this.logger.info(`文件上传成功: ${fileName} -> ${imageUrl}`);
                     return {
-                        success: true,
-                        localPath: filePath,
-                        imageId: imageUrl
+                        url: imageUrl,
+                        etag: json.etag
                     };
                 } else {
-                    this.logger.error(`上传文件成功但缺少URL信息: ${fileName}`);
-                    new Notice(`上传文件成功但缺少URL信息: ${fileName}`, 3000);
-                    return {
-                        success: false,
-                        localPath: filePath,
-                        error: '上传成功但无法获取URL'
+                    const errorMessage = json.error || response.statusText || '未知错误';
+                    this.logger.error(`上传失败响应: ${response.status} ${response.statusText}`, json);
+                    throw new Error(errorMessage);
+                }
+            } catch (error: any) {
+                if (timeoutId) clearTimeout(timeoutId);
+                
+                if (error.name === 'AbortError') {
+                    throw {
+                        type: 'timeout',
+                        message: '上传超时',
+                        code: 'TIMEOUT'
                     };
                 }
-            } else {
-                const errorMessage = json.error || '未知错误';
-                this.logger.error(`上传文件失败 ${filePath}: ${errorMessage}`);
-                new Notice(`上传文件失败: ${fileName}`, 3000);
-                return {
-                    success: false,
-                    localPath: filePath,
-                    error: errorMessage
-                };
+                
+                throw error;
             }
-        } catch (error) {
-            this.logger.error(`处理文件时出错 ${filePath}:`, error);
-            new Notice(`处理文件出错: ${path.basename(filePath)}`, 3000);
-            return {
-                success: false,
-                localPath: filePath,
-                error: (error as Error).message
+        } catch (error: any) {
+            this.logger.error(`上传文件失败 ${fileName}:`, error);
+            
+            // 规范化错误
+            if (error.type) {
+                throw error;
+            }
+
+            // 分析错误类型
+            let type: 'network' | 'server' | 'auth' | 'timeout' | 'unknown' = 'unknown';
+            const message = error.message || String(error);
+
+            if (message.includes('Worker URL或API Key未配置')) {
+                type = 'auth';
+            } else if (message.includes('Failed to fetch') || message.includes('网络')) {
+                type = 'network';
+            } else if (error.status && error.status >= 500) {
+                type = 'server';
+            }
+
+            throw {
+                type,
+                message,
+                code: error.code || error.status
             };
         }
     }
 
     /**
-     * 获取文件URL
-     * 由于构建的imageId已经是完整URL，所以直接返回
+     * 生成唯一文件名
      */
-    public getFileUrl(imageId: string): string {
-        return imageId; // imageId是完整URL
+    private generateUniqueFileName(originalName: string): string {
+        const ext = path.extname(originalName);
+        const baseName = path.basename(originalName, ext)
+            .replace(/[^a-zA-Z0-9\u4e00-\u9fa5_\-\.]/g, '_'); // 替换不支持的字符为下划线，注意转义-和.
+        const timestamp = new Date().getTime();
+        const randomId = uuidv4().split('-')[0]; // 使用UUID的前8位
+        return `${baseName}_${timestamp}_${randomId}${ext}`;
     }
-} 
+
+    /**
+     * 根据文件扩展名获取MIME类型
+     */
+    private getMimeType(fileName: string): string {
+        const extension = path.extname(fileName).toLowerCase().replace('.', '');
+        const mimeTypes: { [key: string]: string } = {
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'png': 'image/png',
+            'gif': 'image/gif',
+            'webp': 'image/webp',
+            'svg': 'image/svg+xml',
+            'bmp': 'image/bmp',
+            'ico': 'image/x-icon',
+            'tiff': 'image/tiff',
+            'tif': 'image/tiff'
+        };
+        return mimeTypes[extension] || 'application/octet-stream';
+    }
+}

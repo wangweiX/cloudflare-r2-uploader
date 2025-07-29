@@ -40,7 +40,7 @@ __export(main_exports, {
 module.exports = __toCommonJS(main_exports);
 
 // src/core/main.ts
-var import_obsidian7 = require("obsidian");
+var import_obsidian6 = require("obsidian");
 
 // src/models/settings.ts
 var DEFAULT_SETTINGS = {
@@ -52,367 +52,19 @@ var DEFAULT_SETTINGS = {
     folderName: "",
     customDomain: ""
   },
-  enableAutoPaste: false
+  enableAutoPaste: false,
+  deleteAfterUpload: false,
+  maxConcurrentUploads: 3,
+  maxRetries: 3,
+  retryDelay: 1e3,
+  maxRetryDelay: 3e4,
+  uploadTimeout: 6e4,
+  showDetailedLogs: false,
+  showProgressNotifications: true
 };
 
 // src/services/worker-service.ts
-var import_obsidian2 = require("obsidian");
 var path = __toESM(require("path"));
-
-// src/utils/logger.ts
-var import_obsidian = require("obsidian");
-var Logger = class _Logger {
-  /**
-   * 私有构造函数，防止直接实例化
-   */
-  constructor() {
-    this.logLevel = 1 /* INFO */;
-  }
-  /**
-   * 获取日志实例
-   */
-  static getInstance() {
-    if (!_Logger.instance) {
-      _Logger.instance = new _Logger();
-    }
-    return _Logger.instance;
-  }
-  /**
-   * 设置日志级别
-   */
-  setLogLevel(level) {
-    this.logLevel = level;
-  }
-  /**
-   * 调试日志
-   */
-  debug(message, ...args) {
-    if (this.logLevel <= 0 /* DEBUG */) {
-      console.debug(`[DEBUG] ${message}`, ...args);
-    }
-  }
-  /**
-   * 信息日志
-   */
-  info(message, ...args) {
-    if (this.logLevel <= 1 /* INFO */) {
-      console.info(`[INFO] ${message}`, ...args);
-    }
-  }
-  /**
-   * 警告日志
-   */
-  warn(message, ...args) {
-    if (this.logLevel <= 2 /* WARN */) {
-      console.warn(`[WARN] ${message}`, ...args);
-    }
-  }
-  /**
-   * 错误日志
-   */
-  error(message, ...args) {
-    if (this.logLevel <= 3 /* ERROR */) {
-      console.error(`[ERROR] ${message}`, ...args);
-    }
-  }
-  /**
-   * 向用户显示通知
-   */
-  notify(message, timeout = 3e3) {
-    new import_obsidian.Notice(message, timeout);
-  }
-};
-
-// src/services/worker-service.ts
-var CloudflareWorkerService = class {
-  /**
-   * 构造函数
-   */
-  constructor(settings) {
-    this.settings = settings;
-    this.logger = Logger.getInstance();
-  }
-  /**
-   * 获取提供者类型
-   */
-  getType() {
-    return "cloudflare_worker" /* CLOUDFLARE_WORKER */;
-  }
-  /**
-   * 上传文件到Cloudflare Worker
-   */
-  async uploadFile(filePath, fileContent) {
-    try {
-      const { workerUrl, apiKey, bucketName, folderName, customDomain } = this.settings.workerSettings;
-      if (!workerUrl || !apiKey) {
-        throw new Error("Worker URL\u6216API Key\u672A\u914D\u7F6E");
-      }
-      const fileName = path.basename(filePath);
-      const getMimeType = (fileName2) => {
-        const extension = path.extname(fileName2).toLowerCase().replace(".", "");
-        const mimeTypes = {
-          "jpg": "image/jpeg",
-          "jpeg": "image/jpeg",
-          "png": "image/png",
-          "gif": "image/gif",
-          "webp": "image/webp",
-          "pdf": "application/pdf",
-          "txt": "text/plain",
-          "doc": "application/msword",
-          "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "xls": "application/vnd.ms-excel",
-          "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        };
-        return mimeTypes[extension] || "application/octet-stream";
-      };
-      const mimeType = getMimeType(fileName);
-      this.logger.info(`\u4E0A\u4F20\u6587\u4EF6\u7C7B\u578B: ${mimeType}, \u6587\u4EF6\u540D: ${fileName}`);
-      const formData = new FormData();
-      const blob = new Blob([fileContent], { type: mimeType });
-      formData.append("file", blob, fileName);
-      if (folderName) {
-        formData.append("folder", folderName);
-      }
-      this.logger.info(`\u5F00\u59CB\u4E0A\u4F20\u6587\u4EF6\u5230Worker: ${fileName}`);
-      const response = await fetch(workerUrl + `/api/v1/buckets/${bucketName}/files`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`
-        },
-        body: formData
-      });
-      const json = await response.json();
-      if (response.ok && json.success) {
-        if (json.path) {
-          const fileIdentifier = json.path;
-          let imageUrl;
-          if (customDomain && customDomain.trim() !== "") {
-            const domainBase = customDomain.startsWith("http") ? customDomain : `https://${customDomain}`;
-            const formattedDomain = domainBase.endsWith("/") ? domainBase : `${domainBase}/`;
-            imageUrl = `${formattedDomain}${fileIdentifier.startsWith("/") ? fileIdentifier.substring(1) : fileIdentifier}`;
-          } else {
-            const baseUrl = new URL(workerUrl);
-            imageUrl = `${baseUrl.origin}/${fileIdentifier.startsWith("/") ? fileIdentifier.substring(1) : fileIdentifier}`;
-          }
-          this.logger.info(`\u6587\u4EF6\u4E0A\u4F20\u6210\u529F: ${fileName}, URL: ${imageUrl}`);
-          return {
-            success: true,
-            localPath: filePath,
-            imageId: imageUrl
-          };
-        } else {
-          this.logger.error(`\u4E0A\u4F20\u6587\u4EF6\u6210\u529F\u4F46\u7F3A\u5C11URL\u4FE1\u606F: ${fileName}`);
-          new import_obsidian2.Notice(`\u4E0A\u4F20\u6587\u4EF6\u6210\u529F\u4F46\u7F3A\u5C11URL\u4FE1\u606F: ${fileName}`, 3e3);
-          return {
-            success: false,
-            localPath: filePath,
-            error: "\u4E0A\u4F20\u6210\u529F\u4F46\u65E0\u6CD5\u83B7\u53D6URL"
-          };
-        }
-      } else {
-        const errorMessage = json.error || "\u672A\u77E5\u9519\u8BEF";
-        this.logger.error(`\u4E0A\u4F20\u6587\u4EF6\u5931\u8D25 ${filePath}: ${errorMessage}`);
-        new import_obsidian2.Notice(`\u4E0A\u4F20\u6587\u4EF6\u5931\u8D25: ${fileName}`, 3e3);
-        return {
-          success: false,
-          localPath: filePath,
-          error: errorMessage
-        };
-      }
-    } catch (error) {
-      this.logger.error(`\u5904\u7406\u6587\u4EF6\u65F6\u51FA\u9519 ${filePath}:`, error);
-      new import_obsidian2.Notice(`\u5904\u7406\u6587\u4EF6\u51FA\u9519: ${path.basename(filePath)}`, 3e3);
-      return {
-        success: false,
-        localPath: filePath,
-        error: error.message
-      };
-    }
-  }
-  /**
-   * 获取文件URL
-   * 由于构建的imageId已经是完整URL，所以直接返回
-   */
-  getFileUrl(imageId) {
-    return imageId;
-  }
-};
-
-// src/services/image-service.ts
-var import_obsidian3 = require("obsidian");
-var path2 = __toESM(require("path"));
-var ImageService = class {
-  /**
-   * 构造函数
-   */
-  constructor(app, storageProvider) {
-    this.app = app;
-    this.storageProvider = storageProvider;
-    this.retryConfig = {
-      maxRetries: 3,
-      delayMs: 1e3
-    };
-    this.logger = Logger.getInstance();
-  }
-  /**
-   * 解析图片路径
-   */
-  resolveAbsolutePath(notePath, imagePath) {
-    if (imagePath.startsWith("/")) {
-      return imagePath.substring(1);
-    } else {
-      const noteDir = path2.dirname(notePath);
-      return path2.join(noteDir, imagePath);
-    }
-  }
-  /**
-   * 延迟函数 - 用于重试间隔
-   */
-  delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-  /**
-   * 带重试机制的上传单个图片
-   */
-  async uploadImageWithRetry(imagePath, fileContent, retryCount = 0) {
-    try {
-      const result = await this.storageProvider.uploadFile(imagePath, fileContent);
-      if (result.success && result.imageId) {
-        const imageUrl = this.storageProvider.getFileUrl(result.imageId);
-        return { success: true, imageUrl };
-      } else {
-        if (retryCount >= this.retryConfig.maxRetries) {
-          this.logger.warn(`\u56FE\u7247\u4E0A\u4F20\u5931\u8D25\uFF0C\u5DF2\u8FBE\u5230\u6700\u5927\u91CD\u8BD5\u6B21\u6570: ${imagePath}`);
-          return { success: false };
-        }
-        this.logger.info(`\u56FE\u7247\u4E0A\u4F20\u5931\u8D25\uFF0C\u5C06\u8FDB\u884C\u7B2C ${retryCount + 1} \u6B21\u91CD\u8BD5: ${imagePath}`);
-        await this.delay(this.retryConfig.delayMs);
-        return this.uploadImageWithRetry(imagePath, fileContent, retryCount + 1);
-      }
-    } catch (error) {
-      if (retryCount >= this.retryConfig.maxRetries) {
-        this.logger.error(`\u56FE\u7247\u4E0A\u4F20\u51FA\u9519\uFF0C\u5DF2\u8FBE\u5230\u6700\u5927\u91CD\u8BD5\u6B21\u6570: ${imagePath}`, error);
-        return { success: false };
-      }
-      this.logger.info(`\u56FE\u7247\u4E0A\u4F20\u51FA\u9519\uFF0C\u5C06\u8FDB\u884C\u7B2C ${retryCount + 1} \u6B21\u91CD\u8BD5: ${imagePath}`);
-      await this.delay(this.retryConfig.delayMs);
-      return this.uploadImageWithRetry(imagePath, fileContent, retryCount + 1);
-    }
-  }
-  /**
-   * 查找笔记中的图片
-   */
-  async findImagesToUpload() {
-    const markdownFiles = this.app.vault.getMarkdownFiles();
-    const imagePathsToUpload = /* @__PURE__ */ new Set();
-    for (const file of markdownFiles) {
-      const content = await this.app.vault.cachedRead(file);
-      const regex = /!\[([^\]]*)\]\(([^)]*)\)/g;
-      let match;
-      while ((match = regex.exec(content)) !== null) {
-        const imagePath = match[2];
-        if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
-          continue;
-        }
-        const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
-        if (await this.app.vault.adapter.exists(absolutePath)) {
-          imagePathsToUpload.add(absolutePath);
-        } else {
-          this.logger.warn(`\u56FE\u7247\u6587\u4EF6\u4E0D\u5B58\u5728\uFF1A${absolutePath}`);
-        }
-      }
-    }
-    return imagePathsToUpload;
-  }
-  /**
-   * 上传图片到存储服务
-   */
-  async uploadImages(paths) {
-    if (paths.length === 0) {
-      return {};
-    }
-    const uploadResults = {};
-    let successCount = 0;
-    let failCount = 0;
-    let currentIndex = 0;
-    const totalImages = paths.length;
-    const updateProgress = () => {
-      const percentage = Math.round(currentIndex / totalImages * 100);
-      new import_obsidian3.Notice(`\u4E0A\u4F20\u8FDB\u5EA6: ${percentage}% (${currentIndex}/${totalImages})`, 1e3);
-    };
-    updateProgress();
-    for (const imagePath of paths) {
-      try {
-        currentIndex++;
-        const fileContent = await this.app.vault.adapter.readBinary(imagePath);
-        const result = await this.uploadImageWithRetry(imagePath, fileContent);
-        if (result.success && result.imageUrl) {
-          uploadResults[imagePath] = result.imageUrl;
-          successCount++;
-        } else {
-          failCount++;
-        }
-        if (currentIndex % Math.max(1, Math.floor(totalImages / 10)) === 0 || currentIndex === totalImages) {
-          updateProgress();
-        }
-      } catch (error) {
-        this.logger.error(`\u5904\u7406\u56FE\u7247\u65F6\u51FA\u9519 ${imagePath}:`, error);
-        new import_obsidian3.Notice(`\u5904\u7406\u56FE\u7247\u51FA\u9519: ${path2.basename(imagePath)}`, 3e3);
-        failCount++;
-        currentIndex++;
-      }
-    }
-    if (successCount > 0) {
-      new import_obsidian3.Notice(`\u6210\u529F\u4E0A\u4F20 ${successCount} \u5F20\u56FE\u7247`, 3e3);
-    }
-    if (failCount > 0) {
-      new import_obsidian3.Notice(`\u6709 ${failCount} \u5F20\u56FE\u7247\u4E0A\u4F20\u5931\u8D25`, 3e3);
-    }
-    return uploadResults;
-  }
-  /**
-   * 更新笔记中的图片链接
-   */
-  async updateNotes(uploadResults) {
-    const markdownFiles = this.app.vault.getMarkdownFiles();
-    let updatedCount = 0;
-    for (const file of markdownFiles) {
-      let content = await this.app.vault.cachedRead(file);
-      let modified = false;
-      const regex = /!\[([^\]]*)\]\(([^)]*)\)/g;
-      let match;
-      let lastIndex = 0;
-      let newContent = "";
-      while ((match = regex.exec(content)) !== null) {
-        const fullMatch = match[0];
-        const altText = match[1];
-        const imagePath = match[2];
-        if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
-          continue;
-        }
-        const absolutePath = this.resolveAbsolutePath(file.path, imagePath);
-        if (uploadResults[absolutePath]) {
-          const newImageUrl = uploadResults[absolutePath];
-          newContent += content.substring(lastIndex, match.index);
-          newContent += `![${altText}](${newImageUrl})`;
-          lastIndex = match.index + fullMatch.length;
-          modified = true;
-        }
-      }
-      if (modified) {
-        newContent += content.substring(lastIndex);
-        await this.app.vault.modify(file, newContent);
-        updatedCount++;
-      }
-    }
-    if (updatedCount > 0) {
-      new import_obsidian3.Notice(`\u5DF2\u66F4\u65B0 ${updatedCount} \u4E2A\u7B14\u8BB0\u6587\u4EF6`, 3e3);
-    }
-  }
-};
-
-// src/services/paste-handler.ts
-var import_obsidian4 = require("obsidian");
 
 // node_modules/uuid/dist/esm-browser/stringify.js
 var byteToHex = [];
@@ -466,7 +118,434 @@ function v4(options, buf, offset) {
 }
 var v4_default = v4;
 
+// src/utils/logger.ts
+var import_obsidian = require("obsidian");
+var LogLevel = /* @__PURE__ */ ((LogLevel2) => {
+  LogLevel2[LogLevel2["DEBUG"] = 0] = "DEBUG";
+  LogLevel2[LogLevel2["INFO"] = 1] = "INFO";
+  LogLevel2[LogLevel2["WARN"] = 2] = "WARN";
+  LogLevel2[LogLevel2["ERROR"] = 3] = "ERROR";
+  return LogLevel2;
+})(LogLevel || {});
+var Logger = class _Logger {
+  constructor() {
+    this.noticeQueue = [];
+    this.maxQueueSize = 3;
+    this.config = {
+      level: 1 /* INFO */,
+      showDetailedLogs: false,
+      showProgressNotifications: true,
+      prefix: "Cloudflare R2 Uploader"
+    };
+  }
+  /**
+   * 获取单例实例
+   */
+  static getInstance() {
+    if (!_Logger.instance) {
+      _Logger.instance = new _Logger();
+    }
+    return _Logger.instance;
+  }
+  /**
+   * 更新配置
+   */
+  updateConfig(config) {
+    this.config = { ...this.config, ...config };
+  }
+  /**
+   * 设置日志级别
+   */
+  setLevel(level) {
+    this.config.level = level;
+  }
+  /**
+   * 设置日志级别（兼容旧API）
+   */
+  setLogLevel(level) {
+    this.setLevel(level);
+  }
+  /**
+   * 设置是否显示详细日志
+   */
+  setShowDetailedLogs(show) {
+    this.config.showDetailedLogs = show;
+  }
+  /**
+   * 设置是否显示进度通知
+   */
+  setShowProgressNotifications(show) {
+    this.config.showProgressNotifications = show;
+  }
+  /**
+   * 调试日志
+   */
+  debug(message, ...args) {
+    this.log(0 /* DEBUG */, message, args);
+  }
+  /**
+   * 信息日志
+   */
+  info(message, ...args) {
+    this.log(1 /* INFO */, message, args);
+  }
+  /**
+   * 警告日志
+   */
+  warn(message, ...args) {
+    this.log(2 /* WARN */, message, args);
+  }
+  /**
+   * 错误日志
+   */
+  error(message, error, ...args) {
+    if (error) {
+      this.log(3 /* ERROR */, message, [error, ...args]);
+      if (error instanceof Error) {
+        this.log(3 /* ERROR */, `\u9519\u8BEF\u8BE6\u60C5: ${error.message}`, [error.stack]);
+      }
+    } else {
+      this.log(3 /* ERROR */, message, args);
+    }
+  }
+  /**
+   * 显示通知
+   */
+  notify(message, timeout = 5e3, type = "info") {
+    if (type === "progress" && !this.config.showProgressNotifications) {
+      return new import_obsidian.Notice("");
+    }
+    this.cleanNoticeQueue();
+    const formattedMessage = this.formatNoticeMessage(message, type);
+    const notice = new import_obsidian.Notice(formattedMessage, timeout);
+    if (timeout > 0) {
+      this.noticeQueue.push(notice);
+    }
+    return notice;
+  }
+  /**
+   * 显示进度通知
+   */
+  notifyProgress(message, timeout = 2e3) {
+    return this.notify(message, timeout, "progress");
+  }
+  /**
+   * 显示错误通知
+   */
+  notifyError(message, timeout = 5e3) {
+    return this.notify(message, timeout, "error");
+  }
+  /**
+   * 记录日志
+   */
+  log(level, message, args) {
+    if (level < this.config.level) {
+      return;
+    }
+    if (!this.config.showDetailedLogs && level < 2 /* WARN */) {
+      return;
+    }
+    const formattedMessage = this.formatLogMessage(message, {
+      timestamp: true,
+      level: true
+    });
+    switch (level) {
+      case 0 /* DEBUG */:
+        console.debug(formattedMessage, ...args);
+        break;
+      case 1 /* INFO */:
+        console.info(formattedMessage, ...args);
+        break;
+      case 2 /* WARN */:
+        console.warn(formattedMessage, ...args);
+        break;
+      case 3 /* ERROR */:
+        console.error(formattedMessage, ...args);
+        break;
+    }
+  }
+  /**
+   * 格式化日志消息
+   */
+  formatLogMessage(message, options) {
+    const parts = [];
+    if (options.timestamp) {
+      const timestamp = (/* @__PURE__ */ new Date()).toISOString().replace("T", " ").substring(0, 19);
+      parts.push(`[${timestamp}]`);
+    }
+    if (options.level) {
+      const levelName = LogLevel[this.config.level];
+      parts.push(`[${levelName}]`);
+    }
+    parts.push(`[${this.config.prefix}]`);
+    if (options.category) {
+      parts.push(`[${options.category}]`);
+    }
+    parts.push(message);
+    return parts.join(" ");
+  }
+  /**
+   * 格式化通知消息
+   */
+  formatNoticeMessage(message, type) {
+    const prefix = {
+      info: "\u{1F4A1}",
+      error: "\u274C",
+      progress: "\u23F3"
+    };
+    return `${prefix[type]} ${this.config.prefix}: ${message}`;
+  }
+  /**
+   * 清理通知队列
+   */
+  cleanNoticeQueue() {
+    while (this.noticeQueue.length >= this.maxQueueSize) {
+      const oldNotice = this.noticeQueue.shift();
+      if (oldNotice) {
+        oldNotice.hide();
+      }
+    }
+    this.noticeQueue = this.noticeQueue.filter((notice) => {
+      return true;
+    });
+  }
+  /**
+   * 清除所有通知
+   */
+  clearAllNotices() {
+    this.noticeQueue.forEach((notice) => notice.hide());
+    this.noticeQueue = [];
+  }
+  /**
+   * 创建一个带分类的日志器
+   */
+  createCategoryLogger(category) {
+    return new CategoryLogger(this, category);
+  }
+};
+var CategoryLogger = class {
+  constructor(logger, category) {
+    this.logger = logger;
+    this.category = category;
+  }
+  debug(message, ...args) {
+    this.logger.debug(`[${this.category}] ${message}`, ...args);
+  }
+  info(message, ...args) {
+    this.logger.info(`[${this.category}] ${message}`, ...args);
+  }
+  warn(message, ...args) {
+    this.logger.warn(`[${this.category}] ${message}`, ...args);
+  }
+  error(message, error, ...args) {
+    this.logger.error(`[${this.category}] ${message}`, error, ...args);
+  }
+};
+
+// src/services/worker-service.ts
+var CloudflareWorkerService = class {
+  /**
+   * 构造函数
+   */
+  constructor(settings) {
+    this.settings = settings;
+    this.logger = Logger.getInstance();
+  }
+  /**
+   * 获取提供者类型
+   */
+  getType() {
+    return "cloudflare_worker" /* CLOUDFLARE_WORKER */;
+  }
+  /**
+   * 上传图片到Cloudflare Worker
+   */
+  async uploadImage(fileContent, fileName, onProgress, options) {
+    try {
+      const { workerUrl, apiKey, bucketName, folderName, customDomain } = this.settings.workerSettings;
+      if (!workerUrl || !apiKey) {
+        throw new Error("Worker URL\u6216API Key\u672A\u914D\u7F6E");
+      }
+      const uniqueFileName = this.generateUniqueFileName(fileName);
+      const cleanFolderName = folderName ? folderName.replace(/\/$/, "") : "";
+      const filePath = cleanFolderName ? `${cleanFolderName}/${uniqueFileName}` : uniqueFileName;
+      const mimeType = this.getMimeType(fileName);
+      this.logger.info(`\u4E0A\u4F20\u6587\u4EF6: ${fileName} -> ${filePath}, \u7C7B\u578B: ${mimeType}`);
+      const encodedFilePath = filePath.split("/").map((part) => encodeURIComponent(part)).join("/");
+      const uploadUrl = `${workerUrl}/api/v1/buckets/${bucketName}/files/${encodedFilePath}`;
+      this.logger.info(`\u4E0A\u4F20URL: ${uploadUrl}`);
+      const controller = new AbortController();
+      const timeoutId = options?.timeout ? setTimeout(() => controller.abort(), options.timeout) : null;
+      try {
+        if (onProgress) {
+          onProgress(0.1);
+        }
+        const response = await fetch(uploadUrl, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": mimeType,
+            "Content-Length": fileContent.byteLength.toString()
+          },
+          body: fileContent,
+          signal: controller.signal
+        });
+        if (timeoutId) clearTimeout(timeoutId);
+        if (onProgress) {
+          onProgress(0.9);
+        }
+        const json = await response.json();
+        if (response.ok && json.success) {
+          let imageUrl;
+          if (customDomain && customDomain.trim() !== "") {
+            const domainBase = customDomain.startsWith("http") ? customDomain : `https://${customDomain}`;
+            const formattedDomain = domainBase.endsWith("/") ? domainBase.slice(0, -1) : domainBase;
+            imageUrl = `${formattedDomain}/${filePath}`;
+          } else {
+            const baseUrl = new URL(workerUrl);
+            imageUrl = `${baseUrl.origin}/${filePath}`;
+          }
+          if (onProgress) {
+            onProgress(1);
+          }
+          this.logger.info(`\u6587\u4EF6\u4E0A\u4F20\u6210\u529F: ${fileName} -> ${imageUrl}`);
+          return {
+            url: imageUrl,
+            etag: json.etag
+          };
+        } else {
+          const errorMessage = json.error || response.statusText || "\u672A\u77E5\u9519\u8BEF";
+          this.logger.error(`\u4E0A\u4F20\u5931\u8D25\u54CD\u5E94: ${response.status} ${response.statusText}`, json);
+          throw new Error(errorMessage);
+        }
+      } catch (error) {
+        if (timeoutId) clearTimeout(timeoutId);
+        if (error.name === "AbortError") {
+          throw {
+            type: "timeout",
+            message: "\u4E0A\u4F20\u8D85\u65F6",
+            code: "TIMEOUT"
+          };
+        }
+        throw error;
+      }
+    } catch (error) {
+      this.logger.error(`\u4E0A\u4F20\u6587\u4EF6\u5931\u8D25 ${fileName}:`, error);
+      if (error.type) {
+        throw error;
+      }
+      let type = "unknown";
+      const message = error.message || String(error);
+      if (message.includes("Worker URL\u6216API Key\u672A\u914D\u7F6E")) {
+        type = "auth";
+      } else if (message.includes("Failed to fetch") || message.includes("\u7F51\u7EDC")) {
+        type = "network";
+      } else if (error.status && error.status >= 500) {
+        type = "server";
+      }
+      throw {
+        type,
+        message,
+        code: error.code || error.status
+      };
+    }
+  }
+  /**
+   * 生成唯一文件名
+   */
+  generateUniqueFileName(originalName) {
+    const ext = path.extname(originalName);
+    const baseName = path.basename(originalName, ext).replace(/[^a-zA-Z0-9\u4e00-\u9fa5_\-\.]/g, "_");
+    const timestamp = (/* @__PURE__ */ new Date()).getTime();
+    const randomId = v4_default().split("-")[0];
+    return `${baseName}_${timestamp}_${randomId}${ext}`;
+  }
+  /**
+   * 根据文件扩展名获取MIME类型
+   */
+  getMimeType(fileName) {
+    const extension = path.extname(fileName).toLowerCase().replace(".", "");
+    const mimeTypes = {
+      "jpg": "image/jpeg",
+      "jpeg": "image/jpeg",
+      "png": "image/png",
+      "gif": "image/gif",
+      "webp": "image/webp",
+      "svg": "image/svg+xml",
+      "bmp": "image/bmp",
+      "ico": "image/x-icon",
+      "tiff": "image/tiff",
+      "tif": "image/tiff"
+    };
+    return mimeTypes[extension] || "application/octet-stream";
+  }
+};
+
+// src/services/image-service.ts
+var path2 = __toESM(require("path"));
+var ImageService = class {
+  /**
+   * 构造函数
+   */
+  constructor(app, storageProvider) {
+    this.app = app;
+    this.storageProvider = storageProvider;
+    this.logger = Logger.getInstance();
+  }
+  /**
+   * 查找所有笔记中需要上传的图片
+   */
+  async findImagesToUpload() {
+    const markdownFiles = this.app.vault.getMarkdownFiles();
+    const imagePathsToUpload = /* @__PURE__ */ new Set();
+    for (const file of markdownFiles) {
+      const content = await this.app.vault.cachedRead(file);
+      const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
+      let match;
+      while ((match = standardRegex.exec(content)) !== null) {
+        const imagePath = match[2];
+        if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+          continue;
+        }
+        const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+        if (absolutePath && await this.app.vault.adapter.exists(absolutePath)) {
+          imagePathsToUpload.add(absolutePath);
+        }
+      }
+      const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
+      while ((match = obsidianRegex.exec(content)) !== null) {
+        const imagePath = match[1];
+        const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+        if (absolutePath && await this.app.vault.adapter.exists(absolutePath)) {
+          imagePathsToUpload.add(absolutePath);
+        }
+      }
+    }
+    this.logger.info(`\u627E\u5230 ${imagePathsToUpload.size} \u5F20\u56FE\u7247\u9700\u8981\u4E0A\u4F20`);
+    return imagePathsToUpload;
+  }
+  /**
+   * 解析图片的绝对路径
+   */
+  async resolveAbsolutePath(notePath, imagePath) {
+    if (path2.isAbsolute(imagePath)) {
+      return imagePath;
+    }
+    const noteDir = path2.dirname(notePath);
+    let absolutePath = path2.normalize(path2.join(noteDir, imagePath));
+    if (await this.app.vault.adapter.exists(absolutePath)) {
+      return absolutePath;
+    }
+    absolutePath = path2.normalize(imagePath);
+    if (await this.app.vault.adapter.exists(absolutePath)) {
+      return absolutePath;
+    }
+    return null;
+  }
+};
+
 // src/services/paste-handler.ts
+var import_obsidian2 = require("obsidian");
 var PasteHandler = class {
   /**
    * 构造函数
@@ -515,21 +594,23 @@ var PasteHandler = class {
       return;
     }
     const items = evt.clipboardData.items;
-    let hasImages = false;
+    const imagesToProcess = [];
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       if (!item.type.startsWith("image/")) {
         continue;
       }
-      hasImages = true;
       const file = item.getAsFile();
-      if (!file) {
-        continue;
+      if (file) {
+        imagesToProcess.push({ file, type: item.type });
       }
-      await this.processImageUpload(file, editor, item.type);
     }
-    if (hasImages) {
+    if (imagesToProcess.length > 0) {
       evt.preventDefault();
+      evt.stopPropagation();
+      for (const { file, type } of imagesToProcess) {
+        await this.processImageUpload(file, editor, type);
+      }
     }
   }
   /**
@@ -538,92 +619,537 @@ var PasteHandler = class {
   async processImageUpload(file, editor, mimeType) {
     try {
       this.logger.info("\u5F00\u59CB\u4E0A\u4F20\u7C98\u8D34\u7684\u56FE\u7247...");
-      new import_obsidian4.Notice("\u6B63\u5728\u4E0A\u4F20\u56FE\u7247...", 2e3);
+      new import_obsidian2.Notice("\u6B63\u5728\u4E0A\u4F20\u56FE\u7247...", 2e3);
       const ext = this.getExtensionFromMime(mimeType);
       const filename = `pasted-image-${v4_default()}${ext}`;
       const arrayBuffer = await file.arrayBuffer();
       const placeholder = `![\u4E0A\u4F20\u4E2D...](${filename})`;
       const cursor = editor.getCursor();
       editor.replaceSelection(placeholder);
-      const result = await this.storageProvider.uploadFile(filename, arrayBuffer);
-      if (result.success && result.imageId) {
-        const imageUrl = this.storageProvider.getFileUrl(result.imageId);
-        const markdownText = `![${file.name || "\u56FE\u7247"}](${imageUrl})`;
+      try {
+        const result = await this.storageProvider.uploadImage(
+          arrayBuffer,
+          filename,
+          void 0,
+          { timeout: 3e4 }
+        );
+        const markdownText = `![${file.name || "\u56FE\u7247"}](${result.url})`;
         const content = editor.getValue();
         const newContent = content.replace(placeholder, markdownText);
         editor.setValue(newContent);
         editor.setCursor(cursor);
         this.logger.info(`\u7C98\u8D34\u56FE\u7247\u4E0A\u4F20\u6210\u529F: ${filename}`);
-        new import_obsidian4.Notice("\u56FE\u7247\u4E0A\u4F20\u6210\u529F!", 2e3);
-      } else {
-        this.logger.error(`\u7C98\u8D34\u56FE\u7247\u4E0A\u4F20\u5931\u8D25: ${filename}`, result.error);
-        new import_obsidian4.Notice(`\u56FE\u7247\u4E0A\u4F20\u5931\u8D25: ${result.error}`, 5e3);
+        new import_obsidian2.Notice("\u56FE\u7247\u4E0A\u4F20\u6210\u529F!", 2e3);
+      } catch (error) {
+        const content = editor.getValue();
+        const newContent = content.replace(placeholder, "");
+        editor.setValue(newContent);
+        editor.setCursor(cursor);
+        const errorMessage = error.message || "\u672A\u77E5\u9519\u8BEF";
+        this.logger.error(`\u7C98\u8D34\u56FE\u7247\u4E0A\u4F20\u5931\u8D25: ${filename}`, error);
+        new import_obsidian2.Notice(`\u56FE\u7247\u4E0A\u4F20\u5931\u8D25: ${errorMessage}`, 5e3);
       }
     } catch (error) {
       this.logger.error("\u5904\u7406\u7C98\u8D34\u56FE\u7247\u65F6\u51FA\u9519", error);
-      new import_obsidian4.Notice("\u5904\u7406\u7C98\u8D34\u56FE\u7247\u65F6\u51FA\u9519: " + error.message, 5e3);
+      new import_obsidian2.Notice("\u5904\u7406\u7C98\u8D34\u56FE\u7247\u65F6\u51FA\u9519", 5e3);
     }
   }
   /**
-   * 从MIME类型获取文件扩展名
+   * 根据MIME类型获取文件扩展名
    */
-  getExtensionFromMime(mime) {
-    const mimeMap = {
+  getExtensionFromMime(mimeType) {
+    const mimeToExt = {
       "image/png": ".png",
       "image/jpeg": ".jpg",
       "image/jpg": ".jpg",
       "image/gif": ".gif",
       "image/webp": ".webp",
+      "image/svg+xml": ".svg",
       "image/bmp": ".bmp",
-      "image/svg+xml": ".svg"
+      "image/x-icon": ".ico",
+      "image/tiff": ".tiff"
     };
-    return mimeMap[mime] || ".png";
-  }
-  /**
-   * 调试方法：检查服务是否正常运行
-   */
-  debugStatus() {
-    console.log("PasteHandler\u72B6\u6001\u68C0\u67E5:");
-    console.log("- \u4E8B\u4EF6\u5F15\u7528\u6570\u91CF:", this.eventRefs.length);
-    console.log("- \u5B58\u50A8\u63D0\u4F9B\u8005:", this.storageProvider ? "\u5DF2\u52A0\u8F7D" : "\u672A\u52A0\u8F7D");
-    new import_obsidian4.Notice("PasteHandler\u72B6\u6001\u68C0\u67E5\u5B8C\u6210\uFF0C\u8BF7\u67E5\u770B\u63A7\u5236\u53F0", 3e3);
-    this.logger.info("\u6267\u884C\u4E86\u72B6\u6001\u68C0\u67E5");
+    return mimeToExt[mimeType] || ".png";
   }
 };
 
 // src/services/current-file-uploader.ts
-var import_obsidian5 = require("obsidian");
+var import_obsidian4 = require("obsidian");
 var path3 = __toESM(require("path"));
-var CurrentFileUploader = class {
-  /**
-   * 构造函数
-   */
-  constructor(app, storageProvider) {
+
+// src/services/upload-manager.ts
+var import_events = require("events");
+var import_obsidian3 = require("obsidian");
+var _UploadManager = class _UploadManager extends import_events.EventEmitter {
+  constructor(app, storageProvider, config) {
+    super();
+    this.deleteAfterUpload = false;
+    // 任务队列
+    this.queue = [];
+    this.activeTasks = /* @__PURE__ */ new Map();
+    this.completedTasks = /* @__PURE__ */ new Map();
+    this.uploadedFiles = /* @__PURE__ */ new Set();
+    // 记录已上传的文件路径
+    // 任务计数器
+    this.taskIdCounter = 0;
+    // 控制标志
+    this.isProcessing = false;
+    this.isPaused = false;
+    // 防抖定时器
+    this.processQueueTimeout = null;
     this.app = app;
     this.storageProvider = storageProvider;
-    this.retryConfig = {
-      maxRetries: 3,
-      delayMs: 1e3
-    };
+    this.config = config;
     this.logger = Logger.getInstance();
   }
   /**
-   * 处理当前活动文件中的图片
-   * @returns 处理结果，包含图片总数、成功数、失败数和新的映射记录
+   * 获取单例实例
+   */
+  static getInstance(app, storageProvider, config) {
+    if (!_UploadManager.instance) {
+      _UploadManager.instance = new _UploadManager(app, storageProvider, config);
+    }
+    return _UploadManager.instance;
+  }
+  /**
+   * 销毁单例实例
+   */
+  static destroyInstance() {
+    if (_UploadManager.instance) {
+      _UploadManager.instance.cancelAll();
+      _UploadManager.instance.removeAllListeners();
+      _UploadManager.instance = null;
+    }
+  }
+  /**
+   * 更新配置
+   */
+  updateConfig(config) {
+    this.config = { ...this.config, ...config };
+    this.logger.info("\u4E0A\u4F20\u7BA1\u7406\u5668\u914D\u7F6E\u5DF2\u66F4\u65B0", config);
+  }
+  /**
+   * 设置是否在上传成功后删除本地文件
+   */
+  setDeleteAfterUpload(value) {
+    this.deleteAfterUpload = value;
+  }
+  /**
+   * 添加单个任务到队列
+   */
+  async addTask(filePath) {
+    if (this.uploadedFiles.has(filePath)) {
+      this.logger.info(`\u6587\u4EF6\u5DF2\u7ECF\u4E0A\u4F20\u8FC7\uFF0C\u8DF3\u8FC7: ${filePath}`);
+      throw new Error(`\u6587\u4EF6\u5DF2\u7ECF\u4E0A\u4F20\u8FC7: ${filePath}`);
+    }
+    const existingTask = this.findTaskByPath(filePath);
+    if (existingTask) {
+      this.logger.info(`\u6587\u4EF6\u5DF2\u7ECF\u5728\u961F\u5217\u4E2D: ${filePath}`);
+      return existingTask;
+    }
+    const file = this.app.vault.getAbstractFileByPath(filePath);
+    if (!(file instanceof import_obsidian3.TFile)) {
+      throw new Error(`\u6587\u4EF6\u4E0D\u5B58\u5728: ${filePath}`);
+    }
+    const task = {
+      id: `upload-${++this.taskIdCounter}`,
+      filePath,
+      fileName: file.name,
+      fileSize: file.stat.size,
+      status: "pending",
+      progress: 0,
+      createdAt: Date.now(),
+      retryCount: 0
+    };
+    this.queue.push(task);
+    this.emit(_UploadManager.EVENTS.TASK_ADDED, task);
+    this.emitStatsUpdate();
+    this.scheduleProcessQueue();
+    return task;
+  }
+  /**
+   * 批量添加任务
+   */
+  async addTasks(filePaths) {
+    const tasks = [];
+    for (const filePath of filePaths) {
+      try {
+        const task = await this.addTask(filePath);
+        tasks.push(task);
+      } catch (error) {
+        this.logger.warn(`\u8DF3\u8FC7\u6587\u4EF6: ${filePath}`, error);
+      }
+    }
+    return tasks;
+  }
+  /**
+   * 安排处理队列（防抖）
+   */
+  scheduleProcessQueue() {
+    if (this.processQueueTimeout) {
+      clearTimeout(this.processQueueTimeout);
+    }
+    this.processQueueTimeout = setTimeout(() => {
+      this.processQueue();
+    }, 100);
+  }
+  /**
+   * 处理队列
+   */
+  async processQueue() {
+    if (this.isProcessing || this.isPaused) {
+      return;
+    }
+    this.isProcessing = true;
+    try {
+      while (this.queue.length > 0 && this.activeTasks.size < this.config.maxConcurrency && !this.isPaused) {
+        const task = this.queue.shift();
+        if (task) {
+          this.startTask(task);
+        }
+      }
+      if (this.queue.length === 0 && this.activeTasks.size === 0) {
+        this.emit(_UploadManager.EVENTS.QUEUE_EMPTY);
+      }
+    } finally {
+      this.isProcessing = false;
+    }
+  }
+  /**
+   * 开始任务
+   */
+  async startTask(task) {
+    task.status = "uploading";
+    task.startedAt = Date.now();
+    this.activeTasks.set(task.id, task);
+    this.emit(_UploadManager.EVENTS.TASK_STARTED, task);
+    this.emitStatsUpdate();
+    try {
+      const file = this.app.vault.getAbstractFileByPath(task.filePath);
+      if (!(file instanceof import_obsidian3.TFile)) {
+        throw new Error(`\u6587\u4EF6\u4E0D\u5B58\u5728: ${task.filePath}`);
+      }
+      const arrayBuffer = await this.app.vault.readBinary(file);
+      const onProgress = (progress) => {
+        task.progress = progress;
+        task.uploadedSize = Math.floor(task.fileSize * progress);
+        if (task.startedAt) {
+          const elapsedSeconds = (Date.now() - task.startedAt) / 1e3;
+          if (elapsedSeconds > 0 && task.uploadedSize) {
+            task.speed = task.uploadedSize / elapsedSeconds;
+          }
+        }
+        this.emit(_UploadManager.EVENTS.TASK_PROGRESS, task);
+      };
+      const result = await this.storageProvider.uploadImage(
+        arrayBuffer,
+        task.fileName,
+        onProgress,
+        { timeout: this.config.timeout }
+      );
+      task.status = "completed";
+      task.completedAt = Date.now();
+      task.url = result.url;
+      task.progress = 1;
+      task.uploadedSize = task.fileSize;
+      this.uploadedFiles.add(task.filePath);
+      this.activeTasks.delete(task.id);
+      this.completedTasks.set(task.id, task);
+      this.emit(_UploadManager.EVENTS.TASK_COMPLETED, task);
+      this.emitStatsUpdate();
+      this.logger.info(`\u4E0A\u4F20\u6210\u529F: ${task.fileName} -> ${result.url}`);
+    } catch (error) {
+      await this.handleTaskError(task, error);
+    } finally {
+      this.scheduleProcessQueue();
+    }
+  }
+  /**
+   * 处理任务错误
+   */
+  async handleTaskError(task, error) {
+    task.error = this.normalizeError(error);
+    task.retryCount = (task.retryCount || 0) + 1;
+    if (task.retryCount < this.config.maxRetries && this.shouldRetry(task.error)) {
+      const delay = Math.min(
+        this.config.retryDelay * Math.pow(2, task.retryCount - 1),
+        this.config.maxRetryDelay
+      );
+      task.status = "retrying";
+      task.nextRetryAt = Date.now() + delay;
+      this.logger.warn(`\u4EFB\u52A1\u5931\u8D25\uFF0C${delay}ms \u540E\u91CD\u8BD5 (${task.retryCount}/${this.config.maxRetries}): ${task.fileName}`, error);
+      this.activeTasks.delete(task.id);
+      setTimeout(() => {
+        if (task.status === "retrying") {
+          task.status = "pending";
+          delete task.nextRetryAt;
+          this.queue.unshift(task);
+          this.scheduleProcessQueue();
+        }
+      }, delay);
+    } else {
+      task.status = "failed";
+      task.completedAt = Date.now();
+      task.progress = 0;
+      delete task.uploadedSize;
+      delete task.speed;
+      this.logger.error(`\u4EFB\u52A1\u5931\u8D25: ${task.fileName}`, error);
+      this.activeTasks.delete(task.id);
+      this.completedTasks.set(task.id, task);
+      this.emit(_UploadManager.EVENTS.TASK_FAILED, task);
+    }
+    this.emitStatsUpdate();
+  }
+  /**
+   * 规范化错误对象
+   */
+  normalizeError(error) {
+    if (error.type) {
+      return error;
+    }
+    let type = "unknown";
+    const message = error.message || String(error);
+    if (message.includes("timeout") || message.includes("\u8D85\u65F6")) {
+      type = "timeout";
+    } else if (message.includes("network") || message.includes("\u7F51\u7EDC")) {
+      type = "network";
+    } else if (error.code === "AUTH_ERROR" || message.includes("\u8BA4\u8BC1") || message.includes("\u6388\u6743")) {
+      type = "auth";
+    } else if (error.code === "SERVER_ERROR" || error.status && error.status >= 500) {
+      type = "server";
+    }
+    return {
+      type,
+      message,
+      code: error.code || error.status,
+      details: error
+    };
+  }
+  /**
+   * 判断是否应该重试
+   */
+  shouldRetry(error) {
+    if (error.type === "auth") {
+      return false;
+    }
+    return ["timeout", "network", "server", "unknown"].includes(error.type);
+  }
+  /**
+   * 取消任务
+   */
+  cancelTask(taskId) {
+    const queueIndex = this.queue.findIndex((t) => t.id === taskId);
+    if (queueIndex !== -1) {
+      const task = this.queue.splice(queueIndex, 1)[0];
+      task.status = "cancelled";
+      task.completedAt = Date.now();
+      this.completedTasks.set(task.id, task);
+      this.emit(_UploadManager.EVENTS.TASK_CANCELLED, task);
+      this.emitStatsUpdate();
+      return;
+    }
+    const activeTask = this.activeTasks.get(taskId);
+    if (activeTask) {
+      activeTask.status = "cancelled";
+      activeTask.completedAt = Date.now();
+      this.activeTasks.delete(taskId);
+      this.completedTasks.set(activeTask.id, activeTask);
+      this.emit(_UploadManager.EVENTS.TASK_CANCELLED, activeTask);
+      this.emitStatsUpdate();
+      this.logger.info(`\u5DF2\u53D6\u6D88\u4EFB\u52A1: ${activeTask.fileName}`);
+    }
+  }
+  /**
+   * 取消所有任务
+   */
+  cancelAll() {
+    while (this.queue.length > 0) {
+      const task = this.queue.shift();
+      task.status = "cancelled";
+      task.completedAt = Date.now();
+      this.completedTasks.set(task.id, task);
+      this.emit(_UploadManager.EVENTS.TASK_CANCELLED, task);
+    }
+    for (const task of this.activeTasks.values()) {
+      task.status = "cancelled";
+      task.completedAt = Date.now();
+      this.completedTasks.set(task.id, task);
+      this.emit(_UploadManager.EVENTS.TASK_CANCELLED, task);
+    }
+    this.activeTasks.clear();
+    this.emitStatsUpdate();
+    this.logger.info("\u5DF2\u53D6\u6D88\u6240\u6709\u4E0A\u4F20\u4EFB\u52A1");
+  }
+  /**
+   * 重试失败的任务
+   */
+  retryFailed() {
+    const failedTasks = Array.from(this.completedTasks.values()).filter((t) => t.status === "failed");
+    for (const task of failedTasks) {
+      task.status = "pending";
+      task.retryCount = 0;
+      delete task.error;
+      delete task.startedAt;
+      delete task.completedAt;
+      delete task.uploadedSize;
+      delete task.speed;
+      task.progress = 0;
+      this.completedTasks.delete(task.id);
+      this.queue.push(task);
+    }
+    if (failedTasks.length > 0) {
+      this.logger.info(`\u5DF2\u5C06 ${failedTasks.length} \u4E2A\u5931\u8D25\u4EFB\u52A1\u91CD\u65B0\u52A0\u5165\u961F\u5217`);
+      this.emitStatsUpdate();
+      this.scheduleProcessQueue();
+    }
+  }
+  /**
+   * 暂停/恢复处理
+   */
+  togglePause() {
+    this.isPaused = !this.isPaused;
+    if (!this.isPaused) {
+      this.scheduleProcessQueue();
+    }
+    this.logger.info(this.isPaused ? "\u5DF2\u6682\u505C\u4E0A\u4F20" : "\u5DF2\u6062\u590D\u4E0A\u4F20");
+  }
+  /**
+   * 获取任务统计信息
+   */
+  getStats() {
+    const allTasks = [
+      ...this.queue,
+      ...Array.from(this.activeTasks.values()),
+      ...Array.from(this.completedTasks.values())
+    ];
+    const stats = {
+      total: allTasks.length,
+      pending: this.queue.length,
+      uploading: this.activeTasks.size,
+      completed: 0,
+      failed: 0,
+      cancelled: 0,
+      totalSize: 0,
+      uploadedSize: 0,
+      isPaused: this.isPaused
+    };
+    for (const task of allTasks) {
+      stats.totalSize += task.fileSize;
+      if (task.status === "completed") {
+        stats.completed++;
+        stats.uploadedSize += task.fileSize;
+      } else if (task.status === "failed") {
+        stats.failed++;
+      } else if (task.status === "cancelled") {
+        stats.cancelled++;
+      } else if (task.uploadedSize) {
+        stats.uploadedSize += task.uploadedSize;
+      }
+    }
+    return stats;
+  }
+  /**
+   * 获取所有任务
+   */
+  getAllTasks() {
+    return [
+      ...this.queue,
+      ...Array.from(this.activeTasks.values()),
+      ...Array.from(this.completedTasks.values())
+    ];
+  }
+  /**
+   * 根据路径查找任务
+   */
+  findTaskByPath(filePath) {
+    let task = this.queue.find((t) => t.filePath === filePath);
+    if (task) return task;
+    for (const t of this.activeTasks.values()) {
+      if (t.filePath === filePath) return t;
+    }
+    for (const t of this.completedTasks.values()) {
+      if (t.filePath === filePath && t.status === "completed") return t;
+    }
+    return void 0;
+  }
+  /**
+   * 发送统计更新事件
+   */
+  emitStatsUpdate() {
+    this.emit(_UploadManager.EVENTS.STATS_UPDATED, this.getStats());
+  }
+  /**
+   * 清理完成的任务
+   */
+  clearCompleted() {
+    const completedIds = Array.from(this.completedTasks.entries()).filter(([_, task]) => task.status === "completed").map(([id]) => id);
+    for (const id of completedIds) {
+      this.completedTasks.delete(id);
+    }
+    this.logger.info(`\u5DF2\u6E05\u7406 ${completedIds.length} \u4E2A\u5DF2\u5B8C\u6210\u4EFB\u52A1`);
+    this.emitStatsUpdate();
+  }
+};
+_UploadManager.instance = null;
+// 事件定义
+_UploadManager.EVENTS = {
+  TASK_ADDED: "task:added",
+  TASK_STARTED: "task:started",
+  TASK_PROGRESS: "task:progress",
+  TASK_COMPLETED: "task:completed",
+  TASK_FAILED: "task:failed",
+  TASK_CANCELLED: "task:cancelled",
+  QUEUE_EMPTY: "queue:empty",
+  STATS_UPDATED: "stats:updated"
+};
+var UploadManager = _UploadManager;
+
+// src/services/current-file-uploader.ts
+var CurrentFileUploader = class {
+  // 添加设置引用
+  /**
+   * 构造函数
+   */
+  constructor(app, storageProvider, uploadManager, settings) {
+    this.app = app;
+    this.storageProvider = storageProvider;
+    this.uploadManager = uploadManager;
+    this.isProcessing = false;
+    this.lastProcessTime = 0;
+    this.debounceDelay = 1e3;
+    this.logger = Logger.getInstance();
+    this.settings = settings;
+  }
+  /**
+   * 处理当前活动文件中的图片（带防抖）
    */
   async processCurrentFile() {
+    const now = Date.now();
+    if (now - this.lastProcessTime < this.debounceDelay) {
+      this.logger.info("\u64CD\u4F5C\u8FC7\u4E8E\u9891\u7E41\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5");
+      new import_obsidian4.Notice("\u64CD\u4F5C\u8FC7\u4E8E\u9891\u7E41\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5", 2e3);
+      return null;
+    }
+    this.lastProcessTime = now;
+    if (this.isProcessing) {
+      this.logger.info("\u6B63\u5728\u5904\u7406\u4E2D\uFF0C\u8BF7\u7B49\u5F85\u5F53\u524D\u64CD\u4F5C\u5B8C\u6210");
+      new import_obsidian4.Notice("\u6B63\u5728\u5904\u7406\u4E2D\uFF0C\u8BF7\u7B49\u5F85\u5F53\u524D\u64CD\u4F5C\u5B8C\u6210", 2e3);
+      return null;
+    }
     const activeFile = this.app.workspace.getActiveFile();
     if (!activeFile || activeFile.extension !== "md") {
-      new import_obsidian5.Notice("\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A Markdown \u7B14\u8BB0\u6587\u4EF6", 3e3);
+      new import_obsidian4.Notice("\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A Markdown \u7B14\u8BB0\u6587\u4EF6", 3e3);
       return null;
     }
     try {
+      this.isProcessing = true;
       this.logger.info(`\u5F00\u59CB\u5904\u7406\u5F53\u524D\u7B14\u8BB0\u6587\u4EF6\uFF1A${activeFile.path}`);
-      new import_obsidian5.Notice(`\u5F00\u59CB\u5904\u7406\u7B14\u8BB0\u6587\u4EF6\uFF1A${activeFile.basename}`, 2e3);
+      const progressNotice = new import_obsidian4.Notice("\u6B63\u5728\u5206\u6790\u56FE\u7247...", 0);
       const imagesToUpload = await this.findImagesInFile(activeFile);
       if (imagesToUpload.size === 0) {
+        progressNotice.hide();
         this.logger.info("\u5F53\u524D\u7B14\u8BB0\u4E2D\u6CA1\u6709\u9700\u8981\u4E0A\u4F20\u7684\u56FE\u7247");
-        new import_obsidian5.Notice("\u5F53\u524D\u7B14\u8BB0\u4E2D\u6CA1\u6709\u627E\u5230\u9700\u8981\u4E0A\u4F20\u7684\u56FE\u7247", 3e3);
+        new import_obsidian4.Notice("\u5F53\u524D\u7B14\u8BB0\u4E2D\u6CA1\u6709\u627E\u5230\u9700\u8981\u4E0A\u4F20\u7684\u56FE\u7247", 3e3);
         return {
           totalImages: 0,
           successCount: 0,
@@ -632,24 +1158,90 @@ var CurrentFileUploader = class {
         };
       }
       this.logger.info(`\u627E\u5230 ${imagesToUpload.size} \u5F20\u56FE\u7247\u9700\u8981\u4E0A\u4F20.`);
-      this.logger.info("\u56FE\u7247\u5730\u5740\u5217\u8868:");
-      Array.from(imagesToUpload).forEach((imagePath, index) => {
-        this.logger.info(`[${index + 1}] ${imagePath}`);
+      progressNotice.setMessage(`\u627E\u5230 ${imagesToUpload.size} \u5F20\u56FE\u7247\uFF0C\u6B63\u5728\u51C6\u5907\u4E0A\u4F20...`);
+      const imagePaths = Array.from(imagesToUpload);
+      const tasks = await this.uploadManager.addTasks(imagePaths);
+      const taskResults = /* @__PURE__ */ new Map();
+      let completedCount = 0;
+      const handleTaskComplete = (task) => {
+        if (tasks.some((t) => t.id === task.id)) {
+          taskResults.set(task.filePath, task);
+          completedCount++;
+          const progress = Math.round(completedCount / tasks.length * 100);
+          progressNotice.setMessage(`\u4E0A\u4F20\u8FDB\u5EA6: ${progress}% (${completedCount}/${tasks.length})`);
+        }
+      };
+      const handleTaskFailed = (task) => {
+        if (tasks.some((t) => t.id === task.id)) {
+          taskResults.set(task.filePath, task);
+          completedCount++;
+          const progress = Math.round(completedCount / tasks.length * 100);
+          progressNotice.setMessage(`\u4E0A\u4F20\u8FDB\u5EA6: ${progress}% (${completedCount}/${tasks.length})`);
+        }
+      };
+      const handleTaskCancelled = (task) => {
+        if (tasks.some((t) => t.id === task.id)) {
+          taskResults.set(task.filePath, task);
+          completedCount++;
+        }
+      };
+      this.uploadManager.on(UploadManager.EVENTS.TASK_COMPLETED, handleTaskComplete);
+      this.uploadManager.on(UploadManager.EVENTS.TASK_FAILED, handleTaskFailed);
+      this.uploadManager.on(UploadManager.EVENTS.TASK_CANCELLED, handleTaskCancelled);
+      const completionPromise = new Promise((resolve) => {
+        const checkCompletion = setInterval(() => {
+          if (completedCount >= tasks.length) {
+            clearInterval(checkCompletion);
+            resolve();
+          }
+        }, 100);
       });
-      new import_obsidian5.Notice(`\u627E\u5230 ${imagesToUpload.size} \u5F20\u56FE\u7247\u9700\u8981\u4E0A\u4F20`, 2e3);
-      const { newMappings, successCount, failCount } = await this.uploadImages(Array.from(imagesToUpload));
-      await this.updateFileLinks(activeFile, newMappings);
+      try {
+        await completionPromise;
+        progressNotice.hide();
+      } finally {
+        this.uploadManager.off(UploadManager.EVENTS.TASK_COMPLETED, handleTaskComplete);
+        this.uploadManager.off(UploadManager.EVENTS.TASK_FAILED, handleTaskFailed);
+        this.uploadManager.off(UploadManager.EVENTS.TASK_CANCELLED, handleTaskCancelled);
+      }
+      let successCount = 0;
+      let failureCount = 0;
+      const newMappings = {};
+      for (const [filePath, task] of taskResults) {
+        if (task.status === "completed" && task.url) {
+          successCount++;
+          newMappings[filePath] = task.url;
+        } else {
+          failureCount++;
+        }
+      }
+      if (Object.keys(newMappings).length > 0) {
+        this.logger.info(`\u51C6\u5907\u66F4\u65B0\u94FE\u63A5\uFF0C\u6620\u5C04\u5173\u7CFB:`, newMappings);
+        await this.updateFileLinks(activeFile, newMappings);
+        if (this.settings?.deleteAfterUpload) {
+          for (const [filePath, url] of Object.entries(newMappings)) {
+            try {
+              await this.app.vault.adapter.remove(filePath);
+              this.logger.info(`\u5DF2\u5220\u9664\u672C\u5730\u6587\u4EF6: ${filePath}`);
+            } catch (deleteError) {
+              this.logger.warn(`\u5220\u9664\u672C\u5730\u6587\u4EF6\u5931\u8D25: ${filePath}`, deleteError);
+            }
+          }
+        }
+      }
       this.logger.info("\u5F53\u524D\u7B14\u8BB0\u56FE\u7247\u5904\u7406\u5B8C\u6210");
       return {
         totalImages: imagesToUpload.size,
         successCount,
-        failureCount: failCount,
+        failureCount,
         newMappings
       };
     } catch (error) {
       this.logger.error("\u5904\u7406\u5F53\u524D\u7B14\u8BB0\u56FE\u7247\u65F6\u51FA\u9519", error);
-      new import_obsidian5.Notice(`\u5904\u7406\u56FE\u7247\u65F6\u51FA\u9519: ${error.message}`, 5e3);
+      new import_obsidian4.Notice(`\u5904\u7406\u56FE\u7247\u65F6\u51FA\u9519: ${error.message}`, 5e3);
       return null;
+    } finally {
+      this.isProcessing = false;
     }
   }
   /**
@@ -680,90 +1272,18 @@ var CurrentFileUploader = class {
         this.logger.warn(`\u65E0\u6CD5\u89E3\u6790\u56FE\u7247\u8DEF\u5F84: ${imagePath}`);
         continue;
       }
-      imagePathsToUpload.add(absolutePath);
-      this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${absolutePath}`);
+      const exists = await this.app.vault.adapter.exists(absolutePath);
+      if (!exists) {
+        this.logger.warn(`\u56FE\u7247\u6587\u4EF6\u4E0D\u5B58\u5728: ${absolutePath}`);
+        continue;
+      }
+      const stat = await this.app.vault.adapter.stat(absolutePath);
+      if (stat && stat.size) {
+        imagePathsToUpload.add(absolutePath);
+        this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${absolutePath} (${this.formatFileSize(stat.size)})`);
+      }
     }
     return imagePathsToUpload;
-  }
-  /**
-   * 延迟函数 - 用于重试间隔
-   */
-  delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-  /**
-   * 带重试机制的上传单个图片
-   */
-  async uploadImageWithRetry(imagePath, fileContent, retryCount = 0) {
-    try {
-      const result = await this.storageProvider.uploadFile(imagePath, fileContent);
-      if (result.success && result.imageId) {
-        const imageUrl = this.storageProvider.getFileUrl(result.imageId);
-        return { success: true, imageUrl };
-      } else {
-        if (retryCount >= this.retryConfig.maxRetries) {
-          this.logger.warn(`\u56FE\u7247\u4E0A\u4F20\u5931\u8D25\uFF0C\u5DF2\u8FBE\u5230\u6700\u5927\u91CD\u8BD5\u6B21\u6570: ${imagePath}`);
-          return { success: false };
-        }
-        this.logger.info(`\u56FE\u7247\u4E0A\u4F20\u5931\u8D25\uFF0C\u5C06\u8FDB\u884C\u7B2C ${retryCount + 1} \u6B21\u91CD\u8BD5: ${imagePath}`);
-        await this.delay(this.retryConfig.delayMs);
-        return this.uploadImageWithRetry(imagePath, fileContent, retryCount + 1);
-      }
-    } catch (error) {
-      if (retryCount >= this.retryConfig.maxRetries) {
-        this.logger.error(`\u56FE\u7247\u4E0A\u4F20\u51FA\u9519\uFF0C\u5DF2\u8FBE\u5230\u6700\u5927\u91CD\u8BD5\u6B21\u6570: ${imagePath}`, error);
-        return { success: false };
-      }
-      this.logger.info(`\u56FE\u7247\u4E0A\u4F20\u51FA\u9519\uFF0C\u5C06\u8FDB\u884C\u7B2C ${retryCount + 1} \u6B21\u91CD\u8BD5: ${imagePath}`);
-      await this.delay(this.retryConfig.delayMs);
-      return this.uploadImageWithRetry(imagePath, fileContent, retryCount + 1);
-    }
-  }
-  /**
-   * 上传图片到存储服务
-   */
-  async uploadImages(paths) {
-    if (paths.length === 0) {
-      return { newMappings: {}, successCount: 0, failCount: 0 };
-    }
-    const newMappings = {};
-    let successCount = 0;
-    let failCount = 0;
-    let currentIndex = 0;
-    const totalImages = paths.length;
-    const updateProgress = () => {
-      const percentage = Math.round(currentIndex / totalImages * 100);
-      new import_obsidian5.Notice(`\u4E0A\u4F20\u8FDB\u5EA6: ${percentage}% (${currentIndex}/${totalImages})`, 1e3);
-    };
-    updateProgress();
-    for (const imagePath of paths) {
-      try {
-        currentIndex++;
-        const fileContent = await this.app.vault.adapter.readBinary(imagePath);
-        const result = await this.uploadImageWithRetry(imagePath, fileContent);
-        if (result.success && result.imageUrl) {
-          newMappings[imagePath] = result.imageUrl;
-          successCount++;
-        } else {
-          failCount++;
-        }
-        if (currentIndex % Math.max(1, Math.floor(totalImages / 10)) === 0 || currentIndex === totalImages) {
-          updateProgress();
-        }
-      } catch (error) {
-        this.logger.error(`\u5904\u7406\u56FE\u7247\u65F6\u51FA\u9519 ${imagePath}:`, error);
-        new import_obsidian5.Notice(`\u5904\u7406\u56FE\u7247\u51FA\u9519: ${path3.basename(imagePath)}`, 3e3);
-        failCount++;
-        currentIndex++;
-      }
-    }
-    if (successCount > 0) {
-      new import_obsidian5.Notice(`\u6210\u529F\u4E0A\u4F20 ${successCount} \u5F20\u56FE\u7247`, 3e3);
-    }
-    if (failCount > 0) {
-      new import_obsidian5.Notice(`\u6709 ${failCount} \u5F20\u56FE\u7247\u4E0A\u4F20\u5931\u8D25`, 3e3);
-    }
-    return { newMappings, successCount, failCount };
   }
   /**
    * 更新当前文件中的图片链接
@@ -789,6 +1309,7 @@ var CurrentFileUploader = class {
         continue;
       }
       const newImageUrl = uploadResults[absolutePath];
+      this.logger.info(`\u67E5\u627E\u6807\u51C6\u683C\u5F0F\u6620\u5C04: ${imagePath} -> ${absolutePath} -> ${newImageUrl || "\u672A\u627E\u5230"}`);
       if (newImageUrl) {
         standardNewContent += content.substring(lastIndex, standardMatch.index);
         standardNewContent += `![${altText}](${newImageUrl})`;
@@ -814,6 +1335,7 @@ var CurrentFileUploader = class {
         continue;
       }
       const newImageUrl = uploadResults[absolutePath];
+      this.logger.info(`\u67E5\u627EObsidian\u683C\u5F0F\u6620\u5C04: ${imagePath} -> ${absolutePath} -> ${newImageUrl || "\u672A\u627E\u5230"}`);
       if (newImageUrl) {
         obsidianNewContent += newContent.substring(lastIndex, obsidianMatch.index);
         obsidianNewContent += `![${path3.basename(imagePath, path3.extname(imagePath))}](${newImageUrl})`;
@@ -827,209 +1349,189 @@ var CurrentFileUploader = class {
     }
     if (newContent !== content) {
       await this.app.vault.modify(file, newContent);
+      this.logger.info(`\u5DF2\u66F4\u65B0\u6587\u4EF6\u4E2D\u7684\u56FE\u7247\u94FE\u63A5: ${file.path}`);
+      this.logger.info(`\u66F4\u65B0\u7684\u94FE\u63A5\u6570\u91CF: ${Object.keys(uploadResults).length}`);
+    } else {
+      this.logger.warn(`\u6587\u4EF6\u5185\u5BB9\u672A\u53D1\u751F\u53D8\u5316\uFF0C\u53EF\u80FD\u94FE\u63A5\u66FF\u6362\u5931\u8D25: ${file.path}`);
     }
   }
   /**
    * 将图片的相对路径解析为绝对路径
-   *
-   * 1. 如果图片路径已经是绝对路径，直接返回
-   * 2. 如果图片路径是相对路径，尝试从当前文件所在的目录下查找
-   * 3. 如果当前文件所在的目录下没有找到，尝试从 vault 根目录下查找
-   * 4. 如果 vault 根目录下也没有找到，返回空字符串
-   *
-   * @param filePath 当前文件的路径
-   * @param imagePath 图片的路径（可能是相对路径或绝对路径）
-   * @returns 图片的绝对路径
    */
   async resolveAbsolutePath(filePath, imagePath) {
     if (path3.isAbsolute(imagePath)) {
-      this.logger.info(`\u56FE\u7247\u8DEF\u5F84\u5DF2\u7ECF\u662F\u7EDD\u5BF9\u8DEF\u5F84\uFF1A${imagePath}`);
-      const exists2 = await this.app.vault.adapter.exists(imagePath);
-      if (exists2) {
-        this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${imagePath}`);
-        return imagePath;
-      }
+      return imagePath;
     }
     let fileDir = path3.dirname(filePath);
     let absolutePath = path3.normalize(path3.join(fileDir, imagePath));
-    this.logger.info(`\u5C1D\u8BD5\u4ECE\u5F53\u524D\u6587\u4EF6\u6240\u5728\u7684\u76EE\u5F55\u4E0B\u67E5\u627E\u56FE\u7247\uFF1A${absolutePath}`);
     let exists = await this.app.vault.adapter.exists(absolutePath);
     if (exists) {
-      this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${absolutePath}`);
       return absolutePath;
     }
-    let vaultPath = this.app.vault.getRoot();
-    absolutePath = path3.normalize(path3.join(vaultPath.path, imagePath));
-    this.logger.info(`\u5C1D\u8BD5\u4ECE vault \u6839\u76EE\u5F55\u4E0B\u67E5\u627E\u56FE\u7247\uFF1A${absolutePath}`);
+    absolutePath = path3.normalize(imagePath);
     exists = await this.app.vault.adapter.exists(absolutePath);
     if (exists) {
-      this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${absolutePath}`);
       return absolutePath;
     }
-    this.logger.warn(`\u56FE\u7247\u6587\u4EF6\u4E0D\u5B58\u5728\uFF1A${imagePath}`);
     return "";
+  }
+  /**
+   * 格式化文件大小
+   */
+  formatFileSize(bytes) {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  }
+  /**
+   * 取消所有上传任务
+   */
+  cancelAll() {
+    this.uploadManager.cancelAll();
+    this.isProcessing = false;
   }
 };
 
 // src/ui/settings-tab.ts
-var import_obsidian6 = require("obsidian");
-var wrapTextWithPasswordHide = (text) => {
-  const hider = text.inputEl.insertAdjacentElement(
-    "beforebegin",
-    createSpan()
-  );
-  if (!hider) {
-    return;
-  }
-  (0, import_obsidian6.setIcon)(hider, "eye-off");
-  hider.addEventListener("click", () => {
-    const isText = text.inputEl.getAttribute("type") === "text";
-    if (isText) {
-      (0, import_obsidian6.setIcon)(hider, "eye-off");
-      text.inputEl.setAttribute("type", "password");
-    } else {
-      (0, import_obsidian6.setIcon)(hider, "eye");
-      text.inputEl.setAttribute("type", "text");
-    }
-    text.inputEl.focus();
-  });
-  text.inputEl.setAttribute("type", "password");
-  return text;
-};
-var SettingsTab = class extends import_obsidian6.PluginSettingTab {
-  /**
-   * 构造函数
-   */
+var import_obsidian5 = require("obsidian");
+var SettingsTab = class extends import_obsidian5.PluginSettingTab {
   constructor(app, plugin) {
     super(app, plugin);
     this.plugin = plugin;
   }
-  /**
-   * 显示设置界面
-   */
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "Cloudflare \u56FE\u7247\u4E0A\u4F20\u5668\u8BBE\u7F6E" });
-    new import_obsidian6.Setting(containerEl).setName("\u542F\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20").setDesc("\u7C98\u8D34\u56FE\u7247\u65F6\u81EA\u52A8\u4E0A\u4F20\u5230Cloudflare\u5E76\u66FF\u6362\u4E3A\u94FE\u63A5").addToggle((toggle) => {
+    containerEl.createEl("h1", { text: "Cloudflare R2 Uploader \u8BBE\u7F6E" });
+    const introDiv = containerEl.createDiv({ cls: "setting-item-description" });
+    introDiv.createEl("p", {
+      text: "\u8BF7\u6309\u7167\u4EE5\u4E0B\u6B65\u9AA4\u914D\u7F6E\u60A8\u7684 Cloudflare R2 \u5B58\u50A8\uFF1A"
+    });
+    const ol = introDiv.createEl("ol");
+    ol.createEl("li", { text: "\u90E8\u7F72 Cloudflare R2 Worker\uFF08\u53C2\u8003\u9879\u76EE\u6587\u6863\uFF09" });
+    ol.createEl("li", { text: "\u83B7\u53D6 Worker URL \u548C API Key" });
+    ol.createEl("li", { text: "\u5728\u4E0B\u65B9\u586B\u5199\u76F8\u5173\u914D\u7F6E\u4FE1\u606F" });
+    ol.createEl("li", { text: "\u4FDD\u5B58\u8BBE\u7F6E\u540E\u5373\u53EF\u5F00\u59CB\u4F7F\u7528" });
+    containerEl.createEl("hr");
+    containerEl.createEl("h2", { text: "\u57FA\u7840\u8BBE\u7F6E" });
+    new import_obsidian5.Setting(containerEl).setName("\u542F\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20").setDesc("\u542F\u7528\u540E\uFF0C\u7C98\u8D34\u56FE\u7247\u65F6\u81EA\u52A8\u4E0A\u4F20\u5230 Cloudflare R2").addToggle((toggle) => {
       toggle.setValue(this.plugin.settings.enableAutoPaste).onChange(async (value) => {
         this.plugin.settings.enableAutoPaste = value;
         await this.plugin.saveSettings();
       });
     });
-    this.displayCloudflareWorkerSettings(containerEl);
-  }
-  /**
-   * 显示Cloudflare Worker设置
-   */
-  displayCloudflareWorkerSettings(containerEl) {
-    containerEl.createEl("h3", { text: "Cloudflare R2 Worker \u914D\u7F6E" });
-    new import_obsidian6.Setting(containerEl).setName("Worker URL").setDesc("\u60A8\u90E8\u7F72\u7684 Cloudflare R2 Worker \u7684 URL").addText(
-      (text) => text.setPlaceholder("https://your-worker.your-subdomain.workers.dev").setValue(this.plugin.settings.workerSettings.workerUrl).onChange(async (value) => {
-        const domainRegex = /^https:\/\/[-a-zA-Z0-9.]+$/;
-        const trimmedValue = value.trim();
-        if (!trimmedValue) {
-          new import_obsidian6.Notice("Worker URL \u4E0D\u80FD\u4E3A\u7A7A");
-          text.setValue(this.plugin.settings.workerSettings.workerUrl);
-          return;
-        }
-        if (domainRegex.test(trimmedValue)) {
-          this.plugin.settings.workerSettings.workerUrl = trimmedValue;
-          await this.plugin.saveSettings();
-        } else {
-          new import_obsidian6.Notice("\u8BF7\u8F93\u5165\u6709\u6548\u7684 Worker URL \u5730\u5740\uFF0C\u4F8B\u5982: https://your-worker.your-subdomain.workers.dev");
-          text.setValue(this.plugin.settings.workerSettings.workerUrl);
-        }
-      })
-    );
-    new import_obsidian6.Setting(containerEl).setName("API Key").setDesc("Worker \u8BA4\u8BC1\u6240\u9700\u7684 API Key").addText((text) => {
-      wrapTextWithPasswordHide(text);
-      text.setPlaceholder("\u8F93\u5165\u60A8\u7684 API Key").setValue(this.plugin.settings.workerSettings.apiKey).onChange(async (value) => {
-        const apiKeyRegex = /^[a-zA-Z0-9_\-]+$/;
-        const trimmedValue = value.trim();
-        if (!trimmedValue) {
-          new import_obsidian6.Notice("API Key \u4E0D\u80FD\u4E3A\u7A7A");
-          text.setValue(this.plugin.settings.workerSettings.apiKey);
-          return;
-        }
-        if (apiKeyRegex.test(trimmedValue)) {
-          this.plugin.settings.workerSettings.apiKey = trimmedValue;
-          await this.plugin.saveSettings();
-        } else {
-          new import_obsidian6.Notice("\u8BF7\u8F93\u5165\u6709\u6548\u7684 API Key\uFF0C\u4EC5\u5305\u542B\u5B57\u6BCD\u3001\u6570\u5B57\u3001\u4E0B\u5212\u7EBF\u548C\u77ED\u6A2A\u7EBF");
-          text.setValue(this.plugin.settings.workerSettings.apiKey);
-        }
+    new import_obsidian5.Setting(containerEl).setName("\u4E0A\u4F20\u6210\u529F\u540E\u5220\u9664\u672C\u5730\u56FE\u7247").setDesc("\u542F\u7528\u540E\uFF0C\u56FE\u7247\u4E0A\u4F20\u6210\u529F\u540E\u4F1A\u81EA\u52A8\u5220\u9664\u672C\u5730\u56FE\u7247\u6587\u4EF6").addToggle((toggle) => {
+      toggle.setValue(this.plugin.settings.deleteAfterUpload).onChange(async (value) => {
+        this.plugin.settings.deleteAfterUpload = value;
+        await this.plugin.saveSettings();
       });
     });
-    new import_obsidian6.Setting(containerEl).setName("\u5B58\u50A8\u6876\u540D\u79F0").setDesc("\u4E0A\u4F20\u6587\u4EF6\u7684\u76EE\u6807\u5B58\u50A8\u6876").addText(
-      (text) => text.setPlaceholder("\u8F93\u5165\u60A8\u7684\u5B58\u50A8\u6876\u540D\u79F0").setValue(this.plugin.settings.workerSettings.bucketName).onChange(async (value) => {
-        const bucketNameRegex = /^[a-z0-9][a-z0-9\-.]{2,61}[a-z0-9]$/;
-        const trimmedValue = value.trim();
-        if (!trimmedValue) {
-          new import_obsidian6.Notice("\u5B58\u50A8\u6876\u540D\u79F0\u4E0D\u80FD\u4E3A\u7A7A");
-          text.setValue(this.plugin.settings.workerSettings.bucketName);
-          return;
-        }
-        if (bucketNameRegex.test(trimmedValue)) {
-          this.plugin.settings.workerSettings.bucketName = trimmedValue;
-          await this.plugin.saveSettings();
-        } else {
-          new import_obsidian6.Notice("\u5B58\u50A8\u6876\u540D\u79F0\u683C\u5F0F\u65E0\u6548\uFF0C\u53EA\u80FD\u5305\u542B\u5C0F\u5199\u5B57\u6BCD\u3001\u6570\u5B57\u3001\u8FDE\u5B57\u7B26\u548C\u70B9\uFF0C\u957F\u5EA6\u5728 3-63 \u4E2A\u5B57\u7B26\u4E4B\u95F4\uFF0C\u4E14\u4E0D\u80FD\u4EE5\u8FDE\u5B57\u7B26\u6216\u70B9\u5F00\u5934\u6216\u7ED3\u5C3E");
-          text.setValue(this.plugin.settings.workerSettings.bucketName);
-        }
-      })
-    );
-    new import_obsidian6.Setting(containerEl).setName("\u6587\u4EF6\u5939\u540D\u79F0\uFF08\u53EF\u9009\uFF09").setDesc("\u4E0A\u4F20\u6587\u4EF6\u7684\u76EE\u6807\u6587\u4EF6\u5939\uFF0C\u5982\u4E0D\u586B\u5219\u9ED8\u8BA4\u5B58\u50A8\u5230\u5B58\u50A8\u6876\u7684\u4E00\u7EA7\u76EE\u5F55\u4E0B").addText(
-      (text) => text.setPlaceholder("\u8BF7\u8F93\u5165\u4E0A\u4F20\u7684\u6587\u4EF6\u5939\u540D\u79F0").setValue(this.plugin.settings.workerSettings.folderName || "").onChange(async (value) => {
-        const trimmedValue = value.trim();
-        if (!trimmedValue) {
-          this.plugin.settings.workerSettings.folderName = void 0;
-          await this.plugin.saveSettings();
-          return;
-        }
-        const folderNameRegex = /^[a-zA-Z0-9_\-\/]+$/;
-        if (folderNameRegex.test(trimmedValue)) {
-          this.plugin.settings.workerSettings.folderName = trimmedValue;
-          await this.plugin.saveSettings();
-        } else {
-          new import_obsidian6.Notice("\u6587\u4EF6\u5939\u540D\u79F0\u683C\u5F0F\u65E0\u6548\uFF0C\u53EA\u80FD\u5305\u542B\u5B57\u6BCD\u3001\u6570\u5B57\u3001\u4E0B\u5212\u7EBF\u3001\u8FDE\u5B57\u7B26\u548C\u659C\u6760");
-          text.setValue(this.plugin.settings.workerSettings.folderName || "");
-        }
-      })
-    );
-    new import_obsidian6.Setting(containerEl).setName("R2 Bucket \u81EA\u5B9A\u4E49\u57DF\u540D\uFF08\u53EF\u9009\uFF09").setDesc("\u60A8\u4E3A R2 Bucket \u914D\u7F6E\u7684\u81EA\u5B9A\u4E49\u57DF\u540D\uFF0C\u5C06\u66FF\u4EE3\u9ED8\u8BA4\u7684 Cloudflare \u57DF\u540D").addText(
-      (text) => text.setPlaceholder("https://images.yourdomain.com").setValue(this.plugin.settings.workerSettings.customDomain || "").onChange(async (value) => {
-        const trimmedValue = value.trim();
-        if (!trimmedValue) {
-          this.plugin.settings.workerSettings.customDomain = "";
-          await this.plugin.saveSettings();
-          return;
-        }
-        let formattedValue = trimmedValue;
-        if (!formattedValue.startsWith("https://")) {
-          formattedValue = "https://" + formattedValue;
-        }
-        const domainRegex = /^https:\/\/[-a-zA-Z0-9.]+$/;
-        if (domainRegex.test(formattedValue)) {
-          this.plugin.settings.workerSettings.customDomain = formattedValue;
-          await this.plugin.saveSettings();
-        } else {
-          new import_obsidian6.Notice("\u81EA\u5B9A\u4E49\u57DF\u540D\u683C\u5F0F\u65E0\u6548\uFF0C\u8BF7\u8F93\u5165\u6B63\u786E\u7684\u57DF\u540D\u683C\u5F0F\uFF0C\u4F8B\u5982\uFF1Ahttps://images.yourdomain.com");
-          text.setValue(this.plugin.settings.workerSettings.customDomain || "");
-        }
-      })
-    );
+    containerEl.createEl("h2", { text: "Cloudflare Worker \u8BBE\u7F6E" });
+    new import_obsidian5.Setting(containerEl).setName("Worker URL").setDesc("\u60A8\u90E8\u7F72\u7684 Cloudflare R2 Worker \u7684 URL").addText((text) => text.setPlaceholder("https://your-worker.your-subdomain.workers.dev").setValue(this.plugin.settings.workerSettings.workerUrl).onChange(async (value) => {
+      this.plugin.settings.workerSettings.workerUrl = value.trim();
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian5.Setting(containerEl).setName("API Key").setDesc("Worker \u7684 API \u5BC6\u94A5\uFF08\u5728 Worker \u73AF\u5883\u53D8\u91CF\u4E2D\u8BBE\u7F6E\uFF09").addText((text) => {
+      const wrapTextWithPasswordHide = (text2) => {
+        text2.inputEl.type = "password";
+        text2.inputEl.autocomplete = "off";
+      };
+      wrapTextWithPasswordHide(text);
+      text.setPlaceholder("\u8F93\u5165\u60A8\u7684 API Key").setValue(this.plugin.settings.workerSettings.apiKey).onChange(async (value) => {
+        this.plugin.settings.workerSettings.apiKey = value.trim();
+        await this.plugin.saveSettings();
+      });
+    });
+    new import_obsidian5.Setting(containerEl).setName("\u5B58\u50A8\u6876\u540D\u79F0").setDesc("Cloudflare R2 \u5B58\u50A8\u6876\u7684\u540D\u79F0").addText((text) => text.setPlaceholder("\u8F93\u5165\u60A8\u7684\u5B58\u50A8\u6876\u540D\u79F0").setValue(this.plugin.settings.workerSettings.bucketName).onChange(async (value) => {
+      this.plugin.settings.workerSettings.bucketName = value.trim();
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian5.Setting(containerEl).setName("\u6587\u4EF6\u5939\u540D\u79F0\uFF08\u53EF\u9009\uFF09").setDesc("\u4E0A\u4F20\u56FE\u7247\u5230\u6307\u5B9A\u6587\u4EF6\u5939\uFF0C\u7559\u7A7A\u5219\u4E0A\u4F20\u5230\u6839\u76EE\u5F55").addText((text) => text.setPlaceholder("\u8BF7\u8F93\u5165\u4E0A\u4F20\u7684\u6587\u4EF6\u5939\u540D\u79F0").setValue(this.plugin.settings.workerSettings.folderName || "").onChange(async (value) => {
+      this.plugin.settings.workerSettings.folderName = value.trim();
+      await this.plugin.saveSettings();
+    }));
+    new import_obsidian5.Setting(containerEl).setName("\u81EA\u5B9A\u4E49\u57DF\u540D\uFF08\u53EF\u9009\uFF09").setDesc("\u5982\u679C\u60A8\u4E3A R2 \u914D\u7F6E\u4E86\u81EA\u5B9A\u4E49\u57DF\u540D\uFF0C\u8BF7\u5728\u6B64\u8F93\u5165").addText((text) => text.setPlaceholder("https://images.yourdomain.com").setValue(this.plugin.settings.workerSettings.customDomain || "").onChange(async (value) => {
+      this.plugin.settings.workerSettings.customDomain = value.trim();
+      await this.plugin.saveSettings();
+    }));
+    containerEl.createEl("h2", { text: "\u9AD8\u7EA7\u8BBE\u7F6E" });
+    new import_obsidian5.Setting(containerEl).setName("\u6700\u5927\u5E76\u53D1\u4E0A\u4F20\u6570").setDesc("\u540C\u65F6\u4E0A\u4F20\u7684\u6700\u5927\u6587\u4EF6\u6570\u91CF\uFF081-50\uFF09").addText((text) => text.setPlaceholder("3").setValue(String(this.plugin.settings.maxConcurrentUploads || 3)).onChange(async (value) => {
+      const num = parseInt(value);
+      if (!isNaN(num) && num >= 1 && num <= 50) {
+        this.plugin.settings.maxConcurrentUploads = num;
+        await this.plugin.saveSettings();
+      }
+    }));
+    new import_obsidian5.Setting(containerEl).setName("\u6700\u5927\u91CD\u8BD5\u6B21\u6570").setDesc("\u4E0A\u4F20\u5931\u8D25\u65F6\u7684\u6700\u5927\u91CD\u8BD5\u6B21\u6570\uFF080-5\uFF09").addText((text) => text.setPlaceholder("3").setValue(String(this.plugin.settings.maxRetries || 3)).onChange(async (value) => {
+      const num = parseInt(value);
+      if (!isNaN(num) && num >= 0 && num <= 5) {
+        this.plugin.settings.maxRetries = num;
+        await this.plugin.saveSettings();
+      }
+    }));
+    new import_obsidian5.Setting(containerEl).setName("\u91CD\u8BD5\u5EF6\u8FDF\uFF08\u6BEB\u79D2\uFF09").setDesc("\u91CD\u8BD5\u524D\u7684\u7B49\u5F85\u65F6\u95F4\uFF08100-10000\uFF09").addText((text) => text.setPlaceholder("1000").setValue(String(this.plugin.settings.retryDelay || 1e3)).onChange(async (value) => {
+      const num = parseInt(value);
+      if (!isNaN(num) && num >= 100 && num <= 1e4) {
+        this.plugin.settings.retryDelay = num;
+        await this.plugin.saveSettings();
+      }
+    }));
+    new import_obsidian5.Setting(containerEl).setName("\u4E0A\u4F20\u8D85\u65F6\uFF08\u6BEB\u79D2\uFF09").setDesc("\u5355\u4E2A\u6587\u4EF6\u4E0A\u4F20\u7684\u8D85\u65F6\u65F6\u95F4\uFF0810000-300000\uFF09").addText((text) => text.setPlaceholder("60000").setValue(String(this.plugin.settings.uploadTimeout || 6e4)).onChange(async (value) => {
+      const num = parseInt(value);
+      if (!isNaN(num) && num >= 1e4 && num <= 3e5) {
+        this.plugin.settings.uploadTimeout = num;
+        await this.plugin.saveSettings();
+      }
+    }));
+    containerEl.createEl("h2", { text: "\u65E5\u5FD7\u8BBE\u7F6E" });
+    new import_obsidian5.Setting(containerEl).setName("\u663E\u793A\u8BE6\u7EC6\u65E5\u5FD7").setDesc("\u5728\u63A7\u5236\u53F0\u8F93\u51FA\u8BE6\u7EC6\u7684\u8C03\u8BD5\u65E5\u5FD7").addToggle((toggle) => {
+      toggle.setValue(this.plugin.settings.showDetailedLogs || false).onChange(async (value) => {
+        this.plugin.settings.showDetailedLogs = value;
+        await this.plugin.saveSettings();
+      });
+    });
+    new import_obsidian5.Setting(containerEl).setName("\u663E\u793A\u4E0A\u4F20\u8FDB\u5EA6\u901A\u77E5").setDesc("\u663E\u793A\u6587\u4EF6\u4E0A\u4F20\u8FDB\u5EA6\u7684\u901A\u77E5").addToggle((toggle) => {
+      toggle.setValue(this.plugin.settings.showProgressNotifications ?? true).onChange(async (value) => {
+        this.plugin.settings.showProgressNotifications = value;
+        await this.plugin.saveSettings();
+      });
+    });
+    containerEl.createEl("hr");
+    containerEl.createEl("h2", { text: "\u5E2E\u52A9" });
+    const helpDiv = containerEl.createDiv({ cls: "setting-item-description" });
+    helpDiv.createEl("p", {
+      text: "\u5982\u9700\u5E2E\u52A9\uFF0C\u8BF7\u8BBF\u95EE\uFF1A"
+    });
+    const helpList = helpDiv.createEl("ul");
+    helpList.createEl("li").createEl("a", {
+      text: "GitHub \u9879\u76EE\u4E3B\u9875",
+      href: "https://github.com/wangweiX/obsidian-cloudflare-r2-uploader"
+    });
+    helpList.createEl("li").createEl("a", {
+      text: "Cloudflare R2 Worker \u90E8\u7F72\u6307\u5357",
+      href: "https://github.com/wangweiX/cloudflare-r2-worker"
+    });
+    new import_obsidian5.Setting(containerEl).setName("\u9A8C\u8BC1\u914D\u7F6E").setDesc("\u6D4B\u8BD5\u4E0E Cloudflare Worker \u7684\u8FDE\u63A5").addButton((button) => button.setButtonText("\u9A8C\u8BC1\u8FDE\u63A5").onClick(async () => {
+      const { workerUrl, apiKey, bucketName } = this.plugin.settings.workerSettings;
+      if (!workerUrl || !apiKey || !bucketName) {
+        new import_obsidian5.Notice("\u8BF7\u5148\u586B\u5199\u6240\u6709\u5FC5\u9700\u7684\u914D\u7F6E\u9879");
+        return;
+      }
+      const urlRegex = /^https?:\/\/.+/;
+      if (!urlRegex.test(workerUrl)) {
+        new import_obsidian5.Notice("Worker URL \u683C\u5F0F\u4E0D\u6B63\u786E\uFF0C\u5E94\u4EE5 http:// \u6216 https:// \u5F00\u5934");
+        return;
+      }
+      new import_obsidian5.Notice("\u914D\u7F6E\u9A8C\u8BC1\u6210\u529F\uFF01\u53EF\u4EE5\u5F00\u59CB\u4F7F\u7528\u4E86\u3002");
+    }));
   }
 };
 
 // src/core/main.ts
-var UPLOAD_ICON = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100" height="100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-<polyline points="17 8 12 3 7 8"></polyline>
-<line x1="12" y1="3" x2="12" y2="15"></line>
-</svg>`;
-var CloudflareImagesUploader = class extends import_obsidian7.Plugin {
+var UPLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100" height="100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>`;
+var CloudflareImagesUploader = class extends import_obsidian6.Plugin {
   constructor() {
     super(...arguments);
     this.settings = DEFAULT_SETTINGS;
@@ -1041,22 +1543,12 @@ var CloudflareImagesUploader = class extends import_obsidian7.Plugin {
     this.logger = Logger.getInstance();
     this.logger.info("\u52A0\u8F7D Cloudflare Images Uploader \u63D2\u4EF6");
     await this.loadSettings();
-    this.storageProvider = this.createStorageProvider();
-    this.imageService = new ImageService(this.app, this.storageProvider);
-    this.pasteHandler = new PasteHandler(this.app, this.storageProvider, this);
-    this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider);
+    this.logger.setShowDetailedLogs(this.settings.showDetailedLogs || false);
+    this.logger.setShowProgressNotifications(this.settings.showProgressNotifications ?? true);
+    this.initializeServices();
     this.addSettingTab(new SettingsTab(this.app, this));
-    this.addCommand({
-      id: "upload-images-to-cloudflare",
-      name: "\u4E0A\u4F20\u6240\u6709\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247",
-      callback: () => this.executeUpload()
-    });
-    this.addCommand({
-      id: "upload-current-note-images",
-      name: "\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247",
-      callback: () => this.uploadCurrentNoteImages()
-    });
-    (0, import_obsidian7.addIcon)("upload-images", UPLOAD_ICON);
+    (0, import_obsidian6.addIcon)("upload-images", UPLOAD_ICON);
+    this.registerCommands();
     this.addRibbonIcon("upload-images", "\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247", () => {
       this.uploadCurrentNoteImages();
     });
@@ -1064,30 +1556,19 @@ var CloudflareImagesUploader = class extends import_obsidian7.Plugin {
       this.pasteHandler.registerPasteEvent();
       this.logger.info("\u5DF2\u542F\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20\u529F\u80FD");
     }
-    this.registerEvent(
-      this.app.workspace.on("layout-change", () => {
-        const currentProvider = this.createStorageProvider();
-        if (currentProvider.getType() !== this.storageProvider.getType()) {
-          this.storageProvider = currentProvider;
-          this.imageService = new ImageService(this.app, this.storageProvider);
-          this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider);
-        }
-        if (this.settings.enableAutoPaste) {
-          this.pasteHandler.registerPasteEvent();
-          this.logger.info("\u5DF2\u542F\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20\u529F\u80FD");
-        } else {
-          this.pasteHandler.unregisterPasteEvent();
-          this.logger.info("\u5DF2\u7981\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20\u529F\u80FD");
-        }
-      })
-    );
   }
   /**
    * 插件卸载
    */
   async onunload() {
     this.logger.info("\u5378\u8F7D Cloudflare Images Uploader \u63D2\u4EF6");
-    this.pasteHandler.unregisterPasteEvent();
+    if (this.uploadManager) {
+      this.uploadManager.cancelAll();
+    }
+    if (this.pasteHandler) {
+      this.pasteHandler.unregisterPasteEvent();
+    }
+    UploadManager.destroyInstance();
   }
   /**
    * 加载设置
@@ -1103,12 +1584,74 @@ var CloudflareImagesUploader = class extends import_obsidian7.Plugin {
     this.handleSettingsChange();
   }
   /**
+   * 初始化服务
+   */
+  initializeServices() {
+    this.storageProvider = this.createStorageProvider();
+    this.uploadManager = UploadManager.getInstance(
+      this.app,
+      this.storageProvider,
+      {
+        maxConcurrency: this.settings.maxConcurrentUploads || 3,
+        maxRetries: this.settings.maxRetries || 3,
+        retryDelay: this.settings.retryDelay || 1e3,
+        maxRetryDelay: this.settings.maxRetryDelay || 3e4,
+        timeout: this.settings.uploadTimeout || 6e4
+      }
+    );
+    this.uploadManager.setDeleteAfterUpload(this.settings.deleteAfterUpload || false);
+    this.imageService = new ImageService(this.app, this.storageProvider);
+    this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider, this.uploadManager, this.settings);
+    this.pasteHandler = new PasteHandler(this.app, this.storageProvider, this);
+  }
+  /**
+   * 注册命令
+   */
+  registerCommands() {
+    this.addCommand({
+      id: "upload-images-to-cloudflare",
+      name: "\u4E0A\u4F20\u6240\u6709\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247",
+      callback: () => this.executeUpload()
+    });
+    this.addCommand({
+      id: "upload-current-note-images",
+      name: "\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247",
+      callback: () => this.uploadCurrentNoteImages()
+    });
+    this.addCommand({
+      id: "cancel-all-uploads",
+      name: "\u53D6\u6D88\u6240\u6709\u4E0A\u4F20\u4EFB\u52A1",
+      callback: () => {
+        this.uploadManager.cancelAll();
+        this.logger.notify("\u5DF2\u53D6\u6D88\u6240\u6709\u4E0A\u4F20\u4EFB\u52A1", 3e3);
+      }
+    });
+    this.addCommand({
+      id: "retry-failed-uploads",
+      name: "\u91CD\u8BD5\u5931\u8D25\u7684\u4E0A\u4F20\u4EFB\u52A1",
+      callback: () => {
+        this.uploadManager.retryFailed();
+        this.logger.notify("\u5DF2\u91CD\u65B0\u52A0\u5165\u5931\u8D25\u7684\u4EFB\u52A1\u5230\u961F\u5217", 3e3);
+      }
+    });
+  }
+  /**
    * 处理设置变更
    */
   handleSettingsChange() {
+    this.logger.setShowDetailedLogs(this.settings.showDetailedLogs || false);
+    this.logger.setShowProgressNotifications(this.settings.showProgressNotifications ?? true);
     this.storageProvider = this.createStorageProvider();
+    this.uploadManager.updateConfig({
+      maxConcurrency: this.settings.maxConcurrentUploads || 3,
+      maxRetries: this.settings.maxRetries || 3,
+      retryDelay: this.settings.retryDelay || 1e3,
+      maxRetryDelay: this.settings.maxRetryDelay || 3e4,
+      timeout: this.settings.uploadTimeout || 6e4
+    });
+    this.uploadManager.setDeleteAfterUpload(this.settings.deleteAfterUpload || false);
     this.imageService = new ImageService(this.app, this.storageProvider);
-    this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider);
+    this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider, this.uploadManager, this.settings);
     if (this.settings.enableAutoPaste) {
       this.pasteHandler.registerPasteEvent();
       this.logger.info("\u5DF2\u542F\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20\u529F\u80FD");
@@ -1138,10 +1681,9 @@ var CloudflareImagesUploader = class extends import_obsidian7.Plugin {
         this.logger.notify("\u6CA1\u6709\u65B0\u7684\u56FE\u7247\u9700\u8981\u4E0A\u4F20", 3e3);
         return;
       }
-      const newMappings = await this.imageService.uploadImages(Array.from(imagePathsToUpload));
-      this.imageService = new ImageService(this.app, this.storageProvider);
-      await this.imageService.updateNotes(newMappings);
-      this.logger.notify("\u56FE\u7247\u5904\u7406\u5B8C\u6210", 3e3);
+      const imagePaths = Array.from(imagePathsToUpload);
+      await this.uploadManager.addTasks(imagePaths);
+      this.logger.notify(`\u5DF2\u6DFB\u52A0 ${imagePaths.length} \u5F20\u56FE\u7247\u5230\u4E0A\u4F20\u961F\u5217`, 3e3);
     } catch (error) {
       this.logger.error("\u6267\u884C\u4E0A\u4F20\u8FC7\u7A0B\u65F6\u51FA\u9519", error);
       this.logger.notify("\u4E0A\u4F20\u8FC7\u7A0B\u4E2D\u51FA\u73B0\u9519\u8BEF\uFF0C\u8BF7\u67E5\u770B\u63A7\u5236\u53F0\u65E5\u5FD7\u3002", 5e3);

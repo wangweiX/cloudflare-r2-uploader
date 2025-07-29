@@ -1,7 +1,9 @@
-import {App, Notice, TFile} from 'obsidian';
+import { App, Notice, TFile } from 'obsidian';
 import * as path from 'path';
-import {StorageProvider} from '../models/storage-provider';
-import {Logger} from '../utils/logger';
+import { StorageProvider } from '../models/storage-provider';
+import { UploadManager } from './upload-manager';
+import { UploadTask } from '../models/upload-task';
+import { Logger } from '../utils/logger';
 
 /**
  * 当前文件上传结果接口
@@ -14,22 +16,15 @@ export interface CurrentFileUploadResult {
 }
 
 /**
- * 重试配置
- */
-interface RetryConfig {
-    maxRetries: number;  // 最大重试次数
-    delayMs: number;     // 重试间隔（毫秒）
-}
-
-/**
  * 当前文件图片上传服务 - 专门处理当前打开的文件中的图片
+ * 使用新的上传管理器处理并发和状态管理
  */
 export class CurrentFileUploader {
     private logger: Logger;
-    private retryConfig: RetryConfig = {
-        maxRetries: 3,
-        delayMs: 1000
-    };
+    private isProcessing: boolean = false;
+    private lastProcessTime: number = 0;
+    private debounceDelay: number = 1000; // 防抖延迟1秒
+    private settings: any; // 添加设置引用
 
     /**
      * 构造函数
@@ -37,15 +32,33 @@ export class CurrentFileUploader {
     constructor(
         private app: App,
         private storageProvider: StorageProvider,
+        private uploadManager: UploadManager,
+        settings?: any
     ) {
         this.logger = Logger.getInstance();
+        this.settings = settings;
     }
 
     /**
-     * 处理当前活动文件中的图片
-     * @returns 处理结果，包含图片总数、成功数、失败数和新的映射记录
+     * 处理当前活动文件中的图片（带防抖）
      */
     public async processCurrentFile(): Promise<CurrentFileUploadResult | null> {
+        // 防抖处理，防止用户快速点击
+        const now = Date.now();
+        if (now - this.lastProcessTime < this.debounceDelay) {
+            this.logger.info('操作过于频繁，请稍后再试');
+            new Notice('操作过于频繁，请稍后再试', 2000);
+            return null;
+        }
+        this.lastProcessTime = now;
+
+        // 检查是否正在处理
+        if (this.isProcessing) {
+            this.logger.info('正在处理中，请等待当前操作完成');
+            new Notice('正在处理中，请等待当前操作完成', 2000);
+            return null;
+        }
+
         // 获取当前活动的文件
         const activeFile = this.app.workspace.getActiveFile();
         if (!activeFile || activeFile.extension !== 'md') {
@@ -54,13 +67,17 @@ export class CurrentFileUploader {
         }
 
         try {
+            this.isProcessing = true;
             this.logger.info(`开始处理当前笔记文件：${activeFile.path}`);
-            new Notice(`开始处理笔记文件：${activeFile.basename}`, 2000);
+            
+            // 创建进度通知
+            const progressNotice = new Notice('正在分析图片...', 0);
 
             // 查找文件中的图片
             const imagesToUpload = await this.findImagesInFile(activeFile);
 
             if (imagesToUpload.size === 0) {
+                progressNotice.hide();
                 this.logger.info('当前笔记中没有需要上传的图片');
                 new Notice('当前笔记中没有找到需要上传的图片', 3000);
                 return {
@@ -72,20 +89,103 @@ export class CurrentFileUploader {
             }
 
             this.logger.info(`找到 ${imagesToUpload.size} 张图片需要上传.`);
+            progressNotice.setMessage(`找到 ${imagesToUpload.size} 张图片，正在准备上传...`);
 
-            // 打印所有识别到的图片地址
-            this.logger.info('图片地址列表:');
-            Array.from(imagesToUpload).forEach((imagePath, index) => {
-                this.logger.info(`[${index + 1}] ${imagePath}`);
+            // 使用上传管理器添加任务
+            const imagePaths = Array.from(imagesToUpload);
+            const tasks = await this.uploadManager.addTasks(imagePaths);
+            
+            // 监听上传进度
+            const taskResults = new Map<string, UploadTask>();
+            let completedCount = 0;
+
+            // 定义事件处理函数
+            const handleTaskComplete = (task: UploadTask) => {
+                if (tasks.some(t => t.id === task.id)) {
+                    taskResults.set(task.filePath, task);
+                    completedCount++;
+                    
+                    // 更新进度
+                    const progress = Math.round((completedCount / tasks.length) * 100);
+                    progressNotice.setMessage(`上传进度: ${progress}% (${completedCount}/${tasks.length})`);
+                }
+            };
+
+            const handleTaskFailed = (task: UploadTask) => {
+                if (tasks.some(t => t.id === task.id)) {
+                    taskResults.set(task.filePath, task);
+                    completedCount++;
+                    
+                    // 更新进度
+                    const progress = Math.round((completedCount / tasks.length) * 100);
+                    progressNotice.setMessage(`上传进度: ${progress}% (${completedCount}/${tasks.length})`);
+                }
+            };
+
+            const handleTaskCancelled = (task: UploadTask) => {
+                if (tasks.some(t => t.id === task.id)) {
+                    taskResults.set(task.filePath, task);
+                    completedCount++;
+                }
+            };
+
+            // 添加事件监听器
+            this.uploadManager.on(UploadManager.EVENTS.TASK_COMPLETED, handleTaskComplete);
+            this.uploadManager.on(UploadManager.EVENTS.TASK_FAILED, handleTaskFailed);
+            this.uploadManager.on(UploadManager.EVENTS.TASK_CANCELLED, handleTaskCancelled);
+
+            // 创建Promise来等待所有任务完成
+            const completionPromise = new Promise<void>((resolve) => {
+                const checkCompletion = setInterval(() => {
+                    if (completedCount >= tasks.length) {
+                        clearInterval(checkCompletion);
+                        resolve();
+                    }
+                }, 100);
             });
 
-            new Notice(`找到 ${imagesToUpload.size} 张图片需要上传`, 2000);
+            try {
+                // 等待所有任务完成
+                await completionPromise;
+                progressNotice.hide();
+            } finally {
+                // 清理事件监听器
+                this.uploadManager.off(UploadManager.EVENTS.TASK_COMPLETED, handleTaskComplete);
+                this.uploadManager.off(UploadManager.EVENTS.TASK_FAILED, handleTaskFailed);
+                this.uploadManager.off(UploadManager.EVENTS.TASK_CANCELLED, handleTaskCancelled);
+            }
 
-            // 上传图片
-            const {newMappings, successCount, failCount} = await this.uploadImages(Array.from(imagesToUpload));
+            // 统计结果
+            let successCount = 0;
+            let failureCount = 0;
+            const newMappings: Record<string, string> = {};
+
+            for (const [filePath, task] of taskResults) {
+                if (task.status === 'completed' && task.url) {
+                    successCount++;
+                    newMappings[filePath] = task.url;
+                } else {
+                    failureCount++;
+                }
+            }
 
             // 更新当前笔记中的链接
-            await this.updateFileLinks(activeFile, newMappings);
+            if (Object.keys(newMappings).length > 0) {
+                this.logger.info(`准备更新链接，映射关系:`, newMappings);
+                await this.updateFileLinks(activeFile, newMappings);
+                
+                // 链接更新成功后，如果启用了删除选项，删除本地文件
+                if (this.settings?.deleteAfterUpload) {
+                    for (const [filePath, url] of Object.entries(newMappings)) {
+                        try {
+                            await this.app.vault.adapter.remove(filePath);
+                            this.logger.info(`已删除本地文件: ${filePath}`);
+                        } catch (deleteError) {
+                            this.logger.warn(`删除本地文件失败: ${filePath}`, deleteError);
+                        }
+                    }
+                }
+            }
 
             this.logger.info('当前笔记图片处理完成');
 
@@ -93,13 +193,15 @@ export class CurrentFileUploader {
             return {
                 totalImages: imagesToUpload.size,
                 successCount,
-                failureCount: failCount,
+                failureCount,
                 newMappings
             };
         } catch (error) {
             this.logger.error('处理当前笔记图片时出错', error);
             new Notice(`处理图片时出错: ${(error as Error).message}`, 5000);
             return null;
+        } finally {
+            this.isProcessing = false;
         }
     }
 
@@ -139,127 +241,23 @@ export class CurrentFileUploader {
                 this.logger.warn(`无法解析图片路径: ${imagePath}`);
                 continue;
             }
-            imagePathsToUpload.add(absolutePath);
-            this.logger.info(`找到图片：${absolutePath}`);
+            
+            // 检查文件是否存在
+            const exists = await this.app.vault.adapter.exists(absolutePath);
+            if (!exists) {
+                this.logger.warn(`图片文件不存在: ${absolutePath}`);
+                continue;
+            }
+
+            // 检查文件大小
+            const stat = await this.app.vault.adapter.stat(absolutePath);
+            if (stat && stat.size) {
+                imagePathsToUpload.add(absolutePath);
+                this.logger.info(`找到图片：${absolutePath} (${this.formatFileSize(stat.size)})`);
+            }
         }
 
         return imagePathsToUpload;
-    }
-
-    /**
-     * 延迟函数 - 用于重试间隔
-     */
-    private delay(ms: number): Promise<void> {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    /**
-     * 带重试机制的上传单个图片
-     */
-    private async uploadImageWithRetry(
-        imagePath: string,
-        fileContent: ArrayBuffer,
-        retryCount = 0
-    ): Promise<{ success: boolean; imageUrl?: string }> {
-        try {
-            // 上传图片
-            const result = await this.storageProvider.uploadFile(imagePath, fileContent);
-
-            if (result.success && result.imageId) {
-                const imageUrl = this.storageProvider.getFileUrl(result.imageId);
-                return {success: true, imageUrl};
-            } else {
-                // 达到最大重试次数
-                if (retryCount >= this.retryConfig.maxRetries) {
-                    this.logger.warn(`图片上传失败，已达到最大重试次数: ${imagePath}`);
-                    return {success: false};
-                }
-
-                // 准备重试
-                this.logger.info(`图片上传失败，将进行第 ${retryCount + 1} 次重试: ${imagePath}`);
-                await this.delay(this.retryConfig.delayMs);
-                return this.uploadImageWithRetry(imagePath, fileContent, retryCount + 1);
-            }
-        } catch (error) {
-            // 达到最大重试次数
-            if (retryCount >= this.retryConfig.maxRetries) {
-                this.logger.error(`图片上传出错，已达到最大重试次数: ${imagePath}`, error);
-                return {success: false};
-            }
-
-            // 准备重试
-            this.logger.info(`图片上传出错，将进行第 ${retryCount + 1} 次重试: ${imagePath}`);
-            await this.delay(this.retryConfig.delayMs);
-            return this.uploadImageWithRetry(imagePath, fileContent, retryCount + 1);
-        }
-    }
-
-    /**
-     * 上传图片到存储服务
-     */
-    private async uploadImages(paths: string[]): Promise<{
-        newMappings: Record<string, string>,
-        successCount: number,
-        failCount: number
-    }> {
-        if (paths.length === 0) {
-            return {newMappings: {}, successCount: 0, failCount: 0};
-        }
-
-        const newMappings: Record<string, string> = {};
-        let successCount = 0;
-        let failCount = 0;
-        let currentIndex = 0;
-        const totalImages = paths.length;
-
-        // 创建和更新进度通知的函数
-        const updateProgress = () => {
-            const percentage = Math.round((currentIndex / totalImages) * 100);
-            new Notice(`上传进度: ${percentage}% (${currentIndex}/${totalImages})`, 1000);
-        };
-
-        // 显示初始进度
-        updateProgress();
-
-        for (const imagePath of paths) {
-            try {
-                // 更新进度计数
-                currentIndex++;
-
-                // 获取文件内容
-                const fileContent = await this.app.vault.adapter.readBinary(imagePath);
-
-                // 带重试的上传图片
-                const result = await this.uploadImageWithRetry(imagePath, fileContent);
-
-                if (result.success && result.imageUrl) {
-                    newMappings[imagePath] = result.imageUrl;
-                    successCount++;
-                } else {
-                    failCount++;
-                }
-
-                // 更新进度（每处理完一张图片或特定比例时更新）
-                if (currentIndex % Math.max(1, Math.floor(totalImages / 10)) === 0 || currentIndex === totalImages) {
-                    updateProgress();
-                }
-            } catch (error) {
-                this.logger.error(`处理图片时出错 ${imagePath}:`, error);
-                new Notice(`处理图片出错: ${path.basename(imagePath)}`, 3000);
-                failCount++;
-                currentIndex++;
-            }
-        }
-
-        // 显示汇总通知
-        if (successCount > 0) {
-            new Notice(`成功上传 ${successCount} 张图片`, 3000);
-        }
-        if (failCount > 0) {
-            new Notice(`有 ${failCount} 张图片上传失败`, 3000);
-        }
-
-        return {newMappings, successCount, failCount};
     }
 
     /**
@@ -292,6 +290,7 @@ export class CurrentFileUploader {
                 continue;
             }
             const newImageUrl = uploadResults[absolutePath];
+            this.logger.info(`查找标准格式映射: ${imagePath} -> ${absolutePath} -> ${newImageUrl || '未找到'}`);
 
             if (newImageUrl) {
                 // 添加匹配前的内容
@@ -327,6 +326,7 @@ export class CurrentFileUploader {
                 continue;
             }
             const newImageUrl = uploadResults[absolutePath];
+            this.logger.info(`查找Obsidian格式映射: ${imagePath} -> ${absolutePath} -> ${newImageUrl || '未找到'}`);
 
             if (newImageUrl) {
                 // 添加匹配前的内容
@@ -349,53 +349,58 @@ export class CurrentFileUploader {
         if (newContent !== content) {
             // 写入文件
             await this.app.vault.modify(file, newContent);
+            this.logger.info(`已更新文件中的图片链接: ${file.path}`);
+            this.logger.info(`更新的链接数量: ${Object.keys(uploadResults).length}`);
+        } else {
+            this.logger.warn(`文件内容未发生变化，可能链接替换失败: ${file.path}`);
         }
     }
 
     /**
      * 将图片的相对路径解析为绝对路径
-     *
-     * 1. 如果图片路径已经是绝对路径，直接返回
-     * 2. 如果图片路径是相对路径，尝试从当前文件所在的目录下查找
-     * 3. 如果当前文件所在的目录下没有找到，尝试从 vault 根目录下查找
-     * 4. 如果 vault 根目录下也没有找到，返回空字符串
-     *
-     * @param filePath 当前文件的路径
-     * @param imagePath 图片的路径（可能是相对路径或绝对路径）
-     * @returns 图片的绝对路径
      */
     private async resolveAbsolutePath(filePath: string, imagePath: string): Promise<string> {
         // 如果图片路径已经是绝对路径，直接返回
         if (path.isAbsolute(imagePath)) {
-            this.logger.info(`图片路径已经是绝对路径：${imagePath}`);
-            const exists = await this.app.vault.adapter.exists(imagePath);
-            if (exists) {
-                this.logger.info(`找到图片：${imagePath}`);
-                return imagePath;
-            }
+            return imagePath;
         }
 
         // 获取当前文件所在的目录
         let fileDir = path.dirname(filePath);
         let absolutePath = path.normalize(path.join(fileDir, imagePath));
-        this.logger.info(`尝试从当前文件所在的目录下查找图片：${absolutePath}`);
+        
+        // 尝试从当前文件所在的目录下查找
         let exists = await this.app.vault.adapter.exists(absolutePath);
         if (exists) {
-            this.logger.info(`找到图片：${absolutePath}`);
             return absolutePath;
         }
 
         // 尝试从 vault 根目录下查找
-        let vaultPath = this.app.vault.getRoot();
-        absolutePath = path.normalize(path.join(vaultPath.path, imagePath));
-        this.logger.info(`尝试从 vault 根目录下查找图片：${absolutePath}`);
+        absolutePath = path.normalize(imagePath);
         exists = await this.app.vault.adapter.exists(absolutePath);
         if (exists) {
-            this.logger.info(`找到图片：${absolutePath}`);
             return absolutePath;
         }
 
-        this.logger.warn(`图片文件不存在：${imagePath}`);
         return '';
     }
-} 
+
+    /**
+     * 格式化文件大小
+     */
+    private formatFileSize(bytes: number): string {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    /**
+     * 取消所有上传任务
+     */
+    public cancelAll(): void {
+        this.uploadManager.cancelAll();
+        this.isProcessing = false;
+    }
+}
