@@ -12,6 +12,19 @@ export interface CloudflareWorkerSettings {
 }
 
 /**
+ * R2 S3 API 设置
+ */
+export interface R2S3Settings {
+  accountId: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucketName: string;
+  folderName?: string;
+  customDomain?: string;
+  region?: string; // R2 uses auto region, but keeping for compatibility
+}
+
+/**
  * 插件设置的数据模型
  */
 export interface PluginSettings {
@@ -20,6 +33,9 @@ export interface PluginSettings {
   
   // Cloudflare Worker 设置
   workerSettings: CloudflareWorkerSettings;
+  
+  // R2 S3 API 设置
+  r2S3Settings?: R2S3Settings;
   
   // 自动上传设置
   enableAutoPaste: boolean;
@@ -48,6 +64,15 @@ export const DEFAULT_SETTINGS: PluginSettings = {
     bucketName: "",
     folderName: "",
     customDomain: ""
+  },
+  r2S3Settings: {
+    accountId: "",
+    accessKeyId: "",
+    secretAccessKey: "",
+    bucketName: "",
+    folderName: "",
+    customDomain: "",
+    region: "auto"
   },
   enableAutoPaste: false,
   deleteAfterUpload: false,

@@ -1,7 +1,7 @@
 import {EventEmitter} from 'events';
 import {App, TFile} from 'obsidian';
 import {StorageProvider} from '../models/storage-provider';
-import {UploadTask, UploadConfig, UploadStatus, UploadError} from '../models/upload-task';
+import {UploadConfig, UploadError, UploadTask} from '../models/upload-task';
 import {Logger} from '../utils/logger';
 
 /**
@@ -77,7 +77,7 @@ export class UploadManager extends EventEmitter {
      * 更新配置
      */
     updateConfig(config: Partial<UploadConfig>): void {
-        this.config = { ...this.config, ...config };
+        this.config = {...this.config, ...config};
         this.logger.info('上传管理器配置已更新', config);
     }
 
@@ -230,7 +230,7 @@ export class UploadManager extends EventEmitter {
                 arrayBuffer,
                 task.fileName,
                 onProgress,
-                { timeout: this.config.timeout }
+                {timeout: this.config.timeout}
             );
 
             // 上传成功

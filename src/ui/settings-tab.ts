@@ -1,5 +1,6 @@
 import {App, PluginSettingTab, Setting, Notice} from 'obsidian';
 import {CloudflareImagesUploader} from '../core/main';
+import {StorageProviderType} from '../models/storage-provider';
 
 /**
  * 设置选项卡
@@ -26,15 +27,40 @@ export class SettingsTab extends PluginSettingTab {
         });
         
         const ol = introDiv.createEl('ol');
-        ol.createEl('li', {text: '部署 Cloudflare R2 Worker（参考项目文档）'});
-        ol.createEl('li', {text: '获取 Worker URL 和 API Key'});
-        ol.createEl('li', {text: '在下方填写相关配置信息'});
-        ol.createEl('li', {text: '保存设置后即可开始使用'});
+        if (this.plugin.settings.storageProvider === StorageProviderType.CLOUDFLARE_WORKER) {
+            ol.createEl('li', {text: '部署 Cloudflare R2 Worker（参考项目文档）'});
+            ol.createEl('li', {text: '获取 Worker URL 和 API Key'});
+            ol.createEl('li', {text: '在下方填写相关配置信息'});
+            ol.createEl('li', {text: '保存设置后即可开始使用'});
+        } else {
+            ol.createEl('li', {text: '在 Cloudflare 控制台创建 R2 存储桶'});
+            ol.createEl('li', {text: '创建 R2 API 令牌（需要 R2 Token 权限）'});
+            ol.createEl('li', {text: '获取账户 ID、Access Key ID 和 Secret Access Key'});
+            ol.createEl('li', {text: '在下方填写相关配置信息'});
+            ol.createEl('li', {text: '保存设置后即可开始使用'});
+        }
 
         containerEl.createEl('hr');
 
         // 分组标题
         containerEl.createEl('h2', {text: '基础设置'});
+
+        // 存储提供者选择
+        new Setting(containerEl)
+            .setName('存储提供者')
+            .setDesc('选择图片上传的存储服务')
+            .addDropdown(dropdown => {
+                dropdown
+                    .addOption(StorageProviderType.CLOUDFLARE_WORKER, 'Cloudflare Worker')
+                    .addOption(StorageProviderType.R2_S3_API, 'R2 S3 API (直连)')
+                    .setValue(this.plugin.settings.storageProvider)
+                    .onChange(async (value: string) => {
+                        this.plugin.settings.storageProvider = value as StorageProviderType;
+                        await this.plugin.saveSettings();
+                        // 重新渲染设置页面以显示对应的配置选项
+                        this.display();
+                    });
+            });
 
         // 自动粘贴上传设置
         new Setting(containerEl)
@@ -62,11 +88,13 @@ export class SettingsTab extends PluginSettingTab {
                     });
             });
 
-        // Cloudflare Worker 设置分组
-        containerEl.createEl('h2', {text: 'Cloudflare Worker 设置'});
+        // 根据选择的存储提供者显示对应的设置
+        if (this.plugin.settings.storageProvider === StorageProviderType.CLOUDFLARE_WORKER) {
+            // Cloudflare Worker 设置分组
+            containerEl.createEl('h2', {text: 'Cloudflare Worker 设置'});
 
-        // Worker URL
-        new Setting(containerEl)
+            // Worker URL
+            new Setting(containerEl)
             .setName('Worker URL')
             .setDesc('您部署的 Cloudflare R2 Worker 的 URL')
             .addText(text => text
@@ -136,6 +164,164 @@ export class SettingsTab extends PluginSettingTab {
                     this.plugin.settings.workerSettings.customDomain = value.trim();
                     await this.plugin.saveSettings();
                 }));
+        } else if (this.plugin.settings.storageProvider === StorageProviderType.R2_S3_API) {
+            // R2 S3 API 设置分组
+            containerEl.createEl('h2', {text: 'R2 S3 API 设置'});
+
+            // 添加帮助信息
+            const helpDiv = containerEl.createDiv({cls: 'setting-item-description'});
+            helpDiv.createEl('p', {
+                text: '提示：在 Cloudflare 控制台右侧可以找到账户 ID。创建 R2 API 令牌时，请选择 "对象读和写" 权限。'
+            });
+            
+            // CORS 配置提示
+            const corsDiv = containerEl.createDiv({cls: 'setting-item-description'});
+            corsDiv.createEl('p', {
+                text: '注意：如果遇到 CORS 错误，这是正常现象。插件会自动重试，通常第二次就能成功。这是由于 R2 的 CORS 策略导致的。'
+            });
+
+            // 账户 ID
+            new Setting(containerEl)
+                .setName('账户 ID')
+                .setDesc('您的 Cloudflare 账户 ID（在控制台右侧可找到）')
+                .addText(text => text
+                    .setPlaceholder('输入您的账户 ID')
+                    .setValue(this.plugin.settings.r2S3Settings?.accountId || '')
+                    .onChange(async (value) => {
+                        if (!this.plugin.settings.r2S3Settings) {
+                            this.plugin.settings.r2S3Settings = {
+                                accountId: '',
+                                accessKeyId: '',
+                                secretAccessKey: '',
+                                bucketName: '',
+                                folderName: '',
+                                customDomain: '',
+                                region: 'auto'
+                            };
+                        }
+                        this.plugin.settings.r2S3Settings.accountId = value.trim();
+                        await this.plugin.saveSettings();
+                    }));
+
+            // Access Key ID
+            new Setting(containerEl)
+                .setName('Access Key ID')
+                .setDesc('R2 API 令牌的 Access Key ID')
+                .addText(text => text
+                    .setPlaceholder('输入您的 Access Key ID')
+                    .setValue(this.plugin.settings.r2S3Settings?.accessKeyId || '')
+                    .onChange(async (value) => {
+                        if (!this.plugin.settings.r2S3Settings) {
+                            this.plugin.settings.r2S3Settings = {
+                                accountId: '',
+                                accessKeyId: '',
+                                secretAccessKey: '',
+                                bucketName: '',
+                                folderName: '',
+                                customDomain: '',
+                                region: 'auto'
+                            };
+                        }
+                        this.plugin.settings.r2S3Settings.accessKeyId = value.trim();
+                        await this.plugin.saveSettings();
+                    }));
+
+            // Secret Access Key
+            new Setting(containerEl)
+                .setName('Secret Access Key')
+                .setDesc('R2 API 令牌的 Secret Access Key')
+                .addText(text => {
+                    // 将文本框转换为密码框
+                    text.inputEl.type = 'password';
+                    text.inputEl.autocomplete = 'off';
+                    text.setPlaceholder('输入您的 Secret Access Key')
+                        .setValue(this.plugin.settings.r2S3Settings?.secretAccessKey || '')
+                        .onChange(async (value) => {
+                            if (!this.plugin.settings.r2S3Settings) {
+                                this.plugin.settings.r2S3Settings = {
+                                    accountId: '',
+                                    accessKeyId: '',
+                                    secretAccessKey: '',
+                                    bucketName: '',
+                                    folderName: '',
+                                    customDomain: '',
+                                    region: 'auto'
+                                };
+                            }
+                            this.plugin.settings.r2S3Settings.secretAccessKey = value.trim();
+                            await this.plugin.saveSettings();
+                        });
+                });
+
+            // 存储桶名称
+            new Setting(containerEl)
+                .setName('存储桶名称')
+                .setDesc('Cloudflare R2 存储桶的名称')
+                .addText(text => text
+                    .setPlaceholder('输入您的存储桶名称')
+                    .setValue(this.plugin.settings.r2S3Settings?.bucketName || '')
+                    .onChange(async (value) => {
+                        if (!this.plugin.settings.r2S3Settings) {
+                            this.plugin.settings.r2S3Settings = {
+                                accountId: '',
+                                accessKeyId: '',
+                                secretAccessKey: '',
+                                bucketName: '',
+                                folderName: '',
+                                customDomain: '',
+                                region: 'auto'
+                            };
+                        }
+                        this.plugin.settings.r2S3Settings.bucketName = value.trim();
+                        await this.plugin.saveSettings();
+                    }));
+
+            // 文件夹名称（可选）
+            new Setting(containerEl)
+                .setName('文件夹名称（可选）')
+                .setDesc('上传图片到指定文件夹，留空则上传到根目录')
+                .addText(text => text
+                    .setPlaceholder('请输入上传的文件夹名称')
+                    .setValue(this.plugin.settings.r2S3Settings?.folderName || '')
+                    .onChange(async (value) => {
+                        if (!this.plugin.settings.r2S3Settings) {
+                            this.plugin.settings.r2S3Settings = {
+                                accountId: '',
+                                accessKeyId: '',
+                                secretAccessKey: '',
+                                bucketName: '',
+                                folderName: '',
+                                customDomain: '',
+                                region: 'auto'
+                            };
+                        }
+                        this.plugin.settings.r2S3Settings.folderName = value.trim();
+                        await this.plugin.saveSettings();
+                    }));
+
+            // 自定义域名（可选）
+            new Setting(containerEl)
+                .setName('自定义域名（可选）')
+                .setDesc('如果您为 R2 配置了自定义域名，请在此输入')
+                .addText(text => text
+                    .setPlaceholder('https://images.yourdomain.com')
+                    .setValue(this.plugin.settings.r2S3Settings?.customDomain || '')
+                    .onChange(async (value) => {
+                        if (!this.plugin.settings.r2S3Settings) {
+                            this.plugin.settings.r2S3Settings = {
+                                accountId: '',
+                                accessKeyId: '',
+                                secretAccessKey: '',
+                                bucketName: '',
+                                folderName: '',
+                                customDomain: '',
+                                region: 'auto'
+                            };
+                        }
+                        this.plugin.settings.r2S3Settings.customDomain = value.trim();
+                        await this.plugin.saveSettings();
+                    }));
+        }
 
         // 高级设置分组
         containerEl.createEl('h2', {text: '高级设置'});
@@ -241,7 +427,7 @@ export class SettingsTab extends PluginSettingTab {
         const helpList = helpDiv.createEl('ul');
         helpList.createEl('li').createEl('a', {
             text: 'GitHub 项目主页',
-            href: 'https://github.com/wangweiX/obsidian-cloudflare-r2-uploader'
+            href: 'https://github.com/wangweiX/cloudflare-r2-uploader'
         });
         helpList.createEl('li').createEl('a', {
             text: 'Cloudflare R2 Worker 部署指南',
