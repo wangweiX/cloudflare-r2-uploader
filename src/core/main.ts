@@ -1,13 +1,14 @@
 import {addIcon, Plugin} from 'obsidian';
 import {DEFAULT_SETTINGS, PluginSettings} from '../models/settings';
 import {CloudflareWorkerService} from '../services/worker-service';
+import {R2S3Service} from '../services/r2-s3-service';
 import {ImageService} from '../services/image-service';
 import {PasteHandler} from '../services/paste-handler';
 import {CurrentFileUploader} from '../services/current-file-uploader';
 import {UploadManager} from '../services/upload-manager';
 import {SettingsTab} from '../ui/settings-tab';
 import {Logger} from '../utils/logger';
-import {StorageProvider} from '../models/storage-provider';
+import {StorageProvider, StorageProviderType} from '../models/storage-provider';
 
 // 上传当前文件按钮的图标
 const UPLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100" height="100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>`;
@@ -208,8 +209,17 @@ export class CloudflareImagesUploader extends Plugin {
      * 创建存储提供者
      */
     private createStorageProvider(): StorageProvider {
-        // 只支持Worker存储提供者
-        return new CloudflareWorkerService(this.settings);
+        // 根据设置选择存储提供者
+        switch (this.settings.storageProvider) {
+            case StorageProviderType.R2_S3_API:
+                if (!this.settings.r2S3Settings) {
+                    throw new Error('R2 S3 API 设置未配置');
+                }
+                return new R2S3Service(this.settings.r2S3Settings);
+            case StorageProviderType.CLOUDFLARE_WORKER:
+            default:
+                return new CloudflareWorkerService(this.settings);
+        }
     }
 
     /**
@@ -276,11 +286,26 @@ export class CloudflareImagesUploader extends Plugin {
      * 验证设置
      */
     private validateSettings(): boolean {
-        const {workerUrl, apiKey} = this.settings.workerSettings;
-        if (!workerUrl || !apiKey) {
-            this.logger.notify('请先在插件设置中完成 Cloudflare Worker 的配置。', 5000);
-            return false;
+        switch (this.settings.storageProvider) {
+            case StorageProviderType.R2_S3_API:
+                if (!this.settings.r2S3Settings) {
+                    this.logger.notify('请先在插件设置中完成 R2 S3 API 的配置。', 5000);
+                    return false;
+                }
+                const {accountId, accessKeyId, secretAccessKey, bucketName} = this.settings.r2S3Settings;
+                if (!accountId || !accessKeyId || !secretAccessKey || !bucketName) {
+                    this.logger.notify('请先在插件设置中完成 R2 S3 API 的配置。', 5000);
+                    return false;
+                }
+                return true;
+            case StorageProviderType.CLOUDFLARE_WORKER:
+            default:
+                const {workerUrl, apiKey} = this.settings.workerSettings;
+                if (!workerUrl || !apiKey) {
+                    this.logger.notify('请先在插件设置中完成 Cloudflare Worker 的配置。', 5000);
+                    return false;
+                }
+                return true;
         }
-        return true;
     }
 }

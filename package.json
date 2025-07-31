@@ -21,12 +21,14 @@
     "@types/node": "^20.11.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "@aws-sdk/client-s3": "^3.857.0",
     "archiver": "^7.0.1",
     "builtin-modules": "^3.3.0",
     "esbuild": "^0.25.8",
     "obsidian": "latest",
     "ts-node": "^10.9.2",
     "typescript": "^5.0.0"
+
   },
   "dependencies": {
     "@types/uuid": "^10.0.0",

@@ -2,7 +2,8 @@
  * 存储提供者类型枚举
  */
 export enum StorageProviderType {
-    CLOUDFLARE_WORKER = 'cloudflare_worker'
+    CLOUDFLARE_WORKER = 'cloudflare_worker',
+    R2_S3_API = 'r2_s3_api'
 }
 
 /**
