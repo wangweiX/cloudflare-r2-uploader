@@ -38,7 +38,7 @@ export interface StorageProvider {
      * @param options 上传选项
      */
     uploadImage(
-        fileContent: ArrayBuffer, 
+        fileContent: ArrayBuffer,
         fileName: string,
         onProgress?: (progress: number) => void,
         options?: UploadOptions

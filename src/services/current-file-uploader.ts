@@ -1,9 +1,9 @@
-import { App, Notice, TFile } from 'obsidian';
+import {App, Notice, TFile} from 'obsidian';
 import * as path from 'path';
-import { StorageProvider } from '../models/storage-provider';
-import { UploadManager } from './upload-manager';
-import { UploadTask } from '../models/upload-task';
-import { Logger } from '../utils/logger';
+import {StorageProvider} from '../models/storage-provider';
+import {UploadManager} from './upload-manager';
+import {UploadTask} from '../models/upload-task';
+import {Logger} from '../utils/logger';
 
 /**
  * 当前文件上传结果接口
@@ -69,7 +69,7 @@ export class CurrentFileUploader {
         try {
             this.isProcessing = true;
             this.logger.info(`开始处理当前笔记文件：${activeFile.path}`);
-            
+
             // 创建进度通知
             const progressNotice = new Notice('正在分析图片...', 0);
 
@@ -94,7 +94,7 @@ export class CurrentFileUploader {
             // 使用上传管理器添加任务
             const imagePaths = Array.from(imagesToUpload);
             const tasks = await this.uploadManager.addTasks(imagePaths);
-            
+
             // 监听上传进度
             const taskResults = new Map<string, UploadTask>();
             let completedCount = 0;
@@ -104,7 +104,7 @@ export class CurrentFileUploader {
                 if (tasks.some(t => t.id === task.id)) {
                     taskResults.set(task.filePath, task);
                     completedCount++;
-                    
+
                     // 更新进度
                     const progress = Math.round((completedCount / tasks.length) * 100);
                     progressNotice.setMessage(`上传进度: ${progress}% (${completedCount}/${tasks.length})`);
@@ -115,7 +115,7 @@ export class CurrentFileUploader {
                 if (tasks.some(t => t.id === task.id)) {
                     taskResults.set(task.filePath, task);
                     completedCount++;
-                    
+
                     // 更新进度
                     const progress = Math.round((completedCount / tasks.length) * 100);
                     progressNotice.setMessage(`上传进度: ${progress}% (${completedCount}/${tasks.length})`);
@@ -173,7 +173,7 @@ export class CurrentFileUploader {
             if (Object.keys(newMappings).length > 0) {
                 this.logger.info(`准备更新链接，映射关系:`, newMappings);
                 await this.updateFileLinks(activeFile, newMappings);
-                
+
                 // 链接更新成功后，如果启用了删除选项，删除本地文件
                 if (this.settings?.deleteAfterUpload) {
                     for (const [filePath, url] of Object.entries(newMappings)) {
@@ -241,7 +241,7 @@ export class CurrentFileUploader {
                 this.logger.warn(`无法解析图片路径: ${imagePath}`);
                 continue;
             }
-            
+
             // 检查文件是否存在
             const exists = await this.app.vault.adapter.exists(absolutePath);
             if (!exists) {
@@ -368,7 +368,7 @@ export class CurrentFileUploader {
         // 获取当前文件所在的目录
         let fileDir = path.dirname(filePath);
         let absolutePath = path.normalize(path.join(fileDir, imagePath));
-        
+
         // 尝试从当前文件所在的目录下查找
         let exists = await this.app.vault.adapter.exists(absolutePath);
         if (exists) {
