@@ -1,7 +1,6 @@
 import {App, Editor, EventRef, MarkdownView, Notice, Plugin} from 'obsidian';
 import {v4 as uuidv4} from 'uuid';
 import {StorageProvider} from '../models/storage-provider';
-import {UploadManager} from './upload-manager';
 import {Logger} from '../utils/logger';
 
 /**
@@ -76,7 +75,7 @@ export class PasteHandler {
         }
 
         const items = evt.clipboardData.items;
-        const imagesToProcess: Array<{file: File, type: string}> = [];
+        const imagesToProcess: Array<{ file: File, type: string }> = [];
 
         // 先检查是否有图片
         for (let i = 0; i < items.length; i++) {
@@ -97,7 +96,7 @@ export class PasteHandler {
         if (imagesToProcess.length > 0) {
             evt.preventDefault();
             evt.stopPropagation();
-            
+
             // 异步处理图片上传
             for (const {file, type} of imagesToProcess) {
                 await this.processImageUpload(file, editor, type);
@@ -132,7 +131,7 @@ export class PasteHandler {
                     arrayBuffer,
                     filename,
                     undefined,
-                    { timeout: 30000 }
+                    {timeout: 30000}
                 );
 
                 // 上传成功，替换占位符为云端链接
