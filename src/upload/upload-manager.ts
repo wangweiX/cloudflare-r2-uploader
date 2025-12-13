@@ -39,8 +39,9 @@ export class UploadManager extends EventEmitter {
     // Dependencies
     private readonly app: App;
     private readonly logger: Logger;
-    private readonly taskRunner: TaskRunner;
+    private taskRunner: TaskRunner;
     private readonly retryStrategy: IRetryStrategy;
+    private readonly fileReader: VaultFileReader;
 
     // Configuration
     private config: UploadConfig;
@@ -72,8 +73,8 @@ export class UploadManager extends EventEmitter {
         this.logger = Logger.getInstance();
 
         // Initialize dependencies
-        const fileReader = new VaultFileReader(app);
-        this.taskRunner = new TaskRunner(fileReader, storageProvider);
+        this.fileReader = new VaultFileReader(app);
+        this.taskRunner = new TaskRunner(this.fileReader, storageProvider);
         this.retryStrategy = ExponentialBackoffStrategy.fromUploadConfig(config);
     }
 
@@ -110,6 +111,34 @@ export class UploadManager extends EventEmitter {
 
     setDeleteAfterUpload(value: boolean): void {
         this.deleteAfterUpload = value;
+    }
+
+    /**
+     * Update the storage provider.
+     *
+     * IMPORTANT: This should be called when switching between Worker and R2 S3 providers.
+     * The method will:
+     * 1. Cancel any pending/active tasks (to avoid using old provider)
+     * 2. Create a new TaskRunner with the new provider
+     * 3. Clear upload history (since provider changed, previous uploads are irrelevant)
+     */
+    updateStorageProvider(storageProvider: StorageProvider): void {
+        // Cancel pending tasks to avoid confusion
+        const hasPendingTasks = this.queue.length > 0 || this.activeTasks.size > 0;
+        if (hasPendingTasks) {
+            this.cancelAll();
+            this.logger.warn('切换存储提供者，已取消所有待处理任务');
+        }
+
+        // Create new TaskRunner with new provider
+        this.taskRunner = new TaskRunner(this.fileReader, storageProvider);
+
+        // Clear upload history since provider changed
+        this.uploadedFiles.clear();
+        this.completedTasks.clear();
+
+        this.logger.info(`存储提供者已切换: ${storageProvider.getType()}`);
+        this.emitStatsUpdate();
     }
 
     // ===== Task Addition =====

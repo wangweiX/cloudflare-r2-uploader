@@ -172,8 +172,17 @@ export class CloudflareImagesUploader extends Plugin {
         this.logger.setShowDetailedLogs(this.settings.showDetailedLogs || false);
         this.logger.setShowProgressNotifications(this.settings.showProgressNotifications ?? true);
 
-        // 更新存储提供者
+        // 检查存储提供者是否变更
+        const previousProviderType = this.storageProvider.getType();
+        const newProviderType = this.settings.storageProvider;
+
+        // 重新创建存储提供者
         this.storageProvider = this.createStorageProvider();
+
+        // 仅当提供者类型变更时，才更新上传管理器的存储提供者
+        if (previousProviderType !== newProviderType) {
+            this.uploadManager.updateStorageProvider(this.storageProvider);
+        }
 
         // 更新上传管理器配置
         this.uploadManager.updateConfig({
