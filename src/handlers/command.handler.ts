@@ -8,7 +8,7 @@
  */
 
 import {Plugin} from 'obsidian';
-import {PluginSettings, StorageProviderType} from '../types';
+import {isR2S3Provider, isWorkerProvider, PluginSettings, R2S3ProviderSettings, WorkerProviderSettings} from '../types';
 import {CurrentFileUploader, UploadManager} from '../upload';
 import {ImageFinder} from '../image';
 import {Logger} from '../utils';
@@ -170,27 +170,32 @@ export class CommandHandler {
     // ===== Settings Validation =====
 
     /**
-     * Validate settings before upload operations
+     * Validate settings before upload operations.
+     * Uses type guards for type-safe provider-specific validation.
      */
     private validateSettings(): boolean {
         const settings = this.deps.getSettings();
 
-        switch (settings.storageProvider) {
-            case StorageProviderType.R2_S3_API:
-                return this.validateR2S3Settings(settings);
-
-            case StorageProviderType.CLOUDFLARE_WORKER:
-            default:
-                return this.validateWorkerSettings(settings);
+        // Use type guards for type-safe validation
+        if (isR2S3Provider(settings)) {
+            return this.validateR2S3Settings(settings);
         }
+
+        if (isWorkerProvider(settings)) {
+            return this.validateWorkerSettings(settings);
+        }
+
+        // Should never reach here with proper discriminated union
+        this.logger.notify('未知的存储提供者类型', 5000);
+        return false;
     }
 
-    private validateR2S3Settings(settings: PluginSettings): boolean {
-        if (!settings.r2S3Settings) {
-            this.logger.notify('请先在插件设置中完成 R2 S3 API 的配置。', 5000);
-            return false;
-        }
-
+    /**
+     * Validate R2 S3 API settings.
+     * Type guard ensures settings.r2S3Settings is defined.
+     */
+    private validateR2S3Settings(settings: R2S3ProviderSettings): boolean {
+        // TypeScript knows r2S3Settings is defined due to type guard
         const {accountId, accessKeyId, secretAccessKey, bucketName} = settings.r2S3Settings;
         if (!accountId || !accessKeyId || !secretAccessKey || !bucketName) {
             this.logger.notify('请先在插件设置中完成 R2 S3 API 的配置。', 5000);
@@ -200,7 +205,10 @@ export class CommandHandler {
         return true;
     }
 
-    private validateWorkerSettings(settings: PluginSettings): boolean {
+    /**
+     * Validate Cloudflare Worker settings.
+     */
+    private validateWorkerSettings(settings: WorkerProviderSettings): boolean {
         const {workerUrl, apiKey} = settings.workerSettings;
         if (!workerUrl || !apiKey) {
             this.logger.notify('请先在插件设置中完成 Cloudflare Worker 的配置。', 5000);

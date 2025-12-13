@@ -2,26 +2,21 @@
  * R2S3Section - R2 S3 API settings
  */
 
-import {R2S3Settings} from '../../types';
+import {isR2S3Provider} from '../../types';
 import {BaseSection} from './base-section';
-import {createTextInput, createPasswordInput} from '../helpers';
-
-/**
- * Default R2 S3 settings for initialization
- */
-const DEFAULT_R2S3_SETTINGS: R2S3Settings = {
-    accountId: '',
-    accessKeyId: '',
-    secretAccessKey: '',
-    bucketName: '',
-    folderName: '',
-    customDomain: '',
-    region: 'auto'
-};
+import {createPasswordInput, createTextInput} from '../helpers';
 
 export class R2S3Section extends BaseSection {
     public render(container: HTMLElement): void {
         this.createHeading(container, 'R2 S3 API 设置');
+
+        // Type guard ensures we have R2S3ProviderSettings
+        if (!isR2S3Provider(this.settings)) {
+            container.createEl('p', {text: '错误：当前不是 R2 S3 API 存储提供者'});
+            return;
+        }
+
+        const r2Settings = this.settings.r2S3Settings;
 
         // Help info
         const helpDiv = this.createDescription(container);
@@ -40,9 +35,9 @@ export class R2S3Section extends BaseSection {
             name: '账户 ID',
             desc: '您的 Cloudflare 账户 ID（在控制台右侧可找到）',
             placeholder: '输入您的账户 ID',
-            getValue: () => this.getR2Settings().accountId,
+            getValue: () => r2Settings.accountId,
             setValue: async (value) => {
-                this.ensureR2Settings().accountId = value;
+                r2Settings.accountId = value;
                 await this.save();
             }
         });
@@ -52,9 +47,9 @@ export class R2S3Section extends BaseSection {
             name: 'Access Key ID',
             desc: 'R2 API 令牌的 Access Key ID',
             placeholder: '输入您的 Access Key ID',
-            getValue: () => this.getR2Settings().accessKeyId,
+            getValue: () => r2Settings.accessKeyId,
             setValue: async (value) => {
-                this.ensureR2Settings().accessKeyId = value;
+                r2Settings.accessKeyId = value;
                 await this.save();
             }
         });
@@ -64,9 +59,9 @@ export class R2S3Section extends BaseSection {
             name: 'Secret Access Key',
             desc: 'R2 API 令牌的 Secret Access Key',
             placeholder: '输入您的 Secret Access Key',
-            getValue: () => this.getR2Settings().secretAccessKey,
+            getValue: () => r2Settings.secretAccessKey,
             setValue: async (value) => {
-                this.ensureR2Settings().secretAccessKey = value;
+                r2Settings.secretAccessKey = value;
                 await this.save();
             }
         });
@@ -76,9 +71,9 @@ export class R2S3Section extends BaseSection {
             name: '存储桶名称',
             desc: 'Cloudflare R2 存储桶的名称',
             placeholder: '输入您的存储桶名称',
-            getValue: () => this.getR2Settings().bucketName,
+            getValue: () => r2Settings.bucketName,
             setValue: async (value) => {
-                this.ensureR2Settings().bucketName = value;
+                r2Settings.bucketName = value;
                 await this.save();
             }
         });
@@ -88,9 +83,9 @@ export class R2S3Section extends BaseSection {
             name: '文件夹名称（可选）',
             desc: '上传图片到指定文件夹，留空则上传到根目录',
             placeholder: '请输入上传的文件夹名称',
-            getValue: () => this.getR2Settings().folderName || '',
+            getValue: () => r2Settings.folderName || '',
             setValue: async (value) => {
-                this.ensureR2Settings().folderName = value;
+                r2Settings.folderName = value;
                 await this.save();
             }
         });
@@ -100,28 +95,11 @@ export class R2S3Section extends BaseSection {
             name: '自定义域名（可选）',
             desc: '如果您为 R2 配置了自定义域名，请在此输入',
             placeholder: 'https://images.yourdomain.com',
-            getValue: () => this.getR2Settings().customDomain || '',
+            getValue: () => r2Settings.customDomain || '',
             setValue: async (value) => {
-                this.ensureR2Settings().customDomain = value;
+                r2Settings.customDomain = value;
                 await this.save();
             }
         });
-    }
-
-    /**
-     * Get R2 settings, returning defaults if not set
-     */
-    private getR2Settings(): R2S3Settings {
-        return this.settings.r2S3Settings || DEFAULT_R2S3_SETTINGS;
-    }
-
-    /**
-     * Ensure R2 settings exist, initializing if needed
-     */
-    private ensureR2Settings(): R2S3Settings {
-        if (!this.settings.r2S3Settings) {
-            this.settings.r2S3Settings = {...DEFAULT_R2S3_SETTINGS};
-        }
-        return this.settings.r2S3Settings;
     }
 }

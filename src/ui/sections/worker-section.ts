@@ -2,12 +2,19 @@
  * WorkerSection - Cloudflare Worker settings
  */
 
+import {isWorkerProvider} from '../../types';
 import {BaseSection} from './base-section';
-import {createTextInput, createPasswordInput} from '../helpers';
+import {createPasswordInput, createTextInput} from '../helpers';
 
 export class WorkerSection extends BaseSection {
     public render(container: HTMLElement): void {
         this.createHeading(container, 'Cloudflare Worker 设置');
+
+        // Type guard ensures we have WorkerProviderSettings
+        if (!isWorkerProvider(this.settings)) {
+            container.createEl('p', {text: '错误：当前不是 Worker 存储提供者'});
+            return;
+        }
 
         const workerSettings = this.settings.workerSettings;
 

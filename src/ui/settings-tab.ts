@@ -9,7 +9,7 @@
 
 import {App, Notice, PluginSettingTab, Setting} from 'obsidian';
 import type {CloudflareImagesUploader} from '../core/main';
-import {StorageProviderType} from '../types';
+import {isR2S3Provider, isWorkerProvider, StorageProviderType} from '../types';
 import {
     SectionDeps,
     BasicSection,
@@ -43,7 +43,10 @@ export class SettingsTab extends PluginSettingTab {
 
         new BasicSection({
             ...deps,
-            onProviderChange: () => this.display()
+            onProviderChange: () => this.display(),
+            setSettings: (settings) => {
+                this.plugin.settings = settings;
+            }
         }).render(containerEl);
 
         this.renderProviderSection(containerEl, deps);
@@ -139,6 +142,11 @@ export class SettingsTab extends PluginSettingTab {
      * Validate Worker configuration
      */
     private validateWorkerConfig(): void {
+        if (!isWorkerProvider(this.plugin.settings)) {
+            new Notice('当前未选择 Worker 存储提供者');
+            return;
+        }
+
         const {workerUrl, apiKey, bucketName} = this.plugin.settings.workerSettings;
 
         if (!workerUrl || !apiKey || !bucketName) {
@@ -159,14 +167,12 @@ export class SettingsTab extends PluginSettingTab {
      * Validate R2 S3 API configuration
      */
     private validateR2S3Config(): void {
-        const r2Settings = this.plugin.settings.r2S3Settings;
-
-        if (!r2Settings) {
-            new Notice('请先填写 R2 S3 API 配置');
+        if (!isR2S3Provider(this.plugin.settings)) {
+            new Notice('当前未选择 R2 S3 API 存储提供者');
             return;
         }
 
-        const {accountId, accessKeyId, secretAccessKey, bucketName} = r2Settings;
+        const {accountId, accessKeyId, secretAccessKey, bucketName} = this.plugin.settings.r2S3Settings;
 
         if (!accountId || !accessKeyId || !secretAccessKey || !bucketName) {
             new Notice('请先填写所有必需的 R2 配置项（账户 ID、Access Key、Secret Key、存储桶名称）');

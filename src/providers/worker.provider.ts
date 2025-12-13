@@ -1,4 +1,4 @@
-import {PluginSettings, StorageProviderType} from '../types';
+import {StorageProviderType, WorkerProviderSettings} from '../types';
 import {BaseStorageProvider, ErrorClassifier, ExecuteUploadResult, isCommonNetworkError, ProviderUploadSettings} from './base.provider';
 
 /**
@@ -18,7 +18,7 @@ export class CloudflareWorkerService extends BaseStorageProvider {
         getErrorCode: (err) => err.code || err.status
     };
 
-    constructor(private settings: PluginSettings) {
+    constructor(private settings: WorkerProviderSettings) {
         super();
     }
 

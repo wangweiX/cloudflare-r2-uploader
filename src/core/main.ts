@@ -1,9 +1,17 @@
 import {addIcon, Plugin} from 'obsidian';
-import {DEFAULT_SETTINGS, UPLOAD_ICON} from '../config';
-import {PluginSettings, StorageProvider, StorageProviderType} from '../types';
+import {
+    createR2S3Settings,
+    createWorkerSettings,
+    DEFAULT_BASE_SETTINGS,
+    DEFAULT_R2S3_SETTINGS,
+    DEFAULT_SETTINGS,
+    DEFAULT_WORKER_SETTINGS,
+    UPLOAD_ICON
+} from '../config';
+import {isR2S3Provider, isWorkerProvider, PluginSettings, StorageProvider, StorageProviderType} from '../types';
 import {CloudflareWorkerService, R2S3Service} from '../providers';
 import {ImageFinder} from '../image';
-import {PasteHandler, CommandHandler} from '../handlers';
+import {CommandHandler, PasteHandler} from '../handlers';
 import {CurrentFileUploader, UploadManager} from '../upload';
 import {SettingsTab} from '../ui/settings-tab';
 import {Logger} from '../utils';
@@ -56,7 +64,49 @@ export class CloudflareImagesUploader extends Plugin {
     // ===== Settings =====
 
     async loadSettings(): Promise<void> {
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+        const savedData = await this.loadData();
+        this.settings = this.migrateSettings(savedData);
+    }
+
+    /**
+     * Migrate settings from old format (both providers stored) to new format (discriminated union).
+     * Also handles first-time initialization when no saved data exists.
+     */
+    private migrateSettings(savedData: any): PluginSettings {
+        if (!savedData) {
+            return DEFAULT_SETTINGS;
+        }
+
+        // Extract base settings that are common to both providers
+        const baseSettings = {
+            enableAutoPaste: savedData.enableAutoPaste ?? DEFAULT_BASE_SETTINGS.enableAutoPaste,
+            deleteAfterUpload: savedData.deleteAfterUpload ?? DEFAULT_BASE_SETTINGS.deleteAfterUpload,
+            maxConcurrentUploads: savedData.maxConcurrentUploads ?? DEFAULT_BASE_SETTINGS.maxConcurrentUploads,
+            maxRetries: savedData.maxRetries ?? DEFAULT_BASE_SETTINGS.maxRetries,
+            retryDelay: savedData.retryDelay ?? DEFAULT_BASE_SETTINGS.retryDelay,
+            maxRetryDelay: savedData.maxRetryDelay ?? DEFAULT_BASE_SETTINGS.maxRetryDelay,
+            uploadTimeout: savedData.uploadTimeout ?? DEFAULT_BASE_SETTINGS.uploadTimeout,
+            showDetailedLogs: savedData.showDetailedLogs ?? DEFAULT_BASE_SETTINGS.showDetailedLogs,
+            showProgressNotifications: savedData.showProgressNotifications ?? DEFAULT_BASE_SETTINGS.showProgressNotifications
+        };
+
+        // Determine provider type and create appropriate settings
+        const providerType = savedData.storageProvider ?? StorageProviderType.CLOUDFLARE_WORKER;
+
+        if (providerType === StorageProviderType.R2_S3_API) {
+            return {
+                storageProvider: StorageProviderType.R2_S3_API,
+                r2S3Settings: savedData.r2S3Settings ?? {...DEFAULT_R2S3_SETTINGS},
+                ...baseSettings
+            };
+        }
+
+        // Default to Worker provider
+        return {
+            storageProvider: StorageProviderType.CLOUDFLARE_WORKER,
+            workerSettings: savedData.workerSettings ?? {...DEFAULT_WORKER_SETTINGS},
+            ...baseSettings
+        };
     }
 
     async saveSettings(): Promise<void> {
@@ -115,17 +165,16 @@ export class CloudflareImagesUploader extends Plugin {
     }
 
     private createStorageProvider(): StorageProvider {
-        switch (this.settings.storageProvider) {
-            case StorageProviderType.R2_S3_API:
-                if (!this.settings.r2S3Settings) {
-                    throw new Error('R2 S3 API 设置未配置');
-                }
-                return new R2S3Service(this.settings.r2S3Settings);
-
-            case StorageProviderType.CLOUDFLARE_WORKER:
-            default:
-                return new CloudflareWorkerService(this.settings);
+        if (isR2S3Provider(this.settings)) {
+            return new R2S3Service(this.settings.r2S3Settings);
         }
+
+        if (isWorkerProvider(this.settings)) {
+            return new CloudflareWorkerService(this.settings);
+        }
+
+        // Should never reach here with proper discriminated union
+        throw new Error(`Unknown storage provider type: ${(this.settings as any).storageProvider}`);
     }
 
     // ===== UI Setup =====

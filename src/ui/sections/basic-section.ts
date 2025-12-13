@@ -3,7 +3,8 @@
  */
 
 import {Setting} from 'obsidian';
-import {StorageProviderType} from '../../types';
+import {BasePluginSettings, PluginSettings, StorageProviderType} from '../../types';
+import {createR2S3Settings, createWorkerSettings} from '../../config';
 import {BaseSection, SectionDeps} from './base-section';
 import {createToggleInput} from '../helpers';
 
@@ -12,6 +13,7 @@ import {createToggleInput} from '../helpers';
  */
 export interface BasicSectionDeps extends SectionDeps {
     onProviderChange: () => void;
+    setSettings: (settings: PluginSettings) => void;
 }
 
 export class BasicSection extends BaseSection {
@@ -32,9 +34,14 @@ export class BasicSection extends BaseSection {
                     .addOption(StorageProviderType.R2_S3_API, 'R2 S3 API (直连)')
                     .setValue(this.settings.storageProvider)
                     .onChange(async (value: string) => {
-                        this.settings.storageProvider = value as StorageProviderType;
-                        await this.save();
-                        this.deps.onProviderChange();
+                        const newProvider = value as StorageProviderType;
+                        if (newProvider !== this.settings.storageProvider) {
+                            // Create new settings with the new provider type
+                            const newSettings = this.createSettingsForProvider(newProvider);
+                            this.deps.setSettings(newSettings);
+                            await this.save();
+                            this.deps.onProviderChange();
+                        }
                     });
             });
 
@@ -59,5 +66,31 @@ export class BasicSection extends BaseSection {
                 await this.save();
             }
         });
+    }
+
+    /**
+     * Create new settings object for the given provider type.
+     * Preserves base settings (toggles, limits, etc.) while creating provider-specific defaults.
+     */
+    private createSettingsForProvider(provider: StorageProviderType): PluginSettings {
+        // Extract base settings from current settings
+        const baseSettings: Partial<BasePluginSettings> = {
+            enableAutoPaste: this.settings.enableAutoPaste,
+            deleteAfterUpload: this.settings.deleteAfterUpload,
+            maxConcurrentUploads: this.settings.maxConcurrentUploads,
+            maxRetries: this.settings.maxRetries,
+            retryDelay: this.settings.retryDelay,
+            maxRetryDelay: this.settings.maxRetryDelay,
+            uploadTimeout: this.settings.uploadTimeout,
+            showDetailedLogs: this.settings.showDetailedLogs,
+            showProgressNotifications: this.settings.showProgressNotifications
+        };
+
+        // Create new settings with appropriate provider type
+        if (provider === StorageProviderType.R2_S3_API) {
+            return createR2S3Settings(baseSettings);
+        }
+
+        return createWorkerSettings(baseSettings);
     }
 }
