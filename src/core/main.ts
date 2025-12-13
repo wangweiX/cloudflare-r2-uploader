@@ -143,7 +143,9 @@ export class CloudflareImagesUploader extends Plugin {
 
         // Add ribbon icon (goes through CommandHandler for consistent validation)
         this.addRibbonIcon('upload-images', '上传当前笔记中的图片', () => {
-            this.commandHandler.uploadCurrentNoteImages();
+            this.commandHandler.uploadCurrentNoteImages().catch(err => {
+                this.logger.error('上传当前笔记中的图片失败', err);
+            });
         });
     }
 
