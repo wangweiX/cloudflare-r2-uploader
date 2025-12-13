@@ -35,6 +35,10 @@ export interface VaultUploadResult {
 
 type TerminalStatus = 'completed' | 'failed' | 'cancelled';
 
+/**
+ * Helper type guard for terminal task statuses.
+ * Used by the waiting logic to decide when a task should be counted as finished.
+ */
 function isTerminalStatus(status: UploadTask['status']): status is TerminalStatus {
     return status === 'completed' || status === 'failed' || status === 'cancelled';
 }
@@ -48,6 +52,13 @@ export class VaultUploader {
     private lastProcessTime = 0;
     private readonly debounceDelayMs = 1000;
 
+    /**
+     * Create a vault-level uploader.
+     *
+     * @param app Obsidian App instance
+     * @param uploadManager Shared UploadManager singleton (queue + concurrency + retry)
+     * @param getSettings Lazy settings getter so this component always reads the latest persisted settings
+     */
     constructor(
         private readonly app: App,
         private readonly uploadManager: UploadManager,
@@ -58,6 +69,17 @@ export class VaultUploader {
         this.updater = new LinkUpdater(app.vault.adapter);
     }
 
+    /**
+     * Process the entire vault with a closed-loop pipeline:
+     * - Scan: collect all local images referenced by markdown notes
+     * - Upload: enqueue and upload the discovered images
+     * - Rewrite: replace local links with cloud URLs in all notes
+     * - Verify: rescan the vault to validate remaining references
+     * - Delete (optional): remove only those uploaded files that are no longer referenced
+     *
+     * User-facing messages are emitted via Notice. Errors are logged and surfaced to users as a single
+     * localized failure notice.
+     */
     public async processVault(): Promise<VaultUploadResult | null> {
         if (!this.checkDebounce()) {
             return null;
@@ -187,6 +209,11 @@ export class VaultUploader {
         }
     }
 
+    /**
+     * Prevent accidental repeated triggers.
+     *
+     * This is intentionally a lightweight guard, separate from the "isProcessing" mutex.
+     */
     private checkDebounce(): boolean {
         const now = Date.now();
         if (now - this.lastProcessTime < this.debounceDelayMs) {
@@ -197,6 +224,14 @@ export class VaultUploader {
         return true;
     }
 
+    /**
+     * Scan all markdown files and collect local image references.
+     *
+     * The returned paths are vault-absolute paths (the same format used by UploadManager tasks).
+     *
+     * @returns paths The set of referenced, existing local image paths
+     * @returns errorCount Number of files that failed to scan (used to abort deletion for safety)
+     */
     private async scanReferencedImages(
         markdownFiles: TFile[],
         notice: Notice,
@@ -229,6 +264,16 @@ export class VaultUploader {
         return {paths, errorCount};
     }
 
+    /**
+     * Wait until all given tasks reach a terminal status (completed/failed/cancelled).
+     *
+     * Uses both:
+     * - event listeners (fast path)
+     * - periodic polling (safety net) because event delivery can be missed in edge cases
+     *
+     * Assumption: the UploadManager is not paused indefinitely; each task has an upload timeout and
+     * a bounded retry policy so it should eventually become terminal.
+     */
     private async waitForTerminalTasks(tasks: UploadTask[], notice: Notice, label: string): Promise<void> {
         if (tasks.length === 0) {
             return;
@@ -291,6 +336,12 @@ export class VaultUploader {
         }
     }
 
+    /**
+     * Collect successful tasks for the specific set of scanned image paths.
+     *
+     * This reads UploadManager.getAllTasks() (including previously completed tasks within the same session)
+     * so that link rewriting can still happen even if some paths were deduplicated at enqueue time.
+     */
     private getCompletedTasksForPaths(targetPaths: Set<string>): UploadTask[] {
         const tasks = this.uploadManager
             .getAllTasks()
@@ -298,6 +349,11 @@ export class VaultUploader {
         return tasks;
     }
 
+    /**
+     * Build a replacement map: absolutePath -> public URL.
+     *
+     * Keys must match LinkUpdater's resolution output, which is the vault-absolute path.
+     */
     private buildReplacementMap(tasks: UploadTask[]): Record<string, string> {
         const replacements: Record<string, string> = {};
         for (const task of tasks) {
@@ -308,6 +364,15 @@ export class VaultUploader {
         return replacements;
     }
 
+    /**
+     * Rewrite image links for all markdown files using the provided replacements map.
+     *
+     * Notes:
+     * - Only local images are targeted (LinkUpdater ignores remote URLs).
+     * - Obsidian-style embeds (![[...]] and variants) are rewritten to standard markdown links.
+     *
+     * Failure mode: a per-file update error is logged and skipped; the pipeline continues for other files.
+     */
     private async rewriteLinks(
         markdownFiles: TFile[],
         replacements: Record<string, string>,
@@ -346,6 +411,17 @@ export class VaultUploader {
         return {modifiedNotes, replacedLinks};
     }
 
+    /**
+     * Delete local files by vault path.
+     *
+     * This should only be invoked after:
+     * 1) successful rewrite
+     * 2) verification scan that proves the file is no longer referenced by any markdown note
+     *
+     * Defensive behavior:
+     * - Checks existence before removal
+     * - Logs and counts errors but continues deleting other files
+     */
     private async deleteLocalFiles(
         filePaths: string[],
         notice: Notice
@@ -376,6 +452,11 @@ export class VaultUploader {
         return {deletedCount, errorCount};
     }
 
+    /**
+     * Produce a minimal status summary for the tasks returned from addTasks().
+     *
+     * This intentionally only summarizes the tasks created in this run (not the full session history).
+     */
     private summarizeTasks(tasks: UploadTask[]): {failed: number; cancelled: number} {
         let failed = 0;
         let cancelled = 0;
