@@ -119,7 +119,7 @@ export class CloudflareImagesUploader extends Plugin {
         // 创建其他服务
         this.imageService = new ImageService(this.app, this.storageProvider);
         this.currentFileUploader = new CurrentFileUploader(this.app, this.uploadManager, this.settings);
-        this.pasteHandler = new PasteHandler(this.app, this.storageProvider, this);
+        this.pasteHandler = new PasteHandler(this.app, () => this.storageProvider, this);
     }
 
     /**

@@ -15,7 +15,7 @@ export class PasteHandler {
      */
     constructor(
         private app: App,
-        private storageProvider: StorageProvider,
+        private readonly getStorageProvider: () => StorageProvider,
         private plugin: Plugin
     ) {
         this.logger = Logger.getInstance();
@@ -127,7 +127,8 @@ export class PasteHandler {
 
             // 使用新的uploadImage方法上传
             try {
-                const result = await this.storageProvider.uploadImage(
+                const storageProvider = this.getStorageProvider();
+                const result = await storageProvider.uploadImage(
                     arrayBuffer,
                     filename,
                     undefined,

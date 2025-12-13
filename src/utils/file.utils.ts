@@ -14,26 +14,109 @@ export function generateUniqueFileName(originalName: string): string {
 }
 
 /**
+ * Normalize a path to use POSIX separators (forward slashes).
+ * Obsidian vault paths always use forward slashes regardless of platform.
+ * Also resolves . and .. path segments.
+ */
+function normalizeVaultPath(p: string): string {
+    // Replace backslashes with forward slashes
+    let normalized = p.replace(/\\/g, '/');
+    // Remove redundant slashes
+    normalized = normalized.replace(/\/+/g, '/');
+    // Remove leading ./ if present
+    if (normalized.startsWith('./')) {
+        normalized = normalized.substring(2);
+    }
+    // Remove trailing slash
+    if (normalized.endsWith('/') && normalized.length > 1) {
+        normalized = normalized.slice(0, -1);
+    }
+
+    const isAbsolute = normalized.startsWith('/');
+
+    // Resolve . and .. segments using stack-based approach
+    const parts = normalized.split('/');
+    const stack: string[] = [];
+
+    for (const part of parts) {
+        if (part === '' || part === '.') {
+            // Skip empty parts and current directory references
+            continue;
+        } else if (part === '..') {
+            // Go up one directory if possible
+            if (stack.length > 0 && stack[stack.length - 1] !== '..') {
+                stack.pop();
+            }
+            // If this is an absolute vault path, do not allow going above root.
+            // For relative paths, preserve leading ".." so that baseDir joining can resolve it correctly.
+            else if (!isAbsolute) {
+                stack.push('..');
+            }
+        } else {
+            stack.push(part);
+        }
+    }
+
+    const result = stack.join('/');
+    return isAbsolute ? `/${result}` : result;
+}
+
+/**
+ * Get the directory name using POSIX-style paths.
+ */
+function posixDirname(p: string): string {
+    const normalized = normalizeVaultPath(p);
+    const lastSlash = normalized.lastIndexOf('/');
+    if (lastSlash === -1) return '';
+    return normalized.substring(0, lastSlash);
+}
+
+/**
+ * Join paths using POSIX-style paths.
+ */
+function posixJoin(...parts: string[]): string {
+    const joined = parts
+        .filter(p => p && p.length > 0)
+        .map(p => normalizeVaultPath(p))
+        .join('/');
+    return normalizeVaultPath(joined);
+}
+
+/**
  * Resolve a relative image path to an absolute path using a vault-like adapter.
+ *
+ * Uses POSIX-style paths to ensure compatibility with Obsidian vault on all platforms.
+ * Obsidian's DataAdapter.exists() expects forward slashes even on Windows.
  */
 export async function resolveAbsolutePath(
     notePath: string,
     imagePath: string,
     adapter: { exists: (p: string) => Promise<boolean> }
 ): Promise<string | null> {
-    if (path.isAbsolute(imagePath)) {
-        return imagePath;
+    // Normalize the image path first
+    const normalizedImagePath = normalizeVaultPath(imagePath);
+
+    // If it's already absolute (starts with /), use as-is
+    if (normalizedImagePath.startsWith('/')) {
+        const absolutePath = normalizedImagePath.substring(1); // Remove leading /
+        if (await adapter.exists(absolutePath)) {
+            return absolutePath;
+        }
+        return null;
     }
 
-    const noteDir = path.dirname(notePath);
-    let absolutePath = path.normalize(path.join(noteDir, imagePath));
-    if (await adapter.exists(absolutePath)) {
-        return absolutePath;
+    // Try relative to the note's directory first
+    const noteDir = posixDirname(notePath);
+    if (noteDir) {
+        const relativePath = posixJoin(noteDir, normalizedImagePath);
+        if (await adapter.exists(relativePath)) {
+            return relativePath;
+        }
     }
 
-    absolutePath = path.normalize(imagePath);
-    if (await adapter.exists(absolutePath)) {
-        return absolutePath;
+    // Try as vault-root-relative path
+    if (await adapter.exists(normalizedImagePath)) {
+        return normalizedImagePath;
     }
 
     return null;
