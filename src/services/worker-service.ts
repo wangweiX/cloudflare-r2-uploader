@@ -1,8 +1,5 @@
-import * as path from 'path';
-import {v4 as uuidv4} from 'uuid';
 import {PluginSettings, StorageProvider, StorageProviderType, UploadOptions, UploadResult} from '../types';
-import {MIME_TYPES} from '../config';
-import {Logger} from '../utils/logger';
+import {Logger, generateUniqueFileName, getMimeType} from '../utils';
 
 /**
  * Cloudflare Worker服务 - 负责处理与Cloudflare Worker的通信
@@ -42,7 +39,7 @@ export class CloudflareWorkerService implements StorageProvider {
             }
 
             // 生成唯一文件名防止覆盖
-            const uniqueFileName = this.generateUniqueFileName(fileName);
+            const uniqueFileName = generateUniqueFileName(fileName);
             
             // 构建完整的文件路径
             // 确保folderName不以/结尾，避免双斜杠
@@ -50,7 +47,7 @@ export class CloudflareWorkerService implements StorageProvider {
             const filePath = cleanFolderName ? `${cleanFolderName}/${uniqueFileName}` : uniqueFileName;
 
             // 获取文件的MIME类型
-            const mimeType = this.getMimeType(fileName);
+            const mimeType = getMimeType(fileName);
             this.logger.info(`上传文件: ${fileName} -> ${filePath}, 类型: ${mimeType}`);
 
             // 构建上传URL（使用POST方法）
@@ -159,24 +156,4 @@ export class CloudflareWorkerService implements StorageProvider {
         }
     }
 
-    /**
-     * 生成唯一文件名
-     */
-    private generateUniqueFileName(originalName: string): string {
-        const ext = path.extname(originalName);
-        const baseName = path.basename(originalName, ext)
-            .replace(/[^a-zA-Z0-9\u4e00-\u9fa5_\-\.]/g, '_'); // 替换不支持的字符为下划线，注意转义-和.
-        const timestamp = new Date().getTime();
-        const randomId = uuidv4().split('-')[0]; // 使用UUID的前8位
-        return `${baseName}_${timestamp}_${randomId}${ext}`;
-    }
-
-    /**
-     * 根据文件扩展名获取MIME类型
-     */
-    private getMimeType(fileName: string): string {
-        const extension = path.extname(fileName).toLowerCase().replace('.', '');
-        const mimeType = MIME_TYPES[extension];
-        return mimeType || 'application/octet-stream';
-    }
 }

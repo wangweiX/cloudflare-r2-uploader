@@ -1,6 +1,5 @@
 import {App} from 'obsidian';
-import * as path from 'path';
-import {Logger} from '../utils/logger';
+import {Logger, resolveAbsolutePath} from '../utils';
 import {IMAGE_PATTERNS} from '../config';
 
 /**
@@ -39,7 +38,7 @@ export class ImageService {
                     continue;
                 }
                 
-                const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+                const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
                 if (absolutePath && await this.app.vault.adapter.exists(absolutePath)) {
                     imagePathsToUpload.add(absolutePath);
                 }
@@ -49,7 +48,7 @@ export class ImageService {
             const obsidianRegex = IMAGE_PATTERNS.OBSIDIAN_INTERNAL;
             while ((match = obsidianRegex.exec(content)) !== null) {
                 const imagePath = match[1];
-                const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+                const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
                 if (absolutePath && await this.app.vault.adapter.exists(absolutePath)) {
                     imagePathsToUpload.add(absolutePath);
                 }
@@ -60,29 +59,4 @@ export class ImageService {
         return imagePathsToUpload;
     }
 
-    /**
-     * 解析图片的绝对路径
-     */
-    private async resolveAbsolutePath(notePath: string, imagePath: string): Promise<string | null> {
-        // 如果已经是绝对路径，直接返回
-        if (path.isAbsolute(imagePath)) {
-            return imagePath;
-        }
-
-        // 尝试从笔记所在目录解析
-        const noteDir = path.dirname(notePath);
-        let absolutePath = path.normalize(path.join(noteDir, imagePath));
-        
-        if (await this.app.vault.adapter.exists(absolutePath)) {
-            return absolutePath;
-        }
-
-        // 尝试从vault根目录解析
-        absolutePath = path.normalize(imagePath);
-        if (await this.app.vault.adapter.exists(absolutePath)) {
-            return absolutePath;
-        }
-
-        return null;
-    }
 }

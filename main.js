@@ -707,60 +707,34 @@ var DEFAULT_SETTINGS = {
   showProgressNotifications: true
 };
 
-// src/services/worker-service.ts
-var path = __toESM(require("path"));
-
-// node_modules/uuid/dist/esm-browser/stringify.js
-var byteToHex = [];
-for (let i2 = 0; i2 < 256; ++i2) {
-  byteToHex.push((i2 + 256).toString(16).slice(1));
-}
-function unsafeStringify(arr, offset = 0) {
-  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
-}
-
-// node_modules/uuid/dist/esm-browser/rng.js
-var getRandomValues;
-var rnds8 = new Uint8Array(16);
-function rng() {
-  if (!getRandomValues) {
-    if (typeof crypto === "undefined" || !crypto.getRandomValues) {
-      throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
-    }
-    getRandomValues = crypto.getRandomValues.bind(crypto);
-  }
-  return getRandomValues(rnds8);
-}
-
-// node_modules/uuid/dist/esm-browser/native.js
-var randomUUID = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
-var native_default = { randomUUID };
-
-// node_modules/uuid/dist/esm-browser/v4.js
-function v4(options, buf, offset) {
-  if (native_default.randomUUID && !buf && !options) {
-    return native_default.randomUUID();
-  }
-  options = options || {};
-  const rnds = options.random ?? options.rng?.() ?? rng();
-  if (rnds.length < 16) {
-    throw new Error("Random bytes length must be >= 16");
-  }
-  rnds[6] = rnds[6] & 15 | 64;
-  rnds[8] = rnds[8] & 63 | 128;
-  if (buf) {
-    offset = offset || 0;
-    if (offset < 0 || offset + 16 > buf.length) {
-      throw new RangeError(`UUID byte range ${offset}:${offset + 15} is out of buffer bounds`);
-    }
-    for (let i2 = 0; i2 < 16; ++i2) {
-      buf[offset + i2] = rnds[i2];
-    }
-    return buf;
-  }
-  return unsafeStringify(rnds);
-}
-var v4_default = v4;
+// src/config/constants.ts
+var UPLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100" height="100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>`;
+var UPLOAD_EVENTS = {
+  TASK_ADDED: "task:added",
+  TASK_STARTED: "task:started",
+  TASK_PROGRESS: "task:progress",
+  TASK_COMPLETED: "task:completed",
+  TASK_FAILED: "task:failed",
+  TASK_CANCELLED: "task:cancelled",
+  QUEUE_EMPTY: "queue:empty",
+  STATS_UPDATED: "stats:updated"
+};
+var IMAGE_PATTERNS = {
+  STANDARD_MARKDOWN: /!\[([^\]]*)\]\(([^)]*)\)/g,
+  OBSIDIAN_INTERNAL: /!\[\[([^\]]+)\]\]/g
+};
+var MIME_TYPES = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  gif: "image/gif",
+  webp: "image/webp",
+  svg: "image/svg+xml",
+  bmp: "image/bmp",
+  ico: "image/x-icon",
+  tiff: "image/tiff",
+  tif: "image/tiff"
+};
 
 // src/utils/logger.ts
 var import_obsidian = require("obsidian");
@@ -986,6 +960,97 @@ var CategoryLogger = class {
   }
 };
 
+// src/utils/file.utils.ts
+var path = __toESM(require("path"));
+
+// node_modules/uuid/dist/esm-browser/stringify.js
+var byteToHex = [];
+for (let i2 = 0; i2 < 256; ++i2) {
+  byteToHex.push((i2 + 256).toString(16).slice(1));
+}
+function unsafeStringify(arr, offset = 0) {
+  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+}
+
+// node_modules/uuid/dist/esm-browser/rng.js
+var getRandomValues;
+var rnds8 = new Uint8Array(16);
+function rng() {
+  if (!getRandomValues) {
+    if (typeof crypto === "undefined" || !crypto.getRandomValues) {
+      throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
+    }
+    getRandomValues = crypto.getRandomValues.bind(crypto);
+  }
+  return getRandomValues(rnds8);
+}
+
+// node_modules/uuid/dist/esm-browser/native.js
+var randomUUID = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
+var native_default = { randomUUID };
+
+// node_modules/uuid/dist/esm-browser/v4.js
+function v4(options, buf, offset) {
+  if (native_default.randomUUID && !buf && !options) {
+    return native_default.randomUUID();
+  }
+  options = options || {};
+  const rnds = options.random ?? options.rng?.() ?? rng();
+  if (rnds.length < 16) {
+    throw new Error("Random bytes length must be >= 16");
+  }
+  rnds[6] = rnds[6] & 15 | 64;
+  rnds[8] = rnds[8] & 63 | 128;
+  if (buf) {
+    offset = offset || 0;
+    if (offset < 0 || offset + 16 > buf.length) {
+      throw new RangeError(`UUID byte range ${offset}:${offset + 15} is out of buffer bounds`);
+    }
+    for (let i2 = 0; i2 < 16; ++i2) {
+      buf[offset + i2] = rnds[i2];
+    }
+    return buf;
+  }
+  return unsafeStringify(rnds);
+}
+var v4_default = v4;
+
+// src/utils/file.utils.ts
+function generateUniqueFileName(originalName) {
+  const ext = path.extname(originalName);
+  const baseName = path.basename(originalName, ext).replace(/[^a-zA-Z0-9\u4e00-\u9fa5_.-]/g, "_");
+  const timestamp = Date.now();
+  const randomId = v4_default().split("-")[0];
+  return `${baseName}_${timestamp}_${randomId}${ext}`;
+}
+async function resolveAbsolutePath(notePath, imagePath, adapter) {
+  if (path.isAbsolute(imagePath)) {
+    return imagePath;
+  }
+  const noteDir = path.dirname(notePath);
+  let absolutePath = path.normalize(path.join(noteDir, imagePath));
+  if (await adapter.exists(absolutePath)) {
+    return absolutePath;
+  }
+  absolutePath = path.normalize(imagePath);
+  if (await adapter.exists(absolutePath)) {
+    return absolutePath;
+  }
+  return null;
+}
+function getMimeType(fileName) {
+  const extension = path.extname(fileName).toLowerCase().replace(".", "");
+  const mimeType = MIME_TYPES[extension];
+  return mimeType || "application/octet-stream";
+}
+function formatFileSize(bytes) {
+  if (bytes === 0) return "0 Bytes";
+  const k2 = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i2 = Math.floor(Math.log(bytes) / Math.log(k2));
+  return parseFloat((bytes / Math.pow(k2, i2)).toFixed(2)) + " " + sizes[i2];
+}
+
 // src/services/worker-service.ts
 var CloudflareWorkerService = class {
   /**
@@ -1010,10 +1075,10 @@ var CloudflareWorkerService = class {
       if (!workerUrl || !apiKey) {
         throw new Error("Worker URL\u6216API Key\u672A\u914D\u7F6E");
       }
-      const uniqueFileName = this.generateUniqueFileName(fileName);
+      const uniqueFileName = generateUniqueFileName(fileName);
       const cleanFolderName = folderName ? folderName.replace(/\/$/, "") : "";
       const filePath = cleanFolderName ? `${cleanFolderName}/${uniqueFileName}` : uniqueFileName;
-      const mimeType = this.getMimeType(fileName);
+      const mimeType = getMimeType(fileName);
       this.logger.info(`\u4E0A\u4F20\u6587\u4EF6: ${fileName} -> ${filePath}, \u7C7B\u578B: ${mimeType}`);
       const encodedFilePath = filePath.split("/").map((part) => encodeURIComponent(part)).join("/");
       const uploadUrl = `${workerUrl}/api/v1/buckets/${bucketName}/files/${encodedFilePath}`;
@@ -1094,39 +1159,7 @@ var CloudflareWorkerService = class {
       };
     }
   }
-  /**
-   * 生成唯一文件名
-   */
-  generateUniqueFileName(originalName) {
-    const ext = path.extname(originalName);
-    const baseName = path.basename(originalName, ext).replace(/[^a-zA-Z0-9\u4e00-\u9fa5_\-\.]/g, "_");
-    const timestamp = (/* @__PURE__ */ new Date()).getTime();
-    const randomId = v4_default().split("-")[0];
-    return `${baseName}_${timestamp}_${randomId}${ext}`;
-  }
-  /**
-   * 根据文件扩展名获取MIME类型
-   */
-  getMimeType(fileName) {
-    const extension = path.extname(fileName).toLowerCase().replace(".", "");
-    const mimeTypes = {
-      "jpg": "image/jpeg",
-      "jpeg": "image/jpeg",
-      "png": "image/png",
-      "gif": "image/gif",
-      "webp": "image/webp",
-      "svg": "image/svg+xml",
-      "bmp": "image/bmp",
-      "ico": "image/x-icon",
-      "tiff": "image/tiff",
-      "tif": "image/tiff"
-    };
-    return mimeTypes[extension] || "application/octet-stream";
-  }
 };
-
-// src/services/r2-s3-service.ts
-var path2 = __toESM(require("path"));
 
 // node_modules/@smithy/protocol-http/dist-es/extensions/httpExtensionConfiguration.js
 var getHttpHandlerExtensionConfiguration = (runtimeConfig) => {
@@ -2158,13 +2191,13 @@ var FetchHttpHandler = class _FetchHttpHandler {
       abortError.name = "AbortError";
       return Promise.reject(abortError);
     }
-    let path5 = request.path;
+    let path3 = request.path;
     const queryString = buildQueryString(request.query || {});
     if (queryString) {
-      path5 += `?${queryString}`;
+      path3 += `?${queryString}`;
     }
     if (request.fragment) {
-      path5 += `#${request.fragment}`;
+      path3 += `#${request.fragment}`;
     }
     let auth = "";
     if (request.username != null || request.password != null) {
@@ -2173,7 +2206,7 @@ var FetchHttpHandler = class _FetchHttpHandler {
       auth = `${username}:${password}@`;
     }
     const { port, method } = request;
-    const url = `${request.protocol}//${auth}${request.hostname}${port ? `:${port}` : ""}${path5}`;
+    const url = `${request.protocol}//${auth}${request.hostname}${port ? `:${port}` : ""}${path3}`;
     const body = method === "GET" || method === "HEAD" ? void 0 : request.body;
     const requestOptions = {
       body,
@@ -2724,8 +2757,8 @@ var RequestBuilder = class {
     return this;
   }
   p(memberName, labelValueProvider, uriLabel, isGreedyLabel) {
-    this.resolvePathStack.push((path5) => {
-      this.path = resolvedPath(path5, this.input, memberName, labelValueProvider, uriLabel, isGreedyLabel);
+    this.resolvePathStack.push((path3) => {
+      this.path = resolvedPath(path3, this.input, memberName, labelValueProvider, uriLabel, isGreedyLabel);
     });
     return this;
   }
@@ -3213,10 +3246,10 @@ ${longDate}
 ${credentialScope}
 ${toHex(hashedRequest)}`;
   }
-  getCanonicalPath({ path: path5 }) {
+  getCanonicalPath({ path: path3 }) {
     if (this.uriEscapePath) {
       const normalizedPathSegments = [];
-      for (const pathSegment of path5.split("/")) {
+      for (const pathSegment of path3.split("/")) {
         if (pathSegment?.length === 0)
           continue;
         if (pathSegment === ".")
@@ -3227,11 +3260,11 @@ ${toHex(hashedRequest)}`;
           normalizedPathSegments.push(pathSegment);
         }
       }
-      const normalizedPath = `${path5?.startsWith("/") ? "/" : ""}${normalizedPathSegments.join("/")}${normalizedPathSegments.length > 0 && path5?.endsWith("/") ? "/" : ""}`;
+      const normalizedPath = `${path3?.startsWith("/") ? "/" : ""}${normalizedPathSegments.join("/")}${normalizedPathSegments.length > 0 && path3?.endsWith("/") ? "/" : ""}`;
       const doubleEncoded = escapeUri(normalizedPath);
       return doubleEncoded.replace(/%2F/g, "/");
     }
-    return path5;
+    return path3;
   }
   validateResolvedCredentials(credentials) {
     if (typeof credentials !== "object" || typeof credentials.accessKeyId !== "string" || typeof credentials.secretAccessKey !== "string") {
@@ -7604,18 +7637,18 @@ var EndpointError = class extends Error {
 var booleanEquals = (value1, value2) => value1 === value2;
 
 // node_modules/@smithy/util-endpoints/dist-es/lib/getAttrPathList.js
-var getAttrPathList = (path5) => {
-  const parts = path5.split(".");
+var getAttrPathList = (path3) => {
+  const parts = path3.split(".");
   const pathList = [];
   for (const part of parts) {
     const squareBracketIndex = part.indexOf("[");
     if (squareBracketIndex !== -1) {
       if (part.indexOf("]") !== part.length - 1) {
-        throw new EndpointError(`Path: '${path5}' does not end with ']'`);
+        throw new EndpointError(`Path: '${path3}' does not end with ']'`);
       }
       const arrayIndex = part.slice(squareBracketIndex + 1, -1);
       if (Number.isNaN(parseInt(arrayIndex))) {
-        throw new EndpointError(`Invalid array index: '${arrayIndex}' in path: '${path5}'`);
+        throw new EndpointError(`Invalid array index: '${arrayIndex}' in path: '${path3}'`);
       }
       if (squareBracketIndex !== 0) {
         pathList.push(part.slice(0, squareBracketIndex));
@@ -7629,9 +7662,9 @@ var getAttrPathList = (path5) => {
 };
 
 // node_modules/@smithy/util-endpoints/dist-es/lib/getAttr.js
-var getAttr = (value, path5) => getAttrPathList(path5).reduce((acc, index) => {
+var getAttr = (value, path3) => getAttrPathList(path3).reduce((acc, index) => {
   if (typeof acc !== "object") {
-    throw new EndpointError(`Index '${index}' in '${path5}' not found in '${JSON.stringify(value)}'`);
+    throw new EndpointError(`Index '${index}' in '${path3}' not found in '${JSON.stringify(value)}'`);
   } else if (Array.isArray(acc)) {
     return acc[parseInt(index)];
   }
@@ -7656,8 +7689,8 @@ var parseURL = (value) => {
         return value;
       }
       if (typeof value === "object" && "hostname" in value) {
-        const { hostname: hostname2, port, protocol: protocol2 = "", path: path5 = "", query = {} } = value;
-        const url = new URL(`${protocol2}//${hostname2}${port ? `:${port}` : ""}${path5}`);
+        const { hostname: hostname2, port, protocol: protocol2 = "", path: path3 = "", query = {} } = value;
+        const url = new URL(`${protocol2}//${hostname2}${port ? `:${port}` : ""}${path3}`);
         url.search = Object.entries(query).map(([k2, v2]) => `${k2}=${v2}`).join("&");
         return url;
       }
@@ -8650,8 +8683,8 @@ var createConfigValueProvider = (configKey, canonicalEndpointParamKey, config) =
           return endpoint.url.href;
         }
         if ("hostname" in endpoint) {
-          const { protocol, hostname, port, path: path5 } = endpoint;
-          return `${protocol}//${hostname}${port ? ":" + port : ""}${path5}`;
+          const { protocol, hostname, port, path: path3 } = endpoint;
+          return `${protocol}//${hostname}${port ? ":" + port : ""}${path3}`;
         }
       }
       return endpoint;
@@ -12259,10 +12292,10 @@ var R2S3Service = class {
       if (!bucketName) {
         throw new Error("R2 S3 API \u914D\u7F6E\u4E0D\u5B8C\u6574\uFF1A\u7F3A\u5C11\u5B58\u50A8\u6876\u540D\u79F0");
       }
-      const uniqueFileName = this.generateUniqueFileName(fileName);
+      const uniqueFileName = generateUniqueFileName(fileName);
       const cleanFolderName = folderName ? folderName.replace(/\/$/, "") : "";
       const filePath = cleanFolderName ? `${cleanFolderName}/${uniqueFileName}` : uniqueFileName;
-      const mimeType = this.getMimeType(fileName);
+      const mimeType = getMimeType(fileName);
       this.logger.info(`\u4E0A\u4F20\u6587\u4EF6: ${fileName} -> ${filePath}, \u7C7B\u578B: ${mimeType}`);
       const uploadParams = {
         Bucket: bucketName,
@@ -12334,39 +12367,9 @@ var R2S3Service = class {
       };
     }
   }
-  /**
-   * 生成唯一文件名
-   */
-  generateUniqueFileName(originalName) {
-    const ext = path2.extname(originalName);
-    const baseName = path2.basename(originalName, ext).replace(/[^a-zA-Z0-9\u4e00-\u9fa5_\-\.]/g, "_");
-    const timestamp = (/* @__PURE__ */ new Date()).getTime();
-    const randomId = v4_default().split("-")[0];
-    return `${baseName}_${timestamp}_${randomId}${ext}`;
-  }
-  /**
-   * 根据文件扩展名获取MIME类型
-   */
-  getMimeType(fileName) {
-    const extension = path2.extname(fileName).toLowerCase().replace(".", "");
-    const mimeTypes = {
-      "jpg": "image/jpeg",
-      "jpeg": "image/jpeg",
-      "png": "image/png",
-      "gif": "image/gif",
-      "webp": "image/webp",
-      "svg": "image/svg+xml",
-      "bmp": "image/bmp",
-      "ico": "image/x-icon",
-      "tiff": "image/tiff",
-      "tif": "image/tiff"
-    };
-    return mimeTypes[extension] || "application/octet-stream";
-  }
 };
 
 // src/services/image-service.ts
-var path3 = __toESM(require("path"));
 var ImageService = class {
   /**
    * 构造函数
@@ -12384,22 +12387,22 @@ var ImageService = class {
     const imagePathsToUpload = /* @__PURE__ */ new Set();
     for (const file of markdownFiles) {
       const content = await this.app.vault.cachedRead(file);
-      const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
+      const standardRegex = IMAGE_PATTERNS.STANDARD_MARKDOWN;
       let match;
       while ((match = standardRegex.exec(content)) !== null) {
         const imagePath = match[2];
         if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
           continue;
         }
-        const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+        const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
         if (absolutePath && await this.app.vault.adapter.exists(absolutePath)) {
           imagePathsToUpload.add(absolutePath);
         }
       }
-      const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
+      const obsidianRegex = IMAGE_PATTERNS.OBSIDIAN_INTERNAL;
       while ((match = obsidianRegex.exec(content)) !== null) {
         const imagePath = match[1];
-        const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
+        const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
         if (absolutePath && await this.app.vault.adapter.exists(absolutePath)) {
           imagePathsToUpload.add(absolutePath);
         }
@@ -12407,24 +12410,6 @@ var ImageService = class {
     }
     this.logger.info(`\u627E\u5230 ${imagePathsToUpload.size} \u5F20\u56FE\u7247\u9700\u8981\u4E0A\u4F20`);
     return imagePathsToUpload;
-  }
-  /**
-   * 解析图片的绝对路径
-   */
-  async resolveAbsolutePath(notePath, imagePath) {
-    if (path3.isAbsolute(imagePath)) {
-      return imagePath;
-    }
-    const noteDir = path3.dirname(notePath);
-    let absolutePath = path3.normalize(path3.join(noteDir, imagePath));
-    if (await this.app.vault.adapter.exists(absolutePath)) {
-      return absolutePath;
-    }
-    absolutePath = path3.normalize(imagePath);
-    if (await this.app.vault.adapter.exists(absolutePath)) {
-      return absolutePath;
-    }
-    return null;
   }
 };
 
@@ -12559,7 +12544,7 @@ var PasteHandler = class {
 
 // src/services/current-file-uploader.ts
 var import_obsidian4 = require("obsidian");
-var path4 = __toESM(require("path"));
+var path2 = __toESM(require("path"));
 
 // src/services/upload-manager.ts
 var import_events = require("events");
@@ -12975,17 +12960,7 @@ var _UploadManager = class _UploadManager extends import_events.EventEmitter {
   }
 };
 _UploadManager.instance = null;
-// 事件定义
-_UploadManager.EVENTS = {
-  TASK_ADDED: "task:added",
-  TASK_STARTED: "task:started",
-  TASK_PROGRESS: "task:progress",
-  TASK_COMPLETED: "task:completed",
-  TASK_FAILED: "task:failed",
-  TASK_CANCELLED: "task:cancelled",
-  QUEUE_EMPTY: "queue:empty",
-  STATS_UPDATED: "stats:updated"
-};
+_UploadManager.EVENTS = UPLOAD_EVENTS;
 var UploadManager = _UploadManager;
 
 // src/services/current-file-uploader.ts
@@ -13135,7 +13110,7 @@ var CurrentFileUploader = class {
     const imagePathsToUpload = /* @__PURE__ */ new Set();
     const tmpImgPaths = /* @__PURE__ */ new Set();
     const content = await this.app.vault.cachedRead(file);
-    const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
+    const standardRegex = IMAGE_PATTERNS.STANDARD_MARKDOWN;
     let standardMatch;
     while ((standardMatch = standardRegex.exec(content)) !== null) {
       const imagePath = standardMatch[2];
@@ -13144,15 +13119,15 @@ var CurrentFileUploader = class {
       }
       tmpImgPaths.add(imagePath);
     }
-    const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
+    const obsidianRegex = IMAGE_PATTERNS.OBSIDIAN_INTERNAL;
     let obsidianMatch;
     while ((obsidianMatch = obsidianRegex.exec(content)) !== null) {
       const imagePath = obsidianMatch[1];
       tmpImgPaths.add(imagePath);
     }
     for (const imagePath of tmpImgPaths) {
-      let absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
-      if (absolutePath === "") {
+      let absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
+      if (!absolutePath) {
         this.logger.warn(`\u65E0\u6CD5\u89E3\u6790\u56FE\u7247\u8DEF\u5F84: ${imagePath}`);
         continue;
       }
@@ -13164,7 +13139,7 @@ var CurrentFileUploader = class {
       const stat = await this.app.vault.adapter.stat(absolutePath);
       if (stat && stat.size) {
         imagePathsToUpload.add(absolutePath);
-        this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${absolutePath} (${this.formatFileSize(stat.size)})`);
+        this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${absolutePath} (${formatFileSize(stat.size)})`);
       }
     }
     return imagePathsToUpload;
@@ -13176,7 +13151,7 @@ var CurrentFileUploader = class {
     const content = await this.app.vault.cachedRead(file);
     let modified = false;
     let newContent = content;
-    const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
+    const standardRegex = IMAGE_PATTERNS.STANDARD_MARKDOWN;
     let standardMatch;
     let lastIndex = 0;
     let standardNewContent = "";
@@ -13187,8 +13162,8 @@ var CurrentFileUploader = class {
       if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
         continue;
       }
-      const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
-      if (absolutePath === "") {
+      const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
+      if (!absolutePath) {
         this.logger.warn(`\u65E0\u6CD5\u89E3\u6790\u56FE\u7247\u8DEF\u5F84: ${imagePath}`);
         continue;
       }
@@ -13206,15 +13181,15 @@ var CurrentFileUploader = class {
       newContent = standardNewContent;
     }
     modified = false;
-    const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
+    const obsidianRegex = IMAGE_PATTERNS.OBSIDIAN_INTERNAL;
     let obsidianMatch;
     lastIndex = 0;
     let obsidianNewContent = "";
     while ((obsidianMatch = obsidianRegex.exec(newContent)) !== null) {
       const fullMatch = obsidianMatch[0];
       const imagePath = obsidianMatch[1];
-      const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
-      if (absolutePath === "") {
+      const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
+      if (!absolutePath) {
         this.logger.warn(`\u65E0\u6CD5\u89E3\u6790\u56FE\u7247\u8DEF\u5F84: ${imagePath}`);
         continue;
       }
@@ -13222,7 +13197,7 @@ var CurrentFileUploader = class {
       this.logger.info(`\u67E5\u627EObsidian\u683C\u5F0F\u6620\u5C04: ${imagePath} -> ${absolutePath} -> ${newImageUrl || "\u672A\u627E\u5230"}`);
       if (newImageUrl) {
         obsidianNewContent += newContent.substring(lastIndex, obsidianMatch.index);
-        obsidianNewContent += `![${path4.basename(imagePath, path4.extname(imagePath))}](${newImageUrl})`;
+        obsidianNewContent += `![${path2.basename(imagePath, path2.extname(imagePath))}](${newImageUrl})`;
         lastIndex = obsidianMatch.index + fullMatch.length;
         modified = true;
       }
@@ -13239,36 +13214,7 @@ var CurrentFileUploader = class {
       this.logger.warn(`\u6587\u4EF6\u5185\u5BB9\u672A\u53D1\u751F\u53D8\u5316\uFF0C\u53EF\u80FD\u94FE\u63A5\u66FF\u6362\u5931\u8D25: ${file.path}`);
     }
   }
-  /**
-   * 将图片的相对路径解析为绝对路径
-   */
-  async resolveAbsolutePath(filePath, imagePath) {
-    if (path4.isAbsolute(imagePath)) {
-      return imagePath;
-    }
-    let fileDir = path4.dirname(filePath);
-    let absolutePath = path4.normalize(path4.join(fileDir, imagePath));
-    let exists = await this.app.vault.adapter.exists(absolutePath);
-    if (exists) {
-      return absolutePath;
-    }
-    absolutePath = path4.normalize(imagePath);
-    exists = await this.app.vault.adapter.exists(absolutePath);
-    if (exists) {
-      return absolutePath;
-    }
-    return "";
-  }
-  /**
-   * 格式化文件大小
-   */
-  formatFileSize(bytes) {
-    if (bytes === 0) return "0 Bytes";
-    const k2 = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i2 = Math.floor(Math.log(bytes) / Math.log(k2));
-    return parseFloat((bytes / Math.pow(k2, i2)).toFixed(2)) + " " + sizes[i2];
-  }
+  // formatFileSize now comes from shared utils
   /**
    * 取消所有上传任务
    */
@@ -13535,7 +13481,6 @@ var SettingsTab = class extends import_obsidian5.PluginSettingTab {
 };
 
 // src/core/main.ts
-var UPLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100" height="100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>`;
 var CloudflareImagesUploader = class extends import_obsidian6.Plugin {
   constructor() {
     super(...arguments);

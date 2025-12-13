@@ -8,7 +8,7 @@ import {PasteHandler} from '../services/paste-handler';
 import {CurrentFileUploader} from '../services/current-file-uploader';
 import {UploadManager} from '../services/upload-manager';
 import {SettingsTab} from '../ui/settings-tab';
-import {Logger} from '../utils/logger';
+import {Logger} from '../utils';
 
 /**
  * 插件主类

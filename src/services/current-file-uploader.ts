@@ -2,8 +2,9 @@ import {App, Notice, TFile} from 'obsidian';
 import * as path from 'path';
 import {StorageProvider, UploadTask} from '../types';
 import {UploadManager} from './upload-manager';
-import {Logger} from '../utils/logger';
+import {Logger} from '../utils';
 import {IMAGE_PATTERNS} from '../config';
+import {resolveAbsolutePath, formatFileSize} from '../utils';
 
 /**
  * 当前文件上传结果接口
@@ -236,8 +237,8 @@ export class CurrentFileUploader {
 
         // 处理每个找到的图片路径
         for (const imagePath of tmpImgPaths) {
-            let absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
-            if (absolutePath === '') {
+            let absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
+            if (!absolutePath) {
                 this.logger.warn(`无法解析图片路径: ${imagePath}`);
                 continue;
             }
@@ -253,7 +254,7 @@ export class CurrentFileUploader {
             const stat = await this.app.vault.adapter.stat(absolutePath);
             if (stat && stat.size) {
                 imagePathsToUpload.add(absolutePath);
-                this.logger.info(`找到图片：${absolutePath} (${this.formatFileSize(stat.size)})`);
+                this.logger.info(`找到图片：${absolutePath} (${formatFileSize(stat.size)})`);
             }
         }
 
@@ -284,8 +285,8 @@ export class CurrentFileUploader {
                 continue;
             }
 
-            const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
-            if (absolutePath === '') {
+            const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
+            if (!absolutePath) {
                 this.logger.warn(`无法解析图片路径: ${imagePath}`);
                 continue;
             }
@@ -320,8 +321,8 @@ export class CurrentFileUploader {
             const fullMatch = obsidianMatch[0];
             const imagePath = obsidianMatch[1];
 
-            const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
-            if (absolutePath === '') {
+            const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
+            if (!absolutePath) {
                 this.logger.warn(`无法解析图片路径: ${imagePath}`);
                 continue;
             }
@@ -356,45 +357,7 @@ export class CurrentFileUploader {
         }
     }
 
-    /**
-     * 将图片的相对路径解析为绝对路径
-     */
-    private async resolveAbsolutePath(filePath: string, imagePath: string): Promise<string> {
-        // 如果图片路径已经是绝对路径，直接返回
-        if (path.isAbsolute(imagePath)) {
-            return imagePath;
-        }
-
-        // 获取当前文件所在的目录
-        let fileDir = path.dirname(filePath);
-        let absolutePath = path.normalize(path.join(fileDir, imagePath));
-
-        // 尝试从当前文件所在的目录下查找
-        let exists = await this.app.vault.adapter.exists(absolutePath);
-        if (exists) {
-            return absolutePath;
-        }
-
-        // 尝试从 vault 根目录下查找
-        absolutePath = path.normalize(imagePath);
-        exists = await this.app.vault.adapter.exists(absolutePath);
-        if (exists) {
-            return absolutePath;
-        }
-
-        return '';
-    }
-
-    /**
-     * 格式化文件大小
-     */
-    private formatFileSize(bytes: number): string {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
+    // formatFileSize now comes from shared utils
 
     /**
      * 取消所有上传任务

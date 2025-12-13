@@ -1,7 +1,7 @@
 import {App, Editor, EventRef, MarkdownView, Notice, Plugin} from 'obsidian';
 import {v4 as uuidv4} from 'uuid';
 import {StorageProvider} from '../types';
-import {Logger} from '../utils/logger';
+import {Logger} from '../utils';
 
 /**
  * 粘贴事件处理服务 - 负责处理图片粘贴并上传

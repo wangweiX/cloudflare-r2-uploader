@@ -1,9 +1,6 @@
-import * as path from 'path';
-import {v4 as uuidv4} from 'uuid';
 import {S3Client, PutObjectCommand, PutObjectCommandInput} from '@aws-sdk/client-s3';
 import {R2S3Settings, StorageProvider, StorageProviderType, UploadOptions, UploadResult} from '../types';
-import {MIME_TYPES} from '../config';
-import {Logger} from '../utils/logger';
+import {Logger, generateUniqueFileName, getMimeType} from '../utils';
 
 /**
  * R2 S3 API 服务 - 直接使用 Cloudflare R2 的 S3 兼容 API
@@ -56,14 +53,14 @@ export class R2S3Service implements StorageProvider {
             }
 
             // 生成唯一文件名防止覆盖
-            const uniqueFileName = this.generateUniqueFileName(fileName);
+            const uniqueFileName = generateUniqueFileName(fileName);
             
             // 构建完整的文件路径
             const cleanFolderName = folderName ? folderName.replace(/\/$/, '') : '';
             const filePath = cleanFolderName ? `${cleanFolderName}/${uniqueFileName}` : uniqueFileName;
 
             // 获取文件的MIME类型
-            const mimeType = this.getMimeType(fileName);
+            const mimeType = getMimeType(fileName);
             this.logger.info(`上传文件: ${fileName} -> ${filePath}, 类型: ${mimeType}`);
 
             // 准备上传参数
@@ -172,24 +169,4 @@ export class R2S3Service implements StorageProvider {
         }
     }
 
-    /**
-     * 生成唯一文件名
-     */
-    private generateUniqueFileName(originalName: string): string {
-        const ext = path.extname(originalName);
-        const baseName = path.basename(originalName, ext)
-            .replace(/[^a-zA-Z0-9\u4e00-\u9fa5_\-\.]/g, '_');
-        const timestamp = new Date().getTime();
-        const randomId = uuidv4().split('-')[0];
-        return `${baseName}_${timestamp}_${randomId}${ext}`;
-    }
-
-    /**
-     * 根据文件扩展名获取MIME类型
-     */
-    private getMimeType(fileName: string): string {
-        const extension = path.extname(fileName).toLowerCase().replace('.', '');
-        const mimeType = MIME_TYPES[extension];
-        return mimeType || 'application/octet-stream';
-    }
 }
