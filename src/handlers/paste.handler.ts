@@ -141,10 +141,15 @@ export class PasteHandler {
         this.logger.info('开始上传粘贴的图片...');
         new Notice('正在上传图片...', 2000);
 
-        // Insert placeholder
+        // Insert placeholder and record its position
         const placeholder = `![上传中...](${filename})`;
-        const cursor = editor.getCursor();
+        const startPos = editor.getCursor();
         editor.replaceSelection(placeholder);
+        // Calculate end position (same line, column offset by placeholder length)
+        const endPos: EditorPosition = {
+            line: startPos.line,
+            ch: startPos.ch + placeholder.length
+        };
 
         try {
             const arrayBuffer = await file.arrayBuffer();
@@ -157,18 +162,18 @@ export class PasteHandler {
                 {timeout: 30000}
             );
 
-            // Replace placeholder with actual link
+            // Replace placeholder with actual link using targeted replacement
             const altText = file.name || '图片';
             const markdownLink = `![${altText}](${result.url})`;
 
-            this.replaceInEditor(editor, placeholder, markdownLink, cursor);
+            this.replaceRange(editor, placeholder, markdownLink, startPos, endPos);
 
             this.logger.info(`粘贴图片上传成功: ${filename}`);
             new Notice('图片上传成功!', 2000);
 
         } catch (error: any) {
-            // Remove placeholder on failure
-            this.replaceInEditor(editor, placeholder, '', cursor);
+            // Remove placeholder on failure using targeted replacement
+            this.replaceRange(editor, placeholder, '', startPos, endPos);
 
             const errorMessage = error.message || '未知错误';
             this.logger.error(`粘贴图片上传失败: ${filename}`, error);
@@ -177,18 +182,45 @@ export class PasteHandler {
     }
 
     /**
-     * Replace text in editor and restore cursor
+     * Replace text in editor using targeted range replacement.
+     *
+     * This avoids overwriting concurrent user edits by:
+     * 1. Finding the placeholder within the expected range
+     * 2. Using replaceRange() for surgical replacement
+     * 3. Falling back to full content search only if range doesn't match
      */
-    private replaceInEditor(
+    private replaceRange(
         editor: Editor,
         oldText: string,
         newText: string,
-        cursor: EditorPosition
+        expectedStart: EditorPosition,
+        expectedEnd: EditorPosition
     ): void {
-        const content = editor.getValue();
-        const newContent = content.replace(oldText, newText);
-        editor.setValue(newContent);
-        editor.setCursor(cursor);
+        // Try to get text at expected range
+        const textAtRange = editor.getRange(expectedStart, expectedEnd);
+
+        if (textAtRange === oldText) {
+            // Placeholder is exactly where we expect - use targeted replacement
+            editor.replaceRange(newText, expectedStart, expectedEnd);
+        } else {
+            // Placeholder may have shifted due to user edits before it
+            // Search for it in the document and replace
+            const content = editor.getValue();
+            const index = content.indexOf(oldText);
+
+            if (index !== -1) {
+                // Convert linear index to line/ch position
+                const beforeText = content.substring(0, index);
+                const lines = beforeText.split('\n');
+                const startLine = lines.length - 1;
+                const startCh = lines[startLine].length;
+                const start: EditorPosition = {line: startLine, ch: startCh};
+                const end: EditorPosition = {line: startLine, ch: startCh + oldText.length};
+
+                editor.replaceRange(newText, start, end);
+            }
+            // If not found, placeholder was likely deleted by user - do nothing
+        }
     }
 
     /**
