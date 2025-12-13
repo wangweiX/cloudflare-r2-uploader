@@ -1,148 +1,83 @@
-import {PluginSettings, StorageProvider, StorageProviderType, UploadOptions, UploadResult} from '../types';
-import {Logger, generateUniqueFileName, getMimeType} from '../utils';
-import {BaseStorageProvider} from '../providers';
+import {PluginSettings, StorageProviderType} from '../types';
+import {BaseStorageProvider, ErrorClassifier, ExecuteUploadResult, isCommonNetworkError, ProviderUploadSettings} from './base.provider';
 
 /**
- * Cloudflare Worker服务 - 负责处理与Cloudflare Worker的通信
- * 实现了StorageProvider接口，遵循策略模式
+ * Cloudflare Worker provider - handles uploads via Cloudflare Worker proxy.
+ *
+ * Only implements the provider-specific abstract methods.
+ * The upload algorithm is defined in BaseStorageProvider.uploadImage().
  */
-export class CloudflareWorkerService extends BaseStorageProvider implements StorageProvider {
-    private logger: Logger;
+export class CloudflareWorkerService extends BaseStorageProvider {
+    private static readonly ERROR_CLASSIFIER: ErrorClassifier = {
+        isAuthError: (_, msg) => msg.includes('配置不完整'),
+        isNetworkError: (err, msg) =>
+            isCommonNetworkError(err) ||
+            msg.includes('Failed to fetch') ||
+            msg.includes('网络'),
+        isServerError: (err) => err.status && err.status >= 500,
+        getErrorCode: (err) => err.code || err.status
+    };
 
-    /**
-     * 构造函数
-     */
     constructor(private settings: PluginSettings) {
         super();
-        this.logger = Logger.getInstance();
     }
 
-    /**
-     * 获取提供者类型
-     */
     public getType(): StorageProviderType {
         return StorageProviderType.CLOUDFLARE_WORKER;
     }
 
-    /**
-     * 上传图片到Cloudflare Worker
-     */
-    public async uploadImage(
-        fileContent: ArrayBuffer,
-        fileName: string,
-        onProgress?: (progress: number) => void,
-        options?: UploadOptions
-    ): Promise<UploadResult> {
-        try {
-            const {workerUrl, apiKey, bucketName, folderName, customDomain} = this.settings.workerSettings;
-
-            if (!workerUrl || !apiKey) {
-                throw new Error('Worker URL或API Key未配置');
-            }
-
-            // 生成唯一文件名防止覆盖
-            const uniqueFileName = generateUniqueFileName(fileName);
-            const filePath = this.buildFilePath(folderName, uniqueFileName);
-
-            // 获取文件的MIME类型
-            const mimeType = getMimeType(fileName);
-            this.logger.info(`上传文件: ${fileName} -> ${filePath}, 类型: ${mimeType}`);
-
-            // 构建上传URL（使用POST方法）
-            // 对文件路径的各个部分进行编码，但保留/作为路径分隔符
-            const encodedFilePath = filePath.split('/').map(part => encodeURIComponent(part)).join('/');
-            const uploadUrl = `${workerUrl}/api/v1/buckets/${bucketName}/files/${encodedFilePath}`;
-            this.logger.info(`上传URL: ${uploadUrl}`);
-
-            // 创建上传请求
-            const controller = new AbortController();
-            const timeoutId = options?.timeout ? setTimeout(() => controller.abort(), options.timeout) : null;
-
-            try {
-                // 模拟进度（因为Fetch API不支持上传进度）
-                if (onProgress) {
-                    onProgress(0.1); // 开始上传
-                }
-
-                const response = await fetch(uploadUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': mimeType,
-                        'Content-Length': fileContent.byteLength.toString()
-                    },
-                    body: fileContent,
-                    signal: controller.signal
-                });
-
-                if (timeoutId) clearTimeout(timeoutId);
-
-                // 模拟进度
-                if (onProgress) {
-                    onProgress(0.9); // 上传完成，等待响应
-                }
-
-                // 解析响应
-                const json = await response.json();
-
-                if (response.ok && json.success) {
-                    // 构建访问URL
-                    const baseUrl = new URL(workerUrl);
-                    const imageUrl = this.buildPublicUrl(customDomain, filePath, baseUrl.origin);
-
-                    if (onProgress) {
-                        onProgress(1); // 完成
-                    }
-
-                    this.logger.info(`文件上传成功: ${fileName} -> ${imageUrl}`);
-                    return {
-                        url: imageUrl,
-                        etag: json.etag
-                    };
-                } else {
-                    const errorMessage = json.error || response.statusText || '未知错误';
-                    this.logger.error(`上传失败响应: ${response.status} ${response.statusText}`, json);
-                    throw new Error(errorMessage);
-                }
-            } catch (error: any) {
-                if (timeoutId) clearTimeout(timeoutId);
-                
-                if (error.name === 'AbortError') {
-                    throw {
-                        type: 'timeout',
-                        message: '上传超时',
-                        code: 'TIMEOUT'
-                    };
-                }
-                
-                throw error;
-            }
-        } catch (error: any) {
-            this.logger.error(`上传文件失败 ${fileName}:`, error);
-            
-            // 规范化错误
-            if (error.type) {
-                throw error;
-            }
-
-            // 分析错误类型
-            let type: 'network' | 'server' | 'auth' | 'timeout' | 'unknown' = 'unknown';
-            const message = error.message || String(error);
-
-            if (message.includes('Worker URL或API Key未配置')) {
-                type = 'auth';
-            } else if (message.includes('Failed to fetch') || message.includes('网络')) {
-                type = 'network';
-            } else if (error.status && error.status >= 500) {
-                type = 'server';
-            }
-
-            throw {
-                type,
-                message,
-                code: error.code || error.status
-            };
+    protected validateSettings(): void {
+        const {workerUrl, apiKey, bucketName} = this.settings.workerSettings;
+        if (!workerUrl || !apiKey || !bucketName) {
+            throw new Error('Worker 配置不完整：缺少 Worker URL、API Key 或 Bucket 名称');
         }
     }
 
+    protected getUploadSettings(): ProviderUploadSettings {
+        return {
+            folderName: this.settings.workerSettings.folderName,
+            customDomain: this.settings.workerSettings.customDomain
+        };
+    }
+
+    protected getFallbackBaseUrl(): string {
+        return new URL(this.settings.workerSettings.workerUrl).origin;
+    }
+
+    protected getErrorClassifier(): ErrorClassifier {
+        return CloudflareWorkerService.ERROR_CLASSIFIER;
+    }
+
+    protected async executeUpload(
+        fileContent: ArrayBuffer,
+        filePath: string,
+        mimeType: string,
+        signal: AbortSignal
+    ): Promise<ExecuteUploadResult> {
+        const {workerUrl, apiKey, bucketName} = this.settings.workerSettings;
+
+        const encodedPath = filePath.split('/').map(encodeURIComponent).join('/');
+        const uploadUrl = `${workerUrl}/api/v1/buckets/${bucketName}/files/${encodedPath}`;
+        this.logger.info(`上传URL: ${uploadUrl}`);
+
+        // Note: Content-Length is automatically set by fetch; explicitly setting it
+        // may cause issues in some environments (forbidden header in browsers)
+        const response = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': mimeType
+            },
+            body: fileContent,
+            signal
+        });
+
+        const json = await response.json();
+        if (!response.ok || !json.success) {
+            this.logger.error(`上传失败响应: ${response.status} ${response.statusText}`, json);
+            throw new Error(json.error || response.statusText || '未知错误');
+        }
+
+        return {etag: json.etag};
+    }
 }
