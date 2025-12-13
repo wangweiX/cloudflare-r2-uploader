@@ -3,6 +3,7 @@ import * as path from 'path';
 import {StorageProvider, UploadTask} from '../types';
 import {UploadManager} from './upload-manager';
 import {Logger} from '../utils/logger';
+import {IMAGE_PATTERNS} from '../config';
 
 /**
  * 当前文件上传结果接口
@@ -213,7 +214,7 @@ export class CurrentFileUploader {
         const content = await this.app.vault.cachedRead(file);
 
         // 查找所有标准格式的图片链接 ![alt](path)
-        const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
+        const standardRegex = IMAGE_PATTERNS.STANDARD_MARKDOWN;
         let standardMatch;
         while ((standardMatch = standardRegex.exec(content)) !== null) {
             const imagePath = standardMatch[2];
@@ -226,7 +227,7 @@ export class CurrentFileUploader {
         }
 
         // 查找所有 Obsidian 内部链接格式的图片 ![[path]]
-        const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
+        const obsidianRegex = IMAGE_PATTERNS.OBSIDIAN_INTERNAL;
         let obsidianMatch;
         while ((obsidianMatch = obsidianRegex.exec(content)) !== null) {
             const imagePath = obsidianMatch[1];
@@ -268,7 +269,7 @@ export class CurrentFileUploader {
         let newContent = content;
 
         // 处理标准格式的图片链接 ![alt](path)
-        const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
+        const standardRegex = IMAGE_PATTERNS.STANDARD_MARKDOWN;
         let standardMatch;
         let lastIndex = 0;
         let standardNewContent = '';
@@ -310,7 +311,7 @@ export class CurrentFileUploader {
 
         // 处理 Obsidian 内部链接格式的图片 ![[path]]
         modified = false;
-        const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
+        const obsidianRegex = IMAGE_PATTERNS.OBSIDIAN_INTERNAL;
         let obsidianMatch;
         lastIndex = 0;
         let obsidianNewContent = '';

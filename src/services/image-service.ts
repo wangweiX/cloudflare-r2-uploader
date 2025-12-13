@@ -1,6 +1,7 @@
 import {App} from 'obsidian';
 import * as path from 'path';
 import {Logger} from '../utils/logger';
+import {IMAGE_PATTERNS} from '../config';
 
 /**
  * 图片服务 - 负责查找需要上传的图片
@@ -29,7 +30,7 @@ export class ImageService {
             const content = await this.app.vault.cachedRead(file);
             
             // 查找标准Markdown格式的图片链接 ![alt](path)
-            const standardRegex = /!\[([^\]]*)\]\(([^)]*)\)/g;
+            const standardRegex = IMAGE_PATTERNS.STANDARD_MARKDOWN;
             let match;
             while ((match = standardRegex.exec(content)) !== null) {
                 const imagePath = match[2];
@@ -45,7 +46,7 @@ export class ImageService {
             }
 
             // 查找Obsidian内部链接格式的图片 ![[path]]
-            const obsidianRegex = /!\[\[([^\]]+)\]\]/g;
+            const obsidianRegex = IMAGE_PATTERNS.OBSIDIAN_INTERNAL;
             while ((match = obsidianRegex.exec(content)) !== null) {
                 const imagePath = match[1];
                 const absolutePath = await this.resolveAbsolutePath(file.path, imagePath);
