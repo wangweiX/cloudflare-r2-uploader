@@ -8,7 +8,7 @@
  */
 
 import {App, Notice, PluginSettingTab, Setting} from 'obsidian';
-import {CloudflareImagesUploader} from '../core/main';
+import type {CloudflareImagesUploader} from '../core/main';
 import {StorageProviderType} from '../types';
 import {
     SectionDeps,
@@ -113,23 +113,36 @@ export class SettingsTab extends PluginSettingTab {
 
         // Validate button
         new Setting(container)
-            .setName('验证配置')
-            .setDesc('测试与 Cloudflare Worker 的连接')
+            .setName('验证配置格式')
+            .setDesc('检查当前存储提供者的配置是否完整')
             .addButton(button => button
-                .setButtonText('验证连接')
+                .setButtonText('验证配置')
                 .onClick(async () => {
                     this.validateConfiguration();
                 }));
     }
 
     /**
-     * Validate the current configuration
+     * Validate the current configuration based on selected provider
      */
     private validateConfiguration(): void {
+        const provider = this.plugin.settings.storageProvider;
+
+        if (provider === StorageProviderType.CLOUDFLARE_WORKER) {
+            this.validateWorkerConfig();
+        } else {
+            this.validateR2S3Config();
+        }
+    }
+
+    /**
+     * Validate Worker configuration
+     */
+    private validateWorkerConfig(): void {
         const {workerUrl, apiKey, bucketName} = this.plugin.settings.workerSettings;
 
         if (!workerUrl || !apiKey || !bucketName) {
-            new Notice('请先填写所有必需的配置项');
+            new Notice('请先填写所有必需的 Worker 配置项（URL、API Key、存储桶名称）');
             return;
         }
 
@@ -139,6 +152,27 @@ export class SettingsTab extends PluginSettingTab {
             return;
         }
 
-        new Notice('配置验证成功！可以开始使用了。');
+        new Notice('Worker 配置验证成功！');
+    }
+
+    /**
+     * Validate R2 S3 API configuration
+     */
+    private validateR2S3Config(): void {
+        const r2Settings = this.plugin.settings.r2S3Settings;
+
+        if (!r2Settings) {
+            new Notice('请先填写 R2 S3 API 配置');
+            return;
+        }
+
+        const {accountId, accessKeyId, secretAccessKey, bucketName} = r2Settings;
+
+        if (!accountId || !accessKeyId || !secretAccessKey || !bucketName) {
+            new Notice('请先填写所有必需的 R2 配置项（账户 ID、Access Key、Secret Key、存储桶名称）');
+            return;
+        }
+
+        new Notice('R2 S3 API 配置验证成功！');
     }
 }

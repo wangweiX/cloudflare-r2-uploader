@@ -40,13 +40,27 @@ export class AdvancedSection extends BaseSection {
         // Retry delay
         createNumericInput(container, {
             name: '重试延迟（毫秒）',
-            desc: '重试前的等待时间（100-10000）',
+            desc: '首次重试前的等待时间（100-10000）',
             placeholder: '1000',
             min: 100,
             max: 10000,
             getValue: () => this.settings.retryDelay || 1000,
             setValue: async (value) => {
                 this.settings.retryDelay = value;
+                await this.save();
+            }
+        });
+
+        // Max retry delay
+        createNumericInput(container, {
+            name: '最大重试延迟（毫秒）',
+            desc: '指数退避的最大延迟上限（1000-60000）',
+            placeholder: '30000',
+            min: 1000,
+            max: 60000,
+            getValue: () => this.settings.maxRetryDelay || 30000,
+            setValue: async (value) => {
+                this.settings.maxRetryDelay = value;
                 await this.save();
             }
         });

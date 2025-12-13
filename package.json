@@ -18,20 +18,20 @@
   "author": "wang wei",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.11.0",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
-    "@aws-sdk/client-s3": "^3.857.0",
+    "@aws-sdk/client-s3": "^3.948.0",
+    "@types/node": "^24.10.3",
+    "@typescript-eslint/eslint-plugin": "^8.49.0",
+    "@typescript-eslint/parser": "^8.49.0",
     "archiver": "^7.0.1",
-    "builtin-modules": "^3.3.0",
-    "esbuild": "^0.25.8",
+    "builtin-modules": "^5.0.0",
+    "esbuild": "^0.27.1",
     "obsidian": "latest",
     "ts-node": "^10.9.2",
-    "typescript": "^5.0.0"
-
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@types/uuid": "^10.0.0",
-    "uuid": "^11.1.0"
+    "@types/uuid": "^11.0.0",
+    "process": "^0.11.10",
+    "uuid": "^13.0.0"
   }
 }
