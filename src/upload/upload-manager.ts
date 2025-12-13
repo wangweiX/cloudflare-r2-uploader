@@ -60,6 +60,12 @@ export class UploadManager extends EventEmitter {
     private isProcessing = false;
     private isPaused = false;
     private processQueueTimeout: NodeJS.Timeout | null = null;
+    private cleanupInterval: NodeJS.Timeout | null = null;
+
+    // Auto-cleanup configuration
+    // Tasks older than this will be automatically removed from completedTasks
+    private static readonly CLEANUP_MAX_AGE_MS = 30 * 60 * 1000; // 30 minutes
+    private static readonly CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // Check every 5 minutes
 
     // Event constants
     static readonly EVENTS = UPLOAD_EVENTS;
@@ -78,6 +84,9 @@ export class UploadManager extends EventEmitter {
         this.fileReader = new VaultFileReader(app);
         this.taskRunner = new TaskRunner(this.fileReader, storageProvider);
         this.retryStrategy = ExponentialBackoffStrategy.fromUploadConfig(config);
+
+        // Start auto-cleanup interval
+        this.startAutoCleanup();
     }
 
     // ===== Singleton Pattern =====
@@ -91,6 +100,7 @@ export class UploadManager extends EventEmitter {
 
     static destroyInstance(): void {
         if (UploadManager.instance) {
+            UploadManager.instance.stopAutoCleanup();
             UploadManager.instance.cancelAll();
             UploadManager.instance.removeAllListeners();
             UploadManager.instance = null;
@@ -526,16 +536,67 @@ export class UploadManager extends EventEmitter {
 
     // ===== Cleanup =====
 
-    clearCompleted(): void {
-        const completedIds = Array.from(this.completedTasks.entries())
-            .filter(([_, task]) => task.status === 'completed')
+    /**
+     * Start periodic auto-cleanup of old tasks
+     */
+    private startAutoCleanup(): void {
+        this.stopAutoCleanup();
+        this.cleanupInterval = setInterval(() => {
+            this.cleanupOldTasks();
+        }, UploadManager.CLEANUP_INTERVAL_MS);
+    }
+
+    /**
+     * Stop auto-cleanup interval
+     */
+    private stopAutoCleanup(): void {
+        if (this.cleanupInterval) {
+            clearInterval(this.cleanupInterval);
+            this.cleanupInterval = null;
+        }
+    }
+
+    /**
+     * Remove old completed/failed/cancelled tasks from memory
+     * Called automatically by cleanup interval
+     */
+    private cleanupOldTasks(): void {
+        const now = Date.now();
+        const maxAge = UploadManager.CLEANUP_MAX_AGE_MS;
+        let cleanedCount = 0;
+
+        for (const [id, task] of this.completedTasks) {
+            const taskAge = now - (task.completedAt || task.createdAt);
+            if (taskAge > maxAge) {
+                this.completedTasks.delete(id);
+                cleanedCount++;
+            }
+        }
+
+        if (cleanedCount > 0) {
+            this.logger.info(`自动清理了 ${cleanedCount} 个旧任务`);
+            this.emitStatsUpdate();
+        }
+    }
+
+    /**
+     * Manually clear completed tasks
+     * @param includeFailedAndCancelled If true, also clears failed and cancelled tasks
+     */
+    clearCompleted(includeFailedAndCancelled = false): void {
+        const idsToRemove = Array.from(this.completedTasks.entries())
+            .filter(([_, task]) => {
+                if (task.status === 'completed') return true;
+                if (includeFailedAndCancelled && (task.status === 'failed' || task.status === 'cancelled')) return true;
+                return false;
+            })
             .map(([id]) => id);
 
-        for (const id of completedIds) {
+        for (const id of idsToRemove) {
             this.completedTasks.delete(id);
         }
 
-        this.logger.info(`已清理 ${completedIds.length} 个已完成任务`);
+        this.logger.info(`已清理 ${idsToRemove.length} 个任务`);
         this.emitStatsUpdate();
     }
 
