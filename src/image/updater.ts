@@ -11,9 +11,8 @@
  * - Path resolution for matching original paths to replacements
  */
 
-import * as path from 'path';
 import {DataAdapter} from 'obsidian';
-import {resolveAbsolutePath} from '../utils';
+import {resolveAbsolutePath, posixBasename, posixExtname} from '../utils';
 import {ImageLinkParser} from './parser';
 import {LinkUpdateResult, ParsedImageLink} from './types';
 
@@ -126,12 +125,12 @@ export class LinkUpdater {
         if (link.obsidianAlias) {
             // If alias is just a number (resize), use filename instead
             if (/^\d+$/.test(link.obsidianAlias)) {
-                altText = path.basename(link.path, path.extname(link.path));
+                altText = posixBasename(link.path, posixExtname(link.path));
             } else {
                 altText = link.obsidianAlias;
             }
         } else {
-            altText = path.basename(link.path, path.extname(link.path));
+            altText = posixBasename(link.path, posixExtname(link.path));
         }
 
         return `![${altText}](${newUrl})`;

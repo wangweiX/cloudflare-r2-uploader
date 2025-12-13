@@ -1,4 +1,3 @@
-import * as path from 'path';
 import {v4 as uuidv4} from 'uuid';
 import {MIME_TYPES} from '../config';
 
@@ -6,8 +5,8 @@ import {MIME_TYPES} from '../config';
  * Generate a unique, sanitized file name.
  */
 export function generateUniqueFileName(originalName: string): string {
-    const ext = path.extname(originalName);
-    const baseName = path.basename(originalName, ext).replace(/[^a-zA-Z0-9\u4e00-\u9fa5_.-]/g, '_');
+    const ext = posixExtname(originalName);
+    const baseName = posixBasename(originalName, ext).replace(/[^a-zA-Z0-9\u4e00-\u9fa5_.-]/g, '_');
     const timestamp = Date.now();
     const randomId = uuidv4().split('-')[0];
     return `${baseName}_${timestamp}_${randomId}${ext}`;
@@ -83,6 +82,36 @@ function posixJoin(...parts: string[]): string {
 }
 
 /**
+ * Get file extension using POSIX-style paths.
+ * Returns extension with dot (e.g., ".png") or empty string if none.
+ */
+export function posixExtname(p: string): string {
+    const normalized = normalizeVaultPath(p);
+    const lastSlash = normalized.lastIndexOf('/');
+    const filename = lastSlash === -1 ? normalized : normalized.substring(lastSlash + 1);
+    const dotIndex = filename.lastIndexOf('.');
+    // No dot, or dot is first char (hidden file), or dot is last char
+    if (dotIndex <= 0 || dotIndex === filename.length - 1) {
+        return '';
+    }
+    return filename.substring(dotIndex);
+}
+
+/**
+ * Get base filename using POSIX-style paths.
+ * If ext is provided, it will be stripped from the result.
+ */
+export function posixBasename(p: string, ext?: string): string {
+    const normalized = normalizeVaultPath(p);
+    const lastSlash = normalized.lastIndexOf('/');
+    let filename = lastSlash === -1 ? normalized : normalized.substring(lastSlash + 1);
+    if (ext && filename.endsWith(ext)) {
+        filename = filename.substring(0, filename.length - ext.length);
+    }
+    return filename;
+}
+
+/**
  * Resolve a relative image path to an absolute path using a vault-like adapter.
  *
  * Uses POSIX-style paths to ensure compatibility with Obsidian vault on all platforms.
@@ -126,7 +155,7 @@ export async function resolveAbsolutePath(
  * Lookup mime type by file extension.
  */
 export function getMimeType(fileName: string): string {
-    const extension = path.extname(fileName).toLowerCase().replace('.', '');
+    const extension = posixExtname(fileName).toLowerCase().replace('.', '');
     const mimeType = MIME_TYPES[extension];
     return mimeType || 'application/octet-stream';
 }
