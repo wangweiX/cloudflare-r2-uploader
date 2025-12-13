@@ -1,6 +1,7 @@
 import * as path from 'path';
 import {v4 as uuidv4} from 'uuid';
 import {PluginSettings, StorageProvider, StorageProviderType, UploadOptions, UploadResult} from '../types';
+import {MIME_TYPES} from '../config';
 import {Logger} from '../utils/logger';
 
 /**
@@ -175,18 +176,7 @@ export class CloudflareWorkerService implements StorageProvider {
      */
     private getMimeType(fileName: string): string {
         const extension = path.extname(fileName).toLowerCase().replace('.', '');
-        const mimeTypes: { [key: string]: string } = {
-            'jpg': 'image/jpeg',
-            'jpeg': 'image/jpeg',
-            'png': 'image/png',
-            'gif': 'image/gif',
-            'webp': 'image/webp',
-            'svg': 'image/svg+xml',
-            'bmp': 'image/bmp',
-            'ico': 'image/x-icon',
-            'tiff': 'image/tiff',
-            'tif': 'image/tiff'
-        };
-        return mimeTypes[extension] || 'application/octet-stream';
+        const mimeType = MIME_TYPES[extension];
+        return mimeType || 'application/octet-stream';
     }
 }
