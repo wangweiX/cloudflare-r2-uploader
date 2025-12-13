@@ -115,7 +115,9 @@ export class LinkUpdater {
         if (link.format === 'standard') {
             // Preserve title if it exists (more diff-friendly)
             if (link.title) {
-                return `![${link.altText}](${newUrl} "${link.title}")`;
+                // Escape quotes in title to prevent breaking markdown syntax
+                const escapedTitle = link.title.replace(/"/g, '\\"');
+                return `![${link.altText}](${newUrl} "${escapedTitle}")`;
             }
             return `![${link.altText}](${newUrl})`;
         }
