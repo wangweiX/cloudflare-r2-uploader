@@ -336,7 +336,7 @@ export class UploadManager extends EventEmitter {
             task.nextRetryAt = Date.now() + decision.delay;
 
             this.logger.warn(
-                `任务失败，${decision.delay}ms 后重试 (${task.retryCount}/${this.config.maxRetries}): ${task.fileName}`,
+                `任务失败，第 ${task.retryCount}/${this.config.maxRetries} 次重试，${decision.delay}ms 后执行: ${task.fileName}`,
                 error
             );
 
