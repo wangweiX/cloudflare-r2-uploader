@@ -364,5 +364,6 @@ modules.xml
 *.ipr
 .claude
 CLAUDE.md
+AGENTS.md
 
 # End of https://www.toptal.com/developers/gitignore/api/webstorm,webstorm+iml,node,vuejs,nextjs,react
