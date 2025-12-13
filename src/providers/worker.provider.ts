@@ -1,17 +1,19 @@
 import {PluginSettings, StorageProvider, StorageProviderType, UploadOptions, UploadResult} from '../types';
 import {Logger, generateUniqueFileName, getMimeType} from '../utils';
+import {BaseStorageProvider} from '../providers';
 
 /**
  * Cloudflare Worker服务 - 负责处理与Cloudflare Worker的通信
  * 实现了StorageProvider接口，遵循策略模式
  */
-export class CloudflareWorkerService implements StorageProvider {
+export class CloudflareWorkerService extends BaseStorageProvider implements StorageProvider {
     private logger: Logger;
 
     /**
      * 构造函数
      */
     constructor(private settings: PluginSettings) {
+        super();
         this.logger = Logger.getInstance();
     }
 
@@ -40,11 +42,7 @@ export class CloudflareWorkerService implements StorageProvider {
 
             // 生成唯一文件名防止覆盖
             const uniqueFileName = generateUniqueFileName(fileName);
-            
-            // 构建完整的文件路径
-            // 确保folderName不以/结尾，避免双斜杠
-            const cleanFolderName = folderName ? folderName.replace(/\/$/, '') : '';
-            const filePath = cleanFolderName ? `${cleanFolderName}/${uniqueFileName}` : uniqueFileName;
+            const filePath = this.buildFilePath(folderName, uniqueFileName);
 
             // 获取文件的MIME类型
             const mimeType = getMimeType(fileName);
@@ -89,17 +87,8 @@ export class CloudflareWorkerService implements StorageProvider {
 
                 if (response.ok && json.success) {
                     // 构建访问URL
-                    let imageUrl: string;
-                    if (customDomain && customDomain.trim() !== '') {
-                        // 使用自定义域名
-                        const domainBase = customDomain.startsWith('http') ? customDomain : `https://${customDomain}`;
-                        const formattedDomain = domainBase.endsWith('/') ? domainBase.slice(0, -1) : domainBase;
-                        imageUrl = `${formattedDomain}/${filePath}`;
-                    } else {
-                        // 使用Worker URL
-                        const baseUrl = new URL(workerUrl);
-                        imageUrl = `${baseUrl.origin}/${filePath}`;
-                    }
+                    const baseUrl = new URL(workerUrl);
+                    const imageUrl = this.buildPublicUrl(customDomain, filePath, baseUrl.origin);
 
                     if (onProgress) {
                         onProgress(1); // 完成

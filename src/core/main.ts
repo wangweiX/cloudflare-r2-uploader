@@ -1,8 +1,8 @@
 import {addIcon, Plugin} from 'obsidian';
 import {DEFAULT_SETTINGS, UPLOAD_ICON} from '../config';
 import {StorageProvider, StorageProviderType, PluginSettings} from '../types';
-import {CloudflareWorkerService} from '../services/worker-service';
-import {R2S3Service} from '../services/r2-s3-service';
+import {CloudflareWorkerService} from '../providers/worker.provider';
+import {R2S3Service} from '../providers/r2s3.provider';
 import {ImageService} from '../services/image-service';
 import {PasteHandler} from '../services/paste-handler';
 import {CurrentFileUploader} from '../services/current-file-uploader';

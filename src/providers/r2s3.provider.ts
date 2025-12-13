@@ -1,12 +1,13 @@
 import {S3Client, PutObjectCommand, PutObjectCommandInput} from '@aws-sdk/client-s3';
 import {R2S3Settings, StorageProvider, StorageProviderType, UploadOptions, UploadResult} from '../types';
 import {Logger, generateUniqueFileName, getMimeType} from '../utils';
+import {BaseStorageProvider} from '../providers';
 
 /**
  * R2 S3 API 服务 - 直接使用 Cloudflare R2 的 S3 兼容 API
  * 实现了 StorageProvider 接口，遵循策略模式
  */
-export class R2S3Service implements StorageProvider {
+export class R2S3Service extends BaseStorageProvider implements StorageProvider {
     private logger: Logger;
     private s3Client: S3Client;
 
@@ -14,6 +15,7 @@ export class R2S3Service implements StorageProvider {
      * 构造函数
      */
     constructor(private settings: R2S3Settings) {
+        super();
         this.logger = Logger.getInstance();
         
         // 创建 S3 客户端
@@ -54,10 +56,7 @@ export class R2S3Service implements StorageProvider {
 
             // 生成唯一文件名防止覆盖
             const uniqueFileName = generateUniqueFileName(fileName);
-            
-            // 构建完整的文件路径
-            const cleanFolderName = folderName ? folderName.replace(/\/$/, '') : '';
-            const filePath = cleanFolderName ? `${cleanFolderName}/${uniqueFileName}` : uniqueFileName;
+            const filePath = this.buildFilePath(folderName, uniqueFileName);
 
             // 获取文件的MIME类型
             const mimeType = getMimeType(fileName);
@@ -98,16 +97,8 @@ export class R2S3Service implements StorageProvider {
                 }
 
                 // 构建访问URL
-                let imageUrl: string;
-                if (customDomain && customDomain.trim() !== '') {
-                    // 使用自定义域名
-                    const domainBase = customDomain.startsWith('http') ? customDomain : `https://${customDomain}`;
-                    const formattedDomain = domainBase.endsWith('/') ? domainBase.slice(0, -1) : domainBase;
-                    imageUrl = `${formattedDomain}/${filePath}`;
-                } else {
-                    // 使用 R2 公共访问 URL（需要配置公共访问）
-                    imageUrl = `https://${this.settings.accountId}.r2.cloudflarestorage.com/${bucketName}/${filePath}`;
-                }
+                const fallbackBase = `https://${this.settings.accountId}.r2.cloudflarestorage.com/${bucketName}`;
+                const imageUrl = this.buildPublicUrl(customDomain, filePath, fallbackBase);
 
                 if (onProgress) {
                     onProgress(1); // 完成
