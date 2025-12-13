@@ -67,47 +67,6 @@ export class ImageFinder {
     }
 
     /**
-     * Find all local images in the entire vault
-     *
-     * @param options Finder options
-     * @returns Set of absolute paths of existing images
-     */
-    public async findInVault(options: FinderOptions = {}): Promise<Set<string>> {
-        const markdownFiles = this.app.vault.getMarkdownFiles();
-        const imagePaths = new Set<string>();
-
-        for (const file of markdownFiles) {
-            const images = await this.findInFile(file, options);
-            for (const image of images) {
-                if (image.exists) {
-                    imagePaths.add(image.absolutePath);
-                }
-            }
-        }
-
-        return imagePaths;
-    }
-
-    /**
-     * Find images in a single file and return unique absolute paths
-     *
-     * @param file The markdown file to search
-     * @returns Set of absolute paths of existing images
-     */
-    public async findImagePathsInFile(file: TFile): Promise<Set<string>> {
-        const images = await this.findInFile(file);
-        const paths = new Set<string>();
-
-        for (const image of images) {
-            if (image.exists) {
-                paths.add(image.absolutePath);
-            }
-        }
-
-        return paths;
-    }
-
-    /**
      * Resolve parsed image links to absolute paths with existence check
      */
     private async resolveImages(

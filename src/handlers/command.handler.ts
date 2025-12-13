@@ -103,8 +103,16 @@ export class CommandHandler {
                 return;
             }
 
+            const deletionSummary = result.deletionEnabled
+                ? (
+                    result.skippedDeletionDueToScanErrors
+                        ? '删除已跳过：验证扫描出现错误'
+                        : `删除=${result.deletedLocalFiles}，仍被引用跳过=${result.stillReferencedAfterRewrite}，删除失败=${result.deleteErrors}`
+                )
+                : '删除未启用';
+
             this.logger.notify(
-                `Vault processing completed. Notes=${result.totalNotes}, images=${result.referencedLocalImages}, replacedLinks=${result.replacedLinks}, deletedFiles=${result.deletedLocalFiles}`,
+                `全库处理完成：笔记=${result.totalNotes}，图片引用=${result.referencedLocalImages}，替换链接=${result.replacedLinks}，上传成功=${result.successfulUploads}，失败=${result.failedUploads}，取消=${result.cancelledUploads}，${deletionSummary}`,
                 5000
             );
         } catch (error) {

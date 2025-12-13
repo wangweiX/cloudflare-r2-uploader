@@ -4,6 +4,18 @@ import {PluginSettings, UploadTask} from '../types';
 import {Logger} from '../utils';
 import {UploadManager} from './upload-manager';
 
+/**
+ * VaultUploader orchestrates a closed-loop pipeline for the entire vault:
+ * 1) Scan all markdown notes and collect local image references (resolved to vault-absolute paths)
+ * 2) Enqueue uploads via UploadManager
+ * 3) Wait for the enqueued tasks to reach a terminal status (events + polling safety net)
+ * 4) Rewrite links in all notes via LinkUpdater using absolutePath -> url mappings
+ * 5) Optional safe deletion: rescan the vault, and only delete uploaded files that are no longer referenced
+ *
+ * Safety properties:
+ * - Deletion is only performed after a full verification scan succeeds with zero scan errors.
+ * - Files still referenced by any note after rewrite are never deleted.
+ */
 export interface VaultUploadResult {
     totalNotes: number;
     referencedLocalImages: number;
@@ -52,22 +64,22 @@ export class VaultUploader {
         }
 
         if (this.isProcessing) {
-            new Notice('A vault upload task is already running. Please wait.', 3000);
+            new Notice('已有一个全库处理任务在运行，请等待完成。', 3000);
             return null;
         }
 
         this.isProcessing = true;
-        const progressNotice = new Notice('Preparing vault upload...', 0);
+        const progressNotice = new Notice('正在准备全库处理...', 0);
 
         try {
             const markdownFiles = this.app.vault.getMarkdownFiles();
 
-            progressNotice.setMessage(`Scanning notes... (0/${markdownFiles.length})`);
-            const initialScan = await this.scanReferencedImages(markdownFiles, progressNotice, 'Scanning notes');
+            progressNotice.setMessage(`正在扫描笔记... (0/${markdownFiles.length})`);
+            const initialScan = await this.scanReferencedImages(markdownFiles, progressNotice, '正在扫描笔记');
 
             if (initialScan.paths.size === 0) {
                 progressNotice.hide();
-                new Notice('No local images found in the vault.', 3000);
+                new Notice('Vault 中未发现需要上传的本地图片。', 3000);
                 return {
                     totalNotes: markdownFiles.length,
                     referencedLocalImages: 0,
@@ -86,16 +98,19 @@ export class VaultUploader {
                 };
             }
 
-            progressNotice.setMessage(`Queueing ${initialScan.paths.size} images for upload...`);
+            progressNotice.setMessage(`正在将 ${initialScan.paths.size} 张图片加入上传队列...`);
             const tasks = await this.uploadManager.addTasks(Array.from(initialScan.paths));
 
-            progressNotice.setMessage(`Uploading images... (0/${tasks.length})`);
-            await this.waitForTerminalTasks(tasks, progressNotice, 'Uploading images');
+            progressNotice.setMessage(`正在上传图片... (0/${tasks.length})`);
+            await this.waitForTerminalTasks(tasks, progressNotice, '正在上传图片');
 
+            // Use the UploadManager's in-memory history to build a complete mapping.
+            // This enables link rewriting even for images that were uploaded earlier in the same session
+            // but were deduplicated (not re-enqueued) during this run.
             const completedTasks = this.getCompletedTasksForPaths(initialScan.paths);
             const replacements = this.buildReplacementMap(completedTasks);
 
-            progressNotice.setMessage(`Updating links... (0/${markdownFiles.length})`);
+            progressNotice.setMessage(`正在替换笔记中的图片链接... (0/${markdownFiles.length})`);
             const rewriteStats = await this.rewriteLinks(markdownFiles, replacements, progressNotice);
 
             const settings = this.getSettings();
@@ -108,11 +123,11 @@ export class VaultUploader {
             let verifiedNotes = 0;
 
             if (deletionEnabled && Object.keys(replacements).length > 0) {
-                progressNotice.setMessage(`Verifying references before deletion... (0/${markdownFiles.length})`);
+                progressNotice.setMessage(`正在验证删除前的引用情况... (0/${markdownFiles.length})`);
                 const verificationScan = await this.scanReferencedImages(
                     markdownFiles,
                     progressNotice,
-                    'Verifying references'
+                    '正在验证引用'
                 );
                 verifiedNotes = markdownFiles.length;
 
@@ -134,7 +149,7 @@ export class VaultUploader {
                     }
 
                     if (deletable.length > 0) {
-                        progressNotice.setMessage(`Deleting local files... (0/${deletable.length})`);
+                        progressNotice.setMessage(`正在删除本地文件... (0/${deletable.length})`);
                         const deletionStats = await this.deleteLocalFiles(deletable, progressNotice);
                         deletedLocalFiles = deletionStats.deletedCount;
                         deleteErrors = deletionStats.errorCount;
@@ -165,7 +180,7 @@ export class VaultUploader {
         } catch (error) {
             progressNotice.hide();
             this.logger.error('Vault upload failed', error);
-            new Notice(`Vault upload failed: ${(error as Error).message}`, 5000);
+            new Notice(`全库处理失败：${(error as Error).message}`, 5000);
             return null;
         } finally {
             this.isProcessing = false;
@@ -175,7 +190,7 @@ export class VaultUploader {
     private checkDebounce(): boolean {
         const now = Date.now();
         if (now - this.lastProcessTime < this.debounceDelayMs) {
-            new Notice('Operation is too frequent. Please try again later.', 2000);
+            new Notice('操作过于频繁，请稍后再试。', 2000);
             return false;
         }
         this.lastProcessTime = now;
@@ -187,6 +202,8 @@ export class VaultUploader {
         notice: Notice,
         label: string
     ): Promise<{paths: Set<string>; errorCount: number}> {
+        // errorCount is intentionally tracked: any scan error will abort the deletion phase
+        // because we cannot safely guarantee that there are no remaining references.
         const paths = new Set<string>();
         let errorCount = 0;
 
@@ -224,6 +241,8 @@ export class VaultUploader {
             notice.setMessage(`${label}... (${terminalTaskIds.size}/${targetTaskIds.size})`);
         };
 
+        // Initialize state from current task objects in case some tasks already completed
+        // before we attach event listeners.
         for (const task of tasks) {
             if (isTerminalStatus(task.status)) {
                 terminalTaskIds.add(task.id);
@@ -249,6 +268,8 @@ export class VaultUploader {
                     return;
                 }
 
+                // Polling is a safety net: event delivery can be missed in edge cases,
+                // and tasks are mutated in-place, so polling remains consistent.
                 interval = setInterval(() => {
                     for (const task of tasks) {
                         if (isTerminalStatus(task.status)) {
@@ -302,10 +323,12 @@ export class VaultUploader {
         for (let i = 0; i < markdownFiles.length; i++) {
             const file = markdownFiles[i];
             if (i % 10 === 0) {
-                notice.setMessage(`Updating links... (${i + 1}/${markdownFiles.length})`);
+                notice.setMessage(`正在替换笔记中的图片链接... (${i + 1}/${markdownFiles.length})`);
             }
 
             try {
+                // cachedRead avoids disk churn during full-vault operations.
+                // In the worst case, stale cache yields fewer deletions (safe failure), not data loss.
                 const content = await this.app.vault.cachedRead(file);
                 const result = await this.updater.updateLinks(content, file.path, replacements);
                 if (!result.modified) {
@@ -333,7 +356,7 @@ export class VaultUploader {
         for (let i = 0; i < filePaths.length; i++) {
             const filePath = filePaths[i];
             if (i % 10 === 0) {
-                notice.setMessage(`Deleting local files... (${i + 1}/${filePaths.length})`);
+                notice.setMessage(`正在删除本地文件... (${i + 1}/${filePaths.length})`);
             }
 
             try {
