@@ -1,5 +1,5 @@
 import {App, Notice, TFile} from 'obsidian';
-import {UploadTask} from '../types';
+import {PluginSettings, UploadTask} from '../types';
 import {UploadManager} from '../upload';
 import {ImageFinder, LinkUpdater} from '../image';
 import {Logger, formatFileSize} from '../utils';
@@ -36,7 +36,7 @@ export class CurrentFileUploader {
     constructor(
         private readonly app: App,
         private readonly uploadManager: UploadManager,
-        private readonly settings?: any
+        private readonly settings?: PluginSettings
     ) {
         this.logger = Logger.getInstance();
         this.finder = new ImageFinder(app, app.vault.adapter);

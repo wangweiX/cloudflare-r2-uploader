@@ -40,8 +40,15 @@ export class CloudflareWorkerService extends BaseStorageProvider {
         };
     }
 
+    /**
+     * Returns the fallback base URL for Worker uploads.
+     *
+     * Preserves the full URL path (not just origin) to support Workers
+     * deployed with path prefixes, e.g., "https://cdn.example.com/images".
+     */
     protected getFallbackBaseUrl(): string {
-        return new URL(this.settings.workerSettings.workerUrl).origin;
+        // Preserve full URL, just normalize trailing slashes
+        return this.settings.workerSettings.workerUrl.replace(/\/+$/, '');
     }
 
     protected getErrorClassifier(): ErrorClassifier {

@@ -2,7 +2,7 @@
  * Setting Helpers - Reusable UI helpers for settings
  */
 
-import {Setting, TextComponent} from 'obsidian';
+import {Setting} from 'obsidian';
 
 /**
  * Configuration for a password input field
