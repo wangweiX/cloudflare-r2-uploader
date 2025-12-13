@@ -79,7 +79,35 @@ export class CloudflareWorkerService extends BaseStorageProvider {
             signal
         });
 
-        const json = await response.json();
+        // Parse response with proper error handling for non-JSON responses
+        let json: { success?: boolean; error?: string; etag?: string };
+        try {
+            const contentType = response.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                // Non-JSON response (e.g., HTML error page from proxy/CDN)
+                const text = await response.text();
+                this.logger.error(`非JSON响应 (${contentType}): ${text.substring(0, 200)}`);
+                throw new Error(
+                    !response.ok
+                        ? `HTTP ${response.status}: ${response.statusText}`
+                        : `服务器返回了非JSON响应: ${contentType || 'unknown'}`
+                );
+            }
+            json = await response.json();
+        } catch (e: any) {
+            // JSON parsing failed or content-type check threw
+            if (e.message?.startsWith('HTTP ') || e.message?.includes('非JSON响应')) {
+                throw e; // Re-throw our own errors
+            }
+            // Unexpected JSON parse error
+            this.logger.error(`JSON解析失败: ${e.message}`);
+            throw new Error(
+                !response.ok
+                    ? `HTTP ${response.status}: ${response.statusText}`
+                    : `响应JSON解析失败: ${e.message}`
+            );
+        }
+
         if (!response.ok || !json.success) {
             this.logger.error(`上传失败响应: ${response.status} ${response.statusText}`, json);
             throw new Error(json.error || response.statusText || '未知错误');
