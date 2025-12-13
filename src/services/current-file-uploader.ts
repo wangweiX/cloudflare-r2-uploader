@@ -1,7 +1,7 @@
 import {App, Notice, TFile} from 'obsidian';
 import * as path from 'path';
 import {StorageProvider, UploadTask} from '../types';
-import {UploadManager} from './upload-manager';
+import {UploadManager} from '../upload';
 import {Logger} from '../utils';
 import {IMAGE_PATTERNS} from '../config';
 import {resolveAbsolutePath, formatFileSize} from '../utils';

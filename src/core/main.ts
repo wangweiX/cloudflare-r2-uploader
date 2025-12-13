@@ -1,12 +1,11 @@
 import {addIcon, Plugin} from 'obsidian';
 import {DEFAULT_SETTINGS, UPLOAD_ICON} from '../config';
-import {StorageProvider, StorageProviderType, PluginSettings} from '../types';
-import {CloudflareWorkerService} from '../providers/worker.provider';
-import {R2S3Service} from '../providers/r2s3.provider';
+import {PluginSettings, StorageProvider, StorageProviderType} from '../types';
+import {CloudflareWorkerService, R2S3Service} from '../providers';
 import {ImageService} from '../services/image-service';
 import {PasteHandler} from '../services/paste-handler';
 import {CurrentFileUploader} from '../services/current-file-uploader';
-import {UploadManager} from '../services/upload-manager';
+import {UploadManager} from '../upload';
 import {SettingsTab} from '../ui/settings-tab';
 import {Logger} from '../utils';
 
@@ -116,7 +115,7 @@ export class CloudflareImagesUploader extends Plugin {
                 timeout: this.settings.uploadTimeout || 60000
             }
         );
-        
+
         // 设置删除配置
         this.uploadManager.setDeleteAfterUpload(this.settings.deleteAfterUpload || false);
 
@@ -184,7 +183,7 @@ export class CloudflareImagesUploader extends Plugin {
             maxRetryDelay: this.settings.maxRetryDelay || 30000,
             timeout: this.settings.uploadTimeout || 60000
         });
-        
+
         // 更新删除配置
         this.uploadManager.setDeleteAfterUpload(this.settings.deleteAfterUpload || false);
 
