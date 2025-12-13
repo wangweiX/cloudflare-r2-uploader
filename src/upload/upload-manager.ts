@@ -289,6 +289,7 @@ export class UploadManager extends EventEmitter {
         // This prevents a cancelled task from being marked as success/retry
         if (abortController.signal.aborted) {
             this.logger.info(`任务已取消，跳过结果处理: ${task.fileName}`);
+            this.scheduleProcessQueue();
             return;
         }
 

@@ -8,6 +8,7 @@ export enum StorageProviderType {
 
 export interface UploadOptions {
     timeout?: number;
+    signal?: AbortSignal;
 }
 
 export interface UploadResult {

@@ -58,12 +58,12 @@ export interface ExecuteUploadResult {
     etag?: string;
 }
 
-/**
- * Timeout controller wrapper
- */
-interface TimeoutController {
+type AbortSource = 'timeout' | 'external';
+
+interface UploadAbortController {
     signal: AbortSignal;
     clear: () => void;
+    getAbortSource: () => AbortSource | undefined;
 }
 
 /**
@@ -132,18 +132,18 @@ export abstract class BaseStorageProvider implements StorageProvider {
         const {folderName, customDomain} = this.getUploadSettings();
         const {filePath, mimeType} = this.prepareUpload(fileName, folderName);
 
-        // Step 3: Create timeout controller
-        const timeout = this.createTimeoutController(options?.timeout);
+        // Step 3: Create abort controller (timeout + external cancellation)
+        const abortController = this.createAbortController(options);
 
         try {
             // Step 4: Report initial progress
             this.reportProgress(onProgress, 0.1);
 
             // Step 5: Execute provider-specific upload
-            const result = await this.executeUpload(fileContent, filePath, mimeType, timeout.signal);
+            const result = await this.executeUpload(fileContent, filePath, mimeType, abortController.signal);
 
             // Step 6: Clear timeout and report progress
-            timeout.clear();
+            abortController.clear();
             this.reportProgress(onProgress, 0.9);
 
             // Step 7: Build public URL
@@ -156,8 +156,8 @@ export abstract class BaseStorageProvider implements StorageProvider {
             // Step 9: Return result
             return {url: imageUrl, etag: result.etag};
         } catch (error: any) {
-            timeout.clear();
-            this.checkAbortError(error);
+            abortController.clear();
+            this.checkAbortError(error, abortController.getAbortSource());
             this.normalizeAndThrowError(error, fileName, this.getErrorClassifier());
         }
     }
@@ -212,16 +212,39 @@ export abstract class BaseStorageProvider implements StorageProvider {
         return `${base}/${filePath}`;
     }
 
-    protected createTimeoutController(timeout?: number): TimeoutController {
+    protected createAbortController(options?: UploadOptions): UploadAbortController {
         const controller = new AbortController();
-        const timeoutId = timeout
-            ? setTimeout(() => controller.abort(), timeout)
+
+        let abortSource: AbortSource | undefined;
+        const abort = (source: AbortSource) => {
+            if (controller.signal.aborted) return;
+            abortSource = source;
+            controller.abort();
+        };
+
+        const timeoutId = options?.timeout
+            ? setTimeout(() => abort('timeout'), options.timeout)
             : null;
+
+        const externalSignal = options?.signal;
+        const onExternalAbort = () => abort('external');
+        if (externalSignal) {
+            if (externalSignal.aborted) {
+                abort('external');
+            } else {
+                externalSignal.addEventListener('abort', onExternalAbort, {once: true});
+            }
+        }
+
         return {
             signal: controller.signal,
             clear: () => {
                 if (timeoutId) clearTimeout(timeoutId);
-            }
+                if (externalSignal) {
+                    externalSignal.removeEventListener('abort', onExternalAbort);
+                }
+            },
+            getAbortSource: () => abortSource
         };
     }
 
@@ -231,8 +254,11 @@ export abstract class BaseStorageProvider implements StorageProvider {
 
     // ===== Error handling =====
 
-    protected checkAbortError(error: any): void {
-        if (error.name === 'AbortError') {
+    protected checkAbortError(error: any, abortSource?: AbortSource): void {
+        if (error?.name === 'AbortError') {
+            if (abortSource === 'external') {
+                throw this.createError('unknown', '任务已取消', 'CANCELLED');
+            }
             throw this.createError('timeout', '上传超时', 'TIMEOUT');
         }
     }

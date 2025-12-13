@@ -126,12 +126,14 @@ export class TaskRunner {
                 onProgress?.({progress, uploadedSize, speed});
             };
 
-            // Step 4: Execute upload (pass abort signal via timeout option)
+            // Step 4: Execute upload (timeout + cancellation signal)
             const result = await this.storageProvider.uploadImage(
                 arrayBuffer,
                 task.fileName,
                 progressCallback,
-                options?.timeout ? {timeout: options.timeout} : undefined
+                options?.timeout || options?.signal
+                    ? {timeout: options.timeout, signal: options.signal}
+                    : undefined
             );
 
             // Step 5: Return success
