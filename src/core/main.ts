@@ -10,9 +10,8 @@ import {
 } from '../config';
 import {isR2S3Provider, isWorkerProvider, PluginSettings, StorageProvider, StorageProviderType} from '../types';
 import {CloudflareWorkerService, R2S3Service} from '../providers';
-import {ImageFinder} from '../image';
 import {CommandHandler, PasteHandler} from '../handlers';
-import {CurrentFileUploader, UploadManager} from '../upload';
+import {CurrentFileUploader, UploadManager, VaultUploader} from '../upload';
 import {SettingsTab} from '../ui/settings-tab';
 import {Logger} from '../utils';
 
@@ -31,8 +30,8 @@ export class CloudflareImagesUploader extends Plugin {
     private logger!: Logger;
     private storageProvider!: StorageProvider;
     private uploadManager!: UploadManager;
-    private imageFinder!: ImageFinder;
     private currentFileUploader!: CurrentFileUploader;
+    private vaultUploader!: VaultUploader;
     private pasteHandler!: PasteHandler;
     private commandHandler!: CommandHandler;
 
@@ -138,14 +137,18 @@ export class CloudflareImagesUploader extends Plugin {
             }
         );
 
-        // Create image finder
-        this.imageFinder = new ImageFinder(this.app, this.app.vault.adapter);
-
         // Create current file uploader
         this.currentFileUploader = new CurrentFileUploader(
             this.app,
             this.uploadManager,
             this.settings
+        );
+
+        // Create vault uploader (uses latest settings via getter)
+        this.vaultUploader = new VaultUploader(
+            this.app,
+            this.uploadManager,
+            () => this.settings
         );
 
         // Create handlers
@@ -160,7 +163,7 @@ export class CloudflareImagesUploader extends Plugin {
             getSettings: () => this.settings,
             getUploadManager: () => this.uploadManager,
             getCurrentFileUploader: () => this.currentFileUploader,
-            getImageFinder: () => this.imageFinder
+            getVaultUploader: () => this.vaultUploader
         });
     }
 

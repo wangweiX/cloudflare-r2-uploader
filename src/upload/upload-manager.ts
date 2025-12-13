@@ -49,11 +49,13 @@ export class UploadManager extends EventEmitter {
     // Task queues
     private readonly queue: UploadTask[] = [];
     private readonly activeTasks: Map<string, UploadTask> = new Map();
+    private readonly retryingTasks: Map<string, UploadTask> = new Map();
     private readonly completedTasks: Map<string, UploadTask> = new Map();
     private readonly uploadedFiles: Set<string> = new Set();
 
     // Abort controllers for active uploads (allows true cancellation)
     private readonly abortControllers: Map<string, AbortController> = new Map();
+    private readonly retryTimers: Map<string, NodeJS.Timeout> = new Map();
 
     // Counters and flags
     private taskIdCounter = 0;
@@ -136,7 +138,7 @@ export class UploadManager extends EventEmitter {
         this.abortAllActiveUploads();
 
         // Cancel any pending/active tasks
-        const hasPendingTasks = this.queue.length > 0 || this.activeTasks.size > 0;
+        const hasPendingTasks = this.queue.length > 0 || this.activeTasks.size > 0 || this.retryingTasks.size > 0;
         if (hasPendingTasks) {
             this.cancelAll();
             this.logger.warn('切换存储提供者，已取消所有待处理任务');
@@ -244,7 +246,7 @@ export class UploadManager extends EventEmitter {
                 this.queue.length > 0 &&
                 this.activeTasks.size < this.config.maxConcurrency &&
                 !this.isPaused
-            ) {
+                ) {
                 const task = this.queue.shift();
                 if (task) {
                     // Fire-and-forget to maintain concurrency (don't await!)
@@ -254,7 +256,7 @@ export class UploadManager extends EventEmitter {
                 }
             }
 
-            if (this.queue.length === 0 && this.activeTasks.size === 0) {
+            if (this.queue.length === 0 && this.activeTasks.size === 0 && this.retryingTasks.size === 0) {
                 this.emit(UploadManager.EVENTS.QUEUE_EMPTY);
             }
         } finally {
@@ -351,15 +353,29 @@ export class UploadManager extends EventEmitter {
             );
 
             this.activeTasks.delete(task.id);
+            this.retryingTasks.set(task.id, task);
 
-            setTimeout(() => {
-                if (task.status === 'retrying') {
-                    task.status = 'pending';
-                    delete task.nextRetryAt;
-                    this.queue.unshift(task);
-                    this.scheduleProcessQueue();
+            const existingTimer = this.retryTimers.get(task.id);
+            if (existingTimer) {
+                clearTimeout(existingTimer);
+            }
+
+            const timer = setTimeout(() => {
+                this.retryTimers.delete(task.id);
+
+                if (task.status !== 'retrying') {
+                    this.retryingTasks.delete(task.id);
+                    return;
                 }
+
+                task.status = 'pending';
+                delete task.nextRetryAt;
+                this.retryingTasks.delete(task.id);
+                this.queue.unshift(task);
+                this.scheduleProcessQueue();
             }, decision.delay);
+
+            this.retryTimers.set(task.id, timer);
         } else {
             // Mark as failed
             task.status = 'failed';
@@ -390,6 +406,21 @@ export class UploadManager extends EventEmitter {
             return;
         }
 
+        // Check retrying tasks
+        const retryingTask = this.retryingTasks.get(taskId);
+        if (retryingTask) {
+            const timer = this.retryTimers.get(taskId);
+            if (timer) {
+                clearTimeout(timer);
+                this.retryTimers.delete(taskId);
+            }
+
+            this.retryingTasks.delete(taskId);
+            this.markAsCancelled(retryingTask);
+            this.logger.info(`已取消任务: ${retryingTask.fileName}`);
+            return;
+        }
+
         // Check active tasks
         const activeTask = this.activeTasks.get(taskId);
         if (activeTask) {
@@ -409,6 +440,7 @@ export class UploadManager extends EventEmitter {
     private markAsCancelled(task: UploadTask): void {
         task.status = 'cancelled';
         task.completedAt = Date.now();
+        delete task.nextRetryAt;
         this.completedTasks.set(task.id, task);
         this.emit(UploadManager.EVENTS.TASK_CANCELLED, task);
         this.emitStatsUpdate();
@@ -417,6 +449,18 @@ export class UploadManager extends EventEmitter {
     cancelAll(): void {
         // Abort all active upload requests first
         this.abortAllActiveUploads();
+
+        // Cancel retrying tasks (scheduled timers)
+        for (const [taskId, timer] of this.retryTimers) {
+            clearTimeout(timer);
+            this.logger.info(`已取消重试定时器: ${taskId}`);
+        }
+        this.retryTimers.clear();
+
+        for (const task of this.retryingTasks.values()) {
+            this.markAsCancelled(task);
+        }
+        this.retryingTasks.clear();
 
         // Cancel queued tasks
         while (this.queue.length > 0) {
@@ -512,6 +556,7 @@ export class UploadManager extends EventEmitter {
         return [
             ...this.queue,
             ...Array.from(this.activeTasks.values()),
+            ...Array.from(this.retryingTasks.values()),
             ...Array.from(this.completedTasks.values())
         ];
     }
@@ -520,6 +565,11 @@ export class UploadManager extends EventEmitter {
         // Check queue
         let task = this.queue.find(t => t.filePath === filePath);
         if (task) return task;
+
+        // Check retrying tasks
+        for (const t of this.retryingTasks.values()) {
+            if (t.filePath === filePath) return t;
+        }
 
         // Check active
         for (const t of this.activeTasks.values()) {
@@ -569,6 +619,9 @@ export class UploadManager extends EventEmitter {
             const taskAge = now - (task.completedAt || task.createdAt);
             if (taskAge > maxAge) {
                 this.completedTasks.delete(id);
+                if (task.status === 'completed') {
+                    this.uploadedFiles.delete(task.filePath);
+                }
                 cleanedCount++;
             }
         }
@@ -584,19 +637,21 @@ export class UploadManager extends EventEmitter {
      * @param includeFailedAndCancelled If true, also clears failed and cancelled tasks
      */
     clearCompleted(includeFailedAndCancelled = false): void {
-        const idsToRemove = Array.from(this.completedTasks.entries())
+        const tasksToRemove = Array.from(this.completedTasks.entries())
             .filter(([_, task]) => {
                 if (task.status === 'completed') return true;
                 if (includeFailedAndCancelled && (task.status === 'failed' || task.status === 'cancelled')) return true;
                 return false;
-            })
-            .map(([id]) => id);
+            });
 
-        for (const id of idsToRemove) {
+        for (const [id, task] of tasksToRemove) {
             this.completedTasks.delete(id);
+            if (task.status === 'completed') {
+                this.uploadedFiles.delete(task.filePath);
+            }
         }
 
-        this.logger.info(`已清理 ${idsToRemove.length} 个任务`);
+        this.logger.info(`已清理 ${tasksToRemove.length} 个任务`);
         this.emitStatsUpdate();
     }
 

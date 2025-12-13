@@ -9,8 +9,7 @@
 
 import {Plugin} from 'obsidian';
 import {isR2S3Provider, isWorkerProvider, PluginSettings, R2S3ProviderSettings, WorkerProviderSettings} from '../types';
-import {CurrentFileUploader, UploadManager} from '../upload';
-import {ImageFinder} from '../image';
+import {CurrentFileUploader, UploadManager, VaultUploader} from '../upload';
 import {Logger} from '../utils';
 
 /**
@@ -30,7 +29,7 @@ export interface CommandHandlerDeps {
     getSettings: () => PluginSettings;
     getUploadManager: () => UploadManager;
     getCurrentFileUploader: () => CurrentFileUploader;
-    getImageFinder: () => ImageFinder;
+    getVaultUploader: () => VaultUploader;
 }
 
 export class CommandHandler {
@@ -98,20 +97,16 @@ export class CommandHandler {
         }
 
         try {
-            const finder = this.deps.getImageFinder();
-            const imagePaths = await finder.findInVault();
-
-            this.logger.info(`找到 ${imagePaths.size} 张图片需要上传`);
-
-            if (imagePaths.size === 0) {
-                this.logger.notify('没有新的图片需要上传', 3000);
+            const uploader = this.deps.getVaultUploader();
+            const result = await uploader.processVault();
+            if (!result) {
                 return;
             }
 
-            const uploadManager = this.deps.getUploadManager();
-            await uploadManager.addTasks(Array.from(imagePaths));
-
-            this.logger.notify(`已添加 ${imagePaths.size} 张图片到上传队列`, 3000);
+            this.logger.notify(
+                `Vault processing completed. Notes=${result.totalNotes}, images=${result.referencedLocalImages}, replacedLinks=${result.replacedLinks}, deletedFiles=${result.deletedLocalFiles}`,
+                5000
+            );
         } catch (error) {
             this.logger.error('执行上传过程时出错', error);
             this.logger.notify('上传过程中出现错误，请查看控制台日志。', 5000);
