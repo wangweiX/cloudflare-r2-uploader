@@ -1,6 +1,6 @@
 import {App, Notice, TFile} from 'obsidian';
 import {PluginSettings, UploadTask} from '../types';
-import {UploadManager} from '../upload';
+import {UploadManager} from './upload-manager';
 import {ImageFinder, LinkUpdater} from '../image';
 import {Logger, formatFileSize} from '../utils';
 

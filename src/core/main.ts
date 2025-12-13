@@ -4,8 +4,7 @@ import {PluginSettings, StorageProvider, StorageProviderType} from '../types';
 import {CloudflareWorkerService, R2S3Service} from '../providers';
 import {ImageFinder} from '../image';
 import {PasteHandler, CommandHandler} from '../handlers';
-import {CurrentFileUploader} from '../services/current-file-uploader';
-import {UploadManager} from '../upload';
+import {CurrentFileUploader, UploadManager} from '../upload';
 import {SettingsTab} from '../ui/settings-tab';
 import {Logger} from '../utils';
 

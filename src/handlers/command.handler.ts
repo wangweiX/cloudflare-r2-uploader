@@ -9,8 +9,7 @@
 
 import {Plugin} from 'obsidian';
 import {PluginSettings, StorageProviderType} from '../types';
-import {UploadManager} from '../upload';
-import {CurrentFileUploader} from '../services/current-file-uploader';
+import {CurrentFileUploader, UploadManager} from '../upload';
 import {ImageFinder} from '../image';
 import {Logger} from '../utils';
 
