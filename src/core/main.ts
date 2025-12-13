@@ -1,5 +1,5 @@
 import {addIcon, Plugin} from 'obsidian';
-import {DEFAULT_SETTINGS} from '../config';
+import {DEFAULT_SETTINGS, UPLOAD_ICON} from '../config';
 import {StorageProvider, StorageProviderType, PluginSettings} from '../types';
 import {CloudflareWorkerService} from '../services/worker-service';
 import {R2S3Service} from '../services/r2-s3-service';
@@ -9,9 +9,6 @@ import {CurrentFileUploader} from '../services/current-file-uploader';
 import {UploadManager} from '../services/upload-manager';
 import {SettingsTab} from '../ui/settings-tab';
 import {Logger} from '../utils/logger';
-
-// 上传当前文件按钮的图标
-const UPLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100" height="100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>`;
 
 /**
  * 插件主类

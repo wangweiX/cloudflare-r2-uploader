@@ -2,6 +2,7 @@ import {EventEmitter} from 'events';
 import {App, TFile} from 'obsidian';
 import {StorageProvider, UploadConfig, UploadError, UploadTask} from '../types';
 import {Logger} from '../utils/logger';
+import {UPLOAD_EVENTS} from '../config';
 
 /**
  * 上传管理器 - 单例模式
@@ -31,17 +32,7 @@ export class UploadManager extends EventEmitter {
     // 防抖定时器
     private processQueueTimeout: NodeJS.Timeout | null = null;
 
-    // 事件定义
-    static readonly EVENTS = {
-        TASK_ADDED: 'task:added',
-        TASK_STARTED: 'task:started',
-        TASK_PROGRESS: 'task:progress',
-        TASK_COMPLETED: 'task:completed',
-        TASK_FAILED: 'task:failed',
-        TASK_CANCELLED: 'task:cancelled',
-        QUEUE_EMPTY: 'queue:empty',
-        STATS_UPDATED: 'stats:updated'
-    };
+    static readonly EVENTS = UPLOAD_EVENTS;
 
     private constructor(app: App, storageProvider: StorageProvider, config: UploadConfig) {
         super();
