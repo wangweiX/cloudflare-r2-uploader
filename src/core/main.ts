@@ -116,12 +116,9 @@ export class CloudflareImagesUploader extends Plugin {
             }
         );
 
-        // 设置删除配置
-        this.uploadManager.setDeleteAfterUpload(this.settings.deleteAfterUpload || false);
-
         // 创建其他服务
         this.imageService = new ImageService(this.app, this.storageProvider);
-        this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider, this.uploadManager, this.settings);
+        this.currentFileUploader = new CurrentFileUploader(this.app, this.uploadManager, this.settings);
         this.pasteHandler = new PasteHandler(this.app, this.storageProvider, this);
     }
 
@@ -193,12 +190,9 @@ export class CloudflareImagesUploader extends Plugin {
             timeout: this.settings.uploadTimeout || 60000
         });
 
-        // 更新删除配置
-        this.uploadManager.setDeleteAfterUpload(this.settings.deleteAfterUpload || false);
-
         // 重新创建服务
         this.imageService = new ImageService(this.app, this.storageProvider);
-        this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider, this.uploadManager, this.settings);
+        this.currentFileUploader = new CurrentFileUploader(this.app, this.uploadManager, this.settings);
 
         // 处理自动粘贴功能的开关
         if (this.settings.enableAutoPaste) {

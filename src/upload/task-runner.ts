@@ -12,6 +12,14 @@ export interface ProgressInfo {
 }
 
 /**
+ * Task execution options
+ */
+export interface TaskExecutionOptions {
+    timeout?: number;
+    signal?: AbortSignal;
+}
+
+/**
  * Task execution result
  */
 export interface TaskExecutionResult {
@@ -80,15 +88,20 @@ export class TaskRunner {
      * Execute a single upload task
      *
      * @param task The task to execute (will be mutated with progress info)
-     * @param timeout Optional timeout in milliseconds
+     * @param options Execution options (timeout, abort signal)
      * @param onProgress Optional callback for progress updates
      */
     public async execute(
         task: UploadTask,
-        timeout?: number,
+        options?: TaskExecutionOptions,
         onProgress?: (info: ProgressInfo) => void
     ): Promise<TaskExecutionResult> {
         try {
+            // Check if already aborted
+            if (options?.signal?.aborted) {
+                return this.createErrorResult('unknown', '任务已取消');
+            }
+
             // Step 1: Get file
             const file = this.fileReader.getFile(task.filePath);
             if (!file) {
@@ -97,6 +110,11 @@ export class TaskRunner {
 
             // Step 2: Read file content
             const arrayBuffer = await this.fileReader.readBinary(file);
+
+            // Check abort after file read
+            if (options?.signal?.aborted) {
+                return this.createErrorResult('unknown', '任务已取消');
+            }
 
             // Step 3: Create progress tracker
             const startTime = Date.now();
@@ -108,12 +126,12 @@ export class TaskRunner {
                 onProgress?.({progress, uploadedSize, speed});
             };
 
-            // Step 4: Execute upload
+            // Step 4: Execute upload (pass abort signal via timeout option)
             const result = await this.storageProvider.uploadImage(
                 arrayBuffer,
                 task.fileName,
                 progressCallback,
-                timeout ? {timeout} : undefined
+                options?.timeout ? {timeout: options.timeout} : undefined
             );
 
             // Step 5: Return success

@@ -4,7 +4,7 @@ import {StorageProvider, UploadConfig, UploadTask} from '../types';
 import {Logger} from '../utils';
 import {UPLOAD_EVENTS} from '../config';
 import {ExponentialBackoffStrategy, IRetryStrategy} from './retry-strategy';
-import {ProgressInfo, TaskRunner, VaultFileReader} from './task-runner';
+import {ProgressInfo, TaskExecutionOptions, TaskRunner, VaultFileReader} from './task-runner';
 
 /**
  * Upload statistics
@@ -45,13 +45,15 @@ export class UploadManager extends EventEmitter {
 
     // Configuration
     private config: UploadConfig;
-    private deleteAfterUpload: boolean = false;
 
     // Task queues
     private readonly queue: UploadTask[] = [];
     private readonly activeTasks: Map<string, UploadTask> = new Map();
     private readonly completedTasks: Map<string, UploadTask> = new Map();
     private readonly uploadedFiles: Set<string> = new Set();
+
+    // Abort controllers for active uploads (allows true cancellation)
+    private readonly abortControllers: Map<string, AbortController> = new Map();
 
     // Counters and flags
     private taskIdCounter = 0;
@@ -109,21 +111,21 @@ export class UploadManager extends EventEmitter {
         this.logger.info('上传管理器配置已更新', config);
     }
 
-    setDeleteAfterUpload(value: boolean): void {
-        this.deleteAfterUpload = value;
-    }
-
     /**
      * Update the storage provider.
      *
      * IMPORTANT: This should be called when switching between Worker and R2 S3 providers.
      * The method will:
-     * 1. Cancel any pending/active tasks (to avoid using old provider)
-     * 2. Create a new TaskRunner with the new provider
-     * 3. Clear upload history (since provider changed, previous uploads are irrelevant)
+     * 1. Abort any active uploads (interrupt network requests)
+     * 2. Cancel any pending tasks
+     * 3. Create a new TaskRunner with the new provider
+     * 4. Clear upload history and reset state for a clean session
      */
     updateStorageProvider(storageProvider: StorageProvider): void {
-        // Cancel pending tasks to avoid confusion
+        // Abort all active uploads first (this actually interrupts network requests)
+        this.abortAllActiveUploads();
+
+        // Cancel any pending/active tasks
         const hasPendingTasks = this.queue.length > 0 || this.activeTasks.size > 0;
         if (hasPendingTasks) {
             this.cancelAll();
@@ -133,12 +135,24 @@ export class UploadManager extends EventEmitter {
         // Create new TaskRunner with new provider
         this.taskRunner = new TaskRunner(this.fileReader, storageProvider);
 
-        // Clear upload history since provider changed
+        // Reset for clean session
         this.uploadedFiles.clear();
         this.completedTasks.clear();
+        this.taskIdCounter = 0;
 
         this.logger.info(`存储提供者已切换: ${storageProvider.getType()}`);
         this.emitStatsUpdate();
+    }
+
+    /**
+     * Abort all active upload requests
+     */
+    private abortAllActiveUploads(): void {
+        for (const [taskId, controller] of this.abortControllers) {
+            controller.abort();
+            this.logger.info(`已中止上传请求: ${taskId}`);
+        }
+        this.abortControllers.clear();
     }
 
     // ===== Task Addition =====
@@ -223,7 +237,10 @@ export class UploadManager extends EventEmitter {
             ) {
                 const task = this.queue.shift();
                 if (task) {
-                    await this.executeTask(task);
+                    // Fire-and-forget to maintain concurrency (don't await!)
+                    this.executeTask(task).catch(err => {
+                        this.logger.error(`任务执行异常: ${task.fileName}`, err);
+                    });
                 }
             }
 
@@ -245,6 +262,10 @@ export class UploadManager extends EventEmitter {
         this.emit(UploadManager.EVENTS.TASK_STARTED, task);
         this.emitStatsUpdate();
 
+        // Create abort controller for this task
+        const abortController = new AbortController();
+        this.abortControllers.set(task.id, abortController);
+
         // Progress callback
         const onProgress = (info: ProgressInfo) => {
             task.progress = info.progress;
@@ -253,12 +274,23 @@ export class UploadManager extends EventEmitter {
             this.emit(UploadManager.EVENTS.TASK_PROGRESS, task);
         };
 
-        // Execute via TaskRunner
-        const result = await this.taskRunner.execute(
-            task,
-            this.config.timeout,
-            onProgress
-        );
+        // Execute via TaskRunner with abort signal
+        const options: TaskExecutionOptions = {
+            timeout: this.config.timeout,
+            signal: abortController.signal
+        };
+
+        const result = await this.taskRunner.execute(task, options, onProgress);
+
+        // Cleanup abort controller
+        this.abortControllers.delete(task.id);
+
+        // Guard: If task was cancelled during execution, don't process the result
+        // This prevents a cancelled task from being marked as success/retry
+        if (abortController.signal.aborted) {
+            this.logger.info(`任务已取消，跳过结果处理: ${task.fileName}`);
+            return;
+        }
 
         if (result.success) {
             this.handleTaskSuccess(task, result.url!);
@@ -350,6 +382,13 @@ export class UploadManager extends EventEmitter {
         // Check active tasks
         const activeTask = this.activeTasks.get(taskId);
         if (activeTask) {
+            // Abort the upload request
+            const controller = this.abortControllers.get(taskId);
+            if (controller) {
+                controller.abort();
+                this.abortControllers.delete(taskId);
+            }
+
             this.activeTasks.delete(taskId);
             this.markAsCancelled(activeTask);
             this.logger.info(`已取消任务: ${activeTask.fileName}`);
@@ -365,6 +404,9 @@ export class UploadManager extends EventEmitter {
     }
 
     cancelAll(): void {
+        // Abort all active upload requests first
+        this.abortAllActiveUploads();
+
         // Cancel queued tasks
         while (this.queue.length > 0) {
             const task = this.queue.shift()!;

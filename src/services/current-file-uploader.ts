@@ -1,6 +1,6 @@
 import {App, Notice, TFile} from 'obsidian';
 import * as path from 'path';
-import {StorageProvider, UploadTask} from '../types';
+import {UploadTask} from '../types';
 import {UploadManager} from '../upload';
 import {Logger} from '../utils';
 import {IMAGE_PATTERNS} from '../config';
@@ -32,7 +32,6 @@ export class CurrentFileUploader {
      */
     constructor(
         private app: App,
-        private storageProvider: StorageProvider,
         private uploadManager: UploadManager,
         settings?: any
     ) {
