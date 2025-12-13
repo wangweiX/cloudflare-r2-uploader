@@ -365,5 +365,6 @@ modules.xml
 .claude
 CLAUDE.md
 AGENTS.md
+legacy-backup
 
 # End of https://www.toptal.com/developers/gitignore/api/webstorm,webstorm+iml,node,vuejs,nextjs,react

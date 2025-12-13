@@ -1,8 +1,7 @@
 import {App, Notice, TFile} from 'obsidian';
 import * as path from 'path';
-import {StorageProvider} from '../models/storage-provider';
+import {StorageProvider, UploadTask} from '../types';
 import {UploadManager} from './upload-manager';
-import {UploadTask} from '../models/upload-task';
 import {Logger} from '../utils/logger';
 
 /**

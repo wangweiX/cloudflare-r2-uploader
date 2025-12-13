@@ -1,7 +1,6 @@
 import * as path from 'path';
 import {v4 as uuidv4} from 'uuid';
-import {PluginSettings} from '../models/settings';
-import {StorageProvider, StorageProviderType, UploadOptions, UploadResult} from '../models/storage-provider';
+import {PluginSettings, StorageProvider, StorageProviderType, UploadOptions, UploadResult} from '../types';
 import {Logger} from '../utils/logger';
 
 /**

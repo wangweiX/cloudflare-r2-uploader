@@ -1,7 +1,6 @@
 import {EventEmitter} from 'events';
 import {App, TFile} from 'obsidian';
-import {StorageProvider} from '../models/storage-provider';
-import {UploadConfig, UploadError, UploadTask} from '../models/upload-task';
+import {StorageProvider, UploadConfig, UploadError, UploadTask} from '../types';
 import {Logger} from '../utils/logger';
 
 /**

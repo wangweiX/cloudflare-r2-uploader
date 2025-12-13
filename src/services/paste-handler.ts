@@ -1,6 +1,6 @@
 import {App, Editor, EventRef, MarkdownView, Notice, Plugin} from 'obsidian';
 import {v4 as uuidv4} from 'uuid';
-import {StorageProvider} from '../models/storage-provider';
+import {StorageProvider} from '../types';
 import {Logger} from '../utils/logger';
 
 /**

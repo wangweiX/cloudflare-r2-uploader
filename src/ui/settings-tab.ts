@@ -1,6 +1,6 @@
 import {App, PluginSettingTab, Setting, Notice} from 'obsidian';
 import {CloudflareImagesUploader} from '../core/main';
-import {StorageProviderType} from '../models/storage-provider';
+import {StorageProviderType} from '../types';
 
 /**
  * 设置选项卡

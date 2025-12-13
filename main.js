@@ -676,7 +676,16 @@ module.exports = __toCommonJS(main_exports);
 // src/core/main.ts
 var import_obsidian6 = require("obsidian");
 
-// src/models/settings.ts
+// src/config/defaults.ts
+var defaultR2Settings = {
+  accountId: "",
+  accessKeyId: "",
+  secretAccessKey: "",
+  bucketName: "",
+  folderName: "",
+  customDomain: "",
+  region: "auto"
+};
 var DEFAULT_SETTINGS = {
   storageProvider: "cloudflare_worker" /* CLOUDFLARE_WORKER */,
   workerSettings: {
@@ -686,15 +695,7 @@ var DEFAULT_SETTINGS = {
     folderName: "",
     customDomain: ""
   },
-  r2S3Settings: {
-    accountId: "",
-    accessKeyId: "",
-    secretAccessKey: "",
-    bucketName: "",
-    folderName: "",
-    customDomain: "",
-    region: "auto"
-  },
+  r2S3Settings: defaultR2Settings,
   enableAutoPaste: false,
   deleteAfterUpload: false,
   maxConcurrentUploads: 3,
@@ -13511,7 +13512,7 @@ var SettingsTab = class extends import_obsidian5.PluginSettingTab {
     const helpList = helpDiv.createEl("ul");
     helpList.createEl("li").createEl("a", {
       text: "GitHub \u9879\u76EE\u4E3B\u9875",
-      href: "https://github.com/wangweiX/obsidian-cloudflare-r2-uploader"
+      href: "https://github.com/wangweiX/cloudflare-r2-uploader"
     });
     helpList.createEl("li").createEl("a", {
       text: "Cloudflare R2 Worker \u90E8\u7F72\u6307\u5357",

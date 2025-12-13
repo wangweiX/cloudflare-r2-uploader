@@ -1,8 +1,7 @@
 import * as path from 'path';
 import {v4 as uuidv4} from 'uuid';
 import {S3Client, PutObjectCommand, PutObjectCommandInput} from '@aws-sdk/client-s3';
-import {R2S3Settings} from '../models/settings';
-import {StorageProvider, StorageProviderType, UploadOptions, UploadResult} from '../models/storage-provider';
+import {R2S3Settings, StorageProvider, StorageProviderType, UploadOptions, UploadResult} from '../types';
 import {Logger} from '../utils/logger';
 
 /**
