@@ -10,7 +10,7 @@
  * This is a pure utility class with no external dependencies.
  */
 
-import {IMAGE_PATTERNS, MIME_TYPES} from '../config';
+import {IMAGE_PATTERNS, SUPPORTED_IMAGE_EXTENSIONS} from '../config';
 import {ParsedImageLink} from './types';
 
 /**
@@ -18,7 +18,7 @@ import {ParsedImageLink} from './types';
  *
  * This is used to filter out non-image embeds/links from regex parsing results.
  */
-const supportedImageExtensions = new Set(Object.keys(MIME_TYPES));
+const supportedImageExtensions = SUPPORTED_IMAGE_EXTENSIONS;
 
 export class ImageLinkParser {
     /**

@@ -1,5 +1,5 @@
 import {v4 as uuidv4} from 'uuid';
-import {MIME_TYPES} from '../config';
+import {MIME_TYPES, SUPPORTED_IMAGE_EXTENSIONS} from '../config';
 
 /**
  * Generate a unique, sanitized file name.
@@ -143,7 +143,7 @@ export type LinkpathResolver = (linkpath: string, sourcePath: string) => { path:
  * Supported image extensions derived from `MIME_TYPES`.
  * This is used as the canonical filter for "image-ness" across the plugin.
  */
-const supportedImageExtensions = new Set(Object.keys(MIME_TYPES));
+const supportedImageExtensions = SUPPORTED_IMAGE_EXTENSIONS;
 
 /**
  * Cache for the vault-wide image index.
@@ -304,8 +304,8 @@ async function buildVaultImageIndex(adapter: Required<Pick<VaultLikeAdapter, 'li
     const queue: string[] = [''];
     const visited = new Set<string>();
 
-    while (queue.length > 0) {
-        const folder = toAdapterPath(queue.shift() ?? '');
+    for (let queueIndex = 0; queueIndex < queue.length; queueIndex++) {
+        const folder = toAdapterPath(queue[queueIndex] ?? '');
         if (visited.has(folder)) continue;
         visited.add(folder);
 

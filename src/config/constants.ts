@@ -28,3 +28,5 @@ export const MIME_TYPES: Record<string, string> = {
     tiff: 'image/tiff',
     tif: 'image/tiff'
 };
+
+export const SUPPORTED_IMAGE_EXTENSIONS: ReadonlySet<string> = new Set(Object.keys(MIME_TYPES));
