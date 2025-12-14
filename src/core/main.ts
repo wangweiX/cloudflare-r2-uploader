@@ -1,7 +1,5 @@
 import {addIcon, Plugin} from 'obsidian';
 import {
-    createR2S3Settings,
-    createWorkerSettings,
     DEFAULT_BASE_SETTINGS,
     DEFAULT_R2S3_SETTINGS,
     DEFAULT_SETTINGS,
