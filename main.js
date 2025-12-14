@@ -4,15 +4,13 @@ if you want to view the source, please visit the github repository of this plugi
 */
 
 "use strict";
-var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __commonJS = (cb2, mod) => function __require() {
-  return mod || (0, cb2[__getOwnPropNames(cb2)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
 var __export = (target, all) => {
   for (var name in all)
@@ -26,643 +24,302 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
-// node_modules/bowser/es5.js
-var require_es5 = __commonJS({
-  "node_modules/bowser/es5.js"(exports2, module2) {
-    !function(e2, t2) {
-      "object" == typeof exports2 && "object" == typeof module2 ? module2.exports = t2() : "function" == typeof define && define.amd ? define([], t2) : "object" == typeof exports2 ? exports2.bowser = t2() : e2.bowser = t2();
-    }(exports2, function() {
-      return function(e2) {
-        var t2 = {};
-        function r2(n2) {
-          if (t2[n2]) return t2[n2].exports;
-          var i2 = t2[n2] = { i: n2, l: false, exports: {} };
-          return e2[n2].call(i2.exports, i2, i2.exports, r2), i2.l = true, i2.exports;
-        }
-        return r2.m = e2, r2.c = t2, r2.d = function(e3, t3, n2) {
-          r2.o(e3, t3) || Object.defineProperty(e3, t3, { enumerable: true, get: n2 });
-        }, r2.r = function(e3) {
-          "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e3, Symbol.toStringTag, { value: "Module" }), Object.defineProperty(e3, "__esModule", { value: true });
-        }, r2.t = function(e3, t3) {
-          if (1 & t3 && (e3 = r2(e3)), 8 & t3) return e3;
-          if (4 & t3 && "object" == typeof e3 && e3 && e3.__esModule) return e3;
-          var n2 = /* @__PURE__ */ Object.create(null);
-          if (r2.r(n2), Object.defineProperty(n2, "default", { enumerable: true, value: e3 }), 2 & t3 && "string" != typeof e3) for (var i2 in e3) r2.d(n2, i2, function(t4) {
-            return e3[t4];
-          }.bind(null, i2));
-          return n2;
-        }, r2.n = function(e3) {
-          var t3 = e3 && e3.__esModule ? function() {
-            return e3.default;
-          } : function() {
-            return e3;
-          };
-          return r2.d(t3, "a", t3), t3;
-        }, r2.o = function(e3, t3) {
-          return Object.prototype.hasOwnProperty.call(e3, t3);
-        }, r2.p = "", r2(r2.s = 90);
-      }({ 17: function(e2, t2, r2) {
-        "use strict";
-        t2.__esModule = true, t2.default = void 0;
-        var n2 = r2(18), i2 = function() {
-          function e3() {
+// node_modules/@smithy/util-utf8/dist-es/fromUtf8.browser.js
+var fromUtf8;
+var init_fromUtf8_browser = __esm({
+  "node_modules/@smithy/util-utf8/dist-es/fromUtf8.browser.js"() {
+    fromUtf8 = (input) => new TextEncoder().encode(input);
+  }
+});
+
+// node_modules/@smithy/util-utf8/dist-es/toUint8Array.js
+var toUint8Array;
+var init_toUint8Array = __esm({
+  "node_modules/@smithy/util-utf8/dist-es/toUint8Array.js"() {
+    init_fromUtf8_browser();
+    toUint8Array = (data) => {
+      if (typeof data === "string") {
+        return fromUtf8(data);
+      }
+      if (ArrayBuffer.isView(data)) {
+        return new Uint8Array(data.buffer, data.byteOffset, data.byteLength / Uint8Array.BYTES_PER_ELEMENT);
+      }
+      return new Uint8Array(data);
+    };
+  }
+});
+
+// node_modules/@smithy/util-utf8/dist-es/toUtf8.browser.js
+var toUtf8;
+var init_toUtf8_browser = __esm({
+  "node_modules/@smithy/util-utf8/dist-es/toUtf8.browser.js"() {
+    toUtf8 = (input) => {
+      if (typeof input === "string") {
+        return input;
+      }
+      if (typeof input !== "object" || typeof input.byteOffset !== "number" || typeof input.byteLength !== "number") {
+        throw new Error("@smithy/util-utf8: toUtf8 encoder function only accepts string | Uint8Array.");
+      }
+      return new TextDecoder("utf-8").decode(input);
+    };
+  }
+});
+
+// node_modules/@smithy/util-utf8/dist-es/index.js
+var init_dist_es = __esm({
+  "node_modules/@smithy/util-utf8/dist-es/index.js"() {
+    init_fromUtf8_browser();
+    init_toUint8Array();
+    init_toUtf8_browser();
+  }
+});
+
+// node_modules/@smithy/core/dist-es/submodules/event-streams/EventStreamSerde.js
+var EventStreamSerde;
+var init_EventStreamSerde = __esm({
+  "node_modules/@smithy/core/dist-es/submodules/event-streams/EventStreamSerde.js"() {
+    init_dist_es();
+    EventStreamSerde = class {
+      constructor({ marshaller, serializer, deserializer, serdeContext, defaultContentType }) {
+        __publicField(this, "marshaller");
+        __publicField(this, "serializer");
+        __publicField(this, "deserializer");
+        __publicField(this, "serdeContext");
+        __publicField(this, "defaultContentType");
+        this.marshaller = marshaller;
+        this.serializer = serializer;
+        this.deserializer = deserializer;
+        this.serdeContext = serdeContext;
+        this.defaultContentType = defaultContentType;
+      }
+      async serializeEventStream({ eventStream, requestSchema, initialRequest }) {
+        const marshaller = this.marshaller;
+        const eventStreamMember = requestSchema.getEventStreamMember();
+        const unionSchema = requestSchema.getMemberSchema(eventStreamMember);
+        const serializer = this.serializer;
+        const defaultContentType = this.defaultContentType;
+        const initialRequestMarker = /* @__PURE__ */ Symbol("initialRequestMarker");
+        const eventStreamIterable = {
+          async *[Symbol.asyncIterator]() {
+            if (initialRequest) {
+              const headers = {
+                ":event-type": { type: "string", value: "initial-request" },
+                ":message-type": { type: "string", value: "event" },
+                ":content-type": { type: "string", value: defaultContentType }
+              };
+              serializer.write(requestSchema, initialRequest);
+              const body = serializer.flush();
+              yield {
+                [initialRequestMarker]: true,
+                headers,
+                body
+              };
+            }
+            for await (const page of eventStream) {
+              yield page;
+            }
           }
-          return e3.getFirstMatch = function(e4, t3) {
-            var r3 = t3.match(e4);
-            return r3 && r3.length > 0 && r3[1] || "";
-          }, e3.getSecondMatch = function(e4, t3) {
-            var r3 = t3.match(e4);
-            return r3 && r3.length > 1 && r3[2] || "";
-          }, e3.matchAndReturnConst = function(e4, t3, r3) {
-            if (e4.test(t3)) return r3;
-          }, e3.getWindowsVersionName = function(e4) {
-            switch (e4) {
-              case "NT":
-                return "NT";
-              case "XP":
-                return "XP";
-              case "NT 5.0":
-                return "2000";
-              case "NT 5.1":
-                return "XP";
-              case "NT 5.2":
-                return "2003";
-              case "NT 6.0":
-                return "Vista";
-              case "NT 6.1":
-                return "7";
-              case "NT 6.2":
-                return "8";
-              case "NT 6.3":
-                return "8.1";
-              case "NT 10.0":
-                return "10";
-              default:
-                return;
-            }
-          }, e3.getMacOSVersionName = function(e4) {
-            var t3 = e4.split(".").splice(0, 2).map(function(e5) {
-              return parseInt(e5, 10) || 0;
-            });
-            if (t3.push(0), 10 === t3[0]) switch (t3[1]) {
-              case 5:
-                return "Leopard";
-              case 6:
-                return "Snow Leopard";
-              case 7:
-                return "Lion";
-              case 8:
-                return "Mountain Lion";
-              case 9:
-                return "Mavericks";
-              case 10:
-                return "Yosemite";
-              case 11:
-                return "El Capitan";
-              case 12:
-                return "Sierra";
-              case 13:
-                return "High Sierra";
-              case 14:
-                return "Mojave";
-              case 15:
-                return "Catalina";
-              default:
-                return;
-            }
-          }, e3.getAndroidVersionName = function(e4) {
-            var t3 = e4.split(".").splice(0, 2).map(function(e5) {
-              return parseInt(e5, 10) || 0;
-            });
-            if (t3.push(0), !(1 === t3[0] && t3[1] < 5)) return 1 === t3[0] && t3[1] < 6 ? "Cupcake" : 1 === t3[0] && t3[1] >= 6 ? "Donut" : 2 === t3[0] && t3[1] < 2 ? "Eclair" : 2 === t3[0] && 2 === t3[1] ? "Froyo" : 2 === t3[0] && t3[1] > 2 ? "Gingerbread" : 3 === t3[0] ? "Honeycomb" : 4 === t3[0] && t3[1] < 1 ? "Ice Cream Sandwich" : 4 === t3[0] && t3[1] < 4 ? "Jelly Bean" : 4 === t3[0] && t3[1] >= 4 ? "KitKat" : 5 === t3[0] ? "Lollipop" : 6 === t3[0] ? "Marshmallow" : 7 === t3[0] ? "Nougat" : 8 === t3[0] ? "Oreo" : 9 === t3[0] ? "Pie" : void 0;
-          }, e3.getVersionPrecision = function(e4) {
-            return e4.split(".").length;
-          }, e3.compareVersions = function(t3, r3, n3) {
-            void 0 === n3 && (n3 = false);
-            var i3 = e3.getVersionPrecision(t3), s2 = e3.getVersionPrecision(r3), a2 = Math.max(i3, s2), o2 = 0, u2 = e3.map([t3, r3], function(t4) {
-              var r4 = a2 - e3.getVersionPrecision(t4), n4 = t4 + new Array(r4 + 1).join(".0");
-              return e3.map(n4.split("."), function(e4) {
-                return new Array(20 - e4.length).join("0") + e4;
-              }).reverse();
-            });
-            for (n3 && (o2 = a2 - Math.min(i3, s2)), a2 -= 1; a2 >= o2; ) {
-              if (u2[0][a2] > u2[1][a2]) return 1;
-              if (u2[0][a2] === u2[1][a2]) {
-                if (a2 === o2) return 0;
-                a2 -= 1;
-              } else if (u2[0][a2] < u2[1][a2]) return -1;
-            }
-          }, e3.map = function(e4, t3) {
-            var r3, n3 = [];
-            if (Array.prototype.map) return Array.prototype.map.call(e4, t3);
-            for (r3 = 0; r3 < e4.length; r3 += 1) n3.push(t3(e4[r3]));
-            return n3;
-          }, e3.find = function(e4, t3) {
-            var r3, n3;
-            if (Array.prototype.find) return Array.prototype.find.call(e4, t3);
-            for (r3 = 0, n3 = e4.length; r3 < n3; r3 += 1) {
-              var i3 = e4[r3];
-              if (t3(i3, r3)) return i3;
-            }
-          }, e3.assign = function(e4) {
-            for (var t3, r3, n3 = e4, i3 = arguments.length, s2 = new Array(i3 > 1 ? i3 - 1 : 0), a2 = 1; a2 < i3; a2++) s2[a2 - 1] = arguments[a2];
-            if (Object.assign) return Object.assign.apply(Object, [e4].concat(s2));
-            var o2 = function() {
-              var e5 = s2[t3];
-              "object" == typeof e5 && null !== e5 && Object.keys(e5).forEach(function(t4) {
-                n3[t4] = e5[t4];
-              });
+        };
+        return marshaller.serialize(eventStreamIterable, (event) => {
+          if (event[initialRequestMarker]) {
+            return {
+              headers: event.headers,
+              body: event.body
             };
-            for (t3 = 0, r3 = s2.length; t3 < r3; t3 += 1) o2();
-            return e4;
-          }, e3.getBrowserAlias = function(e4) {
-            return n2.BROWSER_ALIASES_MAP[e4];
-          }, e3.getBrowserTypeByAlias = function(e4) {
-            return n2.BROWSER_MAP[e4] || "";
-          }, e3;
-        }();
-        t2.default = i2, e2.exports = t2.default;
-      }, 18: function(e2, t2, r2) {
-        "use strict";
-        t2.__esModule = true, t2.ENGINE_MAP = t2.OS_MAP = t2.PLATFORMS_MAP = t2.BROWSER_MAP = t2.BROWSER_ALIASES_MAP = void 0;
-        t2.BROWSER_ALIASES_MAP = { "Amazon Silk": "amazon_silk", "Android Browser": "android", Bada: "bada", BlackBerry: "blackberry", Chrome: "chrome", Chromium: "chromium", Electron: "electron", Epiphany: "epiphany", Firefox: "firefox", Focus: "focus", Generic: "generic", "Google Search": "google_search", Googlebot: "googlebot", "Internet Explorer": "ie", "K-Meleon": "k_meleon", Maxthon: "maxthon", "Microsoft Edge": "edge", "MZ Browser": "mz", "NAVER Whale Browser": "naver", Opera: "opera", "Opera Coast": "opera_coast", PhantomJS: "phantomjs", Puffin: "puffin", QupZilla: "qupzilla", QQ: "qq", QQLite: "qqlite", Safari: "safari", Sailfish: "sailfish", "Samsung Internet for Android": "samsung_internet", SeaMonkey: "seamonkey", Sleipnir: "sleipnir", Swing: "swing", Tizen: "tizen", "UC Browser": "uc", Vivaldi: "vivaldi", "WebOS Browser": "webos", WeChat: "wechat", "Yandex Browser": "yandex", Roku: "roku" };
-        t2.BROWSER_MAP = { amazon_silk: "Amazon Silk", android: "Android Browser", bada: "Bada", blackberry: "BlackBerry", chrome: "Chrome", chromium: "Chromium", electron: "Electron", epiphany: "Epiphany", firefox: "Firefox", focus: "Focus", generic: "Generic", googlebot: "Googlebot", google_search: "Google Search", ie: "Internet Explorer", k_meleon: "K-Meleon", maxthon: "Maxthon", edge: "Microsoft Edge", mz: "MZ Browser", naver: "NAVER Whale Browser", opera: "Opera", opera_coast: "Opera Coast", phantomjs: "PhantomJS", puffin: "Puffin", qupzilla: "QupZilla", qq: "QQ Browser", qqlite: "QQ Browser Lite", safari: "Safari", sailfish: "Sailfish", samsung_internet: "Samsung Internet for Android", seamonkey: "SeaMonkey", sleipnir: "Sleipnir", swing: "Swing", tizen: "Tizen", uc: "UC Browser", vivaldi: "Vivaldi", webos: "WebOS Browser", wechat: "WeChat", yandex: "Yandex Browser" };
-        t2.PLATFORMS_MAP = { tablet: "tablet", mobile: "mobile", desktop: "desktop", tv: "tv" };
-        t2.OS_MAP = { WindowsPhone: "Windows Phone", Windows: "Windows", MacOS: "macOS", iOS: "iOS", Android: "Android", WebOS: "WebOS", BlackBerry: "BlackBerry", Bada: "Bada", Tizen: "Tizen", Linux: "Linux", ChromeOS: "Chrome OS", PlayStation4: "PlayStation 4", Roku: "Roku" };
-        t2.ENGINE_MAP = { EdgeHTML: "EdgeHTML", Blink: "Blink", Trident: "Trident", Presto: "Presto", Gecko: "Gecko", WebKit: "WebKit" };
-      }, 90: function(e2, t2, r2) {
-        "use strict";
-        t2.__esModule = true, t2.default = void 0;
-        var n2, i2 = (n2 = r2(91)) && n2.__esModule ? n2 : { default: n2 }, s2 = r2(18);
-        function a2(e3, t3) {
-          for (var r3 = 0; r3 < t3.length; r3++) {
-            var n3 = t3[r3];
-            n3.enumerable = n3.enumerable || false, n3.configurable = true, "value" in n3 && (n3.writable = true), Object.defineProperty(e3, n3.key, n3);
           }
-        }
-        var o2 = function() {
-          function e3() {
-          }
-          var t3, r3, n3;
-          return e3.getParser = function(e4, t4) {
-            if (void 0 === t4 && (t4 = false), "string" != typeof e4) throw new Error("UserAgent should be a string");
-            return new i2.default(e4, t4);
-          }, e3.parse = function(e4) {
-            return new i2.default(e4).getResult();
-          }, t3 = e3, n3 = [{ key: "BROWSER_MAP", get: function() {
-            return s2.BROWSER_MAP;
-          } }, { key: "ENGINE_MAP", get: function() {
-            return s2.ENGINE_MAP;
-          } }, { key: "OS_MAP", get: function() {
-            return s2.OS_MAP;
-          } }, { key: "PLATFORMS_MAP", get: function() {
-            return s2.PLATFORMS_MAP;
-          } }], (r3 = null) && a2(t3.prototype, r3), n3 && a2(t3, n3), e3;
-        }();
-        t2.default = o2, e2.exports = t2.default;
-      }, 91: function(e2, t2, r2) {
-        "use strict";
-        t2.__esModule = true, t2.default = void 0;
-        var n2 = u2(r2(92)), i2 = u2(r2(93)), s2 = u2(r2(94)), a2 = u2(r2(95)), o2 = u2(r2(17));
-        function u2(e3) {
-          return e3 && e3.__esModule ? e3 : { default: e3 };
-        }
-        var d2 = function() {
-          function e3(e4, t4) {
-            if (void 0 === t4 && (t4 = false), null == e4 || "" === e4) throw new Error("UserAgent parameter can't be empty");
-            this._ua = e4, this.parsedResult = {}, true !== t4 && this.parse();
-          }
-          var t3 = e3.prototype;
-          return t3.getUA = function() {
-            return this._ua;
-          }, t3.test = function(e4) {
-            return e4.test(this._ua);
-          }, t3.parseBrowser = function() {
-            var e4 = this;
-            this.parsedResult.browser = {};
-            var t4 = o2.default.find(n2.default, function(t5) {
-              if ("function" == typeof t5.test) return t5.test(e4);
-              if (t5.test instanceof Array) return t5.test.some(function(t6) {
-                return e4.test(t6);
-              });
-              throw new Error("Browser's test function is not valid");
-            });
-            return t4 && (this.parsedResult.browser = t4.describe(this.getUA())), this.parsedResult.browser;
-          }, t3.getBrowser = function() {
-            return this.parsedResult.browser ? this.parsedResult.browser : this.parseBrowser();
-          }, t3.getBrowserName = function(e4) {
-            return e4 ? String(this.getBrowser().name).toLowerCase() || "" : this.getBrowser().name || "";
-          }, t3.getBrowserVersion = function() {
-            return this.getBrowser().version;
-          }, t3.getOS = function() {
-            return this.parsedResult.os ? this.parsedResult.os : this.parseOS();
-          }, t3.parseOS = function() {
-            var e4 = this;
-            this.parsedResult.os = {};
-            var t4 = o2.default.find(i2.default, function(t5) {
-              if ("function" == typeof t5.test) return t5.test(e4);
-              if (t5.test instanceof Array) return t5.test.some(function(t6) {
-                return e4.test(t6);
-              });
-              throw new Error("Browser's test function is not valid");
-            });
-            return t4 && (this.parsedResult.os = t4.describe(this.getUA())), this.parsedResult.os;
-          }, t3.getOSName = function(e4) {
-            var t4 = this.getOS().name;
-            return e4 ? String(t4).toLowerCase() || "" : t4 || "";
-          }, t3.getOSVersion = function() {
-            return this.getOS().version;
-          }, t3.getPlatform = function() {
-            return this.parsedResult.platform ? this.parsedResult.platform : this.parsePlatform();
-          }, t3.getPlatformType = function(e4) {
-            void 0 === e4 && (e4 = false);
-            var t4 = this.getPlatform().type;
-            return e4 ? String(t4).toLowerCase() || "" : t4 || "";
-          }, t3.parsePlatform = function() {
-            var e4 = this;
-            this.parsedResult.platform = {};
-            var t4 = o2.default.find(s2.default, function(t5) {
-              if ("function" == typeof t5.test) return t5.test(e4);
-              if (t5.test instanceof Array) return t5.test.some(function(t6) {
-                return e4.test(t6);
-              });
-              throw new Error("Browser's test function is not valid");
-            });
-            return t4 && (this.parsedResult.platform = t4.describe(this.getUA())), this.parsedResult.platform;
-          }, t3.getEngine = function() {
-            return this.parsedResult.engine ? this.parsedResult.engine : this.parseEngine();
-          }, t3.getEngineName = function(e4) {
-            return e4 ? String(this.getEngine().name).toLowerCase() || "" : this.getEngine().name || "";
-          }, t3.parseEngine = function() {
-            var e4 = this;
-            this.parsedResult.engine = {};
-            var t4 = o2.default.find(a2.default, function(t5) {
-              if ("function" == typeof t5.test) return t5.test(e4);
-              if (t5.test instanceof Array) return t5.test.some(function(t6) {
-                return e4.test(t6);
-              });
-              throw new Error("Browser's test function is not valid");
-            });
-            return t4 && (this.parsedResult.engine = t4.describe(this.getUA())), this.parsedResult.engine;
-          }, t3.parse = function() {
-            return this.parseBrowser(), this.parseOS(), this.parsePlatform(), this.parseEngine(), this;
-          }, t3.getResult = function() {
-            return o2.default.assign({}, this.parsedResult);
-          }, t3.satisfies = function(e4) {
-            var t4 = this, r3 = {}, n3 = 0, i3 = {}, s3 = 0;
-            if (Object.keys(e4).forEach(function(t5) {
-              var a4 = e4[t5];
-              "string" == typeof a4 ? (i3[t5] = a4, s3 += 1) : "object" == typeof a4 && (r3[t5] = a4, n3 += 1);
-            }), n3 > 0) {
-              var a3 = Object.keys(r3), u3 = o2.default.find(a3, function(e5) {
-                return t4.isOS(e5);
-              });
-              if (u3) {
-                var d3 = this.satisfies(r3[u3]);
-                if (void 0 !== d3) return d3;
+          const unionMember = Object.keys(event).find((key) => {
+            return key !== "__type";
+          }) ?? "";
+          const { additionalHeaders, body, eventType, explicitPayloadContentType } = this.writeEventBody(unionMember, unionSchema, event);
+          const headers = {
+            ":event-type": { type: "string", value: eventType },
+            ":message-type": { type: "string", value: "event" },
+            ":content-type": { type: "string", value: explicitPayloadContentType ?? defaultContentType },
+            ...additionalHeaders
+          };
+          return {
+            headers,
+            body
+          };
+        });
+      }
+      async deserializeEventStream({ response, responseSchema, initialResponseContainer }) {
+        const marshaller = this.marshaller;
+        const eventStreamMember = responseSchema.getEventStreamMember();
+        const unionSchema = responseSchema.getMemberSchema(eventStreamMember);
+        const memberSchemas = unionSchema.getMemberSchemas();
+        const initialResponseMarker = /* @__PURE__ */ Symbol("initialResponseMarker");
+        const asyncIterable = marshaller.deserialize(response.body, async (event) => {
+          const unionMember = Object.keys(event).find((key) => {
+            return key !== "__type";
+          }) ?? "";
+          const body = event[unionMember].body;
+          if (unionMember === "initial-response") {
+            const dataObject = await this.deserializer.read(responseSchema, body);
+            delete dataObject[eventStreamMember];
+            return {
+              [initialResponseMarker]: true,
+              ...dataObject
+            };
+          } else if (unionMember in memberSchemas) {
+            const eventStreamSchema = memberSchemas[unionMember];
+            if (eventStreamSchema.isStructSchema()) {
+              const out = {};
+              let hasBindings = false;
+              for (const [name, member2] of eventStreamSchema.structIterator()) {
+                const { eventHeader, eventPayload } = member2.getMergedTraits();
+                hasBindings = hasBindings || Boolean(eventHeader || eventPayload);
+                if (eventPayload) {
+                  if (member2.isBlobSchema()) {
+                    out[name] = body;
+                  } else if (member2.isStringSchema()) {
+                    out[name] = (this.serdeContext?.utf8Encoder ?? toUtf8)(body);
+                  } else if (member2.isStructSchema()) {
+                    out[name] = await this.deserializer.read(member2, body);
+                  }
+                } else if (eventHeader) {
+                  const value = event[unionMember].headers[name]?.value;
+                  if (value != null) {
+                    if (member2.isNumericSchema()) {
+                      if (value && typeof value === "object" && "bytes" in value) {
+                        out[name] = BigInt(value.toString());
+                      } else {
+                        out[name] = Number(value);
+                      }
+                    } else {
+                      out[name] = value;
+                    }
+                  }
+                }
               }
-              var c2 = o2.default.find(a3, function(e5) {
-                return t4.isPlatform(e5);
-              });
-              if (c2) {
-                var f2 = this.satisfies(r3[c2]);
-                if (void 0 !== f2) return f2;
+              if (hasBindings) {
+                return {
+                  [unionMember]: out
+                };
               }
             }
-            if (s3 > 0) {
-              var l2 = Object.keys(i3), h2 = o2.default.find(l2, function(e5) {
-                return t4.isBrowser(e5, true);
-              });
-              if (void 0 !== h2) return this.compareVersion(i3[h2]);
+            return {
+              [unionMember]: await this.deserializer.read(eventStreamSchema, body)
+            };
+          } else {
+            return {
+              $unknown: event
+            };
+          }
+        });
+        const asyncIterator = asyncIterable[Symbol.asyncIterator]();
+        const firstEvent = await asyncIterator.next();
+        if (firstEvent.done) {
+          return asyncIterable;
+        }
+        if (firstEvent.value?.[initialResponseMarker]) {
+          if (!responseSchema) {
+            throw new Error("@smithy::core/protocols - initial-response event encountered in event stream but no response schema given.");
+          }
+          for (const [key, value] of Object.entries(firstEvent.value)) {
+            initialResponseContainer[key] = value;
+          }
+        }
+        return {
+          async *[Symbol.asyncIterator]() {
+            if (!firstEvent?.value?.[initialResponseMarker]) {
+              yield firstEvent.value;
             }
-          }, t3.isBrowser = function(e4, t4) {
-            void 0 === t4 && (t4 = false);
-            var r3 = this.getBrowserName().toLowerCase(), n3 = e4.toLowerCase(), i3 = o2.default.getBrowserTypeByAlias(n3);
-            return t4 && i3 && (n3 = i3.toLowerCase()), n3 === r3;
-          }, t3.compareVersion = function(e4) {
-            var t4 = [0], r3 = e4, n3 = false, i3 = this.getBrowserVersion();
-            if ("string" == typeof i3) return ">" === e4[0] || "<" === e4[0] ? (r3 = e4.substr(1), "=" === e4[1] ? (n3 = true, r3 = e4.substr(2)) : t4 = [], ">" === e4[0] ? t4.push(1) : t4.push(-1)) : "=" === e4[0] ? r3 = e4.substr(1) : "~" === e4[0] && (n3 = true, r3 = e4.substr(1)), t4.indexOf(o2.default.compareVersions(i3, r3, n3)) > -1;
-          }, t3.isOS = function(e4) {
-            return this.getOSName(true) === String(e4).toLowerCase();
-          }, t3.isPlatform = function(e4) {
-            return this.getPlatformType(true) === String(e4).toLowerCase();
-          }, t3.isEngine = function(e4) {
-            return this.getEngineName(true) === String(e4).toLowerCase();
-          }, t3.is = function(e4, t4) {
-            return void 0 === t4 && (t4 = false), this.isBrowser(e4, t4) || this.isOS(e4) || this.isPlatform(e4);
-          }, t3.some = function(e4) {
-            var t4 = this;
-            return void 0 === e4 && (e4 = []), e4.some(function(e5) {
-              return t4.is(e5);
-            });
-          }, e3;
-        }();
-        t2.default = d2, e2.exports = t2.default;
-      }, 92: function(e2, t2, r2) {
-        "use strict";
-        t2.__esModule = true, t2.default = void 0;
-        var n2, i2 = (n2 = r2(17)) && n2.__esModule ? n2 : { default: n2 };
-        var s2 = /version\/(\d+(\.?_?\d+)+)/i, a2 = [{ test: [/googlebot/i], describe: function(e3) {
-          var t3 = { name: "Googlebot" }, r3 = i2.default.getFirstMatch(/googlebot\/(\d+(\.\d+))/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/opera/i], describe: function(e3) {
-          var t3 = { name: "Opera" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/(?:opera)[\s/](\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/opr\/|opios/i], describe: function(e3) {
-          var t3 = { name: "Opera" }, r3 = i2.default.getFirstMatch(/(?:opr|opios)[\s/](\S+)/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/SamsungBrowser/i], describe: function(e3) {
-          var t3 = { name: "Samsung Internet for Android" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/(?:SamsungBrowser)[\s/](\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/Whale/i], describe: function(e3) {
-          var t3 = { name: "NAVER Whale Browser" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/(?:whale)[\s/](\d+(?:\.\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/MZBrowser/i], describe: function(e3) {
-          var t3 = { name: "MZ Browser" }, r3 = i2.default.getFirstMatch(/(?:MZBrowser)[\s/](\d+(?:\.\d+)+)/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/focus/i], describe: function(e3) {
-          var t3 = { name: "Focus" }, r3 = i2.default.getFirstMatch(/(?:focus)[\s/](\d+(?:\.\d+)+)/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/swing/i], describe: function(e3) {
-          var t3 = { name: "Swing" }, r3 = i2.default.getFirstMatch(/(?:swing)[\s/](\d+(?:\.\d+)+)/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/coast/i], describe: function(e3) {
-          var t3 = { name: "Opera Coast" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/(?:coast)[\s/](\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/opt\/\d+(?:.?_?\d+)+/i], describe: function(e3) {
-          var t3 = { name: "Opera Touch" }, r3 = i2.default.getFirstMatch(/(?:opt)[\s/](\d+(\.?_?\d+)+)/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/yabrowser/i], describe: function(e3) {
-          var t3 = { name: "Yandex Browser" }, r3 = i2.default.getFirstMatch(/(?:yabrowser)[\s/](\d+(\.?_?\d+)+)/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/ucbrowser/i], describe: function(e3) {
-          var t3 = { name: "UC Browser" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/(?:ucbrowser)[\s/](\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/Maxthon|mxios/i], describe: function(e3) {
-          var t3 = { name: "Maxthon" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/(?:Maxthon|mxios)[\s/](\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/epiphany/i], describe: function(e3) {
-          var t3 = { name: "Epiphany" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/(?:epiphany)[\s/](\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/puffin/i], describe: function(e3) {
-          var t3 = { name: "Puffin" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/(?:puffin)[\s/](\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/sleipnir/i], describe: function(e3) {
-          var t3 = { name: "Sleipnir" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/(?:sleipnir)[\s/](\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/k-meleon/i], describe: function(e3) {
-          var t3 = { name: "K-Meleon" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/(?:k-meleon)[\s/](\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/micromessenger/i], describe: function(e3) {
-          var t3 = { name: "WeChat" }, r3 = i2.default.getFirstMatch(/(?:micromessenger)[\s/](\d+(\.?_?\d+)+)/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/qqbrowser/i], describe: function(e3) {
-          var t3 = { name: /qqbrowserlite/i.test(e3) ? "QQ Browser Lite" : "QQ Browser" }, r3 = i2.default.getFirstMatch(/(?:qqbrowserlite|qqbrowser)[/](\d+(\.?_?\d+)+)/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/msie|trident/i], describe: function(e3) {
-          var t3 = { name: "Internet Explorer" }, r3 = i2.default.getFirstMatch(/(?:msie |rv:)(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/\sedg\//i], describe: function(e3) {
-          var t3 = { name: "Microsoft Edge" }, r3 = i2.default.getFirstMatch(/\sedg\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/edg([ea]|ios)/i], describe: function(e3) {
-          var t3 = { name: "Microsoft Edge" }, r3 = i2.default.getSecondMatch(/edg([ea]|ios)\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/vivaldi/i], describe: function(e3) {
-          var t3 = { name: "Vivaldi" }, r3 = i2.default.getFirstMatch(/vivaldi\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/seamonkey/i], describe: function(e3) {
-          var t3 = { name: "SeaMonkey" }, r3 = i2.default.getFirstMatch(/seamonkey\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/sailfish/i], describe: function(e3) {
-          var t3 = { name: "Sailfish" }, r3 = i2.default.getFirstMatch(/sailfish\s?browser\/(\d+(\.\d+)?)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/silk/i], describe: function(e3) {
-          var t3 = { name: "Amazon Silk" }, r3 = i2.default.getFirstMatch(/silk\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/phantom/i], describe: function(e3) {
-          var t3 = { name: "PhantomJS" }, r3 = i2.default.getFirstMatch(/phantomjs\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/slimerjs/i], describe: function(e3) {
-          var t3 = { name: "SlimerJS" }, r3 = i2.default.getFirstMatch(/slimerjs\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/blackberry|\bbb\d+/i, /rim\stablet/i], describe: function(e3) {
-          var t3 = { name: "BlackBerry" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/blackberry[\d]+\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/(web|hpw)[o0]s/i], describe: function(e3) {
-          var t3 = { name: "WebOS Browser" }, r3 = i2.default.getFirstMatch(s2, e3) || i2.default.getFirstMatch(/w(?:eb)?[o0]sbrowser\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/bada/i], describe: function(e3) {
-          var t3 = { name: "Bada" }, r3 = i2.default.getFirstMatch(/dolfin\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/tizen/i], describe: function(e3) {
-          var t3 = { name: "Tizen" }, r3 = i2.default.getFirstMatch(/(?:tizen\s?)?browser\/(\d+(\.?_?\d+)+)/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/qupzilla/i], describe: function(e3) {
-          var t3 = { name: "QupZilla" }, r3 = i2.default.getFirstMatch(/(?:qupzilla)[\s/](\d+(\.?_?\d+)+)/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/firefox|iceweasel|fxios/i], describe: function(e3) {
-          var t3 = { name: "Firefox" }, r3 = i2.default.getFirstMatch(/(?:firefox|iceweasel|fxios)[\s/](\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/electron/i], describe: function(e3) {
-          var t3 = { name: "Electron" }, r3 = i2.default.getFirstMatch(/(?:electron)\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/MiuiBrowser/i], describe: function(e3) {
-          var t3 = { name: "Miui" }, r3 = i2.default.getFirstMatch(/(?:MiuiBrowser)[\s/](\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/chromium/i], describe: function(e3) {
-          var t3 = { name: "Chromium" }, r3 = i2.default.getFirstMatch(/(?:chromium)[\s/](\d+(\.?_?\d+)+)/i, e3) || i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/chrome|crios|crmo/i], describe: function(e3) {
-          var t3 = { name: "Chrome" }, r3 = i2.default.getFirstMatch(/(?:chrome|crios|crmo)\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/GSA/i], describe: function(e3) {
-          var t3 = { name: "Google Search" }, r3 = i2.default.getFirstMatch(/(?:GSA)\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: function(e3) {
-          var t3 = !e3.test(/like android/i), r3 = e3.test(/android/i);
-          return t3 && r3;
-        }, describe: function(e3) {
-          var t3 = { name: "Android Browser" }, r3 = i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/playstation 4/i], describe: function(e3) {
-          var t3 = { name: "PlayStation 4" }, r3 = i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/safari|applewebkit/i], describe: function(e3) {
-          var t3 = { name: "Safari" }, r3 = i2.default.getFirstMatch(s2, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/.*/i], describe: function(e3) {
-          var t3 = -1 !== e3.search("\\(") ? /^(.*)\/(.*)[ \t]\((.*)/ : /^(.*)\/(.*) /;
-          return { name: i2.default.getFirstMatch(t3, e3), version: i2.default.getSecondMatch(t3, e3) };
-        } }];
-        t2.default = a2, e2.exports = t2.default;
-      }, 93: function(e2, t2, r2) {
-        "use strict";
-        t2.__esModule = true, t2.default = void 0;
-        var n2, i2 = (n2 = r2(17)) && n2.__esModule ? n2 : { default: n2 }, s2 = r2(18);
-        var a2 = [{ test: [/Roku\/DVP/], describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/Roku\/DVP-(\d+\.\d+)/i, e3);
-          return { name: s2.OS_MAP.Roku, version: t3 };
-        } }, { test: [/windows phone/i], describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/windows phone (?:os)?\s?(\d+(\.\d+)*)/i, e3);
-          return { name: s2.OS_MAP.WindowsPhone, version: t3 };
-        } }, { test: [/windows /i], describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/Windows ((NT|XP)( \d\d?.\d)?)/i, e3), r3 = i2.default.getWindowsVersionName(t3);
-          return { name: s2.OS_MAP.Windows, version: t3, versionName: r3 };
-        } }, { test: [/Macintosh(.*?) FxiOS(.*?)\//], describe: function(e3) {
-          var t3 = { name: s2.OS_MAP.iOS }, r3 = i2.default.getSecondMatch(/(Version\/)(\d[\d.]+)/, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/macintosh/i], describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/mac os x (\d+(\.?_?\d+)+)/i, e3).replace(/[_\s]/g, "."), r3 = i2.default.getMacOSVersionName(t3), n3 = { name: s2.OS_MAP.MacOS, version: t3 };
-          return r3 && (n3.versionName = r3), n3;
-        } }, { test: [/(ipod|iphone|ipad)/i], describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/os (\d+([_\s]\d+)*) like mac os x/i, e3).replace(/[_\s]/g, ".");
-          return { name: s2.OS_MAP.iOS, version: t3 };
-        } }, { test: function(e3) {
-          var t3 = !e3.test(/like android/i), r3 = e3.test(/android/i);
-          return t3 && r3;
-        }, describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/android[\s/-](\d+(\.\d+)*)/i, e3), r3 = i2.default.getAndroidVersionName(t3), n3 = { name: s2.OS_MAP.Android, version: t3 };
-          return r3 && (n3.versionName = r3), n3;
-        } }, { test: [/(web|hpw)[o0]s/i], describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/(?:web|hpw)[o0]s\/(\d+(\.\d+)*)/i, e3), r3 = { name: s2.OS_MAP.WebOS };
-          return t3 && t3.length && (r3.version = t3), r3;
-        } }, { test: [/blackberry|\bbb\d+/i, /rim\stablet/i], describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/rim\stablet\sos\s(\d+(\.\d+)*)/i, e3) || i2.default.getFirstMatch(/blackberry\d+\/(\d+([_\s]\d+)*)/i, e3) || i2.default.getFirstMatch(/\bbb(\d+)/i, e3);
-          return { name: s2.OS_MAP.BlackBerry, version: t3 };
-        } }, { test: [/bada/i], describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/bada\/(\d+(\.\d+)*)/i, e3);
-          return { name: s2.OS_MAP.Bada, version: t3 };
-        } }, { test: [/tizen/i], describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/tizen[/\s](\d+(\.\d+)*)/i, e3);
-          return { name: s2.OS_MAP.Tizen, version: t3 };
-        } }, { test: [/linux/i], describe: function() {
-          return { name: s2.OS_MAP.Linux };
-        } }, { test: [/CrOS/], describe: function() {
-          return { name: s2.OS_MAP.ChromeOS };
-        } }, { test: [/PlayStation 4/], describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/PlayStation 4[/\s](\d+(\.\d+)*)/i, e3);
-          return { name: s2.OS_MAP.PlayStation4, version: t3 };
-        } }];
-        t2.default = a2, e2.exports = t2.default;
-      }, 94: function(e2, t2, r2) {
-        "use strict";
-        t2.__esModule = true, t2.default = void 0;
-        var n2, i2 = (n2 = r2(17)) && n2.__esModule ? n2 : { default: n2 }, s2 = r2(18);
-        var a2 = [{ test: [/googlebot/i], describe: function() {
-          return { type: "bot", vendor: "Google" };
-        } }, { test: [/huawei/i], describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/(can-l01)/i, e3) && "Nova", r3 = { type: s2.PLATFORMS_MAP.mobile, vendor: "Huawei" };
-          return t3 && (r3.model = t3), r3;
-        } }, { test: [/nexus\s*(?:7|8|9|10).*/i], describe: function() {
-          return { type: s2.PLATFORMS_MAP.tablet, vendor: "Nexus" };
-        } }, { test: [/ipad/i], describe: function() {
-          return { type: s2.PLATFORMS_MAP.tablet, vendor: "Apple", model: "iPad" };
-        } }, { test: [/Macintosh(.*?) FxiOS(.*?)\//], describe: function() {
-          return { type: s2.PLATFORMS_MAP.tablet, vendor: "Apple", model: "iPad" };
-        } }, { test: [/kftt build/i], describe: function() {
-          return { type: s2.PLATFORMS_MAP.tablet, vendor: "Amazon", model: "Kindle Fire HD 7" };
-        } }, { test: [/silk/i], describe: function() {
-          return { type: s2.PLATFORMS_MAP.tablet, vendor: "Amazon" };
-        } }, { test: [/tablet(?! pc)/i], describe: function() {
-          return { type: s2.PLATFORMS_MAP.tablet };
-        } }, { test: function(e3) {
-          var t3 = e3.test(/ipod|iphone/i), r3 = e3.test(/like (ipod|iphone)/i);
-          return t3 && !r3;
-        }, describe: function(e3) {
-          var t3 = i2.default.getFirstMatch(/(ipod|iphone)/i, e3);
-          return { type: s2.PLATFORMS_MAP.mobile, vendor: "Apple", model: t3 };
-        } }, { test: [/nexus\s*[0-6].*/i, /galaxy nexus/i], describe: function() {
-          return { type: s2.PLATFORMS_MAP.mobile, vendor: "Nexus" };
-        } }, { test: [/[^-]mobi/i], describe: function() {
-          return { type: s2.PLATFORMS_MAP.mobile };
-        } }, { test: function(e3) {
-          return "blackberry" === e3.getBrowserName(true);
-        }, describe: function() {
-          return { type: s2.PLATFORMS_MAP.mobile, vendor: "BlackBerry" };
-        } }, { test: function(e3) {
-          return "bada" === e3.getBrowserName(true);
-        }, describe: function() {
-          return { type: s2.PLATFORMS_MAP.mobile };
-        } }, { test: function(e3) {
-          return "windows phone" === e3.getBrowserName();
-        }, describe: function() {
-          return { type: s2.PLATFORMS_MAP.mobile, vendor: "Microsoft" };
-        } }, { test: function(e3) {
-          var t3 = Number(String(e3.getOSVersion()).split(".")[0]);
-          return "android" === e3.getOSName(true) && t3 >= 3;
-        }, describe: function() {
-          return { type: s2.PLATFORMS_MAP.tablet };
-        } }, { test: function(e3) {
-          return "android" === e3.getOSName(true);
-        }, describe: function() {
-          return { type: s2.PLATFORMS_MAP.mobile };
-        } }, { test: function(e3) {
-          return "macos" === e3.getOSName(true);
-        }, describe: function() {
-          return { type: s2.PLATFORMS_MAP.desktop, vendor: "Apple" };
-        } }, { test: function(e3) {
-          return "windows" === e3.getOSName(true);
-        }, describe: function() {
-          return { type: s2.PLATFORMS_MAP.desktop };
-        } }, { test: function(e3) {
-          return "linux" === e3.getOSName(true);
-        }, describe: function() {
-          return { type: s2.PLATFORMS_MAP.desktop };
-        } }, { test: function(e3) {
-          return "playstation 4" === e3.getOSName(true);
-        }, describe: function() {
-          return { type: s2.PLATFORMS_MAP.tv };
-        } }, { test: function(e3) {
-          return "roku" === e3.getOSName(true);
-        }, describe: function() {
-          return { type: s2.PLATFORMS_MAP.tv };
-        } }];
-        t2.default = a2, e2.exports = t2.default;
-      }, 95: function(e2, t2, r2) {
-        "use strict";
-        t2.__esModule = true, t2.default = void 0;
-        var n2, i2 = (n2 = r2(17)) && n2.__esModule ? n2 : { default: n2 }, s2 = r2(18);
-        var a2 = [{ test: function(e3) {
-          return "microsoft edge" === e3.getBrowserName(true);
-        }, describe: function(e3) {
-          if (/\sedg\//i.test(e3)) return { name: s2.ENGINE_MAP.Blink };
-          var t3 = i2.default.getFirstMatch(/edge\/(\d+(\.?_?\d+)+)/i, e3);
-          return { name: s2.ENGINE_MAP.EdgeHTML, version: t3 };
-        } }, { test: [/trident/i], describe: function(e3) {
-          var t3 = { name: s2.ENGINE_MAP.Trident }, r3 = i2.default.getFirstMatch(/trident\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: function(e3) {
-          return e3.test(/presto/i);
-        }, describe: function(e3) {
-          var t3 = { name: s2.ENGINE_MAP.Presto }, r3 = i2.default.getFirstMatch(/presto\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: function(e3) {
-          var t3 = e3.test(/gecko/i), r3 = e3.test(/like gecko/i);
-          return t3 && !r3;
-        }, describe: function(e3) {
-          var t3 = { name: s2.ENGINE_MAP.Gecko }, r3 = i2.default.getFirstMatch(/gecko\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }, { test: [/(apple)?webkit\/537\.36/i], describe: function() {
-          return { name: s2.ENGINE_MAP.Blink };
-        } }, { test: [/(apple)?webkit/i], describe: function(e3) {
-          var t3 = { name: s2.ENGINE_MAP.WebKit }, r3 = i2.default.getFirstMatch(/webkit\/(\d+(\.?_?\d+)+)/i, e3);
-          return r3 && (t3.version = r3), t3;
-        } }];
-        t2.default = a2, e2.exports = t2.default;
-      } });
-    });
+            while (true) {
+              const { done, value } = await asyncIterator.next();
+              if (done) {
+                break;
+              }
+              yield value;
+            }
+          }
+        };
+      }
+      writeEventBody(unionMember, unionSchema, event) {
+        const serializer = this.serializer;
+        let eventType = unionMember;
+        let explicitPayloadMember = null;
+        let explicitPayloadContentType;
+        const isKnownSchema = (() => {
+          const struct = unionSchema.getSchema();
+          return struct[4].includes(unionMember);
+        })();
+        const additionalHeaders = {};
+        if (!isKnownSchema) {
+          const [type, value] = event[unionMember];
+          eventType = type;
+          serializer.write(15, value);
+        } else {
+          const eventSchema = unionSchema.getMemberSchema(unionMember);
+          if (eventSchema.isStructSchema()) {
+            for (const [memberName, memberSchema] of eventSchema.structIterator()) {
+              const { eventHeader, eventPayload } = memberSchema.getMergedTraits();
+              if (eventPayload) {
+                explicitPayloadMember = memberName;
+              } else if (eventHeader) {
+                const value = event[unionMember][memberName];
+                let type = "binary";
+                if (memberSchema.isNumericSchema()) {
+                  if ((-2) ** 31 <= value && value <= 2 ** 31 - 1) {
+                    type = "integer";
+                  } else {
+                    type = "long";
+                  }
+                } else if (memberSchema.isTimestampSchema()) {
+                  type = "timestamp";
+                } else if (memberSchema.isStringSchema()) {
+                  type = "string";
+                } else if (memberSchema.isBooleanSchema()) {
+                  type = "boolean";
+                }
+                if (value != null) {
+                  additionalHeaders[memberName] = {
+                    type,
+                    value
+                  };
+                  delete event[unionMember][memberName];
+                }
+              }
+            }
+            if (explicitPayloadMember !== null) {
+              const payloadSchema = eventSchema.getMemberSchema(explicitPayloadMember);
+              if (payloadSchema.isBlobSchema()) {
+                explicitPayloadContentType = "application/octet-stream";
+              } else if (payloadSchema.isStringSchema()) {
+                explicitPayloadContentType = "text/plain";
+              }
+              serializer.write(payloadSchema, event[unionMember][explicitPayloadMember]);
+            } else {
+              serializer.write(eventSchema, event[unionMember]);
+            }
+          } else {
+            throw new Error("@smithy/core/event-streams - non-struct member not supported in event stream union.");
+          }
+        }
+        const messageSerialization = serializer.flush();
+        const body = typeof messageSerialization === "string" ? (this.serdeContext?.utf8Decoder ?? fromUtf8)(messageSerialization) : messageSerialization;
+        return {
+          body,
+          eventType,
+          explicitPayloadContentType,
+          additionalHeaders
+        };
+      }
+    };
+  }
+});
+
+// node_modules/@smithy/core/dist-es/submodules/event-streams/index.js
+var event_streams_exports = {};
+__export(event_streams_exports, {
+  EventStreamSerde: () => EventStreamSerde
+});
+var init_event_streams = __esm({
+  "node_modules/@smithy/core/dist-es/submodules/event-streams/index.js"() {
+    init_EventStreamSerde();
   }
 });
 
@@ -674,28 +331,18 @@ __export(main_exports, {
 module.exports = __toCommonJS(main_exports);
 
 // src/core/main.ts
-var import_obsidian6 = require("obsidian");
+var import_obsidian10 = require("obsidian");
+
+// src/types/settings.types.ts
+function isWorkerProvider(settings) {
+  return settings.storageProvider === "cloudflare_worker" /* CLOUDFLARE_WORKER */;
+}
+function isR2S3Provider(settings) {
+  return settings.storageProvider === "r2_s3_api" /* R2_S3_API */;
+}
 
 // src/config/defaults.ts
-var defaultR2Settings = {
-  accountId: "",
-  accessKeyId: "",
-  secretAccessKey: "",
-  bucketName: "",
-  folderName: "",
-  customDomain: "",
-  region: "auto"
-};
-var DEFAULT_SETTINGS = {
-  storageProvider: "cloudflare_worker" /* CLOUDFLARE_WORKER */,
-  workerSettings: {
-    workerUrl: "",
-    apiKey: "",
-    bucketName: "",
-    folderName: "",
-    customDomain: ""
-  },
-  r2S3Settings: defaultR2Settings,
+var DEFAULT_BASE_SETTINGS = {
   enableAutoPaste: false,
   deleteAfterUpload: false,
   maxConcurrentUploads: 3,
@@ -706,6 +353,43 @@ var DEFAULT_SETTINGS = {
   showDetailedLogs: false,
   showProgressNotifications: true
 };
+var DEFAULT_WORKER_SETTINGS = {
+  workerUrl: "",
+  apiKey: "",
+  bucketName: "",
+  folderName: "",
+  customDomain: ""
+};
+var DEFAULT_R2S3_SETTINGS = {
+  accountId: "",
+  accessKeyId: "",
+  secretAccessKey: "",
+  bucketName: "",
+  folderName: "",
+  customDomain: "",
+  region: "auto"
+};
+var DEFAULT_SETTINGS = {
+  storageProvider: "cloudflare_worker" /* CLOUDFLARE_WORKER */,
+  workerSettings: DEFAULT_WORKER_SETTINGS,
+  ...DEFAULT_BASE_SETTINGS
+};
+function createWorkerSettings(base = {}) {
+  return {
+    storageProvider: "cloudflare_worker" /* CLOUDFLARE_WORKER */,
+    workerSettings: { ...DEFAULT_WORKER_SETTINGS },
+    ...DEFAULT_BASE_SETTINGS,
+    ...base
+  };
+}
+function createR2S3Settings(base = {}) {
+  return {
+    storageProvider: "r2_s3_api" /* R2_S3_API */,
+    r2S3Settings: { ...DEFAULT_R2S3_SETTINGS },
+    ...DEFAULT_BASE_SETTINGS,
+    ...base
+  };
+}
 
 // src/config/constants.ts
 var UPLOAD_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100" height="100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>`;
@@ -942,8 +626,8 @@ var Logger = class _Logger {
   }
 };
 var CategoryLogger = class {
-  constructor(logger2, category) {
-    this.logger = logger2;
+  constructor(logger, category) {
+    this.logger = logger;
     this.category = category;
   }
   debug(message, ...args) {
@@ -960,10 +644,7 @@ var CategoryLogger = class {
   }
 };
 
-// src/utils/file.utils.ts
-var path = __toESM(require("path"));
-
-// node_modules/uuid/dist/esm-browser/stringify.js
+// node_modules/uuid/dist/stringify.js
 var byteToHex = [];
 for (let i2 = 0; i2 < 256; ++i2) {
   byteToHex.push((i2 + 256).toString(16).slice(1));
@@ -972,7 +653,7 @@ function unsafeStringify(arr, offset = 0) {
   return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
 }
 
-// node_modules/uuid/dist/esm-browser/rng.js
+// node_modules/uuid/dist/rng.js
 var getRandomValues;
 var rnds8 = new Uint8Array(16);
 function rng() {
@@ -985,15 +666,12 @@ function rng() {
   return getRandomValues(rnds8);
 }
 
-// node_modules/uuid/dist/esm-browser/native.js
+// node_modules/uuid/dist/native.js
 var randomUUID = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
 var native_default = { randomUUID };
 
-// node_modules/uuid/dist/esm-browser/v4.js
-function v4(options, buf, offset) {
-  if (native_default.randomUUID && !buf && !options) {
-    return native_default.randomUUID();
-  }
+// node_modules/uuid/dist/v4.js
+function _v4(options, buf, offset) {
   options = options || {};
   const rnds = options.random ?? options.rng?.() ?? rng();
   if (rnds.length < 16) {
@@ -1013,33 +691,102 @@ function v4(options, buf, offset) {
   }
   return unsafeStringify(rnds);
 }
+function v4(options, buf, offset) {
+  if (native_default.randomUUID && !buf && !options) {
+    return native_default.randomUUID();
+  }
+  return _v4(options, buf, offset);
+}
 var v4_default = v4;
 
 // src/utils/file.utils.ts
 function generateUniqueFileName(originalName) {
-  const ext = path.extname(originalName);
-  const baseName = path.basename(originalName, ext).replace(/[^a-zA-Z0-9\u4e00-\u9fa5_.-]/g, "_");
+  const ext = posixExtname(originalName);
+  const baseName = posixBasename(originalName, ext).replace(/[^a-zA-Z0-9\u4e00-\u9fa5_.-]/g, "_");
   const timestamp = Date.now();
   const randomId = v4_default().split("-")[0];
   return `${baseName}_${timestamp}_${randomId}${ext}`;
 }
+function normalizeVaultPath(p2) {
+  let normalized = p2.replace(/\\/g, "/");
+  normalized = normalized.replace(/\/+/g, "/");
+  if (normalized.startsWith("./")) {
+    normalized = normalized.substring(2);
+  }
+  if (normalized.endsWith("/") && normalized.length > 1) {
+    normalized = normalized.slice(0, -1);
+  }
+  const isAbsolute = normalized.startsWith("/");
+  const parts = normalized.split("/");
+  const stack = [];
+  for (const part of parts) {
+    if (part === "" || part === ".") {
+      continue;
+    } else if (part === "..") {
+      if (stack.length > 0 && stack[stack.length - 1] !== "..") {
+        stack.pop();
+      } else if (!isAbsolute) {
+        stack.push("..");
+      }
+    } else {
+      stack.push(part);
+    }
+  }
+  const result = stack.join("/");
+  return isAbsolute ? `/${result}` : result;
+}
+function posixDirname(p2) {
+  const normalized = normalizeVaultPath(p2);
+  const lastSlash = normalized.lastIndexOf("/");
+  if (lastSlash === -1) return "";
+  return normalized.substring(0, lastSlash);
+}
+function posixJoin(...parts) {
+  const joined = parts.filter((p2) => p2 && p2.length > 0).map((p2) => normalizeVaultPath(p2)).join("/");
+  return normalizeVaultPath(joined);
+}
+function posixExtname(p2) {
+  const normalized = normalizeVaultPath(p2);
+  const lastSlash = normalized.lastIndexOf("/");
+  const filename = lastSlash === -1 ? normalized : normalized.substring(lastSlash + 1);
+  const dotIndex = filename.lastIndexOf(".");
+  if (dotIndex <= 0 || dotIndex === filename.length - 1) {
+    return "";
+  }
+  return filename.substring(dotIndex);
+}
+function posixBasename(p2, ext) {
+  const normalized = normalizeVaultPath(p2);
+  const lastSlash = normalized.lastIndexOf("/");
+  let filename = lastSlash === -1 ? normalized : normalized.substring(lastSlash + 1);
+  if (ext && filename.endsWith(ext)) {
+    filename = filename.substring(0, filename.length - ext.length);
+  }
+  return filename;
+}
 async function resolveAbsolutePath(notePath, imagePath, adapter) {
-  if (path.isAbsolute(imagePath)) {
-    return imagePath;
+  const normalizedImagePath = normalizeVaultPath(imagePath);
+  if (normalizedImagePath.startsWith("/")) {
+    const absolutePath = normalizedImagePath.substring(1);
+    if (await adapter.exists(absolutePath)) {
+      return absolutePath;
+    }
+    return null;
   }
-  const noteDir = path.dirname(notePath);
-  let absolutePath = path.normalize(path.join(noteDir, imagePath));
-  if (await adapter.exists(absolutePath)) {
-    return absolutePath;
+  const noteDir = posixDirname(notePath);
+  if (noteDir) {
+    const relativePath = posixJoin(noteDir, normalizedImagePath);
+    if (await adapter.exists(relativePath)) {
+      return relativePath;
+    }
   }
-  absolutePath = path.normalize(imagePath);
-  if (await adapter.exists(absolutePath)) {
-    return absolutePath;
+  if (await adapter.exists(normalizedImagePath)) {
+    return normalizedImagePath;
   }
   return null;
 }
 function getMimeType(fileName) {
-  const extension = path.extname(fileName).toLowerCase().replace(".", "");
+  const extension = posixExtname(fileName).toLowerCase().replace(".", "");
   const mimeType = MIME_TYPES[extension];
   return mimeType || "application/octet-stream";
 }
@@ -1051,115 +798,239 @@ function formatFileSize(bytes) {
   return parseFloat((bytes / Math.pow(k2, i2)).toFixed(2)) + " " + sizes[i2];
 }
 
-// src/services/worker-service.ts
-var CloudflareWorkerService = class {
-  /**
-   * 构造函数
-   */
-  constructor(settings) {
-    this.settings = settings;
+// src/providers/base.provider.ts
+var NETWORK_ERROR_CODES = /* @__PURE__ */ new Set([
+  "ECONNRESET",
+  // Connection reset by peer
+  "ENOTFOUND",
+  // DNS lookup failed
+  "EAI_AGAIN",
+  // DNS lookup timed out
+  "ETIMEDOUT",
+  // Connection timed out
+  "ECONNREFUSED",
+  // Connection refused
+  "EHOSTUNREACH",
+  // Host unreachable
+  "ENETUNREACH",
+  // Network unreachable
+  "EPIPE",
+  // Broken pipe
+  "ECONNABORTED"
+  // Connection aborted
+]);
+function isCommonNetworkError(error) {
+  const code = error?.code || error?.cause?.code;
+  return code ? NETWORK_ERROR_CODES.has(code) : false;
+}
+var BaseStorageProvider = class {
+  constructor() {
     this.logger = Logger.getInstance();
   }
+  // ===== Template Method - defines the upload algorithm =====
   /**
-   * 获取提供者类型
+   * Template method that defines the upload algorithm skeleton.
+   * Subclasses customize behavior by implementing abstract methods.
    */
+  async uploadImage(fileContent, fileName, onProgress, options) {
+    this.validateSettings();
+    const { folderName, customDomain } = this.getUploadSettings();
+    const { filePath, mimeType } = this.prepareUpload(fileName, folderName);
+    const abortController = this.createAbortController(options);
+    try {
+      this.reportProgress(onProgress, 0.1);
+      const result = await this.executeUpload(fileContent, filePath, mimeType, abortController.signal);
+      abortController.clear();
+      this.reportProgress(onProgress, 0.9);
+      const imageUrl = this.buildPublicUrl(customDomain, filePath, this.getFallbackBaseUrl());
+      this.reportProgress(onProgress, 1);
+      this.logger.info(`\u6587\u4EF6\u4E0A\u4F20\u6210\u529F: ${fileName} -> ${imageUrl}`);
+      return { url: imageUrl, etag: result.etag };
+    } catch (error) {
+      abortController.clear();
+      this.checkAbortError(error, abortController.getAbortSource());
+      this.normalizeAndThrowError(error, fileName, this.getErrorClassifier());
+    }
+  }
+  // ===== Protected utility methods =====
+  prepareUpload(fileName, folderName) {
+    const uniqueFileName = generateUniqueFileName(fileName);
+    const filePath = this.buildFilePath(folderName, uniqueFileName);
+    const mimeType = getMimeType(fileName);
+    this.logger.info(`\u4E0A\u4F20\u6587\u4EF6: ${fileName} -> ${filePath}, \u7C7B\u578B: ${mimeType}`);
+    return { uniqueFileName, filePath, mimeType };
+  }
+  buildFilePath(folderName, fileName) {
+    const folder = this.sanitizeFolderName(folderName);
+    return folder ? `${folder}/${fileName}` : fileName;
+  }
+  sanitizeFolderName(folderName) {
+    if (!folderName) return "";
+    return folderName.replace(/\\/g, "/").trim().replace(/^\/+|\/+$/g, "").replace(/\/{2,}/g, "/");
+  }
+  /**
+   * Build the public URL for an uploaded file.
+   *
+   * Handles edge cases:
+   * - Normalizes trailing slashes to avoid double slashes
+   * - Supports customDomain with or without protocol
+   * - Supports customDomain with path prefix (e.g., "cdn.example.com/images")
+   * - fallbackBase may include bucket path (e.g., R2: "https://account.r2.../bucket")
+   */
+  buildPublicUrl(customDomain, filePath, fallbackBase) {
+    let base;
+    if (customDomain?.trim()) {
+      const domain = customDomain.trim();
+      const fullUrl = domain.startsWith("http") ? domain : `https://${domain}`;
+      base = fullUrl.replace(/\/+$/, "");
+    } else {
+      base = fallbackBase.replace(/\/+$/, "");
+    }
+    return `${base}/${filePath}`;
+  }
+  createAbortController(options) {
+    const controller = new AbortController();
+    let abortSource;
+    const abort = (source) => {
+      if (controller.signal.aborted) return;
+      abortSource = source;
+      controller.abort();
+    };
+    const timeoutId = options?.timeout ? setTimeout(() => abort("timeout"), options.timeout) : null;
+    const externalSignal = options?.signal;
+    const onExternalAbort = () => abort("external");
+    if (externalSignal) {
+      if (externalSignal.aborted) {
+        abort("external");
+      } else {
+        externalSignal.addEventListener("abort", onExternalAbort, { once: true });
+      }
+    }
+    return {
+      signal: controller.signal,
+      clear: () => {
+        if (timeoutId) clearTimeout(timeoutId);
+        if (externalSignal) {
+          externalSignal.removeEventListener("abort", onExternalAbort);
+        }
+      },
+      getAbortSource: () => abortSource
+    };
+  }
+  reportProgress(onProgress, value = 0) {
+    onProgress?.(value);
+  }
+  // ===== Error handling =====
+  checkAbortError(error, abortSource) {
+    if (error?.name === "AbortError") {
+      if (abortSource === "external") {
+        throw this.createError("unknown", "\u4EFB\u52A1\u5DF2\u53D6\u6D88", "CANCELLED");
+      }
+      throw this.createError("timeout", "\u4E0A\u4F20\u8D85\u65F6", "TIMEOUT");
+    }
+  }
+  createError(type, message, code) {
+    return { type, message, code };
+  }
+  normalizeAndThrowError(error, fileName, classifier) {
+    this.logger.error(`\u4E0A\u4F20\u6587\u4EF6\u5931\u8D25 ${fileName}:`, error);
+    if (error.type) {
+      throw error;
+    }
+    const message = error.message || String(error);
+    let type = "unknown";
+    if (classifier.isAuthError(error, message)) {
+      type = "auth";
+    } else if (classifier.isNetworkError(error, message)) {
+      type = "network";
+    } else if (classifier.isServerError(error)) {
+      type = "server";
+    }
+    throw this.createError(type, message, classifier.getErrorCode(error));
+  }
+};
+
+// src/providers/worker.provider.ts
+var _CloudflareWorkerService = class _CloudflareWorkerService extends BaseStorageProvider {
+  constructor(settings) {
+    super();
+    this.settings = settings;
+  }
   getType() {
     return "cloudflare_worker" /* CLOUDFLARE_WORKER */;
   }
-  /**
-   * 上传图片到Cloudflare Worker
-   */
-  async uploadImage(fileContent, fileName, onProgress, options) {
-    try {
-      const { workerUrl, apiKey, bucketName, folderName, customDomain } = this.settings.workerSettings;
-      if (!workerUrl || !apiKey) {
-        throw new Error("Worker URL\u6216API Key\u672A\u914D\u7F6E");
-      }
-      const uniqueFileName = generateUniqueFileName(fileName);
-      const cleanFolderName = folderName ? folderName.replace(/\/$/, "") : "";
-      const filePath = cleanFolderName ? `${cleanFolderName}/${uniqueFileName}` : uniqueFileName;
-      const mimeType = getMimeType(fileName);
-      this.logger.info(`\u4E0A\u4F20\u6587\u4EF6: ${fileName} -> ${filePath}, \u7C7B\u578B: ${mimeType}`);
-      const encodedFilePath = filePath.split("/").map((part) => encodeURIComponent(part)).join("/");
-      const uploadUrl = `${workerUrl}/api/v1/buckets/${bucketName}/files/${encodedFilePath}`;
-      this.logger.info(`\u4E0A\u4F20URL: ${uploadUrl}`);
-      const controller = new AbortController();
-      const timeoutId = options?.timeout ? setTimeout(() => controller.abort(), options.timeout) : null;
-      try {
-        if (onProgress) {
-          onProgress(0.1);
-        }
-        const response = await fetch(uploadUrl, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": mimeType,
-            "Content-Length": fileContent.byteLength.toString()
-          },
-          body: fileContent,
-          signal: controller.signal
-        });
-        if (timeoutId) clearTimeout(timeoutId);
-        if (onProgress) {
-          onProgress(0.9);
-        }
-        const json = await response.json();
-        if (response.ok && json.success) {
-          let imageUrl;
-          if (customDomain && customDomain.trim() !== "") {
-            const domainBase = customDomain.startsWith("http") ? customDomain : `https://${customDomain}`;
-            const formattedDomain = domainBase.endsWith("/") ? domainBase.slice(0, -1) : domainBase;
-            imageUrl = `${formattedDomain}/${filePath}`;
-          } else {
-            const baseUrl = new URL(workerUrl);
-            imageUrl = `${baseUrl.origin}/${filePath}`;
-          }
-          if (onProgress) {
-            onProgress(1);
-          }
-          this.logger.info(`\u6587\u4EF6\u4E0A\u4F20\u6210\u529F: ${fileName} -> ${imageUrl}`);
-          return {
-            url: imageUrl,
-            etag: json.etag
-          };
-        } else {
-          const errorMessage = json.error || response.statusText || "\u672A\u77E5\u9519\u8BEF";
-          this.logger.error(`\u4E0A\u4F20\u5931\u8D25\u54CD\u5E94: ${response.status} ${response.statusText}`, json);
-          throw new Error(errorMessage);
-        }
-      } catch (error) {
-        if (timeoutId) clearTimeout(timeoutId);
-        if (error.name === "AbortError") {
-          throw {
-            type: "timeout",
-            message: "\u4E0A\u4F20\u8D85\u65F6",
-            code: "TIMEOUT"
-          };
-        }
-        throw error;
-      }
-    } catch (error) {
-      this.logger.error(`\u4E0A\u4F20\u6587\u4EF6\u5931\u8D25 ${fileName}:`, error);
-      if (error.type) {
-        throw error;
-      }
-      let type = "unknown";
-      const message = error.message || String(error);
-      if (message.includes("Worker URL\u6216API Key\u672A\u914D\u7F6E")) {
-        type = "auth";
-      } else if (message.includes("Failed to fetch") || message.includes("\u7F51\u7EDC")) {
-        type = "network";
-      } else if (error.status && error.status >= 500) {
-        type = "server";
-      }
-      throw {
-        type,
-        message,
-        code: error.code || error.status
-      };
+  validateSettings() {
+    const { workerUrl, apiKey, bucketName } = this.settings.workerSettings;
+    if (!workerUrl || !apiKey || !bucketName) {
+      throw new Error("Worker \u914D\u7F6E\u4E0D\u5B8C\u6574\uFF1A\u7F3A\u5C11 Worker URL\u3001API Key \u6216 Bucket \u540D\u79F0");
     }
   }
+  getUploadSettings() {
+    return {
+      folderName: this.settings.workerSettings.folderName,
+      customDomain: this.settings.workerSettings.customDomain
+    };
+  }
+  /**
+   * Returns the fallback base URL for Worker uploads.
+   *
+   * Preserves the full URL path (not just origin) to support Workers
+   * deployed with path prefixes, e.g., "https://cdn.example.com/images".
+   */
+  getFallbackBaseUrl() {
+    return this.settings.workerSettings.workerUrl.replace(/\/+$/, "");
+  }
+  getErrorClassifier() {
+    return _CloudflareWorkerService.ERROR_CLASSIFIER;
+  }
+  async executeUpload(fileContent, filePath, mimeType, signal) {
+    const { workerUrl, apiKey, bucketName } = this.settings.workerSettings;
+    const encodedPath = filePath.split("/").map(encodeURIComponent).join("/");
+    const uploadUrl = `${workerUrl}/api/v1/buckets/${bucketName}/files/${encodedPath}`;
+    this.logger.info(`\u4E0A\u4F20URL: ${uploadUrl}`);
+    const response = await fetch(uploadUrl, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": mimeType
+      },
+      body: fileContent,
+      signal
+    });
+    let json;
+    try {
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        const text = await response.text();
+        this.logger.error(`\u975EJSON\u54CD\u5E94 (${contentType}): ${text.substring(0, 200)}`);
+        throw new Error(
+          !response.ok ? `HTTP ${response.status}: ${response.statusText}` : `\u670D\u52A1\u5668\u8FD4\u56DE\u4E86\u975EJSON\u54CD\u5E94: ${contentType || "unknown"}`
+        );
+      }
+      json = await response.json();
+    } catch (e2) {
+      if (e2.message?.startsWith("HTTP ") || e2.message?.includes("\u975EJSON\u54CD\u5E94")) {
+        throw e2;
+      }
+      this.logger.error(`JSON\u89E3\u6790\u5931\u8D25: ${e2.message}`);
+      throw new Error(
+        !response.ok ? `HTTP ${response.status}: ${response.statusText}` : `\u54CD\u5E94JSON\u89E3\u6790\u5931\u8D25: ${e2.message}`
+      );
+    }
+    if (!response.ok || !json.success) {
+      this.logger.error(`\u4E0A\u4F20\u5931\u8D25\u54CD\u5E94: ${response.status} ${response.statusText}`, json);
+      throw new Error(json.error || response.statusText || "\u672A\u77E5\u9519\u8BEF");
+    }
+    return { etag: json.etag };
+  }
 };
+_CloudflareWorkerService.ERROR_CLASSIFIER = {
+  isAuthError: (_, msg) => msg.includes("\u914D\u7F6E\u4E0D\u5B8C\u6574"),
+  isNetworkError: (err, msg) => isCommonNetworkError(err) || msg.includes("Failed to fetch") || msg.includes("\u7F51\u7EDC"),
+  isServerError: (err) => err.status && err.status >= 500,
+  getErrorCode: (err) => err.code || err.status
+};
+var CloudflareWorkerService = _CloudflareWorkerService;
 
 // node_modules/@smithy/protocol-http/dist-es/extensions/httpExtensionConfiguration.js
 var getHttpHandlerExtensionConfiguration = (runtimeConfig) => {
@@ -1184,20 +1055,6 @@ var resolveHttpHandlerRuntimeConfig = (httpHandlerExtensionConfiguration) => {
   };
 };
 
-// node_modules/@smithy/types/dist-es/auth/auth.js
-var HttpAuthLocation;
-(function(HttpAuthLocation2) {
-  HttpAuthLocation2["HEADER"] = "header";
-  HttpAuthLocation2["QUERY"] = "query";
-})(HttpAuthLocation || (HttpAuthLocation = {}));
-
-// node_modules/@smithy/types/dist-es/auth/HttpApiKeyAuth.js
-var HttpApiKeyAuthLocation;
-(function(HttpApiKeyAuthLocation2) {
-  HttpApiKeyAuthLocation2["HEADER"] = "header";
-  HttpApiKeyAuthLocation2["QUERY"] = "query";
-})(HttpApiKeyAuthLocation || (HttpApiKeyAuthLocation = {}));
-
 // node_modules/@smithy/types/dist-es/endpoint.js
 var EndpointURLScheme;
 (function(EndpointURLScheme2) {
@@ -1215,35 +1072,23 @@ var AlgorithmId;
   AlgorithmId2["SHA256"] = "sha256";
 })(AlgorithmId || (AlgorithmId = {}));
 
-// node_modules/@smithy/types/dist-es/http.js
-var FieldPosition;
-(function(FieldPosition2) {
-  FieldPosition2[FieldPosition2["HEADER"] = 0] = "HEADER";
-  FieldPosition2[FieldPosition2["TRAILER"] = 1] = "TRAILER";
-})(FieldPosition || (FieldPosition = {}));
-
 // node_modules/@smithy/types/dist-es/middleware.js
 var SMITHY_CONTEXT_KEY = "__smithy_context";
-
-// node_modules/@smithy/types/dist-es/profile.js
-var IniSectionType;
-(function(IniSectionType2) {
-  IniSectionType2["PROFILE"] = "profile";
-  IniSectionType2["SSO_SESSION"] = "sso-session";
-  IniSectionType2["SERVICES"] = "services";
-})(IniSectionType || (IniSectionType = {}));
-
-// node_modules/@smithy/types/dist-es/transfer.js
-var RequestHandlerProtocol;
-(function(RequestHandlerProtocol2) {
-  RequestHandlerProtocol2["HTTP_0_9"] = "http/0.9";
-  RequestHandlerProtocol2["HTTP_1_0"] = "http/1.0";
-  RequestHandlerProtocol2["TDS_8_0"] = "tds/8.0";
-})(RequestHandlerProtocol || (RequestHandlerProtocol = {}));
 
 // node_modules/@smithy/protocol-http/dist-es/httpRequest.js
 var HttpRequest = class _HttpRequest {
   constructor(options) {
+    __publicField(this, "method");
+    __publicField(this, "protocol");
+    __publicField(this, "hostname");
+    __publicField(this, "port");
+    __publicField(this, "path");
+    __publicField(this, "query");
+    __publicField(this, "headers");
+    __publicField(this, "username");
+    __publicField(this, "password");
+    __publicField(this, "fragment");
+    __publicField(this, "body");
     this.method = options.method || "GET";
     this.hostname = options.hostname || "localhost";
     this.port = options.port;
@@ -1290,6 +1135,10 @@ function cloneQuery(query) {
 // node_modules/@smithy/protocol-http/dist-es/httpResponse.js
 var HttpResponse = class {
   constructor(options) {
+    __publicField(this, "statusCode");
+    __publicField(this, "reason");
+    __publicField(this, "headers");
+    __publicField(this, "body");
     this.statusCode = options.statusCode;
     this.reason = options.reason;
     this.headers = options.headers || {};
@@ -1307,12 +1156,19 @@ var HttpResponse = class {
 function addExpectContinueMiddleware(options) {
   return (next) => async (args) => {
     const { request } = args;
-    if (HttpRequest.isInstance(request) && request.body && options.runtime === "node") {
-      if (options.requestHandler?.constructor?.name !== "FetchHttpHandler") {
-        request.headers = {
-          ...request.headers,
-          Expect: "100-continue"
-        };
+    if (options.expectContinueHeader !== false && HttpRequest.isInstance(request) && request.body && options.runtime === "node" && options.requestHandler?.constructor?.name !== "FetchHttpHandler") {
+      let sendHeader = true;
+      if (typeof options.expectContinueHeader === "number") {
+        try {
+          const bodyLength = Number(request.headers?.["content-length"]) ?? options.bodyLengthChecker?.(request.body) ?? Infinity;
+          sendHeader = bodyLength >= options.expectContinueHeader;
+        } catch (e2) {
+        }
+      } else {
+        sendHeader = !!options.expectContinueHeader;
+      }
+      if (sendHeader) {
+        request.headers.Expect = "100-continue";
       }
     }
     return next({
@@ -1359,13 +1215,6 @@ var ChecksumLocation;
   ChecksumLocation2["TRAILER"] = "trailer";
 })(ChecksumLocation || (ChecksumLocation = {}));
 var DEFAULT_CHECKSUM_ALGORITHM = ChecksumAlgorithm.CRC32;
-
-// node_modules/@aws-sdk/middleware-flexible-checksums/dist-es/stringUnionSelector.js
-var SelectorType;
-(function(SelectorType3) {
-  SelectorType3["ENV"] = "env";
-  SelectorType3["CONFIG"] = "shared config entry";
-})(SelectorType || (SelectorType = {}));
 
 // node_modules/@aws-sdk/middleware-flexible-checksums/dist-es/crc64-nvme-crt-container.js
 var crc64NvmeCrtContainer = {
@@ -1535,11 +1384,11 @@ var resolveAuthOptions = (candidateAuthOptions, authSchemePreference) => {
 
 // node_modules/@smithy/core/dist-es/middleware-http-auth-scheme/httpAuthSchemeMiddleware.js
 function convertHttpAuthSchemesToMap(httpAuthSchemes) {
-  const map2 = /* @__PURE__ */ new Map();
+  const map = /* @__PURE__ */ new Map();
   for (const scheme of httpAuthSchemes) {
-    map2.set(scheme.schemeId, scheme);
+    map.set(scheme.schemeId, scheme);
   }
-  return map2;
+  return map;
 }
 var httpAuthSchemeMiddleware = (config, mwOptions) => (next, context) => async (args) => {
   const options = config.httpAuthSchemeProvider(await mwOptions.httpAuthSchemeParametersProvider(config, context, args.input));
@@ -1593,93 +1442,13 @@ var getHttpAuthSchemeEndpointRuleSetPlugin = (config, { httpAuthSchemeParameters
   }
 });
 
-// node_modules/@smithy/middleware-serde/dist-es/deserializerMiddleware.js
-var deserializerMiddleware = (options, deserializer) => (next, context) => async (args) => {
-  const { response } = await next(args);
-  try {
-    const parsed = await deserializer(response, options);
-    return {
-      response,
-      output: parsed
-    };
-  } catch (error) {
-    Object.defineProperty(error, "$response", {
-      value: response
-    });
-    if (!("$metadata" in error)) {
-      const hint = `Deserialization error: to see the raw response, inspect the hidden field {error}.$response on this object.`;
-      try {
-        error.message += "\n  " + hint;
-      } catch (e2) {
-        if (!context.logger || context.logger?.constructor?.name === "NoOpLogger") {
-          console.warn(hint);
-        } else {
-          context.logger?.warn?.(hint);
-        }
-      }
-      if (typeof error.$responseBodyText !== "undefined") {
-        if (error.$response) {
-          error.$response.body = error.$responseBodyText;
-        }
-      }
-      try {
-        if (HttpResponse.isInstance(response)) {
-          const { headers = {} } = response;
-          const headerEntries = Object.entries(headers);
-          error.$metadata = {
-            httpStatusCode: response.statusCode,
-            requestId: findHeader(/^x-[\w-]+-request-?id$/, headerEntries),
-            extendedRequestId: findHeader(/^x-[\w-]+-id-2$/, headerEntries),
-            cfId: findHeader(/^x-[\w-]+-cf-id$/, headerEntries)
-          };
-        }
-      } catch (e2) {
-      }
-    }
-    throw error;
-  }
-};
-var findHeader = (pattern, headers) => {
-  return (headers.find(([k2]) => {
-    return k2.match(pattern);
-  }) || [void 0, void 0])[1];
-};
-
-// node_modules/@smithy/middleware-serde/dist-es/serializerMiddleware.js
-var serializerMiddleware = (options, serializer) => (next, context) => async (args) => {
-  const endpointConfig = options;
-  const endpoint = context.endpointV2?.url && endpointConfig.urlParser ? async () => endpointConfig.urlParser(context.endpointV2.url) : endpointConfig.endpoint;
-  if (!endpoint) {
-    throw new Error("No valid endpoint provider available.");
-  }
-  const request = await serializer(args.input, { ...options, endpoint });
-  return next({
-    ...args,
-    request
-  });
-};
-
 // node_modules/@smithy/middleware-serde/dist-es/serdePlugin.js
-var deserializerMiddlewareOption = {
-  name: "deserializerMiddleware",
-  step: "deserialize",
-  tags: ["DESERIALIZER"],
-  override: true
-};
 var serializerMiddlewareOption = {
   name: "serializerMiddleware",
   step: "serialize",
   tags: ["SERIALIZER"],
   override: true
 };
-function getSerdePlugin(config, serializer, deserializer) {
-  return {
-    applyToStack: (commandStack) => {
-      commandStack.add(deserializerMiddleware(config, deserializer), deserializerMiddlewareOption);
-      commandStack.add(serializerMiddleware(config, serializer), serializerMiddlewareOption);
-    }
-  };
-}
 
 // node_modules/@smithy/core/dist-es/middleware-http-signing/httpSigningMiddleware.js
 var defaultErrorHandler = (signingProperties) => (error) => {
@@ -1730,30 +1499,12 @@ var normalizeProvider2 = (input) => {
 };
 
 // node_modules/@smithy/util-base64/dist-es/constants.browser.js
-var alphabetByEncoding = {};
-var alphabetByValue = new Array(64);
-for (let i2 = 0, start = "A".charCodeAt(0), limit = "Z".charCodeAt(0); i2 + start <= limit; i2++) {
-  const char = String.fromCharCode(i2 + start);
-  alphabetByEncoding[char] = i2;
-  alphabetByValue[i2] = char;
-}
-for (let i2 = 0, start = "a".charCodeAt(0), limit = "z".charCodeAt(0); i2 + start <= limit; i2++) {
-  const char = String.fromCharCode(i2 + start);
-  const index = i2 + 26;
-  alphabetByEncoding[char] = index;
-  alphabetByValue[index] = char;
-}
-for (let i2 = 0; i2 < 10; i2++) {
-  alphabetByEncoding[i2.toString(10)] = i2 + 52;
-  const char = i2.toString(10);
-  const index = i2 + 52;
-  alphabetByEncoding[char] = index;
-  alphabetByValue[index] = char;
-}
-alphabetByEncoding["+"] = 62;
-alphabetByValue[62] = "+";
-alphabetByEncoding["/"] = 63;
-alphabetByValue[63] = "/";
+var chars = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/`;
+var alphabetByEncoding = Object.entries(chars).reduce((acc, [i2, c2]) => {
+  acc[c2] = Number(i2);
+  return acc;
+}, {});
+var alphabetByValue = chars.split("");
 var bitsPerLetter = 6;
 var bitsPerByte = 8;
 var maxLetterValue = 63;
@@ -1793,32 +1544,8 @@ var fromBase64 = (input) => {
   return new Uint8Array(out);
 };
 
-// node_modules/@smithy/util-utf8/dist-es/fromUtf8.browser.js
-var fromUtf8 = (input) => new TextEncoder().encode(input);
-
-// node_modules/@smithy/util-utf8/dist-es/toUint8Array.js
-var toUint8Array = (data) => {
-  if (typeof data === "string") {
-    return fromUtf8(data);
-  }
-  if (ArrayBuffer.isView(data)) {
-    return new Uint8Array(data.buffer, data.byteOffset, data.byteLength / Uint8Array.BYTES_PER_ELEMENT);
-  }
-  return new Uint8Array(data);
-};
-
-// node_modules/@smithy/util-utf8/dist-es/toUtf8.browser.js
-var toUtf8 = (input) => {
-  if (typeof input === "string") {
-    return input;
-  }
-  if (typeof input !== "object" || typeof input.byteOffset !== "number" || typeof input.byteLength !== "number") {
-    throw new Error("@smithy/util-utf8: toUtf8 encoder function only accepts string | Uint8Array.");
-  }
-  return new TextDecoder("utf-8").decode(input);
-};
-
 // node_modules/@smithy/util-base64/dist-es/toBase64.browser.js
+init_dist_es();
 function toBase64(_input) {
   let input;
   if (typeof _input === "string") {
@@ -1850,36 +1577,27 @@ function toBase64(_input) {
   return str;
 }
 
-// node_modules/@smithy/util-stream/dist-es/blob/transforms.js
-function transformToString(payload, encoding = "utf-8") {
-  if (encoding === "base64") {
-    return toBase64(payload);
-  }
-  return toUtf8(payload);
-}
-function transformFromString(str, encoding) {
-  if (encoding === "base64") {
-    return Uint8ArrayBlobAdapter.mutate(fromBase64(str));
-  }
-  return Uint8ArrayBlobAdapter.mutate(fromUtf8(str));
-}
-
 // node_modules/@smithy/util-stream/dist-es/blob/Uint8ArrayBlobAdapter.js
+init_dist_es();
 var Uint8ArrayBlobAdapter = class _Uint8ArrayBlobAdapter extends Uint8Array {
   static fromString(source, encoding = "utf-8") {
-    switch (typeof source) {
-      case "string":
-        return transformFromString(source, encoding);
-      default:
-        throw new Error(`Unsupported conversion from ${typeof source} to Uint8ArrayBlobAdapter.`);
+    if (typeof source === "string") {
+      if (encoding === "base64") {
+        return _Uint8ArrayBlobAdapter.mutate(fromBase64(source));
+      }
+      return _Uint8ArrayBlobAdapter.mutate(fromUtf8(source));
     }
+    throw new Error(`Unsupported conversion from ${typeof source} to Uint8ArrayBlobAdapter.`);
   }
   static mutate(source) {
     Object.setPrototypeOf(source, _Uint8ArrayBlobAdapter.prototype);
     return source;
   }
   transformToString(encoding = "utf-8") {
-    return transformToString(this, encoding);
+    if (encoding === "base64") {
+      return toBase64(this);
+    }
+    return toUtf8(this);
   }
 };
 
@@ -1928,9 +1646,10 @@ var createChecksumStream = ({ expectedChecksum, checksum, source, checksumSource
 // node_modules/@smithy/util-stream/dist-es/ByteArrayCollector.js
 var ByteArrayCollector = class {
   constructor(allocByteArray) {
+    __publicField(this, "allocByteArray");
+    __publicField(this, "byteLength", 0);
+    __publicField(this, "byteArrays", []);
     this.allocByteArray = allocByteArray;
-    this.byteLength = 0;
-    this.byteArrays = [];
   }
   push(byteArray) {
     this.byteArrays.push(byteArray);
@@ -1959,7 +1678,7 @@ var ByteArrayCollector = class {
 };
 
 // node_modules/@smithy/util-stream/dist-es/createBufferedReadableStream.js
-function createBufferedReadableStream(upstream, size, logger2) {
+function createBufferedReadableStream(upstream, size, logger) {
   const reader = upstream.getReader();
   let streamBufferingLoggedWarning = false;
   let bytesSeen = 0;
@@ -1997,7 +1716,7 @@ function createBufferedReadableStream(upstream, size, logger2) {
         const newSize = merge(buffers, mode, chunk);
         if (!streamBufferingLoggedWarning && bytesSeen > size * 2) {
           streamBufferingLoggedWarning = true;
-          logger2?.warn(`@smithy/util-stream - stream chunk size ${chunkSize} is below threshold of ${size}, automatically buffering.`);
+          logger?.warn(`@smithy/util-stream - stream chunk size ${chunkSize} is below threshold of ${size}, automatically buffering.`);
         }
         if (newSize >= size) {
           controller.enqueue(flush(buffers, mode));
@@ -2160,13 +1879,9 @@ var keepAliveSupport = {
   supported: void 0
 };
 var FetchHttpHandler = class _FetchHttpHandler {
-  static create(instanceOrOptions) {
-    if (typeof instanceOrOptions?.handle === "function") {
-      return instanceOrOptions;
-    }
-    return new _FetchHttpHandler(instanceOrOptions);
-  }
   constructor(options) {
+    __publicField(this, "config");
+    __publicField(this, "configProvider");
     if (typeof options === "function") {
       this.configProvider = options().then((opts) => opts || {});
     } else {
@@ -2176,6 +1891,12 @@ var FetchHttpHandler = class _FetchHttpHandler {
     if (keepAliveSupport.supported === void 0) {
       keepAliveSupport.supported = Boolean(typeof Request !== "undefined" && "keepalive" in createRequest("https://[::1]"));
     }
+  }
+  static create(instanceOrOptions) {
+    if (typeof instanceOrOptions?.handle === "function") {
+      return instanceOrOptions;
+    }
+    return new _FetchHttpHandler(instanceOrOptions);
   }
   destroy() {
   }
@@ -2191,13 +1912,13 @@ var FetchHttpHandler = class _FetchHttpHandler {
       abortError.name = "AbortError";
       return Promise.reject(abortError);
     }
-    let path3 = request.path;
+    let path = request.path;
     const queryString = buildQueryString(request.query || {});
     if (queryString) {
-      path3 += `?${queryString}`;
+      path += `?${queryString}`;
     }
     if (request.fragment) {
-      path3 += `#${request.fragment}`;
+      path += `#${request.fragment}`;
     }
     let auth = "";
     if (request.username != null || request.password != null) {
@@ -2206,7 +1927,7 @@ var FetchHttpHandler = class _FetchHttpHandler {
       auth = `${username}:${password}@`;
     }
     const { port, method } = request;
-    const url = `${request.protocol}//${auth}${request.hostname}${port ? `:${port}` : ""}${path3}`;
+    const url = `${request.protocol}//${auth}${request.hostname}${port ? `:${port}` : ""}${path}`;
     const body = method === "GET" || method === "HEAD" ? void 0 : request.body;
     const requestOptions = {
       body,
@@ -2380,6 +2101,7 @@ function toHex(bytes) {
 }
 
 // node_modules/@smithy/util-stream/dist-es/sdk-stream-mixin.browser.js
+init_dist_es();
 var ERR_MSG_STREAM_HAS_BEEN_TRANSFORMED = "The stream has already been transformed.";
 var sdkStreamMixin = (stream) => {
   if (!isBlobInstance(stream) && !isReadableStream(stream)) {
@@ -2461,322 +2183,1315 @@ function extendedEncodeURIComponent(str) {
   });
 }
 
-// node_modules/@smithy/core/dist-es/submodules/serde/parse-utils.js
-var parseBoolean = (value) => {
-  switch (value) {
-    case "true":
-      return true;
-    case "false":
-      return false;
-    default:
-      throw new Error(`Unable to parse boolean value "${value}"`);
+// node_modules/@smithy/core/dist-es/submodules/schema/deref.js
+var deref = (schemaRef) => {
+  if (typeof schemaRef === "function") {
+    return schemaRef();
   }
+  return schemaRef;
 };
-var expectNumber = (value) => {
-  if (value === null || value === void 0) {
-    return void 0;
-  }
-  if (typeof value === "string") {
-    const parsed = parseFloat(value);
-    if (!Number.isNaN(parsed)) {
-      if (String(parsed) !== String(value)) {
-        logger.warn(stackTraceWarning(`Expected number but observed string: ${value}`));
+
+// node_modules/@smithy/core/dist-es/submodules/schema/schemas/operation.js
+var operation = (namespace, name, traits, input, output) => ({
+  name,
+  namespace,
+  traits,
+  input,
+  output
+});
+
+// node_modules/@smithy/core/dist-es/submodules/schema/middleware/schemaDeserializationMiddleware.js
+var schemaDeserializationMiddleware = (config) => (next, context) => async (args) => {
+  const { response } = await next(args);
+  const { operationSchema } = getSmithyContext(context);
+  const [, ns, n2, t2, i2, o2] = operationSchema ?? [];
+  try {
+    const parsed = await config.protocol.deserializeResponse(operation(ns, n2, t2, i2, o2), {
+      ...config,
+      ...context
+    }, response);
+    return {
+      response,
+      output: parsed
+    };
+  } catch (error) {
+    Object.defineProperty(error, "$response", {
+      value: response,
+      enumerable: false,
+      writable: false,
+      configurable: false
+    });
+    if (!("$metadata" in error)) {
+      const hint = `Deserialization error: to see the raw response, inspect the hidden field {error}.$response on this object.`;
+      try {
+        error.message += "\n  " + hint;
+      } catch (e2) {
+        if (!context.logger || context.logger?.constructor?.name === "NoOpLogger") {
+          console.warn(hint);
+        } else {
+          context.logger?.warn?.(hint);
+        }
       }
-      return parsed;
+      if (typeof error.$responseBodyText !== "undefined") {
+        if (error.$response) {
+          error.$response.body = error.$responseBodyText;
+        }
+      }
+      try {
+        if (HttpResponse.isInstance(response)) {
+          const { headers = {} } = response;
+          const headerEntries = Object.entries(headers);
+          error.$metadata = {
+            httpStatusCode: response.statusCode,
+            requestId: findHeader(/^x-[\w-]+-request-?id$/, headerEntries),
+            extendedRequestId: findHeader(/^x-[\w-]+-id-2$/, headerEntries),
+            cfId: findHeader(/^x-[\w-]+-cf-id$/, headerEntries)
+          };
+        }
+      } catch (e2) {
+      }
+    }
+    throw error;
+  }
+};
+var findHeader = (pattern, headers) => {
+  return (headers.find(([k2]) => {
+    return k2.match(pattern);
+  }) || [void 0, void 0])[1];
+};
+
+// node_modules/@smithy/core/dist-es/submodules/schema/middleware/schemaSerializationMiddleware.js
+var schemaSerializationMiddleware = (config) => (next, context) => async (args) => {
+  const { operationSchema } = getSmithyContext(context);
+  const [, ns, n2, t2, i2, o2] = operationSchema ?? [];
+  const endpoint = context.endpointV2?.url && config.urlParser ? async () => config.urlParser(context.endpointV2.url) : config.endpoint;
+  const request = await config.protocol.serializeRequest(operation(ns, n2, t2, i2, o2), args.input, {
+    ...config,
+    ...context,
+    endpoint
+  });
+  return next({
+    ...args,
+    request
+  });
+};
+
+// node_modules/@smithy/core/dist-es/submodules/schema/middleware/getSchemaSerdePlugin.js
+var deserializerMiddlewareOption = {
+  name: "deserializerMiddleware",
+  step: "deserialize",
+  tags: ["DESERIALIZER"],
+  override: true
+};
+var serializerMiddlewareOption2 = {
+  name: "serializerMiddleware",
+  step: "serialize",
+  tags: ["SERIALIZER"],
+  override: true
+};
+function getSchemaSerdePlugin(config) {
+  return {
+    applyToStack: (commandStack) => {
+      commandStack.add(schemaSerializationMiddleware(config), serializerMiddlewareOption2);
+      commandStack.add(schemaDeserializationMiddleware(config), deserializerMiddlewareOption);
+      config.protocol.setSerdeContext(config);
+    }
+  };
+}
+
+// node_modules/@smithy/core/dist-es/submodules/schema/schemas/translateTraits.js
+function translateTraits(indicator) {
+  if (typeof indicator === "object") {
+    return indicator;
+  }
+  indicator = indicator | 0;
+  const traits = {};
+  let i2 = 0;
+  for (const trait of [
+    "httpLabel",
+    "idempotent",
+    "idempotencyToken",
+    "sensitive",
+    "httpPayload",
+    "httpResponseCode",
+    "httpQueryParams"
+  ]) {
+    if ((indicator >> i2++ & 1) === 1) {
+      traits[trait] = 1;
     }
   }
-  if (typeof value === "number") {
-    return value;
-  }
-  throw new TypeError(`Expected number, got ${typeof value}: ${value}`);
-};
-var MAX_FLOAT = Math.ceil(2 ** 127 * (2 - 2 ** -23));
-var expectFloat32 = (value) => {
-  const expected = expectNumber(value);
-  if (expected !== void 0 && !Number.isNaN(expected) && expected !== Infinity && expected !== -Infinity) {
-    if (Math.abs(expected) > MAX_FLOAT) {
-      throw new TypeError(`Expected 32-bit float, got ${value}`);
+  return traits;
+}
+
+// node_modules/@smithy/core/dist-es/submodules/schema/schemas/NormalizedSchema.js
+var _NormalizedSchema = class _NormalizedSchema {
+  constructor(ref, memberName) {
+    __publicField(this, "ref");
+    __publicField(this, "memberName");
+    __publicField(this, "symbol", _NormalizedSchema.symbol);
+    __publicField(this, "name");
+    __publicField(this, "schema");
+    __publicField(this, "_isMemberSchema");
+    __publicField(this, "traits");
+    __publicField(this, "memberTraits");
+    __publicField(this, "normalizedTraits");
+    this.ref = ref;
+    this.memberName = memberName;
+    const traitStack = [];
+    let _ref = ref;
+    let schema = ref;
+    this._isMemberSchema = false;
+    while (isMemberSchema(_ref)) {
+      traitStack.push(_ref[1]);
+      _ref = _ref[0];
+      schema = deref(_ref);
+      this._isMemberSchema = true;
+    }
+    if (traitStack.length > 0) {
+      this.memberTraits = {};
+      for (let i2 = traitStack.length - 1; i2 >= 0; --i2) {
+        const traitSet = traitStack[i2];
+        Object.assign(this.memberTraits, translateTraits(traitSet));
+      }
+    } else {
+      this.memberTraits = 0;
+    }
+    if (schema instanceof _NormalizedSchema) {
+      const computedMemberTraits = this.memberTraits;
+      Object.assign(this, schema);
+      this.memberTraits = Object.assign({}, computedMemberTraits, schema.getMemberTraits(), this.getMemberTraits());
+      this.normalizedTraits = void 0;
+      this.memberName = memberName ?? schema.memberName;
+      return;
+    }
+    this.schema = deref(schema);
+    if (isStaticSchema(this.schema)) {
+      this.name = `${this.schema[1]}#${this.schema[2]}`;
+      this.traits = this.schema[3];
+    } else {
+      this.name = this.memberName ?? String(schema);
+      this.traits = 0;
+    }
+    if (this._isMemberSchema && !memberName) {
+      throw new Error(`@smithy/core/schema - NormalizedSchema member init ${this.getName(true)} missing member name.`);
     }
   }
-  return expected;
-};
-var expectLong = (value) => {
-  if (value === null || value === void 0) {
-    return void 0;
-  }
-  if (Number.isInteger(value) && !Number.isNaN(value)) {
-    return value;
-  }
-  throw new TypeError(`Expected integer, got ${typeof value}: ${value}`);
-};
-var expectShort = (value) => expectSizedInt(value, 16);
-var expectByte = (value) => expectSizedInt(value, 8);
-var expectSizedInt = (value, size) => {
-  const expected = expectLong(value);
-  if (expected !== void 0 && castInt(expected, size) !== expected) {
-    throw new TypeError(`Expected ${size}-bit integer, got ${value}`);
-  }
-  return expected;
-};
-var castInt = (value, size) => {
-  switch (size) {
-    case 32:
-      return Int32Array.of(value)[0];
-    case 16:
-      return Int16Array.of(value)[0];
-    case 8:
-      return Int8Array.of(value)[0];
-  }
-};
-var expectNonNull = (value, location) => {
-  if (value === null || value === void 0) {
-    if (location) {
-      throw new TypeError(`Expected a non-null value for ${location}`);
+  static [Symbol.hasInstance](lhs) {
+    const isPrototype = this.prototype.isPrototypeOf(lhs);
+    if (!isPrototype && typeof lhs === "object" && lhs !== null) {
+      const ns = lhs;
+      return ns.symbol === this.symbol;
     }
-    throw new TypeError("Expected a non-null value");
+    return isPrototype;
   }
-  return value;
+  static of(ref) {
+    const sc = deref(ref);
+    if (sc instanceof _NormalizedSchema) {
+      return sc;
+    }
+    if (isMemberSchema(sc)) {
+      const [ns, traits] = sc;
+      if (ns instanceof _NormalizedSchema) {
+        Object.assign(ns.getMergedTraits(), translateTraits(traits));
+        return ns;
+      }
+      throw new Error(`@smithy/core/schema - may not init unwrapped member schema=${JSON.stringify(ref, null, 2)}.`);
+    }
+    return new _NormalizedSchema(sc);
+  }
+  getSchema() {
+    const sc = this.schema;
+    if (sc[0] === 0) {
+      return sc[4];
+    }
+    return sc;
+  }
+  getName(withNamespace = false) {
+    const { name } = this;
+    const short = !withNamespace && name && name.includes("#");
+    return short ? name.split("#")[1] : name || void 0;
+  }
+  getMemberName() {
+    return this.memberName;
+  }
+  isMemberSchema() {
+    return this._isMemberSchema;
+  }
+  isListSchema() {
+    const sc = this.getSchema();
+    return typeof sc === "number" ? sc >= 64 && sc < 128 : sc[0] === 1;
+  }
+  isMapSchema() {
+    const sc = this.getSchema();
+    return typeof sc === "number" ? sc >= 128 && sc <= 255 : sc[0] === 2;
+  }
+  isStructSchema() {
+    const sc = this.getSchema();
+    return sc[0] === 3 || sc[0] === -3;
+  }
+  isBlobSchema() {
+    const sc = this.getSchema();
+    return sc === 21 || sc === 42;
+  }
+  isTimestampSchema() {
+    const sc = this.getSchema();
+    return typeof sc === "number" && sc >= 4 && sc <= 7;
+  }
+  isUnitSchema() {
+    return this.getSchema() === "unit";
+  }
+  isDocumentSchema() {
+    return this.getSchema() === 15;
+  }
+  isStringSchema() {
+    return this.getSchema() === 0;
+  }
+  isBooleanSchema() {
+    return this.getSchema() === 2;
+  }
+  isNumericSchema() {
+    return this.getSchema() === 1;
+  }
+  isBigIntegerSchema() {
+    return this.getSchema() === 17;
+  }
+  isBigDecimalSchema() {
+    return this.getSchema() === 19;
+  }
+  isStreaming() {
+    const { streaming } = this.getMergedTraits();
+    return !!streaming || this.getSchema() === 42;
+  }
+  isIdempotencyToken() {
+    const match = (traits2) => (traits2 & 4) === 4 || !!traits2?.idempotencyToken;
+    const { normalizedTraits, traits, memberTraits } = this;
+    return match(normalizedTraits) || match(traits) || match(memberTraits);
+  }
+  getMergedTraits() {
+    return this.normalizedTraits ?? (this.normalizedTraits = {
+      ...this.getOwnTraits(),
+      ...this.getMemberTraits()
+    });
+  }
+  getMemberTraits() {
+    return translateTraits(this.memberTraits);
+  }
+  getOwnTraits() {
+    return translateTraits(this.traits);
+  }
+  getKeySchema() {
+    const [isDoc, isMap] = [this.isDocumentSchema(), this.isMapSchema()];
+    if (!isDoc && !isMap) {
+      throw new Error(`@smithy/core/schema - cannot get key for non-map: ${this.getName(true)}`);
+    }
+    const schema = this.getSchema();
+    const memberSchema = isDoc ? 15 : schema[4] ?? 0;
+    return member([memberSchema, 0], "key");
+  }
+  getValueSchema() {
+    const sc = this.getSchema();
+    const [isDoc, isMap, isList] = [this.isDocumentSchema(), this.isMapSchema(), this.isListSchema()];
+    const memberSchema = typeof sc === "number" ? 63 & sc : sc && typeof sc === "object" && (isMap || isList) ? sc[3 + sc[0]] : isDoc ? 15 : void 0;
+    if (memberSchema != null) {
+      return member([memberSchema, 0], isMap ? "value" : "member");
+    }
+    throw new Error(`@smithy/core/schema - ${this.getName(true)} has no value member.`);
+  }
+  getMemberSchema(memberName) {
+    const struct = this.getSchema();
+    if (this.isStructSchema() && struct[4].includes(memberName)) {
+      const i2 = struct[4].indexOf(memberName);
+      const memberSchema = struct[5][i2];
+      return member(isMemberSchema(memberSchema) ? memberSchema : [memberSchema, 0], memberName);
+    }
+    if (this.isDocumentSchema()) {
+      return member([15, 0], memberName);
+    }
+    throw new Error(`@smithy/core/schema - ${this.getName(true)} has no no member=${memberName}.`);
+  }
+  getMemberSchemas() {
+    const buffer = {};
+    try {
+      for (const [k2, v2] of this.structIterator()) {
+        buffer[k2] = v2;
+      }
+    } catch (ignored) {
+    }
+    return buffer;
+  }
+  getEventStreamMember() {
+    if (this.isStructSchema()) {
+      for (const [memberName, memberSchema] of this.structIterator()) {
+        if (memberSchema.isStreaming() && memberSchema.isStructSchema()) {
+          return memberName;
+        }
+      }
+    }
+    return "";
+  }
+  *structIterator() {
+    if (this.isUnitSchema()) {
+      return;
+    }
+    if (!this.isStructSchema()) {
+      throw new Error("@smithy/core/schema - cannot iterate non-struct schema.");
+    }
+    const struct = this.getSchema();
+    for (let i2 = 0; i2 < struct[4].length; ++i2) {
+      yield [struct[4][i2], member([struct[5][i2], 0], struct[4][i2])];
+    }
+  }
 };
-var expectObject = (value) => {
-  if (value === null || value === void 0) {
+__publicField(_NormalizedSchema, "symbol", /* @__PURE__ */ Symbol.for("@smithy/nor"));
+var NormalizedSchema = _NormalizedSchema;
+function member(memberSchema, memberName) {
+  if (memberSchema instanceof NormalizedSchema) {
+    return Object.assign(memberSchema, {
+      memberName,
+      _isMemberSchema: true
+    });
+  }
+  const internalCtorAccess = NormalizedSchema;
+  return new internalCtorAccess(memberSchema, memberName);
+}
+var isMemberSchema = (sc) => Array.isArray(sc) && sc.length === 2;
+var isStaticSchema = (sc) => Array.isArray(sc) && sc.length >= 5;
+
+// node_modules/@smithy/core/dist-es/submodules/schema/TypeRegistry.js
+var _TypeRegistry = class _TypeRegistry {
+  constructor(namespace, schemas = /* @__PURE__ */ new Map(), exceptions = /* @__PURE__ */ new Map()) {
+    __publicField(this, "namespace");
+    __publicField(this, "schemas");
+    __publicField(this, "exceptions");
+    this.namespace = namespace;
+    this.schemas = schemas;
+    this.exceptions = exceptions;
+  }
+  static for(namespace) {
+    if (!_TypeRegistry.registries.has(namespace)) {
+      _TypeRegistry.registries.set(namespace, new _TypeRegistry(namespace));
+    }
+    return _TypeRegistry.registries.get(namespace);
+  }
+  register(shapeId, schema) {
+    const qualifiedName = this.normalizeShapeId(shapeId);
+    const registry = _TypeRegistry.for(qualifiedName.split("#")[0]);
+    registry.schemas.set(qualifiedName, schema);
+  }
+  getSchema(shapeId) {
+    const id = this.normalizeShapeId(shapeId);
+    if (!this.schemas.has(id)) {
+      throw new Error(`@smithy/core/schema - schema not found for ${id}`);
+    }
+    return this.schemas.get(id);
+  }
+  registerError(es, ctor) {
+    const $error = es;
+    const registry = _TypeRegistry.for($error[1]);
+    registry.schemas.set($error[1] + "#" + $error[2], $error);
+    registry.exceptions.set($error, ctor);
+  }
+  getErrorCtor(es) {
+    const $error = es;
+    const registry = _TypeRegistry.for($error[1]);
+    return registry.exceptions.get($error);
+  }
+  getBaseException() {
+    for (const exceptionKey of this.exceptions.keys()) {
+      if (Array.isArray(exceptionKey)) {
+        const [, ns, name] = exceptionKey;
+        const id = ns + "#" + name;
+        if (id.startsWith("smithy.ts.sdk.synthetic.") && id.endsWith("ServiceException")) {
+          return exceptionKey;
+        }
+      }
+    }
     return void 0;
   }
-  if (typeof value === "object" && !Array.isArray(value)) {
-    return value;
+  find(predicate) {
+    return [...this.schemas.values()].find(predicate);
   }
-  const receivedType = Array.isArray(value) ? "array" : typeof value;
-  throw new TypeError(`Expected object, got ${receivedType}: ${value}`);
-};
-var expectString = (value) => {
-  if (value === null || value === void 0) {
-    return void 0;
+  clear() {
+    this.schemas.clear();
+    this.exceptions.clear();
   }
-  if (typeof value === "string") {
-    return value;
+  normalizeShapeId(shapeId) {
+    if (shapeId.includes("#")) {
+      return shapeId;
+    }
+    return this.namespace + "#" + shapeId;
   }
-  if (["boolean", "number", "bigint"].includes(typeof value)) {
-    logger.warn(stackTraceWarning(`Expected string, got ${typeof value}: ${value}`));
-    return String(value);
-  }
-  throw new TypeError(`Expected string, got ${typeof value}: ${value}`);
 };
-var strictParseFloat32 = (value) => {
-  if (typeof value == "string") {
-    return expectFloat32(parseNumber(value));
-  }
-  return expectFloat32(value);
-};
-var NUMBER_REGEX = /(-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)|(-?Infinity)|(NaN)/g;
-var parseNumber = (value) => {
-  const matches = value.match(NUMBER_REGEX);
-  if (matches === null || matches[0].length !== value.length) {
-    throw new TypeError(`Expected real number, got implicit NaN`);
-  }
-  return parseFloat(value);
-};
-var strictParseLong = (value) => {
-  if (typeof value === "string") {
-    return expectLong(parseNumber(value));
-  }
-  return expectLong(value);
-};
-var strictParseShort = (value) => {
-  if (typeof value === "string") {
-    return expectShort(parseNumber(value));
-  }
-  return expectShort(value);
-};
-var strictParseByte = (value) => {
-  if (typeof value === "string") {
-    return expectByte(parseNumber(value));
-  }
-  return expectByte(value);
-};
-var stackTraceWarning = (message) => {
-  return String(new TypeError(message).stack || message).split("\n").slice(0, 5).filter((s2) => !s2.includes("stackTraceWarning")).join("\n");
-};
-var logger = {
-  warn: console.warn
-};
+__publicField(_TypeRegistry, "registries", /* @__PURE__ */ new Map());
+var TypeRegistry = _TypeRegistry;
 
 // node_modules/@smithy/core/dist-es/submodules/serde/date-utils.js
 var DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-function dateToUtcString(date) {
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth();
-  const dayOfWeek = date.getUTCDay();
-  const dayOfMonthInt = date.getUTCDate();
-  const hoursInt = date.getUTCHours();
-  const minutesInt = date.getUTCMinutes();
-  const secondsInt = date.getUTCSeconds();
+function dateToUtcString(date2) {
+  const year2 = date2.getUTCFullYear();
+  const month = date2.getUTCMonth();
+  const dayOfWeek = date2.getUTCDay();
+  const dayOfMonthInt = date2.getUTCDate();
+  const hoursInt = date2.getUTCHours();
+  const minutesInt = date2.getUTCMinutes();
+  const secondsInt = date2.getUTCSeconds();
   const dayOfMonthString = dayOfMonthInt < 10 ? `0${dayOfMonthInt}` : `${dayOfMonthInt}`;
   const hoursString = hoursInt < 10 ? `0${hoursInt}` : `${hoursInt}`;
   const minutesString = minutesInt < 10 ? `0${minutesInt}` : `${minutesInt}`;
   const secondsString = secondsInt < 10 ? `0${secondsInt}` : `${secondsInt}`;
-  return `${DAYS[dayOfWeek]}, ${dayOfMonthString} ${MONTHS[month]} ${year} ${hoursString}:${minutesString}:${secondsString} GMT`;
+  return `${DAYS[dayOfWeek]}, ${dayOfMonthString} ${MONTHS[month]} ${year2} ${hoursString}:${minutesString}:${secondsString} GMT`;
 }
 var RFC3339 = new RegExp(/^(\d{4})-(\d{2})-(\d{2})[tT](\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?[zZ]$/);
 var RFC3339_WITH_OFFSET = new RegExp(/^(\d{4})-(\d{2})-(\d{2})[tT](\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?(([-+]\d{2}\:\d{2})|[zZ])$/);
-var parseRfc3339DateTimeWithOffset = (value) => {
-  if (value === null || value === void 0) {
-    return void 0;
-  }
-  if (typeof value !== "string") {
-    throw new TypeError("RFC-3339 date-times must be expressed as strings");
-  }
-  const match = RFC3339_WITH_OFFSET.exec(value);
-  if (!match) {
-    throw new TypeError("Invalid RFC-3339 date-time value");
-  }
-  const [_, yearStr, monthStr, dayStr, hours, minutes, seconds, fractionalMilliseconds, offsetStr] = match;
-  const year = strictParseShort(stripLeadingZeroes(yearStr));
-  const month = parseDateValue(monthStr, "month", 1, 12);
-  const day = parseDateValue(dayStr, "day", 1, 31);
-  const date = buildDate(year, month, day, { hours, minutes, seconds, fractionalMilliseconds });
-  if (offsetStr.toUpperCase() != "Z") {
-    date.setTime(date.getTime() - parseOffsetToMilliseconds(offsetStr));
-  }
-  return date;
-};
 var IMF_FIXDATE = new RegExp(/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d{2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d{1,2}):(\d{2}):(\d{2})(?:\.(\d+))? GMT$/);
 var RFC_850_DATE = new RegExp(/^(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), (\d{2})-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d{2}) (\d{1,2}):(\d{2}):(\d{2})(?:\.(\d+))? GMT$/);
 var ASC_TIME = new RegExp(/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ( [1-9]|\d{2}) (\d{1,2}):(\d{2}):(\d{2})(?:\.(\d+))? (\d{4})$/);
-var buildDate = (year, month, day, time) => {
-  const adjustedMonth = month - 1;
-  validateDayOfMonth(year, adjustedMonth, day);
-  return new Date(Date.UTC(year, adjustedMonth, day, parseDateValue(time.hours, "hour", 0, 23), parseDateValue(time.minutes, "minute", 0, 59), parseDateValue(time.seconds, "seconds", 0, 60), parseMilliseconds(time.fractionalMilliseconds)));
-};
 var FIFTY_YEARS_IN_MILLIS = 50 * 365 * 24 * 60 * 60 * 1e3;
-var DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-var validateDayOfMonth = (year, month, day) => {
-  let maxDays = DAYS_IN_MONTH[month];
-  if (month === 1 && isLeapYear(year)) {
-    maxDays = 29;
+
+// node_modules/@smithy/uuid/dist-es/randomUUID.browser.js
+var randomUUID2 = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
+
+// node_modules/@smithy/uuid/dist-es/v4.js
+var decimalToHex = Array.from({ length: 256 }, (_, i2) => i2.toString(16).padStart(2, "0"));
+var v42 = () => {
+  if (randomUUID2) {
+    return randomUUID2();
   }
-  if (day > maxDays) {
-    throw new TypeError(`Invalid day for ${MONTHS[month]} in ${year}: ${day}`);
-  }
-};
-var isLeapYear = (year) => {
-  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
-};
-var parseDateValue = (value, type, lower, upper) => {
-  const dateVal = strictParseByte(stripLeadingZeroes(value));
-  if (dateVal < lower || dateVal > upper) {
-    throw new TypeError(`${type} must be between ${lower} and ${upper}, inclusive`);
-  }
-  return dateVal;
-};
-var parseMilliseconds = (value) => {
-  if (value === null || value === void 0) {
-    return 0;
-  }
-  return strictParseFloat32("0." + value) * 1e3;
-};
-var parseOffsetToMilliseconds = (value) => {
-  const directionStr = value[0];
-  let direction = 1;
-  if (directionStr == "+") {
-    direction = 1;
-  } else if (directionStr == "-") {
-    direction = -1;
-  } else {
-    throw new TypeError(`Offset direction, ${directionStr}, must be "+" or "-"`);
-  }
-  const hour = Number(value.substring(1, 3));
-  const minute = Number(value.substring(4, 6));
-  return direction * (hour * 60 + minute) * 60 * 1e3;
-};
-var stripLeadingZeroes = (value) => {
-  let idx = 0;
-  while (idx < value.length - 1 && value.charAt(idx) === "0") {
-    idx++;
-  }
-  if (idx === 0) {
-    return value;
-  }
-  return value.slice(idx);
+  const rnds = new Uint8Array(16);
+  crypto.getRandomValues(rnds);
+  rnds[6] = rnds[6] & 15 | 64;
+  rnds[8] = rnds[8] & 63 | 128;
+  return decimalToHex[rnds[0]] + decimalToHex[rnds[1]] + decimalToHex[rnds[2]] + decimalToHex[rnds[3]] + "-" + decimalToHex[rnds[4]] + decimalToHex[rnds[5]] + "-" + decimalToHex[rnds[6]] + decimalToHex[rnds[7]] + "-" + decimalToHex[rnds[8]] + decimalToHex[rnds[9]] + "-" + decimalToHex[rnds[10]] + decimalToHex[rnds[11]] + decimalToHex[rnds[12]] + decimalToHex[rnds[13]] + decimalToHex[rnds[14]] + decimalToHex[rnds[15]];
 };
 
-// node_modules/@smithy/core/dist-es/submodules/protocols/resolve-path.js
-var resolvedPath = (resolvedPath2, input, memberName, labelValueProvider, uriLabel, isGreedyLabel) => {
-  if (input != null && input[memberName] !== void 0) {
-    const labelValue = labelValueProvider();
-    if (labelValue.length <= 0) {
-      throw new Error("Empty value provided for input HTTP label: " + memberName + ".");
+// node_modules/@smithy/core/dist-es/submodules/serde/lazy-json.js
+var LazyJsonString = function LazyJsonString2(val) {
+  const str = Object.assign(new String(val), {
+    deserializeJSON() {
+      return JSON.parse(String(val));
+    },
+    toString() {
+      return String(val);
+    },
+    toJSON() {
+      return String(val);
     }
-    resolvedPath2 = resolvedPath2.replace(uriLabel, isGreedyLabel ? labelValue.split("/").map((segment) => extendedEncodeURIComponent(segment)).join("/") : extendedEncodeURIComponent(labelValue));
-  } else {
-    throw new Error("No value provided for input HTTP label: " + memberName + ".");
-  }
-  return resolvedPath2;
+  });
+  return str;
 };
+LazyJsonString.from = (object) => {
+  if (object && typeof object === "object" && (object instanceof LazyJsonString || "deserializeJSON" in object)) {
+    return object;
+  } else if (typeof object === "string" || Object.getPrototypeOf(object) === String.prototype) {
+    return LazyJsonString(String(object));
+  }
+  return LazyJsonString(JSON.stringify(object));
+};
+LazyJsonString.fromObject = LazyJsonString.from;
 
-// node_modules/@smithy/core/dist-es/submodules/protocols/requestBuilder.js
-function requestBuilder(input, context) {
-  return new RequestBuilder(input, context);
+// node_modules/@smithy/core/dist-es/submodules/serde/quote-header.js
+function quoteHeader(part) {
+  if (part.includes(",") || part.includes('"')) {
+    part = `"${part.replace(/"/g, '\\"')}"`;
+  }
+  return part;
 }
-var RequestBuilder = class {
-  constructor(input, context) {
-    this.input = input;
-    this.context = context;
-    this.query = {};
-    this.method = "";
-    this.headers = {};
-    this.path = "";
-    this.body = null;
-    this.hostname = "";
-    this.resolvePathStack = [];
+
+// node_modules/@smithy/core/dist-es/submodules/serde/schema-serde-lib/schema-date-utils.js
+var ddd = `(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)(?:[ne|u?r]?s?day)?`;
+var mmm = `(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)`;
+var time = `(\\d?\\d):(\\d{2}):(\\d{2})(?:\\.(\\d+))?`;
+var date = `(\\d?\\d)`;
+var year = `(\\d{4})`;
+var RFC3339_WITH_OFFSET2 = new RegExp(/^(\d{4})-(\d\d)-(\d\d)[tT](\d\d):(\d\d):(\d\d)(\.(\d+))?(([-+]\d\d:\d\d)|[zZ])$/);
+var IMF_FIXDATE2 = new RegExp(`^${ddd}, ${date} ${mmm} ${year} ${time} GMT$`);
+var RFC_850_DATE2 = new RegExp(`^${ddd}, ${date}-${mmm}-(\\d\\d) ${time} GMT$`);
+var ASC_TIME2 = new RegExp(`^${ddd} ${mmm} ( [1-9]|\\d\\d) ${time} ${year}$`);
+var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+var _parseEpochTimestamp = (value) => {
+  if (value == null) {
+    return void 0;
   }
-  async build() {
-    const { hostname, protocol = "https", port, path: basePath } = await this.context.endpoint();
-    this.path = basePath;
-    for (const resolvePath of this.resolvePathStack) {
-      resolvePath(this.path);
+  let num = NaN;
+  if (typeof value === "number") {
+    num = value;
+  } else if (typeof value === "string") {
+    if (!/^-?\d*\.?\d+$/.test(value)) {
+      throw new TypeError(`parseEpochTimestamp - numeric string invalid.`);
     }
-    return new HttpRequest({
-      protocol,
-      hostname: this.hostname || hostname,
-      port,
-      method: this.method,
-      path: this.path,
-      query: this.query,
-      body: this.body,
-      headers: this.headers
+    num = Number.parseFloat(value);
+  } else if (typeof value === "object" && value.tag === 1) {
+    num = value.value;
+  }
+  if (isNaN(num) || Math.abs(num) === Infinity) {
+    throw new TypeError("Epoch timestamps must be valid finite numbers.");
+  }
+  return new Date(Math.round(num * 1e3));
+};
+var _parseRfc3339DateTimeWithOffset = (value) => {
+  if (value == null) {
+    return void 0;
+  }
+  if (typeof value !== "string") {
+    throw new TypeError("RFC3339 timestamps must be strings");
+  }
+  const matches = RFC3339_WITH_OFFSET2.exec(value);
+  if (!matches) {
+    throw new TypeError(`Invalid RFC3339 timestamp format ${value}`);
+  }
+  const [, yearStr, monthStr, dayStr, hours, minutes, seconds, , ms, offsetStr] = matches;
+  range(monthStr, 1, 12);
+  range(dayStr, 1, 31);
+  range(hours, 0, 23);
+  range(minutes, 0, 59);
+  range(seconds, 0, 60);
+  const date2 = new Date(Date.UTC(Number(yearStr), Number(monthStr) - 1, Number(dayStr), Number(hours), Number(minutes), Number(seconds), Number(ms) ? Math.round(parseFloat(`0.${ms}`) * 1e3) : 0));
+  date2.setUTCFullYear(Number(yearStr));
+  if (offsetStr.toUpperCase() != "Z") {
+    const [, sign, offsetH, offsetM] = /([+-])(\d\d):(\d\d)/.exec(offsetStr) || [void 0, "+", 0, 0];
+    const scalar = sign === "-" ? 1 : -1;
+    date2.setTime(date2.getTime() + scalar * (Number(offsetH) * 60 * 60 * 1e3 + Number(offsetM) * 60 * 1e3));
+  }
+  return date2;
+};
+var _parseRfc7231DateTime = (value) => {
+  if (value == null) {
+    return void 0;
+  }
+  if (typeof value !== "string") {
+    throw new TypeError("RFC7231 timestamps must be strings.");
+  }
+  let day;
+  let month;
+  let year2;
+  let hour;
+  let minute;
+  let second;
+  let fraction;
+  let matches;
+  if (matches = IMF_FIXDATE2.exec(value)) {
+    [, day, month, year2, hour, minute, second, fraction] = matches;
+  } else if (matches = RFC_850_DATE2.exec(value)) {
+    [, day, month, year2, hour, minute, second, fraction] = matches;
+    year2 = (Number(year2) + 1900).toString();
+  } else if (matches = ASC_TIME2.exec(value)) {
+    [, month, day, hour, minute, second, fraction, year2] = matches;
+  }
+  if (year2 && second) {
+    const timestamp = Date.UTC(Number(year2), months.indexOf(month), Number(day), Number(hour), Number(minute), Number(second), fraction ? Math.round(parseFloat(`0.${fraction}`) * 1e3) : 0);
+    range(day, 1, 31);
+    range(hour, 0, 23);
+    range(minute, 0, 59);
+    range(second, 0, 60);
+    const date2 = new Date(timestamp);
+    date2.setUTCFullYear(Number(year2));
+    return date2;
+  }
+  throw new TypeError(`Invalid RFC7231 date-time value ${value}.`);
+};
+function range(v2, min, max) {
+  const _v = Number(v2);
+  if (_v < min || _v > max) {
+    throw new Error(`Value ${_v} out of range [${min}, ${max}]`);
+  }
+}
+
+// node_modules/@smithy/core/dist-es/submodules/serde/split-every.js
+function splitEvery(value, delimiter, numDelimiters) {
+  if (numDelimiters <= 0 || !Number.isInteger(numDelimiters)) {
+    throw new Error("Invalid number of delimiters (" + numDelimiters + ") for splitEvery.");
+  }
+  const segments = value.split(delimiter);
+  if (numDelimiters === 1) {
+    return segments;
+  }
+  const compoundSegments = [];
+  let currentSegment = "";
+  for (let i2 = 0; i2 < segments.length; i2++) {
+    if (currentSegment === "") {
+      currentSegment = segments[i2];
+    } else {
+      currentSegment += delimiter + segments[i2];
+    }
+    if ((i2 + 1) % numDelimiters === 0) {
+      compoundSegments.push(currentSegment);
+      currentSegment = "";
+    }
+  }
+  if (currentSegment !== "") {
+    compoundSegments.push(currentSegment);
+  }
+  return compoundSegments;
+}
+
+// node_modules/@smithy/core/dist-es/submodules/serde/split-header.js
+var splitHeader = (value) => {
+  const z2 = value.length;
+  const values = [];
+  let withinQuotes = false;
+  let prevChar = void 0;
+  let anchor = 0;
+  for (let i2 = 0; i2 < z2; ++i2) {
+    const char = value[i2];
+    switch (char) {
+      case `"`:
+        if (prevChar !== "\\") {
+          withinQuotes = !withinQuotes;
+        }
+        break;
+      case ",":
+        if (!withinQuotes) {
+          values.push(value.slice(anchor, i2));
+          anchor = i2 + 1;
+        }
+        break;
+      default:
+    }
+    prevChar = char;
+  }
+  values.push(value.slice(anchor));
+  return values.map((v2) => {
+    v2 = v2.trim();
+    const z3 = v2.length;
+    if (z3 < 2) {
+      return v2;
+    }
+    if (v2[0] === `"` && v2[z3 - 1] === `"`) {
+      v2 = v2.slice(1, z3 - 1);
+    }
+    return v2.replace(/\\"/g, '"');
+  });
+};
+
+// node_modules/@smithy/core/dist-es/submodules/serde/value/NumericValue.js
+var format = /^-?\d*(\.\d+)?$/;
+var NumericValue = class _NumericValue {
+  constructor(string, type) {
+    __publicField(this, "string");
+    __publicField(this, "type");
+    this.string = string;
+    this.type = type;
+    if (!format.test(string)) {
+      throw new Error(`@smithy/core/serde - NumericValue must only contain [0-9], at most one decimal point ".", and an optional negation prefix "-".`);
+    }
+  }
+  toString() {
+    return this.string;
+  }
+  static [Symbol.hasInstance](object) {
+    if (!object || typeof object !== "object") {
+      return false;
+    }
+    const _nv = object;
+    return _NumericValue.prototype.isPrototypeOf(object) || _nv.type === "bigDecimal" && format.test(_nv.string);
+  }
+};
+
+// node_modules/@smithy/core/dist-es/submodules/protocols/SerdeContext.js
+var SerdeContext = class {
+  constructor() {
+    __publicField(this, "serdeContext");
+  }
+  setSerdeContext(serdeContext) {
+    this.serdeContext = serdeContext;
+  }
+};
+
+// node_modules/@smithy/core/dist-es/submodules/protocols/HttpProtocol.js
+var HttpProtocol = class extends SerdeContext {
+  constructor(options) {
+    super();
+    __publicField(this, "options");
+    this.options = options;
+  }
+  getRequestType() {
+    return HttpRequest;
+  }
+  getResponseType() {
+    return HttpResponse;
+  }
+  setSerdeContext(serdeContext) {
+    this.serdeContext = serdeContext;
+    this.serializer.setSerdeContext(serdeContext);
+    this.deserializer.setSerdeContext(serdeContext);
+    if (this.getPayloadCodec()) {
+      this.getPayloadCodec().setSerdeContext(serdeContext);
+    }
+  }
+  updateServiceEndpoint(request, endpoint) {
+    if ("url" in endpoint) {
+      request.protocol = endpoint.url.protocol;
+      request.hostname = endpoint.url.hostname;
+      request.port = endpoint.url.port ? Number(endpoint.url.port) : void 0;
+      request.path = endpoint.url.pathname;
+      request.fragment = endpoint.url.hash || void 0;
+      request.username = endpoint.url.username || void 0;
+      request.password = endpoint.url.password || void 0;
+      if (!request.query) {
+        request.query = {};
+      }
+      for (const [k2, v2] of endpoint.url.searchParams.entries()) {
+        request.query[k2] = v2;
+      }
+      return request;
+    } else {
+      request.protocol = endpoint.protocol;
+      request.hostname = endpoint.hostname;
+      request.port = endpoint.port ? Number(endpoint.port) : void 0;
+      request.path = endpoint.path;
+      request.query = {
+        ...endpoint.query
+      };
+      return request;
+    }
+  }
+  setHostPrefix(request, operationSchema, input) {
+    const inputNs = NormalizedSchema.of(operationSchema.input);
+    const opTraits = translateTraits(operationSchema.traits ?? {});
+    if (opTraits.endpoint) {
+      let hostPrefix = opTraits.endpoint?.[0];
+      if (typeof hostPrefix === "string") {
+        const hostLabelInputs = [...inputNs.structIterator()].filter(([, member2]) => member2.getMergedTraits().hostLabel);
+        for (const [name] of hostLabelInputs) {
+          const replacement = input[name];
+          if (typeof replacement !== "string") {
+            throw new Error(`@smithy/core/schema - ${name} in input must be a string as hostLabel.`);
+          }
+          hostPrefix = hostPrefix.replace(`{${name}}`, replacement);
+        }
+        request.hostname = hostPrefix + request.hostname;
+      }
+    }
+  }
+  deserializeMetadata(output) {
+    return {
+      httpStatusCode: output.statusCode,
+      requestId: output.headers["x-amzn-requestid"] ?? output.headers["x-amzn-request-id"] ?? output.headers["x-amz-request-id"],
+      extendedRequestId: output.headers["x-amz-id-2"],
+      cfId: output.headers["x-amz-cf-id"]
+    };
+  }
+  async serializeEventStream({ eventStream, requestSchema, initialRequest }) {
+    const eventStreamSerde = await this.loadEventStreamCapability();
+    return eventStreamSerde.serializeEventStream({
+      eventStream,
+      requestSchema,
+      initialRequest
     });
   }
-  hn(hostname) {
-    this.hostname = hostname;
-    return this;
-  }
-  bp(uriLabel) {
-    this.resolvePathStack.push((basePath) => {
-      this.path = `${basePath?.endsWith("/") ? basePath.slice(0, -1) : basePath || ""}` + uriLabel;
+  async deserializeEventStream({ response, responseSchema, initialResponseContainer }) {
+    const eventStreamSerde = await this.loadEventStreamCapability();
+    return eventStreamSerde.deserializeEventStream({
+      response,
+      responseSchema,
+      initialResponseContainer
     });
-    return this;
   }
-  p(memberName, labelValueProvider, uriLabel, isGreedyLabel) {
-    this.resolvePathStack.push((path3) => {
-      this.path = resolvedPath(path3, this.input, memberName, labelValueProvider, uriLabel, isGreedyLabel);
+  async loadEventStreamCapability() {
+    const { EventStreamSerde: EventStreamSerde2 } = await Promise.resolve().then(() => (init_event_streams(), event_streams_exports));
+    return new EventStreamSerde2({
+      marshaller: this.getEventStreamMarshaller(),
+      serializer: this.serializer,
+      deserializer: this.deserializer,
+      serdeContext: this.serdeContext,
+      defaultContentType: this.getDefaultContentType()
     });
-    return this;
   }
-  h(headers) {
-    this.headers = headers;
-    return this;
+  getDefaultContentType() {
+    throw new Error(`@smithy/core/protocols - ${this.constructor.name} getDefaultContentType() implementation missing.`);
   }
-  q(query) {
-    this.query = query;
-    return this;
+  async deserializeHttpMessage(schema, context, response, arg4, arg5) {
+    void schema;
+    void context;
+    void response;
+    void arg4;
+    void arg5;
+    return [];
   }
-  b(body) {
-    this.body = body;
-    return this;
+  getEventStreamMarshaller() {
+    const context = this.serdeContext;
+    if (!context.eventStreamMarshaller) {
+      throw new Error("@smithy/core - HttpProtocol: eventStreamMarshaller missing in serdeContext.");
+    }
+    return context.eventStreamMarshaller;
   }
-  m(method) {
-    this.method = method;
-    return this;
+};
+
+// node_modules/@smithy/core/dist-es/submodules/protocols/HttpBindingProtocol.js
+var HttpBindingProtocol = class extends HttpProtocol {
+  async serializeRequest(operationSchema, _input, context) {
+    const input = {
+      ..._input ?? {}
+    };
+    const serializer = this.serializer;
+    const query = {};
+    const headers = {};
+    const endpoint = await context.endpoint();
+    const ns = NormalizedSchema.of(operationSchema?.input);
+    const schema = ns.getSchema();
+    let hasNonHttpBindingMember = false;
+    let payload;
+    const request = new HttpRequest({
+      protocol: "",
+      hostname: "",
+      port: void 0,
+      path: "",
+      fragment: void 0,
+      query,
+      headers,
+      body: void 0
+    });
+    if (endpoint) {
+      this.updateServiceEndpoint(request, endpoint);
+      this.setHostPrefix(request, operationSchema, input);
+      const opTraits = translateTraits(operationSchema.traits);
+      if (opTraits.http) {
+        request.method = opTraits.http[0];
+        const [path, search] = opTraits.http[1].split("?");
+        if (request.path == "/") {
+          request.path = path;
+        } else {
+          request.path += path;
+        }
+        const traitSearchParams = new URLSearchParams(search ?? "");
+        Object.assign(query, Object.fromEntries(traitSearchParams));
+      }
+    }
+    for (const [memberName, memberNs] of ns.structIterator()) {
+      const memberTraits = memberNs.getMergedTraits() ?? {};
+      const inputMemberValue = input[memberName];
+      if (inputMemberValue == null && !memberNs.isIdempotencyToken()) {
+        continue;
+      }
+      if (memberTraits.httpPayload) {
+        const isStreaming2 = memberNs.isStreaming();
+        if (isStreaming2) {
+          const isEventStream = memberNs.isStructSchema();
+          if (isEventStream) {
+            if (input[memberName]) {
+              payload = await this.serializeEventStream({
+                eventStream: input[memberName],
+                requestSchema: ns
+              });
+            }
+          } else {
+            payload = inputMemberValue;
+          }
+        } else {
+          serializer.write(memberNs, inputMemberValue);
+          payload = serializer.flush();
+        }
+        delete input[memberName];
+      } else if (memberTraits.httpLabel) {
+        serializer.write(memberNs, inputMemberValue);
+        const replacement = serializer.flush();
+        if (request.path.includes(`{${memberName}+}`)) {
+          request.path = request.path.replace(`{${memberName}+}`, replacement.split("/").map(extendedEncodeURIComponent).join("/"));
+        } else if (request.path.includes(`{${memberName}}`)) {
+          request.path = request.path.replace(`{${memberName}}`, extendedEncodeURIComponent(replacement));
+        }
+        delete input[memberName];
+      } else if (memberTraits.httpHeader) {
+        serializer.write(memberNs, inputMemberValue);
+        headers[memberTraits.httpHeader.toLowerCase()] = String(serializer.flush());
+        delete input[memberName];
+      } else if (typeof memberTraits.httpPrefixHeaders === "string") {
+        for (const [key, val] of Object.entries(inputMemberValue)) {
+          const amalgam = memberTraits.httpPrefixHeaders + key;
+          serializer.write([memberNs.getValueSchema(), { httpHeader: amalgam }], val);
+          headers[amalgam.toLowerCase()] = serializer.flush();
+        }
+        delete input[memberName];
+      } else if (memberTraits.httpQuery || memberTraits.httpQueryParams) {
+        this.serializeQuery(memberNs, inputMemberValue, query);
+        delete input[memberName];
+      } else {
+        hasNonHttpBindingMember = true;
+      }
+    }
+    if (hasNonHttpBindingMember && input) {
+      serializer.write(schema, input);
+      payload = serializer.flush();
+    }
+    request.headers = headers;
+    request.query = query;
+    request.body = payload;
+    return request;
+  }
+  serializeQuery(ns, data, query) {
+    const serializer = this.serializer;
+    const traits = ns.getMergedTraits();
+    if (traits.httpQueryParams) {
+      for (const [key, val] of Object.entries(data)) {
+        if (!(key in query)) {
+          const valueSchema = ns.getValueSchema();
+          Object.assign(valueSchema.getMergedTraits(), {
+            ...traits,
+            httpQuery: key,
+            httpQueryParams: void 0
+          });
+          this.serializeQuery(valueSchema, val, query);
+        }
+      }
+      return;
+    }
+    if (ns.isListSchema()) {
+      const sparse = !!ns.getMergedTraits().sparse;
+      const buffer = [];
+      for (const item of data) {
+        serializer.write([ns.getValueSchema(), traits], item);
+        const serializable = serializer.flush();
+        if (sparse || serializable !== void 0) {
+          buffer.push(serializable);
+        }
+      }
+      query[traits.httpQuery] = buffer;
+    } else {
+      serializer.write([ns, traits], data);
+      query[traits.httpQuery] = serializer.flush();
+    }
+  }
+  async deserializeResponse(operationSchema, context, response) {
+    const deserializer = this.deserializer;
+    const ns = NormalizedSchema.of(operationSchema.output);
+    const dataObject = {};
+    if (response.statusCode >= 300) {
+      const bytes = await collectBody(response.body, context);
+      if (bytes.byteLength > 0) {
+        Object.assign(dataObject, await deserializer.read(15, bytes));
+      }
+      await this.handleError(operationSchema, context, response, dataObject, this.deserializeMetadata(response));
+      throw new Error("@smithy/core/protocols - HTTP Protocol error handler failed to throw.");
+    }
+    for (const header in response.headers) {
+      const value = response.headers[header];
+      delete response.headers[header];
+      response.headers[header.toLowerCase()] = value;
+    }
+    const nonHttpBindingMembers = await this.deserializeHttpMessage(ns, context, response, dataObject);
+    if (nonHttpBindingMembers.length) {
+      const bytes = await collectBody(response.body, context);
+      if (bytes.byteLength > 0) {
+        const dataFromBody = await deserializer.read(ns, bytes);
+        for (const member2 of nonHttpBindingMembers) {
+          dataObject[member2] = dataFromBody[member2];
+        }
+      }
+    } else if (nonHttpBindingMembers.discardResponseBody) {
+      await collectBody(response.body, context);
+    }
+    dataObject.$metadata = this.deserializeMetadata(response);
+    return dataObject;
+  }
+  async deserializeHttpMessage(schema, context, response, arg4, arg5) {
+    let dataObject;
+    if (arg4 instanceof Set) {
+      dataObject = arg5;
+    } else {
+      dataObject = arg4;
+    }
+    let discardResponseBody = true;
+    const deserializer = this.deserializer;
+    const ns = NormalizedSchema.of(schema);
+    const nonHttpBindingMembers = [];
+    for (const [memberName, memberSchema] of ns.structIterator()) {
+      const memberTraits = memberSchema.getMemberTraits();
+      if (memberTraits.httpPayload) {
+        discardResponseBody = false;
+        const isStreaming2 = memberSchema.isStreaming();
+        if (isStreaming2) {
+          const isEventStream = memberSchema.isStructSchema();
+          if (isEventStream) {
+            dataObject[memberName] = await this.deserializeEventStream({
+              response,
+              responseSchema: ns
+            });
+          } else {
+            dataObject[memberName] = sdkStreamMixin(response.body);
+          }
+        } else if (response.body) {
+          const bytes = await collectBody(response.body, context);
+          if (bytes.byteLength > 0) {
+            dataObject[memberName] = await deserializer.read(memberSchema, bytes);
+          }
+        }
+      } else if (memberTraits.httpHeader) {
+        const key = String(memberTraits.httpHeader).toLowerCase();
+        const value = response.headers[key];
+        if (null != value) {
+          if (memberSchema.isListSchema()) {
+            const headerListValueSchema = memberSchema.getValueSchema();
+            headerListValueSchema.getMergedTraits().httpHeader = key;
+            let sections;
+            if (headerListValueSchema.isTimestampSchema() && headerListValueSchema.getSchema() === 4) {
+              sections = splitEvery(value, ",", 2);
+            } else {
+              sections = splitHeader(value);
+            }
+            const list = [];
+            for (const section of sections) {
+              list.push(await deserializer.read(headerListValueSchema, section.trim()));
+            }
+            dataObject[memberName] = list;
+          } else {
+            dataObject[memberName] = await deserializer.read(memberSchema, value);
+          }
+        }
+      } else if (memberTraits.httpPrefixHeaders !== void 0) {
+        dataObject[memberName] = {};
+        for (const [header, value] of Object.entries(response.headers)) {
+          if (header.startsWith(memberTraits.httpPrefixHeaders)) {
+            const valueSchema = memberSchema.getValueSchema();
+            valueSchema.getMergedTraits().httpHeader = header;
+            dataObject[memberName][header.slice(memberTraits.httpPrefixHeaders.length)] = await deserializer.read(valueSchema, value);
+          }
+        }
+      } else if (memberTraits.httpResponseCode) {
+        dataObject[memberName] = response.statusCode;
+      } else {
+        nonHttpBindingMembers.push(memberName);
+      }
+    }
+    nonHttpBindingMembers.discardResponseBody = discardResponseBody;
+    return nonHttpBindingMembers;
+  }
+};
+
+// node_modules/@smithy/core/dist-es/submodules/protocols/serde/FromStringShapeDeserializer.js
+init_dist_es();
+
+// node_modules/@smithy/core/dist-es/submodules/protocols/serde/determineTimestampFormat.js
+function determineTimestampFormat(ns, settings) {
+  if (settings.timestampFormat.useTrait) {
+    if (ns.isTimestampSchema() && (ns.getSchema() === 5 || ns.getSchema() === 6 || ns.getSchema() === 7)) {
+      return ns.getSchema();
+    }
+  }
+  const { httpLabel, httpPrefixHeaders, httpHeader, httpQuery } = ns.getMergedTraits();
+  const bindingFormat = settings.httpBindings ? typeof httpPrefixHeaders === "string" || Boolean(httpHeader) ? 6 : Boolean(httpQuery) || Boolean(httpLabel) ? 5 : void 0 : void 0;
+  return bindingFormat ?? settings.timestampFormat.default;
+}
+
+// node_modules/@smithy/core/dist-es/submodules/protocols/serde/FromStringShapeDeserializer.js
+var FromStringShapeDeserializer = class extends SerdeContext {
+  constructor(settings) {
+    super();
+    __publicField(this, "settings");
+    this.settings = settings;
+  }
+  read(_schema, data) {
+    const ns = NormalizedSchema.of(_schema);
+    if (ns.isListSchema()) {
+      return splitHeader(data).map((item) => this.read(ns.getValueSchema(), item));
+    }
+    if (ns.isBlobSchema()) {
+      return (this.serdeContext?.base64Decoder ?? fromBase64)(data);
+    }
+    if (ns.isTimestampSchema()) {
+      const format2 = determineTimestampFormat(ns, this.settings);
+      switch (format2) {
+        case 5:
+          return _parseRfc3339DateTimeWithOffset(data);
+        case 6:
+          return _parseRfc7231DateTime(data);
+        case 7:
+          return _parseEpochTimestamp(data);
+        default:
+          console.warn("Missing timestamp format, parsing value with Date constructor:", data);
+          return new Date(data);
+      }
+    }
+    if (ns.isStringSchema()) {
+      const mediaType = ns.getMergedTraits().mediaType;
+      let intermediateValue = data;
+      if (mediaType) {
+        if (ns.getMergedTraits().httpHeader) {
+          intermediateValue = this.base64ToUtf8(intermediateValue);
+        }
+        const isJson = mediaType === "application/json" || mediaType.endsWith("+json");
+        if (isJson) {
+          intermediateValue = LazyJsonString.from(intermediateValue);
+        }
+        return intermediateValue;
+      }
+    }
+    if (ns.isNumericSchema()) {
+      return Number(data);
+    }
+    if (ns.isBigIntegerSchema()) {
+      return BigInt(data);
+    }
+    if (ns.isBigDecimalSchema()) {
+      return new NumericValue(data, "bigDecimal");
+    }
+    if (ns.isBooleanSchema()) {
+      return String(data).toLowerCase() === "true";
+    }
+    return data;
+  }
+  base64ToUtf8(base64String) {
+    return (this.serdeContext?.utf8Encoder ?? toUtf8)((this.serdeContext?.base64Decoder ?? fromBase64)(base64String));
+  }
+};
+
+// node_modules/@smithy/core/dist-es/submodules/protocols/serde/HttpInterceptingShapeDeserializer.js
+init_dist_es();
+var HttpInterceptingShapeDeserializer = class extends SerdeContext {
+  constructor(codecDeserializer, codecSettings) {
+    super();
+    __publicField(this, "codecDeserializer");
+    __publicField(this, "stringDeserializer");
+    this.codecDeserializer = codecDeserializer;
+    this.stringDeserializer = new FromStringShapeDeserializer(codecSettings);
+  }
+  setSerdeContext(serdeContext) {
+    this.stringDeserializer.setSerdeContext(serdeContext);
+    this.codecDeserializer.setSerdeContext(serdeContext);
+    this.serdeContext = serdeContext;
+  }
+  read(schema, data) {
+    const ns = NormalizedSchema.of(schema);
+    const traits = ns.getMergedTraits();
+    const toString = this.serdeContext?.utf8Encoder ?? toUtf8;
+    if (traits.httpHeader || traits.httpResponseCode) {
+      return this.stringDeserializer.read(ns, toString(data));
+    }
+    if (traits.httpPayload) {
+      if (ns.isBlobSchema()) {
+        const toBytes = this.serdeContext?.utf8Decoder ?? fromUtf8;
+        if (typeof data === "string") {
+          return toBytes(data);
+        }
+        return data;
+      } else if (ns.isStringSchema()) {
+        if ("byteLength" in data) {
+          return toString(data);
+        }
+        return data;
+      }
+    }
+    return this.codecDeserializer.read(ns, data);
+  }
+};
+
+// node_modules/@smithy/core/dist-es/submodules/protocols/serde/ToStringShapeSerializer.js
+var ToStringShapeSerializer = class extends SerdeContext {
+  constructor(settings) {
+    super();
+    __publicField(this, "settings");
+    __publicField(this, "stringBuffer", "");
+    this.settings = settings;
+  }
+  write(schema, value) {
+    const ns = NormalizedSchema.of(schema);
+    switch (typeof value) {
+      case "object":
+        if (value === null) {
+          this.stringBuffer = "null";
+          return;
+        }
+        if (ns.isTimestampSchema()) {
+          if (!(value instanceof Date)) {
+            throw new Error(`@smithy/core/protocols - received non-Date value ${value} when schema expected Date in ${ns.getName(true)}`);
+          }
+          const format2 = determineTimestampFormat(ns, this.settings);
+          switch (format2) {
+            case 5:
+              this.stringBuffer = value.toISOString().replace(".000Z", "Z");
+              break;
+            case 6:
+              this.stringBuffer = dateToUtcString(value);
+              break;
+            case 7:
+              this.stringBuffer = String(value.getTime() / 1e3);
+              break;
+            default:
+              console.warn("Missing timestamp format, using epoch seconds", value);
+              this.stringBuffer = String(value.getTime() / 1e3);
+          }
+          return;
+        }
+        if (ns.isBlobSchema() && "byteLength" in value) {
+          this.stringBuffer = (this.serdeContext?.base64Encoder ?? toBase64)(value);
+          return;
+        }
+        if (ns.isListSchema() && Array.isArray(value)) {
+          let buffer = "";
+          for (const item of value) {
+            this.write([ns.getValueSchema(), ns.getMergedTraits()], item);
+            const headerItem = this.flush();
+            const serialized = ns.getValueSchema().isTimestampSchema() ? headerItem : quoteHeader(headerItem);
+            if (buffer !== "") {
+              buffer += ", ";
+            }
+            buffer += serialized;
+          }
+          this.stringBuffer = buffer;
+          return;
+        }
+        this.stringBuffer = JSON.stringify(value, null, 2);
+        break;
+      case "string":
+        const mediaType = ns.getMergedTraits().mediaType;
+        let intermediateValue = value;
+        if (mediaType) {
+          const isJson = mediaType === "application/json" || mediaType.endsWith("+json");
+          if (isJson) {
+            intermediateValue = LazyJsonString.from(intermediateValue);
+          }
+          if (ns.getMergedTraits().httpHeader) {
+            this.stringBuffer = (this.serdeContext?.base64Encoder ?? toBase64)(intermediateValue.toString());
+            return;
+          }
+        }
+        this.stringBuffer = value;
+        break;
+      default:
+        if (ns.isIdempotencyToken()) {
+          this.stringBuffer = v42();
+        } else {
+          this.stringBuffer = String(value);
+        }
+    }
+  }
+  flush() {
+    const buffer = this.stringBuffer;
+    this.stringBuffer = "";
+    return buffer;
+  }
+};
+
+// node_modules/@smithy/core/dist-es/submodules/protocols/serde/HttpInterceptingShapeSerializer.js
+var HttpInterceptingShapeSerializer = class {
+  constructor(codecSerializer, codecSettings, stringSerializer = new ToStringShapeSerializer(codecSettings)) {
+    __publicField(this, "codecSerializer");
+    __publicField(this, "stringSerializer");
+    __publicField(this, "buffer");
+    this.codecSerializer = codecSerializer;
+    this.stringSerializer = stringSerializer;
+  }
+  setSerdeContext(serdeContext) {
+    this.codecSerializer.setSerdeContext(serdeContext);
+    this.stringSerializer.setSerdeContext(serdeContext);
+  }
+  write(schema, value) {
+    const ns = NormalizedSchema.of(schema);
+    const traits = ns.getMergedTraits();
+    if (traits.httpHeader || traits.httpLabel || traits.httpQuery) {
+      this.stringSerializer.write(ns, value);
+      this.buffer = this.stringSerializer.flush();
+      return;
+    }
+    return this.codecSerializer.write(ns, value);
+  }
+  flush() {
+    if (this.buffer !== void 0) {
+      const buffer = this.buffer;
+      this.buffer = void 0;
+      return buffer;
+    }
+    return this.codecSerializer.flush();
   }
 };
 
@@ -2795,7 +3510,7 @@ function setFeature2(context, feature, value) {
 // node_modules/@smithy/core/dist-es/util-identity-and-auth/DefaultIdentityProviderConfig.js
 var DefaultIdentityProviderConfig = class {
   constructor(config) {
-    this.authSchemes = /* @__PURE__ */ new Map();
+    __publicField(this, "authSchemes", /* @__PURE__ */ new Map());
     for (const [key, value] of Object.entries(config)) {
       if (value !== void 0) {
         this.authSchemes.set(key, value);
@@ -2808,7 +3523,9 @@ var DefaultIdentityProviderConfig = class {
 };
 
 // node_modules/@smithy/core/dist-es/util-identity-and-auth/memoizeIdentityProvider.js
-var createIsIdentityExpiredFunction = (expirationMs) => (identity) => doesIdentityRequireRefresh(identity) && identity.expiration.getTime() - Date.now() < expirationMs;
+var createIsIdentityExpiredFunction = (expirationMs) => function isIdentityExpired2(identity) {
+  return doesIdentityRequireRefresh(identity) && identity.expiration.getTime() - Date.now() < expirationMs;
+};
 var EXPIRATION_MS = 3e5;
 var isIdentityExpired = createIsIdentityExpiredFunction(EXPIRATION_MS);
 var doesIdentityRequireRefresh = (identity) => identity.expiration !== void 0;
@@ -2913,6 +3630,9 @@ var resolveAwsSdkSigV4AConfig = (config) => {
   return config;
 };
 
+// node_modules/@smithy/signature-v4/dist-es/SignatureV4.js
+init_dist_es();
+
 // node_modules/@smithy/signature-v4/dist-es/constants.js
 var ALGORITHM_QUERY_PARAM = "X-Amz-Algorithm";
 var CREDENTIAL_QUERY_PARAM = "X-Amz-Credential";
@@ -2955,6 +3675,7 @@ var KEY_TYPE_IDENTIFIER = "aws4_request";
 var MAX_PRESIGNED_TTL = 60 * 60 * 24 * 7;
 
 // node_modules/@smithy/signature-v4/dist-es/credentialDerivation.js
+init_dist_es();
 var signingKeyCache = {};
 var cacheQueue = [];
 var createScope = (shortDate, region, service) => `${shortDate}/${region}/${service}/${KEY_TYPE_IDENTIFIER}`;
@@ -3002,6 +3723,7 @@ var getCanonicalHeaders = ({ headers }, unsignableHeaders, signableHeaders) => {
 var isArrayBuffer = (arg) => typeof ArrayBuffer === "function" && arg instanceof ArrayBuffer || Object.prototype.toString.call(arg) === "[object ArrayBuffer]";
 
 // node_modules/@smithy/signature-v4/dist-es/getPayloadHash.js
+init_dist_es();
 var getPayloadHash = async ({ headers, body }, hashConstructor) => {
   for (const headerName of Object.keys(headers)) {
     if (headerName.toLowerCase() === SHA256_HEADER) {
@@ -3019,6 +3741,7 @@ var getPayloadHash = async ({ headers, body }, hashConstructor) => {
 };
 
 // node_modules/@smithy/signature-v4/dist-es/HeaderFormatter.js
+init_dist_es();
 var HeaderFormatter = class {
   format(headers) {
     const chunks = [];
@@ -3102,6 +3825,7 @@ var HEADER_VALUE_TYPE;
 var UUID_PATTERN = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 var Int64 = class _Int64 {
   constructor(bytes) {
+    __publicField(this, "bytes");
     this.bytes = bytes;
     if (bytes.byteLength !== 8) {
       throw new Error("Int64 buffers must be exactly 8 bytes");
@@ -3182,6 +3906,9 @@ var prepareRequest = (request) => {
   return request;
 };
 
+// node_modules/@smithy/signature-v4/dist-es/SignatureV4Base.js
+init_dist_es();
+
 // node_modules/@smithy/signature-v4/dist-es/getCanonicalQuery.js
 var getCanonicalQuery = ({ query = {} }) => {
   const keys = [];
@@ -3203,23 +3930,29 @@ var getCanonicalQuery = ({ query = {} }) => {
 };
 
 // node_modules/@smithy/signature-v4/dist-es/utilDate.js
-var iso8601 = (time) => toDate(time).toISOString().replace(/\.\d{3}Z$/, "Z");
-var toDate = (time) => {
-  if (typeof time === "number") {
-    return new Date(time * 1e3);
+var iso8601 = (time2) => toDate(time2).toISOString().replace(/\.\d{3}Z$/, "Z");
+var toDate = (time2) => {
+  if (typeof time2 === "number") {
+    return new Date(time2 * 1e3);
   }
-  if (typeof time === "string") {
-    if (Number(time)) {
-      return new Date(Number(time) * 1e3);
+  if (typeof time2 === "string") {
+    if (Number(time2)) {
+      return new Date(Number(time2) * 1e3);
     }
-    return new Date(time);
+    return new Date(time2);
   }
-  return time;
+  return time2;
 };
 
 // node_modules/@smithy/signature-v4/dist-es/SignatureV4Base.js
 var SignatureV4Base = class {
   constructor({ applyChecksum, credentials, region, service, sha256, uriEscapePath = true }) {
+    __publicField(this, "service");
+    __publicField(this, "regionProvider");
+    __publicField(this, "credentialProvider");
+    __publicField(this, "sha256");
+    __publicField(this, "uriEscapePath");
+    __publicField(this, "applyChecksum");
     this.service = service;
     this.sha256 = sha256;
     this.uriEscapePath = uriEscapePath;
@@ -3246,10 +3979,10 @@ ${longDate}
 ${credentialScope}
 ${toHex(hashedRequest)}`;
   }
-  getCanonicalPath({ path: path3 }) {
+  getCanonicalPath({ path }) {
     if (this.uriEscapePath) {
       const normalizedPathSegments = [];
-      for (const pathSegment of path3.split("/")) {
+      for (const pathSegment of path.split("/")) {
         if (pathSegment?.length === 0)
           continue;
         if (pathSegment === ".")
@@ -3260,11 +3993,11 @@ ${toHex(hashedRequest)}`;
           normalizedPathSegments.push(pathSegment);
         }
       }
-      const normalizedPath = `${path3?.startsWith("/") ? "/" : ""}${normalizedPathSegments.join("/")}${normalizedPathSegments.length > 0 && path3?.endsWith("/") ? "/" : ""}`;
+      const normalizedPath = `${path?.startsWith("/") ? "/" : ""}${normalizedPathSegments.join("/")}${normalizedPathSegments.length > 0 && path?.endsWith("/") ? "/" : ""}`;
       const doubleEncoded = escapeUri(normalizedPath);
       return doubleEncoded.replace(/%2F/g, "/");
     }
-    return path3;
+    return path;
   }
   validateResolvedCredentials(credentials) {
     if (typeof credentials !== "object" || typeof credentials.accessKeyId !== "string" || typeof credentials.secretAccessKey !== "string") {
@@ -3294,7 +4027,7 @@ var SignatureV4 = class extends SignatureV4Base {
       sha256,
       uriEscapePath
     });
-    this.headerFormatter = new HeaderFormatter();
+    __publicField(this, "headerFormatter", new HeaderFormatter());
   }
   async presign(originalRequest, options = {}) {
     const { signingDate = /* @__PURE__ */ new Date(), expiresIn = 3600, unsignableHeaders, unhoistableHeaders, signableHeaders, hoistableHeaders, signingRegion, signingService } = options;
@@ -3822,8 +4555,11 @@ var priorityWeights = {
 // node_modules/@smithy/smithy-client/dist-es/client.js
 var Client = class {
   constructor(config) {
+    __publicField(this, "config");
+    __publicField(this, "middlewareStack", constructStack());
+    __publicField(this, "initConfig");
+    __publicField(this, "handlers");
     this.config = config;
-    this.middlewareStack = constructStack();
   }
   send(command, optionsOrCb, cb2) {
     const options = typeof optionsOrCb !== "function" ? optionsOrCb : void 0;
@@ -3858,10 +4594,44 @@ var Client = class {
   }
 };
 
+// node_modules/@smithy/smithy-client/dist-es/schemaLogFilter.js
+var SENSITIVE_STRING = "***SensitiveInformation***";
+function schemaLogFilter(schema, data) {
+  if (data == null) {
+    return data;
+  }
+  const ns = NormalizedSchema.of(schema);
+  if (ns.getMergedTraits().sensitive) {
+    return SENSITIVE_STRING;
+  }
+  if (ns.isListSchema()) {
+    const isSensitive = !!ns.getValueSchema().getMergedTraits().sensitive;
+    if (isSensitive) {
+      return SENSITIVE_STRING;
+    }
+  } else if (ns.isMapSchema()) {
+    const isSensitive = !!ns.getKeySchema().getMergedTraits().sensitive || !!ns.getValueSchema().getMergedTraits().sensitive;
+    if (isSensitive) {
+      return SENSITIVE_STRING;
+    }
+  } else if (ns.isStructSchema() && typeof data === "object") {
+    const object = data;
+    const newObject = {};
+    for (const [member2, memberNs] of ns.structIterator()) {
+      if (object[member2] != null) {
+        newObject[member2] = schemaLogFilter(memberNs, object[member2]);
+      }
+    }
+    return newObject;
+  }
+  return data;
+}
+
 // node_modules/@smithy/smithy-client/dist-es/command.js
 var Command = class {
   constructor() {
-    this.middlewareStack = constructStack();
+    __publicField(this, "middlewareStack", constructStack());
+    __publicField(this, "schema");
   }
   static classBuilder() {
     return new ClassBuilder();
@@ -3871,9 +4641,9 @@ var Command = class {
       this.middlewareStack.use(mw);
     }
     const stack = clientStack.concat(this.middlewareStack);
-    const { logger: logger2 } = configuration;
+    const { logger } = configuration;
     const handlerExecutionContext = {
-      logger: logger2,
+      logger,
       clientName,
       commandName,
       inputFilterSensitiveLog,
@@ -3890,18 +4660,19 @@ var Command = class {
 };
 var ClassBuilder = class {
   constructor() {
-    this._init = () => {
-    };
-    this._ep = {};
-    this._middlewareFn = () => [];
-    this._commandName = "";
-    this._clientName = "";
-    this._additionalContext = {};
-    this._smithyContext = {};
-    this._inputFilterSensitiveLog = (_) => _;
-    this._outputFilterSensitiveLog = (_) => _;
-    this._serializer = null;
-    this._deserializer = null;
+    __publicField(this, "_init", () => {
+    });
+    __publicField(this, "_ep", {});
+    __publicField(this, "_middlewareFn", () => []);
+    __publicField(this, "_commandName", "");
+    __publicField(this, "_clientName", "");
+    __publicField(this, "_additionalContext", {});
+    __publicField(this, "_smithyContext", {});
+    __publicField(this, "_inputFilterSensitiveLog");
+    __publicField(this, "_outputFilterSensitiveLog");
+    __publicField(this, "_serializer", null);
+    __publicField(this, "_deserializer", null);
+    __publicField(this, "_operationSchema");
   }
   init(cb2) {
     this._init = cb2;
@@ -3914,10 +4685,10 @@ var ClassBuilder = class {
     this._middlewareFn = middlewareSupplier;
     return this;
   }
-  s(service, operation, smithyContext = {}) {
+  s(service, operation2, smithyContext = {}) {
     this._smithyContext = {
       service,
-      operation,
+      operation: operation2,
       ...smithyContext
     };
     return this;
@@ -3944,34 +4715,38 @@ var ClassBuilder = class {
     this._deserializer = deserializer;
     return this;
   }
-  sc(operation) {
-    this._operationSchema = operation;
-    this._smithyContext.operationSchema = operation;
+  sc(operation2) {
+    this._operationSchema = operation2;
+    this._smithyContext.operationSchema = operation2;
     return this;
   }
   build() {
     const closure = this;
     let CommandRef;
     return CommandRef = class extends Command {
-      static getEndpointParameterInstructions() {
-        return closure._ep;
-      }
       constructor(...[input]) {
         super();
-        this.serialize = closure._serializer;
-        this.deserialize = closure._deserializer;
+        __publicField(this, "input");
+        __publicField(this, "serialize", closure._serializer);
+        __publicField(this, "deserialize", closure._deserializer);
         this.input = input ?? {};
         closure._init(this);
         this.schema = closure._operationSchema;
       }
+      static getEndpointParameterInstructions() {
+        return closure._ep;
+      }
       resolveMiddleware(stack, configuration, options) {
+        const op = closure._operationSchema;
+        const input = op?.[4] ?? op?.input;
+        const output = op?.[5] ?? op?.output;
         return this.resolveMiddlewareWithContext(stack, configuration, options, {
           CommandCtor: CommandRef,
           middlewareFn: closure._middlewareFn,
           clientName: closure._clientName,
           commandName: closure._commandName,
-          inputFilterSensitiveLog: closure._inputFilterSensitiveLog,
-          outputFilterSensitiveLog: closure._outputFilterSensitiveLog,
+          inputFilterSensitiveLog: closure._inputFilterSensitiveLog ?? (op ? schemaLogFilter.bind(null, input) : (_) => _),
+          outputFilterSensitiveLog: closure._outputFilterSensitiveLog ?? (op ? schemaLogFilter.bind(null, output) : (_) => _),
           smithyContext: closure._smithyContext,
           additionalContext: closure._additionalContext
         });
@@ -3980,13 +4755,14 @@ var ClassBuilder = class {
   }
 };
 
-// node_modules/@smithy/smithy-client/dist-es/constants.js
-var SENSITIVE_STRING = "***SensitiveInformation***";
-
 // node_modules/@smithy/smithy-client/dist-es/exceptions.js
 var ServiceException = class _ServiceException extends Error {
   constructor(options) {
     super(options.message);
+    __publicField(this, "$fault");
+    __publicField(this, "$response");
+    __publicField(this, "$retryable");
+    __publicField(this, "$metadata");
     Object.setPrototypeOf(this, Object.getPrototypeOf(this).constructor.prototype);
     this.name = options.name;
     this.$fault = options.$fault;
@@ -4026,29 +4802,6 @@ var decorateServiceException = (exception, additions = {}) => {
   return exception;
 };
 
-// node_modules/@smithy/smithy-client/dist-es/default-error-handler.js
-var throwDefaultError = ({ output, parsedBody, exceptionCtor, errorCode }) => {
-  const $metadata = deserializeMetadata(output);
-  const statusCode = $metadata.httpStatusCode ? $metadata.httpStatusCode + "" : void 0;
-  const response = new exceptionCtor({
-    name: parsedBody?.code || parsedBody?.Code || errorCode || statusCode || "UnknownError",
-    $fault: "client",
-    $metadata
-  });
-  throw decorateServiceException(response, parsedBody);
-};
-var withBaseException = (ExceptionCtor) => {
-  return ({ output, parsedBody, errorCode }) => {
-    throwDefaultError({ output, parsedBody, exceptionCtor: ExceptionCtor, errorCode });
-  };
-};
-var deserializeMetadata = (output) => ({
-  httpStatusCode: output.statusCode,
-  requestId: output.headers["x-amzn-requestid"] ?? output.headers["x-amzn-request-id"] ?? output.headers["x-amz-request-id"],
-  extendedRequestId: output.headers["x-amz-id-2"],
-  cfId: output.headers["x-amz-cf-id"]
-});
-
 // node_modules/@smithy/smithy-client/dist-es/defaults-mode.js
 var loadConfigsForDefaultMode = (mode) => {
   switch (mode) {
@@ -4078,7 +4831,7 @@ var loadConfigsForDefaultMode = (mode) => {
 };
 
 // node_modules/@smithy/smithy-client/dist-es/extensions/checksum.js
-var getChecksumConfiguration2 = (runtimeConfig) => {
+var getChecksumConfiguration = (runtimeConfig) => {
   const checksumAlgorithms = [];
   for (const id in AlgorithmId) {
     const algorithmId = AlgorithmId[id];
@@ -4099,7 +4852,7 @@ var getChecksumConfiguration2 = (runtimeConfig) => {
     }
   };
 };
-var resolveChecksumRuntimeConfig2 = (clientConfig) => {
+var resolveChecksumRuntimeConfig = (clientConfig) => {
   const runtimeConfig = {};
   clientConfig.checksumAlgorithms().forEach((checksumAlgorithm) => {
     runtimeConfig[checksumAlgorithm.algorithmId()] = checksumAlgorithm.checksumConstructor();
@@ -4126,10 +4879,10 @@ var resolveRetryRuntimeConfig = (retryStrategyConfiguration) => {
 
 // node_modules/@smithy/smithy-client/dist-es/extensions/defaultExtensionConfiguration.js
 var getDefaultExtensionConfiguration = (runtimeConfig) => {
-  return Object.assign(getChecksumConfiguration2(runtimeConfig), getRetryConfiguration(runtimeConfig));
+  return Object.assign(getChecksumConfiguration(runtimeConfig), getRetryConfiguration(runtimeConfig));
 };
 var resolveDefaultRuntimeConfig = (config) => {
-  return Object.assign(resolveChecksumRuntimeConfig2(config), resolveRetryRuntimeConfig(config));
+  return Object.assign(resolveChecksumRuntimeConfig(config), resolveRetryRuntimeConfig(config));
 };
 
 // node_modules/@smithy/smithy-client/dist-es/get-value-from-text-node.js
@@ -4143,11 +4896,6 @@ var getValueFromTextNode = (obj) => {
     }
   }
   return obj;
-};
-
-// node_modules/@smithy/smithy-client/dist-es/is-serializable-header-value.js
-var isSerializableHeaderValue = (value) => {
-  return value != null;
 };
 
 // node_modules/@smithy/smithy-client/dist-es/NoOpLogger.js
@@ -4164,1475 +4912,448 @@ var NoOpLogger = class {
   }
 };
 
-// node_modules/@smithy/smithy-client/dist-es/object-mapping.js
-function map(arg0, arg1, arg2) {
-  let target;
-  let filter;
-  let instructions;
-  if (typeof arg1 === "undefined" && typeof arg2 === "undefined") {
-    target = {};
-    instructions = arg0;
-  } else {
-    target = arg0;
-    if (typeof arg1 === "function") {
-      filter = arg1;
-      instructions = arg2;
-      return mapWithFilter(target, filter, instructions);
-    } else {
-      instructions = arg1;
-    }
+// node_modules/@aws-sdk/core/dist-es/submodules/protocols/ProtocolLib.js
+var ProtocolLib = class {
+  constructor(queryCompat = false) {
+    __publicField(this, "queryCompat");
+    this.queryCompat = queryCompat;
   }
-  for (const key of Object.keys(instructions)) {
-    if (!Array.isArray(instructions[key])) {
-      target[key] = instructions[key];
-      continue;
-    }
-    applyInstruction(target, null, instructions, key);
-  }
-  return target;
-}
-var mapWithFilter = (target, filter, instructions) => {
-  return map(target, Object.entries(instructions).reduce((_instructions, [key, value]) => {
-    if (Array.isArray(value)) {
-      _instructions[key] = value;
-    } else {
-      if (typeof value === "function") {
-        _instructions[key] = [filter, value()];
+  resolveRestContentType(defaultContentType, inputSchema) {
+    const members = inputSchema.getMemberSchemas();
+    const httpPayloadMember = Object.values(members).find((m2) => {
+      return !!m2.getMergedTraits().httpPayload;
+    });
+    if (httpPayloadMember) {
+      const mediaType = httpPayloadMember.getMergedTraits().mediaType;
+      if (mediaType) {
+        return mediaType;
+      } else if (httpPayloadMember.isStringSchema()) {
+        return "text/plain";
+      } else if (httpPayloadMember.isBlobSchema()) {
+        return "application/octet-stream";
       } else {
-        _instructions[key] = [filter, value];
+        return defaultContentType;
+      }
+    } else if (!inputSchema.isUnitSchema()) {
+      const hasBody = Object.values(members).find((m2) => {
+        const { httpQuery, httpQueryParams, httpHeader, httpLabel, httpPrefixHeaders } = m2.getMergedTraits();
+        const noPrefixHeaders = httpPrefixHeaders === void 0;
+        return !httpQuery && !httpQueryParams && !httpHeader && !httpLabel && noPrefixHeaders;
+      });
+      if (hasBody) {
+        return defaultContentType;
       }
     }
-    return _instructions;
-  }, {}));
+  }
+  async getErrorSchemaOrThrowBaseException(errorIdentifier, defaultNamespace, response, dataObject, metadata, getErrorSchema) {
+    let namespace = defaultNamespace;
+    let errorName = errorIdentifier;
+    if (errorIdentifier.includes("#")) {
+      [namespace, errorName] = errorIdentifier.split("#");
+    }
+    const errorMetadata = {
+      $metadata: metadata,
+      $fault: response.statusCode < 500 ? "client" : "server"
+    };
+    const registry = TypeRegistry.for(namespace);
+    try {
+      const errorSchema = getErrorSchema?.(registry, errorName) ?? registry.getSchema(errorIdentifier);
+      return { errorSchema, errorMetadata };
+    } catch (e2) {
+      dataObject.message = dataObject.message ?? dataObject.Message ?? "UnknownError";
+      const synthetic = TypeRegistry.for("smithy.ts.sdk.synthetic." + namespace);
+      const baseExceptionSchema = synthetic.getBaseException();
+      if (baseExceptionSchema) {
+        const ErrorCtor = synthetic.getErrorCtor(baseExceptionSchema) ?? Error;
+        throw this.decorateServiceException(Object.assign(new ErrorCtor({ name: errorName }), errorMetadata), dataObject);
+      }
+      throw this.decorateServiceException(Object.assign(new Error(errorName), errorMetadata), dataObject);
+    }
+  }
+  decorateServiceException(exception, additions = {}) {
+    if (this.queryCompat) {
+      const msg = exception.Message ?? additions.Message;
+      const error = decorateServiceException(exception, additions);
+      if (msg) {
+        error.message = msg;
+      }
+      error.Error = {
+        ...error.Error,
+        Type: error.Error.Type,
+        Code: error.Error.Code,
+        Message: error.Error.message ?? error.Error.Message ?? msg
+      };
+      const reqId = error.$metadata.requestId;
+      if (reqId) {
+        error.RequestId = reqId;
+      }
+      return error;
+    }
+    return decorateServiceException(exception, additions);
+  }
+  setQueryCompatError(output, response) {
+    const queryErrorHeader = response.headers?.["x-amzn-query-error"];
+    if (output !== void 0 && queryErrorHeader != null) {
+      const [Code, Type] = queryErrorHeader.split(";");
+      const entries = Object.entries(output);
+      const Error2 = {
+        Code,
+        Type
+      };
+      Object.assign(output, Error2);
+      for (const [k2, v2] of entries) {
+        Error2[k2 === "message" ? "Message" : k2] = v2;
+      }
+      delete Error2.__type;
+      output.Error = Error2;
+    }
+  }
+  queryCompatOutput(queryCompatErrorData, errorData) {
+    if (queryCompatErrorData.Error) {
+      errorData.Error = queryCompatErrorData.Error;
+    }
+    if (queryCompatErrorData.Type) {
+      errorData.Type = queryCompatErrorData.Type;
+    }
+    if (queryCompatErrorData.Code) {
+      errorData.Code = queryCompatErrorData.Code;
+    }
+  }
+  findQueryCompatibleError(registry, errorName) {
+    try {
+      return registry.getSchema(errorName);
+    } catch (e2) {
+      return registry.find((schema) => NormalizedSchema.of(schema).getMergedTraits().awsQueryError?.[0] === errorName);
+    }
+  }
 };
-var applyInstruction = (target, source, instructions, targetKey) => {
-  if (source !== null) {
-    let instruction = instructions[targetKey];
-    if (typeof instruction === "function") {
-      instruction = [, instruction];
-    }
-    const [filter2 = nonNullish, valueFn = pass, sourceKey = targetKey] = instruction;
-    if (typeof filter2 === "function" && filter2(source[sourceKey]) || typeof filter2 !== "function" && !!filter2) {
-      target[targetKey] = valueFn(source[sourceKey]);
-    }
+
+// node_modules/@aws-sdk/core/dist-es/submodules/protocols/ConfigurableSerdeContext.js
+var SerdeContextConfig = class {
+  constructor() {
+    __publicField(this, "serdeContext");
+  }
+  setSerdeContext(serdeContext) {
+    this.serdeContext = serdeContext;
+  }
+};
+
+// node_modules/@aws-sdk/core/dist-es/submodules/protocols/structIterator.js
+function* serializingStructIterator(ns, sourceObject) {
+  if (ns.isUnitSchema()) {
     return;
   }
-  let [filter, value] = instructions[targetKey];
-  if (typeof value === "function") {
-    let _value;
-    const defaultFilterPassed = filter === void 0 && (_value = value()) != null;
-    const customFilterPassed = typeof filter === "function" && !!filter(void 0) || typeof filter !== "function" && !!filter;
-    if (defaultFilterPassed) {
-      target[targetKey] = _value;
-    } else if (customFilterPassed) {
-      target[targetKey] = value();
-    }
-  } else {
-    const defaultFilterPassed = filter === void 0 && value != null;
-    const customFilterPassed = typeof filter === "function" && !!filter(value) || typeof filter !== "function" && !!filter;
-    if (defaultFilterPassed || customFilterPassed) {
-      target[targetKey] = value;
-    }
-  }
-};
-var nonNullish = (_) => _ != null;
-var pass = (_) => _;
-
-// node_modules/@smithy/smithy-client/dist-es/ser-utils.js
-var serializeDateTime = (date) => date.toISOString().replace(".000Z", "Z");
-
-// node_modules/@aws-sdk/core/dist-es/submodules/protocols/common.js
-var collectBodyString = (streamBody, context) => collectBody(streamBody, context).then((body) => context.utf8Encoder(body));
-
-// node_modules/fast-xml-parser/src/util.js
-var nameStartChar = ":A-Za-z_\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD";
-var nameChar = nameStartChar + "\\-.\\d\\u00B7\\u0300-\\u036F\\u203F-\\u2040";
-var nameRegexp = "[" + nameStartChar + "][" + nameChar + "]*";
-var regexName = new RegExp("^" + nameRegexp + "$");
-function getAllMatches(string, regex) {
-  const matches = [];
-  let match = regex.exec(string);
-  while (match) {
-    const allmatches = [];
-    allmatches.startIndex = regex.lastIndex - match[0].length;
-    const len = match.length;
-    for (let index = 0; index < len; index++) {
-      allmatches.push(match[index]);
-    }
-    matches.push(allmatches);
-    match = regex.exec(string);
-  }
-  return matches;
-}
-var isName = function(string) {
-  const match = regexName.exec(string);
-  return !(match === null || typeof match === "undefined");
-};
-function isExist(v2) {
-  return typeof v2 !== "undefined";
-}
-
-// node_modules/fast-xml-parser/src/validator.js
-var defaultOptions = {
-  allowBooleanAttributes: false,
-  //A tag can have attributes without any value
-  unpairedTags: []
-};
-function validate(xmlData, options) {
-  options = Object.assign({}, defaultOptions, options);
-  const tags = [];
-  let tagFound = false;
-  let reachedRoot = false;
-  if (xmlData[0] === "\uFEFF") {
-    xmlData = xmlData.substr(1);
-  }
-  for (let i2 = 0; i2 < xmlData.length; i2++) {
-    if (xmlData[i2] === "<" && xmlData[i2 + 1] === "?") {
-      i2 += 2;
-      i2 = readPI(xmlData, i2);
-      if (i2.err) return i2;
-    } else if (xmlData[i2] === "<") {
-      let tagStartPos = i2;
-      i2++;
-      if (xmlData[i2] === "!") {
-        i2 = readCommentAndCDATA(xmlData, i2);
-        continue;
-      } else {
-        let closingTag = false;
-        if (xmlData[i2] === "/") {
-          closingTag = true;
-          i2++;
-        }
-        let tagName = "";
-        for (; i2 < xmlData.length && xmlData[i2] !== ">" && xmlData[i2] !== " " && xmlData[i2] !== "	" && xmlData[i2] !== "\n" && xmlData[i2] !== "\r"; i2++) {
-          tagName += xmlData[i2];
-        }
-        tagName = tagName.trim();
-        if (tagName[tagName.length - 1] === "/") {
-          tagName = tagName.substring(0, tagName.length - 1);
-          i2--;
-        }
-        if (!validateTagName(tagName)) {
-          let msg;
-          if (tagName.trim().length === 0) {
-            msg = "Invalid space after '<'.";
-          } else {
-            msg = "Tag '" + tagName + "' is an invalid name.";
-          }
-          return getErrorObject("InvalidTag", msg, getLineNumberForPosition(xmlData, i2));
-        }
-        const result = readAttributeStr(xmlData, i2);
-        if (result === false) {
-          return getErrorObject("InvalidAttr", "Attributes for '" + tagName + "' have open quote.", getLineNumberForPosition(xmlData, i2));
-        }
-        let attrStr = result.value;
-        i2 = result.index;
-        if (attrStr[attrStr.length - 1] === "/") {
-          const attrStrStart = i2 - attrStr.length;
-          attrStr = attrStr.substring(0, attrStr.length - 1);
-          const isValid = validateAttributeString(attrStr, options);
-          if (isValid === true) {
-            tagFound = true;
-          } else {
-            return getErrorObject(isValid.err.code, isValid.err.msg, getLineNumberForPosition(xmlData, attrStrStart + isValid.err.line));
-          }
-        } else if (closingTag) {
-          if (!result.tagClosed) {
-            return getErrorObject("InvalidTag", "Closing tag '" + tagName + "' doesn't have proper closing.", getLineNumberForPosition(xmlData, i2));
-          } else if (attrStr.trim().length > 0) {
-            return getErrorObject("InvalidTag", "Closing tag '" + tagName + "' can't have attributes or invalid starting.", getLineNumberForPosition(xmlData, tagStartPos));
-          } else if (tags.length === 0) {
-            return getErrorObject("InvalidTag", "Closing tag '" + tagName + "' has not been opened.", getLineNumberForPosition(xmlData, tagStartPos));
-          } else {
-            const otg = tags.pop();
-            if (tagName !== otg.tagName) {
-              let openPos = getLineNumberForPosition(xmlData, otg.tagStartPos);
-              return getErrorObject(
-                "InvalidTag",
-                "Expected closing tag '" + otg.tagName + "' (opened in line " + openPos.line + ", col " + openPos.col + ") instead of closing tag '" + tagName + "'.",
-                getLineNumberForPosition(xmlData, tagStartPos)
-              );
-            }
-            if (tags.length == 0) {
-              reachedRoot = true;
-            }
-          }
-        } else {
-          const isValid = validateAttributeString(attrStr, options);
-          if (isValid !== true) {
-            return getErrorObject(isValid.err.code, isValid.err.msg, getLineNumberForPosition(xmlData, i2 - attrStr.length + isValid.err.line));
-          }
-          if (reachedRoot === true) {
-            return getErrorObject("InvalidXml", "Multiple possible root nodes found.", getLineNumberForPosition(xmlData, i2));
-          } else if (options.unpairedTags.indexOf(tagName) !== -1) {
-          } else {
-            tags.push({ tagName, tagStartPos });
-          }
-          tagFound = true;
-        }
-        for (i2++; i2 < xmlData.length; i2++) {
-          if (xmlData[i2] === "<") {
-            if (xmlData[i2 + 1] === "!") {
-              i2++;
-              i2 = readCommentAndCDATA(xmlData, i2);
-              continue;
-            } else if (xmlData[i2 + 1] === "?") {
-              i2 = readPI(xmlData, ++i2);
-              if (i2.err) return i2;
-            } else {
-              break;
-            }
-          } else if (xmlData[i2] === "&") {
-            const afterAmp = validateAmpersand(xmlData, i2);
-            if (afterAmp == -1)
-              return getErrorObject("InvalidChar", "char '&' is not expected.", getLineNumberForPosition(xmlData, i2));
-            i2 = afterAmp;
-          } else {
-            if (reachedRoot === true && !isWhiteSpace(xmlData[i2])) {
-              return getErrorObject("InvalidXml", "Extra text at the end", getLineNumberForPosition(xmlData, i2));
-            }
-          }
-        }
-        if (xmlData[i2] === "<") {
-          i2--;
-        }
-      }
-    } else {
-      if (isWhiteSpace(xmlData[i2])) {
-        continue;
-      }
-      return getErrorObject("InvalidChar", "char '" + xmlData[i2] + "' is not expected.", getLineNumberForPosition(xmlData, i2));
-    }
-  }
-  if (!tagFound) {
-    return getErrorObject("InvalidXml", "Start tag expected.", 1);
-  } else if (tags.length == 1) {
-    return getErrorObject("InvalidTag", "Unclosed tag '" + tags[0].tagName + "'.", getLineNumberForPosition(xmlData, tags[0].tagStartPos));
-  } else if (tags.length > 0) {
-    return getErrorObject("InvalidXml", "Invalid '" + JSON.stringify(tags.map((t2) => t2.tagName), null, 4).replace(/\r?\n/g, "") + "' found.", { line: 1, col: 1 });
-  }
-  return true;
-}
-function isWhiteSpace(char) {
-  return char === " " || char === "	" || char === "\n" || char === "\r";
-}
-function readPI(xmlData, i2) {
-  const start = i2;
-  for (; i2 < xmlData.length; i2++) {
-    if (xmlData[i2] == "?" || xmlData[i2] == " ") {
-      const tagname = xmlData.substr(start, i2 - start);
-      if (i2 > 5 && tagname === "xml") {
-        return getErrorObject("InvalidXml", "XML declaration allowed only at the start of the document.", getLineNumberForPosition(xmlData, i2));
-      } else if (xmlData[i2] == "?" && xmlData[i2 + 1] == ">") {
-        i2++;
-        break;
-      } else {
-        continue;
-      }
-    }
-  }
-  return i2;
-}
-function readCommentAndCDATA(xmlData, i2) {
-  if (xmlData.length > i2 + 5 && xmlData[i2 + 1] === "-" && xmlData[i2 + 2] === "-") {
-    for (i2 += 3; i2 < xmlData.length; i2++) {
-      if (xmlData[i2] === "-" && xmlData[i2 + 1] === "-" && xmlData[i2 + 2] === ">") {
-        i2 += 2;
-        break;
-      }
-    }
-  } else if (xmlData.length > i2 + 8 && xmlData[i2 + 1] === "D" && xmlData[i2 + 2] === "O" && xmlData[i2 + 3] === "C" && xmlData[i2 + 4] === "T" && xmlData[i2 + 5] === "Y" && xmlData[i2 + 6] === "P" && xmlData[i2 + 7] === "E") {
-    let angleBracketsCount = 1;
-    for (i2 += 8; i2 < xmlData.length; i2++) {
-      if (xmlData[i2] === "<") {
-        angleBracketsCount++;
-      } else if (xmlData[i2] === ">") {
-        angleBracketsCount--;
-        if (angleBracketsCount === 0) {
-          break;
-        }
-      }
-    }
-  } else if (xmlData.length > i2 + 9 && xmlData[i2 + 1] === "[" && xmlData[i2 + 2] === "C" && xmlData[i2 + 3] === "D" && xmlData[i2 + 4] === "A" && xmlData[i2 + 5] === "T" && xmlData[i2 + 6] === "A" && xmlData[i2 + 7] === "[") {
-    for (i2 += 8; i2 < xmlData.length; i2++) {
-      if (xmlData[i2] === "]" && xmlData[i2 + 1] === "]" && xmlData[i2 + 2] === ">") {
-        i2 += 2;
-        break;
-      }
-    }
-  }
-  return i2;
-}
-var doubleQuote = '"';
-var singleQuote = "'";
-function readAttributeStr(xmlData, i2) {
-  let attrStr = "";
-  let startChar = "";
-  let tagClosed = false;
-  for (; i2 < xmlData.length; i2++) {
-    if (xmlData[i2] === doubleQuote || xmlData[i2] === singleQuote) {
-      if (startChar === "") {
-        startChar = xmlData[i2];
-      } else if (startChar !== xmlData[i2]) {
-      } else {
-        startChar = "";
-      }
-    } else if (xmlData[i2] === ">") {
-      if (startChar === "") {
-        tagClosed = true;
-        break;
-      }
-    }
-    attrStr += xmlData[i2];
-  }
-  if (startChar !== "") {
-    return false;
-  }
-  return {
-    value: attrStr,
-    index: i2,
-    tagClosed
-  };
-}
-var validAttrStrRegxp = new RegExp(`(\\s*)([^\\s=]+)(\\s*=)?(\\s*(['"])(([\\s\\S])*?)\\5)?`, "g");
-function validateAttributeString(attrStr, options) {
-  const matches = getAllMatches(attrStr, validAttrStrRegxp);
-  const attrNames = {};
-  for (let i2 = 0; i2 < matches.length; i2++) {
-    if (matches[i2][1].length === 0) {
-      return getErrorObject("InvalidAttr", "Attribute '" + matches[i2][2] + "' has no space in starting.", getPositionFromMatch(matches[i2]));
-    } else if (matches[i2][3] !== void 0 && matches[i2][4] === void 0) {
-      return getErrorObject("InvalidAttr", "Attribute '" + matches[i2][2] + "' is without value.", getPositionFromMatch(matches[i2]));
-    } else if (matches[i2][3] === void 0 && !options.allowBooleanAttributes) {
-      return getErrorObject("InvalidAttr", "boolean attribute '" + matches[i2][2] + "' is not allowed.", getPositionFromMatch(matches[i2]));
-    }
-    const attrName = matches[i2][2];
-    if (!validateAttrName(attrName)) {
-      return getErrorObject("InvalidAttr", "Attribute '" + attrName + "' is an invalid name.", getPositionFromMatch(matches[i2]));
-    }
-    if (!attrNames.hasOwnProperty(attrName)) {
-      attrNames[attrName] = 1;
-    } else {
-      return getErrorObject("InvalidAttr", "Attribute '" + attrName + "' is repeated.", getPositionFromMatch(matches[i2]));
-    }
-  }
-  return true;
-}
-function validateNumberAmpersand(xmlData, i2) {
-  let re = /\d/;
-  if (xmlData[i2] === "x") {
-    i2++;
-    re = /[\da-fA-F]/;
-  }
-  for (; i2 < xmlData.length; i2++) {
-    if (xmlData[i2] === ";")
-      return i2;
-    if (!xmlData[i2].match(re))
-      break;
-  }
-  return -1;
-}
-function validateAmpersand(xmlData, i2) {
-  i2++;
-  if (xmlData[i2] === ";")
-    return -1;
-  if (xmlData[i2] === "#") {
-    i2++;
-    return validateNumberAmpersand(xmlData, i2);
-  }
-  let count = 0;
-  for (; i2 < xmlData.length; i2++, count++) {
-    if (xmlData[i2].match(/\w/) && count < 20)
+  const struct = ns.getSchema();
+  for (let i2 = 0; i2 < struct[4].length; ++i2) {
+    const key = struct[4][i2];
+    const memberSchema = struct[5][i2];
+    const memberNs = new NormalizedSchema([memberSchema, 0], key);
+    if (!(key in sourceObject) && !memberNs.isIdempotencyToken()) {
       continue;
-    if (xmlData[i2] === ";")
-      break;
-    return -1;
-  }
-  return i2;
-}
-function getErrorObject(code, message, lineNumber) {
-  return {
-    err: {
-      code,
-      msg: message,
-      line: lineNumber.line || lineNumber,
-      col: lineNumber.col
     }
-  };
-}
-function validateAttrName(attrName) {
-  return isName(attrName);
-}
-function validateTagName(tagname) {
-  return isName(tagname);
-}
-function getLineNumberForPosition(xmlData, index) {
-  const lines = xmlData.substring(0, index).split(/\r?\n/);
-  return {
-    line: lines.length,
-    // column number is last line's length + 1, because column numbering starts at 1:
-    col: lines[lines.length - 1].length + 1
-  };
-}
-function getPositionFromMatch(match) {
-  return match.startIndex + match[1].length;
+    yield [key, memberNs];
+  }
 }
 
-// node_modules/fast-xml-parser/src/xmlparser/OptionsBuilder.js
-var defaultOptions2 = {
-  preserveOrder: false,
-  attributeNamePrefix: "@_",
-  attributesGroupName: false,
-  textNodeName: "#text",
-  ignoreAttributes: true,
-  removeNSPrefix: false,
-  // remove NS from tag name or attribute name if true
-  allowBooleanAttributes: false,
-  //a tag can have attributes without any value
-  //ignoreRootElement : false,
-  parseTagValue: true,
-  parseAttributeValue: false,
-  trimValues: true,
-  //Trim string values of tag and attributes
-  cdataPropName: false,
-  numberParseOptions: {
-    hex: true,
-    leadingZeros: true,
-    eNotation: true
-  },
-  tagValueProcessor: function(tagName, val) {
-    return val;
-  },
-  attributeValueProcessor: function(attrName, val) {
-    return val;
-  },
-  stopNodes: [],
-  //nested tags will not be parsed even for errors
-  alwaysCreateTextNode: false,
-  isArray: () => false,
-  commentPropName: false,
-  unpairedTags: [],
-  processEntities: true,
-  htmlEntities: false,
-  ignoreDeclaration: false,
-  ignorePiTags: false,
-  transformTagName: false,
-  transformAttributeName: false,
-  updateTag: function(tagName, jPath, attrs) {
-    return tagName;
-  },
-  // skipEmptyListItem: false
-  captureMetaData: false
-};
-var buildOptions = function(options) {
-  return Object.assign({}, defaultOptions2, options);
-};
-
-// node_modules/fast-xml-parser/src/xmlparser/xmlNode.js
-var METADATA_SYMBOL;
-if (typeof Symbol !== "function") {
-  METADATA_SYMBOL = "@@xmlMetadata";
-} else {
-  METADATA_SYMBOL = Symbol("XML Node Metadata");
+// node_modules/@aws-sdk/xml-builder/dist-es/escape-attribute.js
+function escapeAttribute(value) {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
-var XmlNode = class {
-  constructor(tagname) {
-    this.tagname = tagname;
-    this.child = [];
-    this[":@"] = {};
+
+// node_modules/@aws-sdk/xml-builder/dist-es/escape-element.js
+function escapeElement(value) {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&apos;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\r/g, "&#x0D;").replace(/\n/g, "&#x0A;").replace(/\u0085/g, "&#x85;").replace(/\u2028/, "&#x2028;");
+}
+
+// node_modules/@aws-sdk/xml-builder/dist-es/XmlText.js
+var XmlText = class {
+  constructor(value) {
+    __publicField(this, "value");
+    this.value = value;
   }
-  add(key, val) {
-    if (key === "__proto__") key = "#__proto__";
-    this.child.push({ [key]: val });
-  }
-  addChild(node, startIndex) {
-    if (node.tagname === "__proto__") node.tagname = "#__proto__";
-    if (node[":@"] && Object.keys(node[":@"]).length > 0) {
-      this.child.push({ [node.tagname]: node.child, [":@"]: node[":@"] });
-    } else {
-      this.child.push({ [node.tagname]: node.child });
-    }
-    if (startIndex !== void 0) {
-      this.child[this.child.length - 1][METADATA_SYMBOL] = { startIndex };
-    }
-  }
-  /** symbol used for metadata */
-  static getMetaDataSymbol() {
-    return METADATA_SYMBOL;
+  toString() {
+    return escapeElement("" + this.value);
   }
 };
 
-// node_modules/fast-xml-parser/src/xmlparser/DocTypeReader.js
-function readDocType(xmlData, i2) {
-  const entities = {};
-  if (xmlData[i2 + 3] === "O" && xmlData[i2 + 4] === "C" && xmlData[i2 + 5] === "T" && xmlData[i2 + 6] === "Y" && xmlData[i2 + 7] === "P" && xmlData[i2 + 8] === "E") {
-    i2 = i2 + 9;
-    let angleBracketsCount = 1;
-    let hasBody = false, comment = false;
-    let exp = "";
-    for (; i2 < xmlData.length; i2++) {
-      if (xmlData[i2] === "<" && !comment) {
-        if (hasBody && hasSeq(xmlData, "!ENTITY", i2)) {
-          i2 += 7;
-          let entityName, val;
-          [entityName, val, i2] = readEntityExp(xmlData, i2 + 1);
-          if (val.indexOf("&") === -1)
-            entities[entityName] = {
-              regx: RegExp(`&${entityName};`, "g"),
-              val
-            };
-        } else if (hasBody && hasSeq(xmlData, "!ELEMENT", i2)) {
-          i2 += 8;
-          const { index } = readElementExp(xmlData, i2 + 1);
-          i2 = index;
-        } else if (hasBody && hasSeq(xmlData, "!ATTLIST", i2)) {
-          i2 += 8;
-        } else if (hasBody && hasSeq(xmlData, "!NOTATION", i2)) {
-          i2 += 9;
-          const { index } = readNotationExp(xmlData, i2 + 1);
-          i2 = index;
-        } else if (hasSeq(xmlData, "!--", i2)) comment = true;
-        else throw new Error(`Invalid DOCTYPE`);
-        angleBracketsCount++;
-        exp = "";
-      } else if (xmlData[i2] === ">") {
-        if (comment) {
-          if (xmlData[i2 - 1] === "-" && xmlData[i2 - 2] === "-") {
-            comment = false;
-            angleBracketsCount--;
+// node_modules/@aws-sdk/xml-builder/dist-es/XmlNode.js
+var XmlNode = class _XmlNode {
+  constructor(name, children = []) {
+    __publicField(this, "name");
+    __publicField(this, "children");
+    __publicField(this, "attributes", {});
+    this.name = name;
+    this.children = children;
+  }
+  static of(name, childText, withName) {
+    const node = new _XmlNode(name);
+    if (childText !== void 0) {
+      node.addChildNode(new XmlText(childText));
+    }
+    if (withName !== void 0) {
+      node.withName(withName);
+    }
+    return node;
+  }
+  withName(name) {
+    this.name = name;
+    return this;
+  }
+  addAttribute(name, value) {
+    this.attributes[name] = value;
+    return this;
+  }
+  addChildNode(child) {
+    this.children.push(child);
+    return this;
+  }
+  removeAttribute(name) {
+    delete this.attributes[name];
+    return this;
+  }
+  n(name) {
+    this.name = name;
+    return this;
+  }
+  c(child) {
+    this.children.push(child);
+    return this;
+  }
+  a(name, value) {
+    if (value != null) {
+      this.attributes[name] = value;
+    }
+    return this;
+  }
+  cc(input, field, withName = field) {
+    if (input[field] != null) {
+      const node = _XmlNode.of(field, input[field]).withName(withName);
+      this.c(node);
+    }
+  }
+  l(input, listName, memberName, valueProvider) {
+    if (input[listName] != null) {
+      const nodes = valueProvider();
+      nodes.map((node) => {
+        node.withName(memberName);
+        this.c(node);
+      });
+    }
+  }
+  lc(input, listName, memberName, valueProvider) {
+    if (input[listName] != null) {
+      const nodes = valueProvider();
+      const containerNode = new _XmlNode(memberName);
+      nodes.map((node) => {
+        containerNode.c(node);
+      });
+      this.c(containerNode);
+    }
+  }
+  toString() {
+    const hasChildren = Boolean(this.children.length);
+    let xmlText = `<${this.name}`;
+    const attributes = this.attributes;
+    for (const attributeName of Object.keys(attributes)) {
+      const attribute = attributes[attributeName];
+      if (attribute != null) {
+        xmlText += ` ${attributeName}="${escapeAttribute("" + attribute)}"`;
+      }
+    }
+    return xmlText += !hasChildren ? "/>" : `>${this.children.map((c2) => c2.toString()).join("")}</${this.name}>`;
+  }
+};
+
+// node_modules/@aws-sdk/xml-builder/dist-es/xml-parser.browser.js
+var parser;
+function parseXML(xmlString) {
+  if (!parser) {
+    parser = new DOMParser();
+  }
+  const xmlDocument = parser.parseFromString(xmlString, "application/xml");
+  if (xmlDocument.getElementsByTagName("parsererror").length > 0) {
+    throw new Error("DOMParser XML parsing error.");
+  }
+  const xmlToObj = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.textContent?.trim()) {
+        return node.textContent;
+      }
+    }
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const element = node;
+      if (element.attributes.length === 0 && element.childNodes.length === 0) {
+        return "";
+      }
+      const obj = {};
+      const attributes = Array.from(element.attributes);
+      for (const attr of attributes) {
+        obj[`${attr.name}`] = attr.value;
+      }
+      const childNodes = Array.from(element.childNodes);
+      for (const child of childNodes) {
+        const childResult = xmlToObj(child);
+        if (childResult != null) {
+          const childName = child.nodeName;
+          if (childNodes.length === 1 && attributes.length === 0 && childName === "#text") {
+            return childResult;
           }
-        } else {
-          angleBracketsCount--;
-        }
-        if (angleBracketsCount === 0) {
-          break;
-        }
-      } else if (xmlData[i2] === "[") {
-        hasBody = true;
-      } else {
-        exp += xmlData[i2];
-      }
-    }
-    if (angleBracketsCount !== 0) {
-      throw new Error(`Unclosed DOCTYPE`);
-    }
-  } else {
-    throw new Error(`Invalid Tag instead of DOCTYPE`);
-  }
-  return { entities, i: i2 };
-}
-var skipWhitespace = (data, index) => {
-  while (index < data.length && /\s/.test(data[index])) {
-    index++;
-  }
-  return index;
-};
-function readEntityExp(xmlData, i2) {
-  i2 = skipWhitespace(xmlData, i2);
-  let entityName = "";
-  while (i2 < xmlData.length && !/\s/.test(xmlData[i2]) && xmlData[i2] !== '"' && xmlData[i2] !== "'") {
-    entityName += xmlData[i2];
-    i2++;
-  }
-  validateEntityName(entityName);
-  i2 = skipWhitespace(xmlData, i2);
-  if (xmlData.substring(i2, i2 + 6).toUpperCase() === "SYSTEM") {
-    throw new Error("External entities are not supported");
-  } else if (xmlData[i2] === "%") {
-    throw new Error("Parameter entities are not supported");
-  }
-  let entityValue = "";
-  [i2, entityValue] = readIdentifierVal(xmlData, i2, "entity");
-  i2--;
-  return [entityName, entityValue, i2];
-}
-function readNotationExp(xmlData, i2) {
-  i2 = skipWhitespace(xmlData, i2);
-  let notationName = "";
-  while (i2 < xmlData.length && !/\s/.test(xmlData[i2])) {
-    notationName += xmlData[i2];
-    i2++;
-  }
-  validateEntityName(notationName);
-  i2 = skipWhitespace(xmlData, i2);
-  const identifierType = xmlData.substring(i2, i2 + 6).toUpperCase();
-  if (identifierType !== "SYSTEM" && identifierType !== "PUBLIC") {
-    throw new Error(`Expected SYSTEM or PUBLIC, found "${identifierType}"`);
-  }
-  i2 += identifierType.length;
-  i2 = skipWhitespace(xmlData, i2);
-  let publicIdentifier = null;
-  let systemIdentifier = null;
-  if (identifierType === "PUBLIC") {
-    [i2, publicIdentifier] = readIdentifierVal(xmlData, i2, "publicIdentifier");
-    i2 = skipWhitespace(xmlData, i2);
-    if (xmlData[i2] === '"' || xmlData[i2] === "'") {
-      [i2, systemIdentifier] = readIdentifierVal(xmlData, i2, "systemIdentifier");
-    }
-  } else if (identifierType === "SYSTEM") {
-    [i2, systemIdentifier] = readIdentifierVal(xmlData, i2, "systemIdentifier");
-    if (!systemIdentifier) {
-      throw new Error("Missing mandatory system identifier for SYSTEM notation");
-    }
-  }
-  return { notationName, publicIdentifier, systemIdentifier, index: --i2 };
-}
-function readIdentifierVal(xmlData, i2, type) {
-  let identifierVal = "";
-  const startChar = xmlData[i2];
-  if (startChar !== '"' && startChar !== "'") {
-    throw new Error(`Expected quoted string, found "${startChar}"`);
-  }
-  i2++;
-  while (i2 < xmlData.length && xmlData[i2] !== startChar) {
-    identifierVal += xmlData[i2];
-    i2++;
-  }
-  if (xmlData[i2] !== startChar) {
-    throw new Error(`Unterminated ${type} value`);
-  }
-  i2++;
-  return [i2, identifierVal];
-}
-function readElementExp(xmlData, i2) {
-  i2 = skipWhitespace(xmlData, i2);
-  let elementName = "";
-  while (i2 < xmlData.length && !/\s/.test(xmlData[i2])) {
-    elementName += xmlData[i2];
-    i2++;
-  }
-  if (!validateEntityName(elementName)) {
-    throw new Error(`Invalid element name: "${elementName}"`);
-  }
-  i2 = skipWhitespace(xmlData, i2);
-  let contentModel = "";
-  if (xmlData[i2] === "E" && hasSeq(xmlData, "MPTY", i2)) i2 += 4;
-  else if (xmlData[i2] === "A" && hasSeq(xmlData, "NY", i2)) i2 += 2;
-  else if (xmlData[i2] === "(") {
-    i2++;
-    while (i2 < xmlData.length && xmlData[i2] !== ")") {
-      contentModel += xmlData[i2];
-      i2++;
-    }
-    if (xmlData[i2] !== ")") {
-      throw new Error("Unterminated content model");
-    }
-  } else {
-    throw new Error(`Invalid Element Expression, found "${xmlData[i2]}"`);
-  }
-  return {
-    elementName,
-    contentModel: contentModel.trim(),
-    index: i2
-  };
-}
-function hasSeq(data, seq, i2) {
-  for (let j2 = 0; j2 < seq.length; j2++) {
-    if (seq[j2] !== data[i2 + j2 + 1]) return false;
-  }
-  return true;
-}
-function validateEntityName(name) {
-  if (isName(name))
-    return name;
-  else
-    throw new Error(`Invalid entity name ${name}`);
-}
-
-// node_modules/strnum/strnum.js
-var hexRegex = /^[-+]?0x[a-fA-F0-9]+$/;
-var numRegex = /^([\-\+])?(0*)([0-9]*(\.[0-9]*)?)$/;
-var consider = {
-  hex: true,
-  // oct: false,
-  leadingZeros: true,
-  decimalPoint: ".",
-  eNotation: true
-  //skipLike: /regex/
-};
-function toNumber(str, options = {}) {
-  options = Object.assign({}, consider, options);
-  if (!str || typeof str !== "string") return str;
-  let trimmedStr = str.trim();
-  if (options.skipLike !== void 0 && options.skipLike.test(trimmedStr)) return str;
-  else if (str === "0") return 0;
-  else if (options.hex && hexRegex.test(trimmedStr)) {
-    return parse_int(trimmedStr, 16);
-  } else if (trimmedStr.search(/.+[eE].+/) !== -1) {
-    return resolveEnotation(str, trimmedStr, options);
-  } else {
-    const match = numRegex.exec(trimmedStr);
-    if (match) {
-      const sign = match[1] || "";
-      const leadingZeros = match[2];
-      let numTrimmedByZeros = trimZeros(match[3]);
-      const decimalAdjacentToLeadingZeros = sign ? (
-        // 0., -00., 000.
-        str[leadingZeros.length + 1] === "."
-      ) : str[leadingZeros.length] === ".";
-      if (!options.leadingZeros && (leadingZeros.length > 1 || leadingZeros.length === 1 && !decimalAdjacentToLeadingZeros)) {
-        return str;
-      } else {
-        const num = Number(trimmedStr);
-        const parsedStr = String(num);
-        if (num === 0) return num;
-        if (parsedStr.search(/[eE]/) !== -1) {
-          if (options.eNotation) return num;
-          else return str;
-        } else if (trimmedStr.indexOf(".") !== -1) {
-          if (parsedStr === "0") return num;
-          else if (parsedStr === numTrimmedByZeros) return num;
-          else if (parsedStr === `${sign}${numTrimmedByZeros}`) return num;
-          else return str;
-        }
-        let n2 = leadingZeros ? numTrimmedByZeros : trimmedStr;
-        if (leadingZeros) {
-          return n2 === parsedStr || sign + n2 === parsedStr ? num : str;
-        } else {
-          return n2 === parsedStr || n2 === sign + parsedStr ? num : str;
-        }
-      }
-    } else {
-      return str;
-    }
-  }
-}
-var eNotationRegx = /^([-+])?(0*)(\d*(\.\d*)?[eE][-\+]?\d+)$/;
-function resolveEnotation(str, trimmedStr, options) {
-  if (!options.eNotation) return str;
-  const notation = trimmedStr.match(eNotationRegx);
-  if (notation) {
-    let sign = notation[1] || "";
-    const eChar = notation[3].indexOf("e") === -1 ? "E" : "e";
-    const leadingZeros = notation[2];
-    const eAdjacentToLeadingZeros = sign ? (
-      // 0E.
-      str[leadingZeros.length + 1] === eChar
-    ) : str[leadingZeros.length] === eChar;
-    if (leadingZeros.length > 1 && eAdjacentToLeadingZeros) return str;
-    else if (leadingZeros.length === 1 && (notation[3].startsWith(`.${eChar}`) || notation[3][0] === eChar)) {
-      return Number(trimmedStr);
-    } else if (options.leadingZeros && !eAdjacentToLeadingZeros) {
-      trimmedStr = (notation[1] || "") + notation[3];
-      return Number(trimmedStr);
-    } else return str;
-  } else {
-    return str;
-  }
-}
-function trimZeros(numStr) {
-  if (numStr && numStr.indexOf(".") !== -1) {
-    numStr = numStr.replace(/0+$/, "");
-    if (numStr === ".") numStr = "0";
-    else if (numStr[0] === ".") numStr = "0" + numStr;
-    else if (numStr[numStr.length - 1] === ".") numStr = numStr.substring(0, numStr.length - 1);
-    return numStr;
-  }
-  return numStr;
-}
-function parse_int(numStr, base) {
-  if (parseInt) return parseInt(numStr, base);
-  else if (Number.parseInt) return Number.parseInt(numStr, base);
-  else if (window && window.parseInt) return window.parseInt(numStr, base);
-  else throw new Error("parseInt, Number.parseInt, window.parseInt are not supported");
-}
-
-// node_modules/fast-xml-parser/src/ignoreAttributes.js
-function getIgnoreAttributesFn(ignoreAttributes) {
-  if (typeof ignoreAttributes === "function") {
-    return ignoreAttributes;
-  }
-  if (Array.isArray(ignoreAttributes)) {
-    return (attrName) => {
-      for (const pattern of ignoreAttributes) {
-        if (typeof pattern === "string" && attrName === pattern) {
-          return true;
-        }
-        if (pattern instanceof RegExp && pattern.test(attrName)) {
-          return true;
-        }
-      }
-    };
-  }
-  return () => false;
-}
-
-// node_modules/fast-xml-parser/src/xmlparser/OrderedObjParser.js
-var OrderedObjParser = class {
-  constructor(options) {
-    this.options = options;
-    this.currentNode = null;
-    this.tagsNodeStack = [];
-    this.docTypeEntities = {};
-    this.lastEntities = {
-      "apos": { regex: /&(apos|#39|#x27);/g, val: "'" },
-      "gt": { regex: /&(gt|#62|#x3E);/g, val: ">" },
-      "lt": { regex: /&(lt|#60|#x3C);/g, val: "<" },
-      "quot": { regex: /&(quot|#34|#x22);/g, val: '"' }
-    };
-    this.ampEntity = { regex: /&(amp|#38|#x26);/g, val: "&" };
-    this.htmlEntities = {
-      "space": { regex: /&(nbsp|#160);/g, val: " " },
-      // "lt" : { regex: /&(lt|#60);/g, val: "<" },
-      // "gt" : { regex: /&(gt|#62);/g, val: ">" },
-      // "amp" : { regex: /&(amp|#38);/g, val: "&" },
-      // "quot" : { regex: /&(quot|#34);/g, val: "\"" },
-      // "apos" : { regex: /&(apos|#39);/g, val: "'" },
-      "cent": { regex: /&(cent|#162);/g, val: "\xA2" },
-      "pound": { regex: /&(pound|#163);/g, val: "\xA3" },
-      "yen": { regex: /&(yen|#165);/g, val: "\xA5" },
-      "euro": { regex: /&(euro|#8364);/g, val: "\u20AC" },
-      "copyright": { regex: /&(copy|#169);/g, val: "\xA9" },
-      "reg": { regex: /&(reg|#174);/g, val: "\xAE" },
-      "inr": { regex: /&(inr|#8377);/g, val: "\u20B9" },
-      "num_dec": { regex: /&#([0-9]{1,7});/g, val: (_, str) => String.fromCodePoint(Number.parseInt(str, 10)) },
-      "num_hex": { regex: /&#x([0-9a-fA-F]{1,6});/g, val: (_, str) => String.fromCodePoint(Number.parseInt(str, 16)) }
-    };
-    this.addExternalEntities = addExternalEntities;
-    this.parseXml = parseXml;
-    this.parseTextData = parseTextData;
-    this.resolveNameSpace = resolveNameSpace;
-    this.buildAttributesMap = buildAttributesMap;
-    this.isItStopNode = isItStopNode;
-    this.replaceEntitiesValue = replaceEntitiesValue;
-    this.readStopNodeData = readStopNodeData;
-    this.saveTextToParentTag = saveTextToParentTag;
-    this.addChild = addChild;
-    this.ignoreAttributesFn = getIgnoreAttributesFn(this.options.ignoreAttributes);
-  }
-};
-function addExternalEntities(externalEntities) {
-  const entKeys = Object.keys(externalEntities);
-  for (let i2 = 0; i2 < entKeys.length; i2++) {
-    const ent = entKeys[i2];
-    this.lastEntities[ent] = {
-      regex: new RegExp("&" + ent + ";", "g"),
-      val: externalEntities[ent]
-    };
-  }
-}
-function parseTextData(val, tagName, jPath, dontTrim, hasAttributes, isLeafNode, escapeEntities) {
-  if (val !== void 0) {
-    if (this.options.trimValues && !dontTrim) {
-      val = val.trim();
-    }
-    if (val.length > 0) {
-      if (!escapeEntities) val = this.replaceEntitiesValue(val);
-      const newval = this.options.tagValueProcessor(tagName, val, jPath, hasAttributes, isLeafNode);
-      if (newval === null || newval === void 0) {
-        return val;
-      } else if (typeof newval !== typeof val || newval !== val) {
-        return newval;
-      } else if (this.options.trimValues) {
-        return parseValue(val, this.options.parseTagValue, this.options.numberParseOptions);
-      } else {
-        const trimmedVal = val.trim();
-        if (trimmedVal === val) {
-          return parseValue(val, this.options.parseTagValue, this.options.numberParseOptions);
-        } else {
-          return val;
-        }
-      }
-    }
-  }
-}
-function resolveNameSpace(tagname) {
-  if (this.options.removeNSPrefix) {
-    const tags = tagname.split(":");
-    const prefix = tagname.charAt(0) === "/" ? "/" : "";
-    if (tags[0] === "xmlns") {
-      return "";
-    }
-    if (tags.length === 2) {
-      tagname = prefix + tags[1];
-    }
-  }
-  return tagname;
-}
-var attrsRegx = new RegExp(`([^\\s=]+)\\s*(=\\s*(['"])([\\s\\S]*?)\\3)?`, "gm");
-function buildAttributesMap(attrStr, jPath, tagName) {
-  if (this.options.ignoreAttributes !== true && typeof attrStr === "string") {
-    const matches = getAllMatches(attrStr, attrsRegx);
-    const len = matches.length;
-    const attrs = {};
-    for (let i2 = 0; i2 < len; i2++) {
-      const attrName = this.resolveNameSpace(matches[i2][1]);
-      if (this.ignoreAttributesFn(attrName, jPath)) {
-        continue;
-      }
-      let oldVal = matches[i2][4];
-      let aName = this.options.attributeNamePrefix + attrName;
-      if (attrName.length) {
-        if (this.options.transformAttributeName) {
-          aName = this.options.transformAttributeName(aName);
-        }
-        if (aName === "__proto__") aName = "#__proto__";
-        if (oldVal !== void 0) {
-          if (this.options.trimValues) {
-            oldVal = oldVal.trim();
-          }
-          oldVal = this.replaceEntitiesValue(oldVal);
-          const newVal = this.options.attributeValueProcessor(attrName, oldVal, jPath);
-          if (newVal === null || newVal === void 0) {
-            attrs[aName] = oldVal;
-          } else if (typeof newVal !== typeof oldVal || newVal !== oldVal) {
-            attrs[aName] = newVal;
+          if (obj[childName]) {
+            if (Array.isArray(obj[childName])) {
+              obj[childName].push(childResult);
+            } else {
+              obj[childName] = [obj[childName], childResult];
+            }
           } else {
-            attrs[aName] = parseValue(
-              oldVal,
-              this.options.parseAttributeValue,
-              this.options.numberParseOptions
-            );
+            obj[childName] = childResult;
           }
-        } else if (this.options.allowBooleanAttributes) {
-          attrs[aName] = true;
+        } else if (childNodes.length === 1 && attributes.length === 0) {
+          return element.textContent;
         }
       }
+      return obj;
     }
-    if (!Object.keys(attrs).length) {
+    return null;
+  };
+  return {
+    [xmlDocument.documentElement.nodeName]: xmlToObj(xmlDocument.documentElement)
+  };
+}
+
+// node_modules/@aws-sdk/core/dist-es/submodules/protocols/xml/XmlShapeDeserializer.js
+init_dist_es();
+var XmlShapeDeserializer = class extends SerdeContextConfig {
+  constructor(settings) {
+    super();
+    __publicField(this, "settings");
+    __publicField(this, "stringDeserializer");
+    this.settings = settings;
+    this.stringDeserializer = new FromStringShapeDeserializer(settings);
+  }
+  setSerdeContext(serdeContext) {
+    this.serdeContext = serdeContext;
+    this.stringDeserializer.setSerdeContext(serdeContext);
+  }
+  read(schema, bytes, key) {
+    const ns = NormalizedSchema.of(schema);
+    const memberSchemas = ns.getMemberSchemas();
+    const isEventPayload = ns.isStructSchema() && ns.isMemberSchema() && !!Object.values(memberSchemas).find((memberNs) => {
+      return !!memberNs.getMemberTraits().eventPayload;
+    });
+    if (isEventPayload) {
+      const output = {};
+      const memberName = Object.keys(memberSchemas)[0];
+      const eventMemberSchema = memberSchemas[memberName];
+      if (eventMemberSchema.isBlobSchema()) {
+        output[memberName] = bytes;
+      } else {
+        output[memberName] = this.read(memberSchemas[memberName], bytes);
+      }
+      return output;
+    }
+    const xmlString = (this.serdeContext?.utf8Encoder ?? toUtf8)(bytes);
+    const parsedObject = this.parseXml(xmlString);
+    return this.readSchema(schema, key ? parsedObject[key] : parsedObject);
+  }
+  readSchema(_schema, value) {
+    const ns = NormalizedSchema.of(_schema);
+    if (ns.isUnitSchema()) {
       return;
     }
-    if (this.options.attributesGroupName) {
-      const attrCollection = {};
-      attrCollection[this.options.attributesGroupName] = attrs;
-      return attrCollection;
+    const traits = ns.getMergedTraits();
+    if (ns.isListSchema() && !Array.isArray(value)) {
+      return this.readSchema(ns, [value]);
     }
-    return attrs;
-  }
-}
-var parseXml = function(xmlData) {
-  xmlData = xmlData.replace(/\r\n?/g, "\n");
-  const xmlObj = new XmlNode("!xml");
-  let currentNode = xmlObj;
-  let textData = "";
-  let jPath = "";
-  for (let i2 = 0; i2 < xmlData.length; i2++) {
-    const ch2 = xmlData[i2];
-    if (ch2 === "<") {
-      if (xmlData[i2 + 1] === "/") {
-        const closeIndex = findClosingIndex(xmlData, ">", i2, "Closing Tag is not closed.");
-        let tagName = xmlData.substring(i2 + 2, closeIndex).trim();
-        if (this.options.removeNSPrefix) {
-          const colonIndex = tagName.indexOf(":");
-          if (colonIndex !== -1) {
-            tagName = tagName.substr(colonIndex + 1);
+    if (value == null) {
+      return value;
+    }
+    if (typeof value === "object") {
+      const sparse = !!traits.sparse;
+      const flat = !!traits.xmlFlattened;
+      if (ns.isListSchema()) {
+        const listValue = ns.getValueSchema();
+        const buffer2 = [];
+        const sourceKey = listValue.getMergedTraits().xmlName ?? "member";
+        const source = flat ? value : (value[0] ?? value)[sourceKey];
+        const sourceArray = Array.isArray(source) ? source : [source];
+        for (const v2 of sourceArray) {
+          if (v2 != null || sparse) {
+            buffer2.push(this.readSchema(listValue, v2));
           }
         }
-        if (this.options.transformTagName) {
-          tagName = this.options.transformTagName(tagName);
-        }
-        if (currentNode) {
-          textData = this.saveTextToParentTag(textData, currentNode, jPath);
-        }
-        const lastTagName = jPath.substring(jPath.lastIndexOf(".") + 1);
-        if (tagName && this.options.unpairedTags.indexOf(tagName) !== -1) {
-          throw new Error(`Unpaired tag can not be used as closing tag: </${tagName}>`);
-        }
-        let propIndex = 0;
-        if (lastTagName && this.options.unpairedTags.indexOf(lastTagName) !== -1) {
-          propIndex = jPath.lastIndexOf(".", jPath.lastIndexOf(".") - 1);
-          this.tagsNodeStack.pop();
+        return buffer2;
+      }
+      const buffer = {};
+      if (ns.isMapSchema()) {
+        const keyNs = ns.getKeySchema();
+        const memberNs = ns.getValueSchema();
+        let entries;
+        if (flat) {
+          entries = Array.isArray(value) ? value : [value];
         } else {
-          propIndex = jPath.lastIndexOf(".");
+          entries = Array.isArray(value.entry) ? value.entry : [value.entry];
         }
-        jPath = jPath.substring(0, propIndex);
-        currentNode = this.tagsNodeStack.pop();
-        textData = "";
-        i2 = closeIndex;
-      } else if (xmlData[i2 + 1] === "?") {
-        let tagData = readTagExp(xmlData, i2, false, "?>");
-        if (!tagData) throw new Error("Pi Tag is not closed.");
-        textData = this.saveTextToParentTag(textData, currentNode, jPath);
-        if (this.options.ignoreDeclaration && tagData.tagName === "?xml" || this.options.ignorePiTags) {
-        } else {
-          const childNode = new XmlNode(tagData.tagName);
-          childNode.add(this.options.textNodeName, "");
-          if (tagData.tagName !== tagData.tagExp && tagData.attrExpPresent) {
-            childNode[":@"] = this.buildAttributesMap(tagData.tagExp, jPath, tagData.tagName);
-          }
-          this.addChild(currentNode, childNode, jPath, i2);
-        }
-        i2 = tagData.closeIndex + 1;
-      } else if (xmlData.substr(i2 + 1, 3) === "!--") {
-        const endIndex = findClosingIndex(xmlData, "-->", i2 + 4, "Comment is not closed.");
-        if (this.options.commentPropName) {
-          const comment = xmlData.substring(i2 + 4, endIndex - 2);
-          textData = this.saveTextToParentTag(textData, currentNode, jPath);
-          currentNode.add(this.options.commentPropName, [{ [this.options.textNodeName]: comment }]);
-        }
-        i2 = endIndex;
-      } else if (xmlData.substr(i2 + 1, 2) === "!D") {
-        const result = readDocType(xmlData, i2);
-        this.docTypeEntities = result.entities;
-        i2 = result.i;
-      } else if (xmlData.substr(i2 + 1, 2) === "![") {
-        const closeIndex = findClosingIndex(xmlData, "]]>", i2, "CDATA is not closed.") - 2;
-        const tagExp = xmlData.substring(i2 + 9, closeIndex);
-        textData = this.saveTextToParentTag(textData, currentNode, jPath);
-        let val = this.parseTextData(tagExp, currentNode.tagname, jPath, true, false, true, true);
-        if (val == void 0) val = "";
-        if (this.options.cdataPropName) {
-          currentNode.add(this.options.cdataPropName, [{ [this.options.textNodeName]: tagExp }]);
-        } else {
-          currentNode.add(this.options.textNodeName, val);
-        }
-        i2 = closeIndex + 2;
-      } else {
-        let result = readTagExp(xmlData, i2, this.options.removeNSPrefix);
-        let tagName = result.tagName;
-        const rawTagName = result.rawTagName;
-        let tagExp = result.tagExp;
-        let attrExpPresent = result.attrExpPresent;
-        let closeIndex = result.closeIndex;
-        if (this.options.transformTagName) {
-          tagName = this.options.transformTagName(tagName);
-        }
-        if (currentNode && textData) {
-          if (currentNode.tagname !== "!xml") {
-            textData = this.saveTextToParentTag(textData, currentNode, jPath, false);
+        const keyProperty = keyNs.getMergedTraits().xmlName ?? "key";
+        const valueProperty = memberNs.getMergedTraits().xmlName ?? "value";
+        for (const entry of entries) {
+          const key = entry[keyProperty];
+          const value2 = entry[valueProperty];
+          if (value2 != null || sparse) {
+            buffer[key] = this.readSchema(memberNs, value2);
           }
         }
-        const lastTag = currentNode;
-        if (lastTag && this.options.unpairedTags.indexOf(lastTag.tagname) !== -1) {
-          currentNode = this.tagsNodeStack.pop();
-          jPath = jPath.substring(0, jPath.lastIndexOf("."));
-        }
-        if (tagName !== xmlObj.tagname) {
-          jPath += jPath ? "." + tagName : tagName;
-        }
-        const startIndex = i2;
-        if (this.isItStopNode(this.options.stopNodes, jPath, tagName)) {
-          let tagContent = "";
-          if (tagExp.length > 0 && tagExp.lastIndexOf("/") === tagExp.length - 1) {
-            if (tagName[tagName.length - 1] === "/") {
-              tagName = tagName.substr(0, tagName.length - 1);
-              jPath = jPath.substr(0, jPath.length - 1);
-              tagExp = tagName;
-            } else {
-              tagExp = tagExp.substr(0, tagExp.length - 1);
-            }
-            i2 = result.closeIndex;
-          } else if (this.options.unpairedTags.indexOf(tagName) !== -1) {
-            i2 = result.closeIndex;
-          } else {
-            const result2 = this.readStopNodeData(xmlData, rawTagName, closeIndex + 1);
-            if (!result2) throw new Error(`Unexpected end of ${rawTagName}`);
-            i2 = result2.i;
-            tagContent = result2.tagContent;
-          }
-          const childNode = new XmlNode(tagName);
-          if (tagName !== tagExp && attrExpPresent) {
-            childNode[":@"] = this.buildAttributesMap(tagExp, jPath, tagName);
-          }
-          if (tagContent) {
-            tagContent = this.parseTextData(tagContent, tagName, jPath, true, attrExpPresent, true, true);
-          }
-          jPath = jPath.substr(0, jPath.lastIndexOf("."));
-          childNode.add(this.options.textNodeName, tagContent);
-          this.addChild(currentNode, childNode, jPath, startIndex);
-        } else {
-          if (tagExp.length > 0 && tagExp.lastIndexOf("/") === tagExp.length - 1) {
-            if (tagName[tagName.length - 1] === "/") {
-              tagName = tagName.substr(0, tagName.length - 1);
-              jPath = jPath.substr(0, jPath.length - 1);
-              tagExp = tagName;
-            } else {
-              tagExp = tagExp.substr(0, tagExp.length - 1);
-            }
-            if (this.options.transformTagName) {
-              tagName = this.options.transformTagName(tagName);
-            }
-            const childNode = new XmlNode(tagName);
-            if (tagName !== tagExp && attrExpPresent) {
-              childNode[":@"] = this.buildAttributesMap(tagExp, jPath, tagName);
-            }
-            this.addChild(currentNode, childNode, jPath, startIndex);
-            jPath = jPath.substr(0, jPath.lastIndexOf("."));
-          } else {
-            const childNode = new XmlNode(tagName);
-            this.tagsNodeStack.push(currentNode);
-            if (tagName !== tagExp && attrExpPresent) {
-              childNode[":@"] = this.buildAttributesMap(tagExp, jPath, tagName);
-            }
-            this.addChild(currentNode, childNode, jPath, startIndex);
-            currentNode = childNode;
-          }
-          textData = "";
-          i2 = closeIndex;
-        }
+        return buffer;
       }
-    } else {
-      textData += xmlData[i2];
-    }
-  }
-  return xmlObj.child;
-};
-function addChild(currentNode, childNode, jPath, startIndex) {
-  if (!this.options.captureMetaData) startIndex = void 0;
-  const result = this.options.updateTag(childNode.tagname, jPath, childNode[":@"]);
-  if (result === false) {
-  } else if (typeof result === "string") {
-    childNode.tagname = result;
-    currentNode.addChild(childNode, startIndex);
-  } else {
-    currentNode.addChild(childNode, startIndex);
-  }
-}
-var replaceEntitiesValue = function(val) {
-  if (this.options.processEntities) {
-    for (let entityName in this.docTypeEntities) {
-      const entity = this.docTypeEntities[entityName];
-      val = val.replace(entity.regx, entity.val);
-    }
-    for (let entityName in this.lastEntities) {
-      const entity = this.lastEntities[entityName];
-      val = val.replace(entity.regex, entity.val);
-    }
-    if (this.options.htmlEntities) {
-      for (let entityName in this.htmlEntities) {
-        const entity = this.htmlEntities[entityName];
-        val = val.replace(entity.regex, entity.val);
-      }
-    }
-    val = val.replace(this.ampEntity.regex, this.ampEntity.val);
-  }
-  return val;
-};
-function saveTextToParentTag(textData, currentNode, jPath, isLeafNode) {
-  if (textData) {
-    if (isLeafNode === void 0) isLeafNode = currentNode.child.length === 0;
-    textData = this.parseTextData(
-      textData,
-      currentNode.tagname,
-      jPath,
-      false,
-      currentNode[":@"] ? Object.keys(currentNode[":@"]).length !== 0 : false,
-      isLeafNode
-    );
-    if (textData !== void 0 && textData !== "")
-      currentNode.add(this.options.textNodeName, textData);
-    textData = "";
-  }
-  return textData;
-}
-function isItStopNode(stopNodes, jPath, currentTagName) {
-  const allNodesExp = "*." + currentTagName;
-  for (const stopNodePath in stopNodes) {
-    const stopNodeExp = stopNodes[stopNodePath];
-    if (allNodesExp === stopNodeExp || jPath === stopNodeExp) return true;
-  }
-  return false;
-}
-function tagExpWithClosingIndex(xmlData, i2, closingChar = ">") {
-  let attrBoundary;
-  let tagExp = "";
-  for (let index = i2; index < xmlData.length; index++) {
-    let ch2 = xmlData[index];
-    if (attrBoundary) {
-      if (ch2 === attrBoundary) attrBoundary = "";
-    } else if (ch2 === '"' || ch2 === "'") {
-      attrBoundary = ch2;
-    } else if (ch2 === closingChar[0]) {
-      if (closingChar[1]) {
-        if (xmlData[index + 1] === closingChar[1]) {
-          return {
-            data: tagExp,
-            index
-          };
-        }
-      } else {
-        return {
-          data: tagExp,
-          index
-        };
-      }
-    } else if (ch2 === "	") {
-      ch2 = " ";
-    }
-    tagExp += ch2;
-  }
-}
-function findClosingIndex(xmlData, str, i2, errMsg) {
-  const closingIndex = xmlData.indexOf(str, i2);
-  if (closingIndex === -1) {
-    throw new Error(errMsg);
-  } else {
-    return closingIndex + str.length - 1;
-  }
-}
-function readTagExp(xmlData, i2, removeNSPrefix, closingChar = ">") {
-  const result = tagExpWithClosingIndex(xmlData, i2 + 1, closingChar);
-  if (!result) return;
-  let tagExp = result.data;
-  const closeIndex = result.index;
-  const separatorIndex = tagExp.search(/\s/);
-  let tagName = tagExp;
-  let attrExpPresent = true;
-  if (separatorIndex !== -1) {
-    tagName = tagExp.substring(0, separatorIndex);
-    tagExp = tagExp.substring(separatorIndex + 1).trimStart();
-  }
-  const rawTagName = tagName;
-  if (removeNSPrefix) {
-    const colonIndex = tagName.indexOf(":");
-    if (colonIndex !== -1) {
-      tagName = tagName.substr(colonIndex + 1);
-      attrExpPresent = tagName !== result.data.substr(colonIndex + 1);
-    }
-  }
-  return {
-    tagName,
-    tagExp,
-    closeIndex,
-    attrExpPresent,
-    rawTagName
-  };
-}
-function readStopNodeData(xmlData, tagName, i2) {
-  const startIndex = i2;
-  let openTagCount = 1;
-  for (; i2 < xmlData.length; i2++) {
-    if (xmlData[i2] === "<") {
-      if (xmlData[i2 + 1] === "/") {
-        const closeIndex = findClosingIndex(xmlData, ">", i2, `${tagName} is not closed`);
-        let closeTagName = xmlData.substring(i2 + 2, closeIndex).trim();
-        if (closeTagName === tagName) {
-          openTagCount--;
-          if (openTagCount === 0) {
-            return {
-              tagContent: xmlData.substring(startIndex, i2),
-              i: closeIndex
-            };
+      if (ns.isStructSchema()) {
+        for (const [memberName, memberSchema] of ns.structIterator()) {
+          const memberTraits = memberSchema.getMergedTraits();
+          const xmlObjectKey = !memberTraits.httpPayload ? memberSchema.getMemberTraits().xmlName ?? memberName : memberTraits.xmlName ?? memberSchema.getName();
+          if (value[xmlObjectKey] != null) {
+            buffer[memberName] = this.readSchema(memberSchema, value[xmlObjectKey]);
           }
         }
-        i2 = closeIndex;
-      } else if (xmlData[i2 + 1] === "?") {
-        const closeIndex = findClosingIndex(xmlData, "?>", i2 + 1, "StopNode is not closed.");
-        i2 = closeIndex;
-      } else if (xmlData.substr(i2 + 1, 3) === "!--") {
-        const closeIndex = findClosingIndex(xmlData, "-->", i2 + 3, "StopNode is not closed.");
-        i2 = closeIndex;
-      } else if (xmlData.substr(i2 + 1, 2) === "![") {
-        const closeIndex = findClosingIndex(xmlData, "]]>", i2, "StopNode is not closed.") - 2;
-        i2 = closeIndex;
-      } else {
-        const tagData = readTagExp(xmlData, i2, ">");
-        if (tagData) {
-          const openTagName = tagData && tagData.tagName;
-          if (openTagName === tagName && tagData.tagExp[tagData.tagExp.length - 1] !== "/") {
-            openTagCount++;
-          }
-          i2 = tagData.closeIndex;
+        return buffer;
+      }
+      if (ns.isDocumentSchema()) {
+        return value;
+      }
+      throw new Error(`@aws-sdk/core/protocols - xml deserializer unhandled schema type for ${ns.getName(true)}`);
+    }
+    if (ns.isListSchema()) {
+      return [];
+    }
+    if (ns.isMapSchema() || ns.isStructSchema()) {
+      return {};
+    }
+    return this.stringDeserializer.read(ns, value);
+  }
+  parseXml(xml) {
+    if (xml.length) {
+      let parsedObj;
+      try {
+        parsedObj = parseXML(xml);
+      } catch (e2) {
+        if (e2 && typeof e2 === "object") {
+          Object.defineProperty(e2, "$responseBodyText", {
+            value: xml
+          });
         }
+        throw e2;
       }
-    }
-  }
-}
-function parseValue(val, shouldParse, options) {
-  if (shouldParse && typeof val === "string") {
-    const newval = val.trim();
-    if (newval === "true") return true;
-    else if (newval === "false") return false;
-    else return toNumber(val, options);
-  } else {
-    if (isExist(val)) {
-      return val;
-    } else {
-      return "";
-    }
-  }
-}
-
-// node_modules/fast-xml-parser/src/xmlparser/node2json.js
-var METADATA_SYMBOL2 = XmlNode.getMetaDataSymbol();
-function prettify(node, options) {
-  return compress(node, options);
-}
-function compress(arr, options, jPath) {
-  let text;
-  const compressedObj = {};
-  for (let i2 = 0; i2 < arr.length; i2++) {
-    const tagObj = arr[i2];
-    const property = propName(tagObj);
-    let newJpath = "";
-    if (jPath === void 0) newJpath = property;
-    else newJpath = jPath + "." + property;
-    if (property === options.textNodeName) {
-      if (text === void 0) text = tagObj[property];
-      else text += "" + tagObj[property];
-    } else if (property === void 0) {
-      continue;
-    } else if (tagObj[property]) {
-      let val = compress(tagObj[property], options, newJpath);
-      const isLeaf = isLeafTag(val, options);
-      if (tagObj[METADATA_SYMBOL2] !== void 0) {
-        val[METADATA_SYMBOL2] = tagObj[METADATA_SYMBOL2];
+      const textNodeName = "#text";
+      const key = Object.keys(parsedObj)[0];
+      const parsedObjToReturn = parsedObj[key];
+      if (parsedObjToReturn[textNodeName]) {
+        parsedObjToReturn[key] = parsedObjToReturn[textNodeName];
+        delete parsedObjToReturn[textNodeName];
       }
-      if (tagObj[":@"]) {
-        assignAttributes(val, tagObj[":@"], newJpath, options);
-      } else if (Object.keys(val).length === 1 && val[options.textNodeName] !== void 0 && !options.alwaysCreateTextNode) {
-        val = val[options.textNodeName];
-      } else if (Object.keys(val).length === 0) {
-        if (options.alwaysCreateTextNode) val[options.textNodeName] = "";
-        else val = "";
-      }
-      if (compressedObj[property] !== void 0 && compressedObj.hasOwnProperty(property)) {
-        if (!Array.isArray(compressedObj[property])) {
-          compressedObj[property] = [compressedObj[property]];
-        }
-        compressedObj[property].push(val);
-      } else {
-        if (options.isArray(property, newJpath, isLeaf)) {
-          compressedObj[property] = [val];
-        } else {
-          compressedObj[property] = val;
-        }
-      }
+      return getValueFromTextNode(parsedObjToReturn);
     }
-  }
-  if (typeof text === "string") {
-    if (text.length > 0) compressedObj[options.textNodeName] = text;
-  } else if (text !== void 0) compressedObj[options.textNodeName] = text;
-  return compressedObj;
-}
-function propName(obj) {
-  const keys = Object.keys(obj);
-  for (let i2 = 0; i2 < keys.length; i2++) {
-    const key = keys[i2];
-    if (key !== ":@") return key;
-  }
-}
-function assignAttributes(obj, attrMap, jpath, options) {
-  if (attrMap) {
-    const keys = Object.keys(attrMap);
-    const len = keys.length;
-    for (let i2 = 0; i2 < len; i2++) {
-      const atrrName = keys[i2];
-      if (options.isArray(atrrName, jpath + "." + atrrName, true, true)) {
-        obj[atrrName] = [attrMap[atrrName]];
-      } else {
-        obj[atrrName] = attrMap[atrrName];
-      }
-    }
-  }
-}
-function isLeafTag(obj, options) {
-  const { textNodeName } = options;
-  const propCount = Object.keys(obj).length;
-  if (propCount === 0) {
-    return true;
-  }
-  if (propCount === 1 && (obj[textNodeName] || typeof obj[textNodeName] === "boolean" || obj[textNodeName] === 0)) {
-    return true;
-  }
-  return false;
-}
-
-// node_modules/fast-xml-parser/src/xmlparser/XMLParser.js
-var XMLParser = class {
-  constructor(options) {
-    this.externalEntities = {};
-    this.options = buildOptions(options);
-  }
-  /**
-   * Parse XML dats to JS object 
-   * @param {string|Buffer} xmlData 
-   * @param {boolean|Object} validationOption 
-   */
-  parse(xmlData, validationOption) {
-    if (typeof xmlData === "string") {
-    } else if (xmlData.toString) {
-      xmlData = xmlData.toString();
-    } else {
-      throw new Error("XML data is accepted in String or Bytes[] form.");
-    }
-    if (validationOption) {
-      if (validationOption === true) validationOption = {};
-      const result = validate(xmlData, validationOption);
-      if (result !== true) {
-        throw Error(`${result.err.msg}:${result.err.line}:${result.err.col}`);
-      }
-    }
-    const orderedObjParser = new OrderedObjParser(this.options);
-    orderedObjParser.addExternalEntities(this.externalEntities);
-    const orderedResult = orderedObjParser.parseXml(xmlData);
-    if (this.options.preserveOrder || orderedResult === void 0) return orderedResult;
-    else return prettify(orderedResult, this.options);
-  }
-  /**
-   * Add Entity which is not by default supported by this library
-   * @param {string} key 
-   * @param {string} value 
-   */
-  addEntity(key, value) {
-    if (value.indexOf("&") !== -1) {
-      throw new Error("Entity value can't have '&'");
-    } else if (key.indexOf("&") !== -1 || key.indexOf(";") !== -1) {
-      throw new Error("An entity must be set without '&' and ';'. Eg. use '#xD' for '&#xD;'");
-    } else if (value === "&") {
-      throw new Error("An entity with value '&' is not permitted");
-    } else {
-      this.externalEntities[key] = value;
-    }
-  }
-  /**
-   * Returns a Symbol that can be used to access the metadata
-   * property on a node.
-   * 
-   * If Symbol is not available in the environment, an ordinary property is used
-   * and the name of the property is here returned.
-   * 
-   * The XMLMetaData property is only present when `captureMetaData`
-   * is true in the options.
-   */
-  static getMetaDataSymbol() {
-    return XmlNode.getMetaDataSymbol();
+    return {};
   }
 };
 
 // node_modules/@aws-sdk/core/dist-es/submodules/protocols/xml/parseXmlBody.js
-var parseXmlBody = (streamBody, context) => collectBodyString(streamBody, context).then((encoded) => {
-  if (encoded.length) {
-    const parser = new XMLParser({
-      attributeNamePrefix: "",
-      htmlEntities: true,
-      ignoreAttributes: false,
-      ignoreDeclaration: true,
-      parseTagValue: false,
-      trimValues: false,
-      tagValueProcessor: (_, val) => val.trim() === "" && val.includes("\n") ? "" : void 0
-    });
-    parser.addEntity("#xD", "\r");
-    parser.addEntity("#10", "\n");
-    let parsedObj;
-    try {
-      parsedObj = parser.parse(encoded, true);
-    } catch (e2) {
-      if (e2 && typeof e2 === "object") {
-        Object.defineProperty(e2, "$responseBodyText", {
-          value: encoded
-        });
-      }
-      throw e2;
-    }
-    const textNodeName = "#text";
-    const key = Object.keys(parsedObj)[0];
-    const parsedObjToReturn = parsedObj[key];
-    if (parsedObjToReturn[textNodeName]) {
-      parsedObjToReturn[key] = parsedObjToReturn[textNodeName];
-      delete parsedObjToReturn[textNodeName];
-    }
-    return getValueFromTextNode(parsedObjToReturn);
-  }
-  return {};
-});
-var parseXmlErrorBody = async (errorBody, context) => {
-  const value = await parseXmlBody(errorBody, context);
-  if (value.Error) {
-    value.Error.message = value.Error.message ?? value.Error.Message;
-  }
-  return value;
-};
 var loadRestXmlErrorCode = (output, data) => {
   if (data?.Error?.Code !== void 0) {
     return data.Error.Code;
@@ -5642,6 +5363,352 @@ var loadRestXmlErrorCode = (output, data) => {
   }
   if (output.statusCode == 404) {
     return "NotFound";
+  }
+};
+
+// node_modules/@aws-sdk/core/dist-es/submodules/protocols/xml/XmlShapeSerializer.js
+var XmlShapeSerializer = class extends SerdeContextConfig {
+  constructor(settings) {
+    super();
+    __publicField(this, "settings");
+    __publicField(this, "stringBuffer");
+    __publicField(this, "byteBuffer");
+    __publicField(this, "buffer");
+    this.settings = settings;
+  }
+  write(schema, value) {
+    const ns = NormalizedSchema.of(schema);
+    if (ns.isStringSchema() && typeof value === "string") {
+      this.stringBuffer = value;
+    } else if (ns.isBlobSchema()) {
+      this.byteBuffer = "byteLength" in value ? value : (this.serdeContext?.base64Decoder ?? fromBase64)(value);
+    } else {
+      this.buffer = this.writeStruct(ns, value, void 0);
+      const traits = ns.getMergedTraits();
+      if (traits.httpPayload && !traits.xmlName) {
+        this.buffer.withName(ns.getName());
+      }
+    }
+  }
+  flush() {
+    if (this.byteBuffer !== void 0) {
+      const bytes = this.byteBuffer;
+      delete this.byteBuffer;
+      return bytes;
+    }
+    if (this.stringBuffer !== void 0) {
+      const str = this.stringBuffer;
+      delete this.stringBuffer;
+      return str;
+    }
+    const buffer = this.buffer;
+    if (this.settings.xmlNamespace) {
+      if (!buffer?.attributes?.["xmlns"]) {
+        buffer.addAttribute("xmlns", this.settings.xmlNamespace);
+      }
+    }
+    delete this.buffer;
+    return buffer.toString();
+  }
+  writeStruct(ns, value, parentXmlns) {
+    const traits = ns.getMergedTraits();
+    const name = ns.isMemberSchema() && !traits.httpPayload ? ns.getMemberTraits().xmlName ?? ns.getMemberName() : traits.xmlName ?? ns.getName();
+    if (!name || !ns.isStructSchema()) {
+      throw new Error(`@aws-sdk/core/protocols - xml serializer, cannot write struct with empty name or non-struct, schema=${ns.getName(true)}.`);
+    }
+    const structXmlNode = XmlNode.of(name);
+    const [xmlnsAttr, xmlns] = this.getXmlnsAttribute(ns, parentXmlns);
+    for (const [memberName, memberSchema] of serializingStructIterator(ns, value)) {
+      const val = value[memberName];
+      if (val != null || memberSchema.isIdempotencyToken()) {
+        if (memberSchema.getMergedTraits().xmlAttribute) {
+          structXmlNode.addAttribute(memberSchema.getMergedTraits().xmlName ?? memberName, this.writeSimple(memberSchema, val));
+          continue;
+        }
+        if (memberSchema.isListSchema()) {
+          this.writeList(memberSchema, val, structXmlNode, xmlns);
+        } else if (memberSchema.isMapSchema()) {
+          this.writeMap(memberSchema, val, structXmlNode, xmlns);
+        } else if (memberSchema.isStructSchema()) {
+          structXmlNode.addChildNode(this.writeStruct(memberSchema, val, xmlns));
+        } else {
+          const memberNode = XmlNode.of(memberSchema.getMergedTraits().xmlName ?? memberSchema.getMemberName());
+          this.writeSimpleInto(memberSchema, val, memberNode, xmlns);
+          structXmlNode.addChildNode(memberNode);
+        }
+      }
+    }
+    if (xmlns) {
+      structXmlNode.addAttribute(xmlnsAttr, xmlns);
+    }
+    return structXmlNode;
+  }
+  writeList(listMember, array, container, parentXmlns) {
+    if (!listMember.isMemberSchema()) {
+      throw new Error(`@aws-sdk/core/protocols - xml serializer, cannot write non-member list: ${listMember.getName(true)}`);
+    }
+    const listTraits = listMember.getMergedTraits();
+    const listValueSchema = listMember.getValueSchema();
+    const listValueTraits = listValueSchema.getMergedTraits();
+    const sparse = !!listValueTraits.sparse;
+    const flat = !!listTraits.xmlFlattened;
+    const [xmlnsAttr, xmlns] = this.getXmlnsAttribute(listMember, parentXmlns);
+    const writeItem = (container2, value) => {
+      if (listValueSchema.isListSchema()) {
+        this.writeList(listValueSchema, Array.isArray(value) ? value : [value], container2, xmlns);
+      } else if (listValueSchema.isMapSchema()) {
+        this.writeMap(listValueSchema, value, container2, xmlns);
+      } else if (listValueSchema.isStructSchema()) {
+        const struct = this.writeStruct(listValueSchema, value, xmlns);
+        container2.addChildNode(struct.withName(flat ? listTraits.xmlName ?? listMember.getMemberName() : listValueTraits.xmlName ?? "member"));
+      } else {
+        const listItemNode = XmlNode.of(flat ? listTraits.xmlName ?? listMember.getMemberName() : listValueTraits.xmlName ?? "member");
+        this.writeSimpleInto(listValueSchema, value, listItemNode, xmlns);
+        container2.addChildNode(listItemNode);
+      }
+    };
+    if (flat) {
+      for (const value of array) {
+        if (sparse || value != null) {
+          writeItem(container, value);
+        }
+      }
+    } else {
+      const listNode = XmlNode.of(listTraits.xmlName ?? listMember.getMemberName());
+      if (xmlns) {
+        listNode.addAttribute(xmlnsAttr, xmlns);
+      }
+      for (const value of array) {
+        if (sparse || value != null) {
+          writeItem(listNode, value);
+        }
+      }
+      container.addChildNode(listNode);
+    }
+  }
+  writeMap(mapMember, map, container, parentXmlns, containerIsMap = false) {
+    if (!mapMember.isMemberSchema()) {
+      throw new Error(`@aws-sdk/core/protocols - xml serializer, cannot write non-member map: ${mapMember.getName(true)}`);
+    }
+    const mapTraits = mapMember.getMergedTraits();
+    const mapKeySchema = mapMember.getKeySchema();
+    const mapKeyTraits = mapKeySchema.getMergedTraits();
+    const keyTag = mapKeyTraits.xmlName ?? "key";
+    const mapValueSchema = mapMember.getValueSchema();
+    const mapValueTraits = mapValueSchema.getMergedTraits();
+    const valueTag = mapValueTraits.xmlName ?? "value";
+    const sparse = !!mapValueTraits.sparse;
+    const flat = !!mapTraits.xmlFlattened;
+    const [xmlnsAttr, xmlns] = this.getXmlnsAttribute(mapMember, parentXmlns);
+    const addKeyValue = (entry, key, val) => {
+      const keyNode = XmlNode.of(keyTag, key);
+      const [keyXmlnsAttr, keyXmlns] = this.getXmlnsAttribute(mapKeySchema, xmlns);
+      if (keyXmlns) {
+        keyNode.addAttribute(keyXmlnsAttr, keyXmlns);
+      }
+      entry.addChildNode(keyNode);
+      let valueNode = XmlNode.of(valueTag);
+      if (mapValueSchema.isListSchema()) {
+        this.writeList(mapValueSchema, val, valueNode, xmlns);
+      } else if (mapValueSchema.isMapSchema()) {
+        this.writeMap(mapValueSchema, val, valueNode, xmlns, true);
+      } else if (mapValueSchema.isStructSchema()) {
+        valueNode = this.writeStruct(mapValueSchema, val, xmlns);
+      } else {
+        this.writeSimpleInto(mapValueSchema, val, valueNode, xmlns);
+      }
+      entry.addChildNode(valueNode);
+    };
+    if (flat) {
+      for (const [key, val] of Object.entries(map)) {
+        if (sparse || val != null) {
+          const entry = XmlNode.of(mapTraits.xmlName ?? mapMember.getMemberName());
+          addKeyValue(entry, key, val);
+          container.addChildNode(entry);
+        }
+      }
+    } else {
+      let mapNode;
+      if (!containerIsMap) {
+        mapNode = XmlNode.of(mapTraits.xmlName ?? mapMember.getMemberName());
+        if (xmlns) {
+          mapNode.addAttribute(xmlnsAttr, xmlns);
+        }
+        container.addChildNode(mapNode);
+      }
+      for (const [key, val] of Object.entries(map)) {
+        if (sparse || val != null) {
+          const entry = XmlNode.of("entry");
+          addKeyValue(entry, key, val);
+          (containerIsMap ? container : mapNode).addChildNode(entry);
+        }
+      }
+    }
+  }
+  writeSimple(_schema, value) {
+    if (null === value) {
+      throw new Error("@aws-sdk/core/protocols - (XML serializer) cannot write null value.");
+    }
+    const ns = NormalizedSchema.of(_schema);
+    let nodeContents = null;
+    if (value && typeof value === "object") {
+      if (ns.isBlobSchema()) {
+        nodeContents = (this.serdeContext?.base64Encoder ?? toBase64)(value);
+      } else if (ns.isTimestampSchema() && value instanceof Date) {
+        const format2 = determineTimestampFormat(ns, this.settings);
+        switch (format2) {
+          case 5:
+            nodeContents = value.toISOString().replace(".000Z", "Z");
+            break;
+          case 6:
+            nodeContents = dateToUtcString(value);
+            break;
+          case 7:
+            nodeContents = String(value.getTime() / 1e3);
+            break;
+          default:
+            console.warn("Missing timestamp format, using http date", value);
+            nodeContents = dateToUtcString(value);
+            break;
+        }
+      } else if (ns.isBigDecimalSchema() && value) {
+        if (value instanceof NumericValue) {
+          return value.string;
+        }
+        return String(value);
+      } else if (ns.isMapSchema() || ns.isListSchema()) {
+        throw new Error("@aws-sdk/core/protocols - xml serializer, cannot call _write() on List/Map schema, call writeList or writeMap() instead.");
+      } else {
+        throw new Error(`@aws-sdk/core/protocols - xml serializer, unhandled schema type for object value and schema: ${ns.getName(true)}`);
+      }
+    }
+    if (ns.isBooleanSchema() || ns.isNumericSchema() || ns.isBigIntegerSchema() || ns.isBigDecimalSchema()) {
+      nodeContents = String(value);
+    }
+    if (ns.isStringSchema()) {
+      if (value === void 0 && ns.isIdempotencyToken()) {
+        nodeContents = v42();
+      } else {
+        nodeContents = String(value);
+      }
+    }
+    if (nodeContents === null) {
+      throw new Error(`Unhandled schema-value pair ${ns.getName(true)}=${value}`);
+    }
+    return nodeContents;
+  }
+  writeSimpleInto(_schema, value, into, parentXmlns) {
+    const nodeContents = this.writeSimple(_schema, value);
+    const ns = NormalizedSchema.of(_schema);
+    const content = new XmlText(nodeContents);
+    const [xmlnsAttr, xmlns] = this.getXmlnsAttribute(ns, parentXmlns);
+    if (xmlns) {
+      into.addAttribute(xmlnsAttr, xmlns);
+    }
+    into.addChildNode(content);
+  }
+  getXmlnsAttribute(ns, parentXmlns) {
+    const traits = ns.getMergedTraits();
+    const [prefix, xmlns] = traits.xmlNamespace ?? [];
+    if (xmlns && xmlns !== parentXmlns) {
+      return [prefix ? `xmlns:${prefix}` : "xmlns", xmlns];
+    }
+    return [void 0, void 0];
+  }
+};
+
+// node_modules/@aws-sdk/core/dist-es/submodules/protocols/xml/XmlCodec.js
+var XmlCodec = class extends SerdeContextConfig {
+  constructor(settings) {
+    super();
+    __publicField(this, "settings");
+    this.settings = settings;
+  }
+  createSerializer() {
+    const serializer = new XmlShapeSerializer(this.settings);
+    serializer.setSerdeContext(this.serdeContext);
+    return serializer;
+  }
+  createDeserializer() {
+    const deserializer = new XmlShapeDeserializer(this.settings);
+    deserializer.setSerdeContext(this.serdeContext);
+    return deserializer;
+  }
+};
+
+// node_modules/@aws-sdk/core/dist-es/submodules/protocols/xml/AwsRestXmlProtocol.js
+var AwsRestXmlProtocol = class extends HttpBindingProtocol {
+  constructor(options) {
+    super(options);
+    __publicField(this, "codec");
+    __publicField(this, "serializer");
+    __publicField(this, "deserializer");
+    __publicField(this, "mixin", new ProtocolLib());
+    const settings = {
+      timestampFormat: {
+        useTrait: true,
+        default: 5
+      },
+      httpBindings: true,
+      xmlNamespace: options.xmlNamespace,
+      serviceNamespace: options.defaultNamespace
+    };
+    this.codec = new XmlCodec(settings);
+    this.serializer = new HttpInterceptingShapeSerializer(this.codec.createSerializer(), settings);
+    this.deserializer = new HttpInterceptingShapeDeserializer(this.codec.createDeserializer(), settings);
+  }
+  getPayloadCodec() {
+    return this.codec;
+  }
+  getShapeId() {
+    return "aws.protocols#restXml";
+  }
+  async serializeRequest(operationSchema, input, context) {
+    const request = await super.serializeRequest(operationSchema, input, context);
+    const inputSchema = NormalizedSchema.of(operationSchema.input);
+    if (!request.headers["content-type"]) {
+      const contentType = this.mixin.resolveRestContentType(this.getDefaultContentType(), inputSchema);
+      if (contentType) {
+        request.headers["content-type"] = contentType;
+      }
+    }
+    if (typeof request.body === "string" && request.headers["content-type"] === this.getDefaultContentType() && !request.body.startsWith("<?xml ") && !this.hasUnstructuredPayloadBinding(inputSchema)) {
+      request.body = '<?xml version="1.0" encoding="UTF-8"?>' + request.body;
+    }
+    return request;
+  }
+  async deserializeResponse(operationSchema, context, response) {
+    return super.deserializeResponse(operationSchema, context, response);
+  }
+  async handleError(operationSchema, context, response, dataObject, metadata) {
+    const errorIdentifier = loadRestXmlErrorCode(response, dataObject) ?? "Unknown";
+    const { errorSchema, errorMetadata } = await this.mixin.getErrorSchemaOrThrowBaseException(errorIdentifier, this.options.defaultNamespace, response, dataObject, metadata);
+    const ns = NormalizedSchema.of(errorSchema);
+    const message = dataObject.Error?.message ?? dataObject.Error?.Message ?? dataObject.message ?? dataObject.Message ?? "Unknown";
+    const ErrorCtor = TypeRegistry.for(errorSchema[1]).getErrorCtor(errorSchema) ?? Error;
+    const exception = new ErrorCtor(message);
+    await this.deserializeHttpMessage(errorSchema, context, response, dataObject);
+    const output = {};
+    for (const [name, member2] of ns.structIterator()) {
+      const target = member2.getMergedTraits().xmlName ?? name;
+      const value = dataObject.Error?.[target] ?? dataObject[target];
+      output[name] = this.codec.createDeserializer().readSchema(member2, value);
+    }
+    throw this.mixin.decorateServiceException(Object.assign(exception, errorMetadata, {
+      $fault: ns.getMergedTraits().error,
+      message
+    }, output), dataObject);
+  }
+  getDefaultContentType() {
+    return "application/xml";
+  }
+  hasUnstructuredPayloadBinding(ns) {
+    for (const [, member2] of ns.structIterator()) {
+      if (member2.getMergedTraits().httpPayload) {
+        return !(member2.isStructSchema() || member2.isMapSchema() || member2.isListSchema());
+      }
+    }
+    return false;
   }
 };
 
@@ -5867,7 +5934,7 @@ function uint32ArrayFrom(a_lookUpTable2) {
 // node_modules/@aws-crypto/crc32c/build/module/aws_crc32c.js
 var AwsCrc32c = (
   /** @class */
-  function() {
+  (function() {
     function AwsCrc32c2() {
       this.crc32c = new Crc32c();
     }
@@ -5887,13 +5954,13 @@ var AwsCrc32c = (
       this.crc32c = new Crc32c();
     };
     return AwsCrc32c2;
-  }()
+  })()
 );
 
 // node_modules/@aws-crypto/crc32c/build/module/index.js
 var Crc32c = (
   /** @class */
-  function() {
+  (function() {
     function Crc32c2() {
       this.checksum = 4294967295;
     }
@@ -5919,7 +5986,7 @@ var Crc32c = (
       return (this.checksum ^ 4294967295) >>> 0;
     };
     return Crc32c2;
-  }()
+  })()
 );
 var a_lookupTable = [
   0,
@@ -6293,7 +6360,7 @@ function __values2(o2) {
 // node_modules/@aws-crypto/crc32/build/module/aws_crc32.js
 var AwsCrc32 = (
   /** @class */
-  function() {
+  (function() {
     function AwsCrc322() {
       this.crc32 = new Crc32();
     }
@@ -6313,13 +6380,13 @@ var AwsCrc32 = (
       this.crc32 = new Crc32();
     };
     return AwsCrc322;
-  }()
+  })()
 );
 
 // node_modules/@aws-crypto/crc32/build/module/index.js
 var Crc32 = (
   /** @class */
-  function() {
+  (function() {
     function Crc322() {
       this.checksum = 4294967295;
     }
@@ -6345,7 +6412,7 @@ var Crc32 = (
       return (this.checksum ^ 4294967295) >>> 0;
     };
     return Crc322;
-  }()
+  })()
 );
 var a_lookUpTable = [
   0,
@@ -6636,6 +6703,7 @@ For more information please go to https://github.com/aws/aws-sdk-js-v3#functiona
 };
 
 // node_modules/@aws-sdk/middleware-flexible-checksums/dist-es/stringHasher.js
+init_dist_es();
 var stringHasher = (checksumAlgorithmFn, body) => {
   const hash = new checksumAlgorithmFn();
   hash.update(toUint8Array(body || ""));
@@ -6803,7 +6871,7 @@ var isChecksumWithPartNumber = (checksum) => {
 var getChecksum = async (body, { checksumAlgorithmFn, base64Encoder }) => base64Encoder(await stringHasher(checksumAlgorithmFn, body));
 
 // node_modules/@aws-sdk/middleware-flexible-checksums/dist-es/validateChecksumFromResponse.js
-var validateChecksumFromResponse = async (response, { config, responseAlgorithms, logger: logger2 }) => {
+var validateChecksumFromResponse = async (response, { config, responseAlgorithms, logger }) => {
   const checksumAlgorithms = getChecksumAlgorithmListForResponse(responseAlgorithms);
   const { body: responseBody, headers: responseHeaders } = response;
   for (const algorithm of checksumAlgorithms) {
@@ -6815,7 +6883,7 @@ var validateChecksumFromResponse = async (response, { config, responseAlgorithms
         checksumAlgorithmFn = selectChecksumAlgorithmFunction(algorithm, config);
       } catch (error) {
         if (algorithm === ChecksumAlgorithm.CRC64NVME) {
-          logger2?.warn(`Skipping ${ChecksumAlgorithm.CRC64NVME} checksum validation: ${error.message}`);
+          logger?.warn(`Skipping ${ChecksumAlgorithm.CRC64NVME} checksum validation: ${error.message}`);
           continue;
         }
         throw error;
@@ -6931,12 +6999,12 @@ var getHostHeaderPlugin = (options) => ({
 var loggerMiddleware = () => (next, context) => async (args) => {
   try {
     const response = await next(args);
-    const { clientName, commandName, logger: logger2, dynamoDbDocumentClientOptions = {} } = context;
+    const { clientName, commandName, logger, dynamoDbDocumentClientOptions = {} } = context;
     const { overrideInputFilterSensitiveLog, overrideOutputFilterSensitiveLog } = dynamoDbDocumentClientOptions;
     const inputFilterSensitiveLog = overrideInputFilterSensitiveLog ?? context.inputFilterSensitiveLog;
     const outputFilterSensitiveLog = overrideOutputFilterSensitiveLog ?? context.outputFilterSensitiveLog;
     const { $metadata, ...outputWithoutMetadata } = response.output;
-    logger2?.info?.({
+    logger?.info?.({
       clientName,
       commandName,
       input: inputFilterSensitiveLog(args.input),
@@ -6945,10 +7013,10 @@ var loggerMiddleware = () => (next, context) => async (args) => {
     });
     return response;
   } catch (error) {
-    const { clientName, commandName, logger: logger2, dynamoDbDocumentClientOptions = {} } = context;
+    const { clientName, commandName, logger, dynamoDbDocumentClientOptions = {} } = context;
     const { overrideInputFilterSensitiveLog } = dynamoDbDocumentClientOptions;
     const inputFilterSensitiveLog = overrideInputFilterSensitiveLog ?? context.inputFilterSensitiveLog;
-    logger2?.error?.({
+    logger?.error?.({
       clientName,
       commandName,
       input: inputFilterSensitiveLog(args.input),
@@ -6970,40 +7038,22 @@ var getLoggerPlugin = (options) => ({
   }
 });
 
-// node_modules/@aws-sdk/middleware-recursion-detection/dist-es/index.js
-var TRACE_ID_HEADER_NAME = "X-Amzn-Trace-Id";
-var ENV_LAMBDA_FUNCTION_NAME = "AWS_LAMBDA_FUNCTION_NAME";
-var ENV_TRACE_ID = "_X_AMZN_TRACE_ID";
-var recursionDetectionMiddleware = (options) => (next) => async (args) => {
-  const { request } = args;
-  if (!HttpRequest.isInstance(request) || options.runtime !== "node") {
-    return next(args);
-  }
-  const traceIdHeader = Object.keys(request.headers ?? {}).find((h2) => h2.toLowerCase() === TRACE_ID_HEADER_NAME.toLowerCase()) ?? TRACE_ID_HEADER_NAME;
-  if (request.headers.hasOwnProperty(traceIdHeader)) {
-    return next(args);
-  }
-  const functionName = process.env[ENV_LAMBDA_FUNCTION_NAME];
-  const traceId = process.env[ENV_TRACE_ID];
-  const nonEmptyString = (str) => typeof str === "string" && str.length > 0;
-  if (nonEmptyString(functionName) && nonEmptyString(traceId)) {
-    request.headers[TRACE_ID_HEADER_NAME] = traceId;
-  }
-  return next({
-    ...args,
-    request
-  });
-};
-var addRecursionDetectionMiddlewareOptions = {
+// node_modules/@aws-sdk/middleware-recursion-detection/dist-es/configuration.js
+var recursionDetectionMiddlewareOptions = {
   step: "build",
   tags: ["RECURSION_DETECTION"],
   name: "recursionDetectionMiddleware",
   override: true,
   priority: "low"
 };
+
+// node_modules/@aws-sdk/middleware-recursion-detection/dist-es/recursionDetectionMiddleware.browser.js
+var recursionDetectionMiddleware = () => (next) => async (args) => next(args);
+
+// node_modules/@aws-sdk/middleware-recursion-detection/dist-es/getRecursionDetectionPlugin.js
 var getRecursionDetectionPlugin = (options) => ({
   applyToStack: (clientStack) => {
-    clientStack.add(recursionDetectionMiddleware(options), addRecursionDetectionMiddlewareOptions);
+    clientStack.add(recursionDetectionMiddleware(), recursionDetectionMiddlewareOptions);
   }
 });
 
@@ -7088,15 +7138,20 @@ function regionRedirectMiddleware(clientConfig) {
       return await next(args);
     } catch (err) {
       if (clientConfig.followRegionRedirects) {
-        if (err?.$metadata?.httpStatusCode === 301 || err?.$metadata?.httpStatusCode === 400 && err?.name === "IllegalLocationConstraintException") {
-          try {
-            const actualRegion = err.$response.headers["x-amz-bucket-region"];
-            context.logger?.debug(`Redirecting from ${await clientConfig.region()} to ${actualRegion}`);
-            context.__s3RegionRedirect = actualRegion;
-          } catch (e2) {
-            throw new Error("Region redirect failed: " + e2);
+        const statusCode = err?.$metadata?.httpStatusCode;
+        const isHeadBucket = context.commandName === "HeadBucketCommand";
+        const bucketRegionHeader = err?.$response?.headers?.["x-amz-bucket-region"];
+        if (bucketRegionHeader) {
+          if (statusCode === 301 || statusCode === 400 && (err?.name === "IllegalLocationConstraintException" || isHeadBucket)) {
+            try {
+              const actualRegion = bucketRegionHeader;
+              context.logger?.debug(`Redirecting from ${await clientConfig.region()} to ${actualRegion}`);
+              context.__s3RegionRedirect = actualRegion;
+            } catch (e2) {
+              throw new Error("Region redirect failed: " + e2);
+            }
+            return next(args);
           }
-          return next(args);
         }
       }
       throw err;
@@ -7223,13 +7278,6 @@ var _S3ExpressIdentityProviderImpl = class _S3ExpressIdentityProviderImpl {
 };
 __publicField(_S3ExpressIdentityProviderImpl, "REFRESH_WINDOW_MS", 6e4);
 var S3ExpressIdentityProviderImpl = _S3ExpressIdentityProviderImpl;
-
-// node_modules/@smithy/util-config-provider/dist-es/types.js
-var SelectorType2;
-(function(SelectorType3) {
-  SelectorType3["ENV"] = "env";
-  SelectorType3["CONFIG"] = "shared config entry";
-})(SelectorType2 || (SelectorType2 = {}));
 
 // node_modules/@aws-sdk/middleware-sdk-s3/dist-es/s3-express/constants.js
 var S3_EXPRESS_BUCKET_TYPE = "Directory";
@@ -7365,7 +7413,7 @@ var getS3ExpressHttpSigningPlugin = (config) => ({
 // node_modules/@aws-sdk/middleware-sdk-s3/dist-es/s3Configuration.js
 var resolveS3Config = (input, { session }) => {
   const [s3ClientProvider, CreateSessionCommandCtor] = session;
-  const { forcePathStyle, useAccelerateEndpoint, disableMultiregionAccessPoints, followRegionRedirects, s3ExpressIdentityProvider, bucketEndpoint } = input;
+  const { forcePathStyle, useAccelerateEndpoint, disableMultiregionAccessPoints, followRegionRedirects, s3ExpressIdentityProvider, bucketEndpoint, expectContinueHeader } = input;
   return Object.assign(input, {
     forcePathStyle: forcePathStyle ?? false,
     useAccelerateEndpoint: useAccelerateEndpoint ?? false,
@@ -7374,7 +7422,8 @@ var resolveS3Config = (input, { session }) => {
     s3ExpressIdentityProvider: s3ExpressIdentityProvider ?? new S3ExpressIdentityProviderImpl(async (key) => s3ClientProvider().send(new CreateSessionCommandCtor({
       Bucket: key
     }))),
-    bucketEndpoint: bucketEndpoint ?? false
+    bucketEndpoint: bucketEndpoint ?? false,
+    expectContinueHeader: expectContinueHeader ?? 2097152
   });
 };
 
@@ -7444,7 +7493,7 @@ var getThrow200ExceptionsPlugin = (config) => ({
 });
 
 // node_modules/@aws-sdk/util-arn-parser/dist-es/index.js
-var validate2 = (str) => typeof str === "string" && str.indexOf("arn:") === 0 && str.split(":").length >= 6;
+var validate = (str) => typeof str === "string" && str.indexOf("arn:") === 0 && str.split(":").length >= 6;
 
 // node_modules/@aws-sdk/middleware-sdk-s3/dist-es/bucket-endpoint-middleware.js
 function bucketEndpointMiddleware(options) {
@@ -7485,9 +7534,9 @@ var bucketEndpointMiddlewareOptions = {
 // node_modules/@aws-sdk/middleware-sdk-s3/dist-es/validate-bucket-name.js
 function validateBucketNameMiddleware({ bucketEndpoint }) {
   return (next) => async (args) => {
-    const { input: { Bucket } } = args;
-    if (!bucketEndpoint && typeof Bucket === "string" && !validate2(Bucket) && Bucket.indexOf("/") >= 0) {
-      const err = new Error(`Bucket name shouldn't contain '/', received '${Bucket}'`);
+    const { input: { Bucket: Bucket2 } } = args;
+    if (!bucketEndpoint && typeof Bucket2 === "string" && !validate(Bucket2) && Bucket2.indexOf("/") >= 0) {
+      const err = new Error(`Bucket name shouldn't contain '/', received '${Bucket2}'`);
       err.name = "InvalidBucketName";
       throw err;
     }
@@ -7523,11 +7572,11 @@ function resolveUserAgentConfig(input) {
     userAgentAppId: async () => {
       const appId = await normalizedAppIdProvider();
       if (!isValidUserAgentAppId(appId)) {
-        const logger2 = input.logger?.constructor?.name === "NoOpLogger" || !input.logger ? console : input.logger;
+        const logger = input.logger?.constructor?.name === "NoOpLogger" || !input.logger ? console : input.logger;
         if (typeof appId !== "string") {
-          logger2?.warn("userAgentAppId must be a string or undefined.");
+          logger?.warn("userAgentAppId must be a string or undefined.");
         } else if (appId.length > 50) {
-          logger2?.warn("The provided userAgentAppId exceeds the maximum length of 50 characters.");
+          logger?.warn("The provided userAgentAppId exceeds the maximum length of 50 characters.");
         }
       }
       return appId;
@@ -7538,8 +7587,9 @@ function resolveUserAgentConfig(input) {
 // node_modules/@smithy/util-endpoints/dist-es/cache/EndpointCache.js
 var EndpointCache = class {
   constructor({ size, params }) {
-    this.data = /* @__PURE__ */ new Map();
-    this.parameters = [];
+    __publicField(this, "capacity");
+    __publicField(this, "data", /* @__PURE__ */ new Map());
+    __publicField(this, "parameters", []);
     this.capacity = size ?? 50;
     if (params) {
       this.parameters = params;
@@ -7637,18 +7687,18 @@ var EndpointError = class extends Error {
 var booleanEquals = (value1, value2) => value1 === value2;
 
 // node_modules/@smithy/util-endpoints/dist-es/lib/getAttrPathList.js
-var getAttrPathList = (path3) => {
-  const parts = path3.split(".");
+var getAttrPathList = (path) => {
+  const parts = path.split(".");
   const pathList = [];
   for (const part of parts) {
     const squareBracketIndex = part.indexOf("[");
     if (squareBracketIndex !== -1) {
       if (part.indexOf("]") !== part.length - 1) {
-        throw new EndpointError(`Path: '${path3}' does not end with ']'`);
+        throw new EndpointError(`Path: '${path}' does not end with ']'`);
       }
       const arrayIndex = part.slice(squareBracketIndex + 1, -1);
       if (Number.isNaN(parseInt(arrayIndex))) {
-        throw new EndpointError(`Invalid array index: '${arrayIndex}' in path: '${path3}'`);
+        throw new EndpointError(`Invalid array index: '${arrayIndex}' in path: '${path}'`);
       }
       if (squareBracketIndex !== 0) {
         pathList.push(part.slice(0, squareBracketIndex));
@@ -7662,9 +7712,9 @@ var getAttrPathList = (path3) => {
 };
 
 // node_modules/@smithy/util-endpoints/dist-es/lib/getAttr.js
-var getAttr = (value, path3) => getAttrPathList(path3).reduce((acc, index) => {
+var getAttr = (value, path) => getAttrPathList(path).reduce((acc, index) => {
   if (typeof acc !== "object") {
-    throw new EndpointError(`Index '${index}' in '${path3}' not found in '${JSON.stringify(value)}'`);
+    throw new EndpointError(`Index '${index}' in '${path}' not found in '${JSON.stringify(value)}'`);
   } else if (Array.isArray(acc)) {
     return acc[parseInt(index)];
   }
@@ -7689,8 +7739,8 @@ var parseURL = (value) => {
         return value;
       }
       if (typeof value === "object" && "hostname" in value) {
-        const { hostname: hostname2, port, protocol: protocol2 = "", path: path3 = "", query = {} } = value;
-        const url = new URL(`${protocol2}//${hostname2}${port ? `:${port}` : ""}${path3}`);
+        const { hostname: hostname2, port, protocol: protocol2 = "", path = "", query = {} } = value;
+        const url = new URL(`${protocol2}//${hostname2}${port ? `:${port}` : ""}${path}`);
         url.search = Object.entries(query).map(([k2, v2]) => `${k2}=${v2}`).join("&");
         return url;
       }
@@ -7804,21 +7854,23 @@ var evaluateExpression = (obj, keyName, options) => {
   if (typeof obj === "string") {
     return evaluateTemplate(obj, options);
   } else if (obj["fn"]) {
-    return callFunction(obj, options);
+    return group.callFunction(obj, options);
   } else if (obj["ref"]) {
     return getReferenceValue(obj, options);
   }
   throw new EndpointError(`'${keyName}': ${String(obj)} is not a string, function or reference.`);
 };
-
-// node_modules/@smithy/util-endpoints/dist-es/utils/callFunction.js
 var callFunction = ({ fn, argv }, options) => {
-  const evaluatedArgs = argv.map((arg) => ["boolean", "number"].includes(typeof arg) ? arg : evaluateExpression(arg, "arg", options));
+  const evaluatedArgs = argv.map((arg) => ["boolean", "number"].includes(typeof arg) ? arg : group.evaluateExpression(arg, "arg", options));
   const fnSegments = fn.split(".");
   if (fnSegments[0] in customEndpointFunctions && fnSegments[1] != null) {
     return customEndpointFunctions[fnSegments[0]][fnSegments[1]](...evaluatedArgs);
   }
   return endpointFunctions[fn](...evaluatedArgs);
+};
+var group = {
+  evaluateExpression,
+  callFunction
 };
 
 // node_modules/@smithy/util-endpoints/dist-es/utils/evaluateCondition.js
@@ -7868,7 +7920,11 @@ var getEndpointHeaders = (headers, options) => Object.entries(headers).reduce((a
   })
 }), {});
 
-// node_modules/@smithy/util-endpoints/dist-es/utils/getEndpointProperty.js
+// node_modules/@smithy/util-endpoints/dist-es/utils/getEndpointProperties.js
+var getEndpointProperties = (properties, options) => Object.entries(properties).reduce((acc, [propertyKey, propertyVal]) => ({
+  ...acc,
+  [propertyKey]: group2.getEndpointProperty(propertyVal, options)
+}), {});
 var getEndpointProperty = (property, options) => {
   if (Array.isArray(property)) {
     return property.map((propertyEntry) => getEndpointProperty(propertyEntry, options));
@@ -7880,19 +7936,17 @@ var getEndpointProperty = (property, options) => {
       if (property === null) {
         throw new EndpointError(`Unexpected endpoint property: ${property}`);
       }
-      return getEndpointProperties(property, options);
+      return group2.getEndpointProperties(property, options);
     case "boolean":
       return property;
     default:
       throw new EndpointError(`Unexpected endpoint property type: ${typeof property}`);
   }
 };
-
-// node_modules/@smithy/util-endpoints/dist-es/utils/getEndpointProperties.js
-var getEndpointProperties = (properties, options) => Object.entries(properties).reduce((acc, [propertyKey, propertyVal]) => ({
-  ...acc,
-  [propertyKey]: getEndpointProperty(propertyVal, options)
-}), {});
+var group2 = {
+  getEndpointProperty,
+  getEndpointProperties
+};
 
 // node_modules/@smithy/util-endpoints/dist-es/utils/getEndpointUrl.js
 var getEndpointUrl = (endpointUrl, options) => {
@@ -7945,19 +7999,6 @@ var evaluateErrorRule = (errorRule, options) => {
   }));
 };
 
-// node_modules/@smithy/util-endpoints/dist-es/utils/evaluateTreeRule.js
-var evaluateTreeRule = (treeRule, options) => {
-  const { conditions, rules } = treeRule;
-  const { result, referenceRecord } = evaluateConditions(conditions, options);
-  if (!result) {
-    return;
-  }
-  return evaluateRules(rules, {
-    ...options,
-    referenceRecord: { ...options.referenceRecord, ...referenceRecord }
-  });
-};
-
 // node_modules/@smithy/util-endpoints/dist-es/utils/evaluateRules.js
 var evaluateRules = (rules, options) => {
   for (const rule of rules) {
@@ -7969,7 +8010,7 @@ var evaluateRules = (rules, options) => {
     } else if (rule.type === "error") {
       evaluateErrorRule(rule, options);
     } else if (rule.type === "tree") {
-      const endpointOrUndefined = evaluateTreeRule(rule, options);
+      const endpointOrUndefined = group3.evaluateTreeRule(rule, options);
       if (endpointOrUndefined) {
         return endpointOrUndefined;
       }
@@ -7979,10 +8020,25 @@ var evaluateRules = (rules, options) => {
   }
   throw new EndpointError(`Rules evaluation failed`);
 };
+var evaluateTreeRule = (treeRule, options) => {
+  const { conditions, rules } = treeRule;
+  const { result, referenceRecord } = evaluateConditions(conditions, options);
+  if (!result) {
+    return;
+  }
+  return group3.evaluateRules(rules, {
+    ...options,
+    referenceRecord: { ...options.referenceRecord, ...referenceRecord }
+  });
+};
+var group3 = {
+  evaluateRules,
+  evaluateTreeRule
+};
 
 // node_modules/@smithy/util-endpoints/dist-es/resolveEndpoint.js
 var resolveEndpoint = (ruleSetObject, options) => {
-  const { endpointParams, logger: logger2 } = options;
+  const { endpointParams, logger } = options;
   const { parameters, rules } = ruleSetObject;
   options.logger?.debug?.(`${debugId} Initial EndpointParams: ${toDebugString(endpointParams)}`);
   const paramsWithDefault = Object.entries(parameters).filter(([, v2]) => v2.default != null).map(([k2, v2]) => [k2, v2.default]);
@@ -7997,7 +8053,7 @@ var resolveEndpoint = (ruleSetObject, options) => {
       throw new EndpointError(`Missing required parameter: '${requiredParam}'`);
     }
   }
-  const endpoint = evaluateRules(rules, { endpointParams, logger: logger2, referenceRecord: {} });
+  const endpoint = evaluateRules(rules, { endpointParams, logger, referenceRecord: {} });
   options.logger?.debug?.(`${debugId} Resolved endpoint: ${toDebugString(endpoint)}`);
   return endpoint;
 };
@@ -8100,11 +8156,14 @@ var partitions_default = {
       "ap-southeast-5": {
         description: "Asia Pacific (Malaysia)"
       },
+      "ap-southeast-6": {
+        description: "Asia Pacific (New Zealand)"
+      },
       "ap-southeast-7": {
         description: "Asia Pacific (Thailand)"
       },
       "aws-global": {
-        description: "AWS Standard global region"
+        description: "aws global region"
       },
       "ca-central-1": {
         description: "Canada (Central)"
@@ -8177,13 +8236,114 @@ var partitions_default = {
     regionRegex: "^cn\\-\\w+\\-\\d+$",
     regions: {
       "aws-cn-global": {
-        description: "AWS China global region"
+        description: "aws-cn global region"
       },
       "cn-north-1": {
         description: "China (Beijing)"
       },
       "cn-northwest-1": {
         description: "China (Ningxia)"
+      }
+    }
+  }, {
+    id: "aws-eusc",
+    outputs: {
+      dnsSuffix: "amazonaws.eu",
+      dualStackDnsSuffix: "api.amazonwebservices.eu",
+      implicitGlobalRegion: "eusc-de-east-1",
+      name: "aws-eusc",
+      supportsDualStack: true,
+      supportsFIPS: true
+    },
+    regionRegex: "^eusc\\-(de)\\-\\w+\\-\\d+$",
+    regions: {
+      "eusc-de-east-1": {
+        description: "EU (Germany)"
+      }
+    }
+  }, {
+    id: "aws-iso",
+    outputs: {
+      dnsSuffix: "c2s.ic.gov",
+      dualStackDnsSuffix: "api.aws.ic.gov",
+      implicitGlobalRegion: "us-iso-east-1",
+      name: "aws-iso",
+      supportsDualStack: true,
+      supportsFIPS: true
+    },
+    regionRegex: "^us\\-iso\\-\\w+\\-\\d+$",
+    regions: {
+      "aws-iso-global": {
+        description: "aws-iso global region"
+      },
+      "us-iso-east-1": {
+        description: "US ISO East"
+      },
+      "us-iso-west-1": {
+        description: "US ISO WEST"
+      }
+    }
+  }, {
+    id: "aws-iso-b",
+    outputs: {
+      dnsSuffix: "sc2s.sgov.gov",
+      dualStackDnsSuffix: "api.aws.scloud",
+      implicitGlobalRegion: "us-isob-east-1",
+      name: "aws-iso-b",
+      supportsDualStack: true,
+      supportsFIPS: true
+    },
+    regionRegex: "^us\\-isob\\-\\w+\\-\\d+$",
+    regions: {
+      "aws-iso-b-global": {
+        description: "aws-iso-b global region"
+      },
+      "us-isob-east-1": {
+        description: "US ISOB East (Ohio)"
+      },
+      "us-isob-west-1": {
+        description: "US ISOB West"
+      }
+    }
+  }, {
+    id: "aws-iso-e",
+    outputs: {
+      dnsSuffix: "cloud.adc-e.uk",
+      dualStackDnsSuffix: "api.cloud-aws.adc-e.uk",
+      implicitGlobalRegion: "eu-isoe-west-1",
+      name: "aws-iso-e",
+      supportsDualStack: true,
+      supportsFIPS: true
+    },
+    regionRegex: "^eu\\-isoe\\-\\w+\\-\\d+$",
+    regions: {
+      "aws-iso-e-global": {
+        description: "aws-iso-e global region"
+      },
+      "eu-isoe-west-1": {
+        description: "EU ISOE West"
+      }
+    }
+  }, {
+    id: "aws-iso-f",
+    outputs: {
+      dnsSuffix: "csp.hci.ic.gov",
+      dualStackDnsSuffix: "api.aws.hci.ic.gov",
+      implicitGlobalRegion: "us-isof-south-1",
+      name: "aws-iso-f",
+      supportsDualStack: true,
+      supportsFIPS: true
+    },
+    regionRegex: "^us\\-isof\\-\\w+\\-\\d+$",
+    regions: {
+      "aws-iso-f-global": {
+        description: "aws-iso-f global region"
+      },
+      "us-isof-east-1": {
+        description: "US ISOF EAST"
+      },
+      "us-isof-south-1": {
+        description: "US ISOF SOUTH"
       }
     }
   }, {
@@ -8199,111 +8359,13 @@ var partitions_default = {
     regionRegex: "^us\\-gov\\-\\w+\\-\\d+$",
     regions: {
       "aws-us-gov-global": {
-        description: "AWS GovCloud (US) global region"
+        description: "aws-us-gov global region"
       },
       "us-gov-east-1": {
         description: "AWS GovCloud (US-East)"
       },
       "us-gov-west-1": {
         description: "AWS GovCloud (US-West)"
-      }
-    }
-  }, {
-    id: "aws-iso",
-    outputs: {
-      dnsSuffix: "c2s.ic.gov",
-      dualStackDnsSuffix: "c2s.ic.gov",
-      implicitGlobalRegion: "us-iso-east-1",
-      name: "aws-iso",
-      supportsDualStack: false,
-      supportsFIPS: true
-    },
-    regionRegex: "^us\\-iso\\-\\w+\\-\\d+$",
-    regions: {
-      "aws-iso-global": {
-        description: "AWS ISO (US) global region"
-      },
-      "us-iso-east-1": {
-        description: "US ISO East"
-      },
-      "us-iso-west-1": {
-        description: "US ISO WEST"
-      }
-    }
-  }, {
-    id: "aws-iso-b",
-    outputs: {
-      dnsSuffix: "sc2s.sgov.gov",
-      dualStackDnsSuffix: "sc2s.sgov.gov",
-      implicitGlobalRegion: "us-isob-east-1",
-      name: "aws-iso-b",
-      supportsDualStack: false,
-      supportsFIPS: true
-    },
-    regionRegex: "^us\\-isob\\-\\w+\\-\\d+$",
-    regions: {
-      "aws-iso-b-global": {
-        description: "AWS ISOB (US) global region"
-      },
-      "us-isob-east-1": {
-        description: "US ISOB East (Ohio)"
-      }
-    }
-  }, {
-    id: "aws-iso-e",
-    outputs: {
-      dnsSuffix: "cloud.adc-e.uk",
-      dualStackDnsSuffix: "cloud.adc-e.uk",
-      implicitGlobalRegion: "eu-isoe-west-1",
-      name: "aws-iso-e",
-      supportsDualStack: false,
-      supportsFIPS: true
-    },
-    regionRegex: "^eu\\-isoe\\-\\w+\\-\\d+$",
-    regions: {
-      "aws-iso-e-global": {
-        description: "AWS ISOE (Europe) global region"
-      },
-      "eu-isoe-west-1": {
-        description: "EU ISOE West"
-      }
-    }
-  }, {
-    id: "aws-iso-f",
-    outputs: {
-      dnsSuffix: "csp.hci.ic.gov",
-      dualStackDnsSuffix: "csp.hci.ic.gov",
-      implicitGlobalRegion: "us-isof-south-1",
-      name: "aws-iso-f",
-      supportsDualStack: false,
-      supportsFIPS: true
-    },
-    regionRegex: "^us\\-isof\\-\\w+\\-\\d+$",
-    regions: {
-      "aws-iso-f-global": {
-        description: "AWS ISOF global region"
-      },
-      "us-isof-east-1": {
-        description: "US ISOF EAST"
-      },
-      "us-isof-south-1": {
-        description: "US ISOF SOUTH"
-      }
-    }
-  }, {
-    id: "aws-eusc",
-    outputs: {
-      dnsSuffix: "amazonaws.eu",
-      dualStackDnsSuffix: "amazonaws.eu",
-      implicitGlobalRegion: "eusc-de-east-1",
-      name: "aws-eusc",
-      supportsDualStack: false,
-      supportsFIPS: true
-    },
-    regionRegex: "^eusc\\-(de)\\-\\w+\\-\\d+$",
-    regions: {
-      "eusc-de-east-1": {
-        description: "EU (Germany)"
       }
     }
   }],
@@ -8447,8 +8509,8 @@ var USER_AGENT = "user-agent";
 var X_AMZ_USER_AGENT = "x-amz-user-agent";
 var SPACE = " ";
 var UA_NAME_SEPARATOR = "/";
-var UA_NAME_ESCAPE_REGEX = /[^\!\$\%\&\'\*\+\-\.\^\_\`\|\~\d\w]/g;
-var UA_VALUE_ESCAPE_REGEX = /[^\!\$\%\&\'\*\+\-\.\^\_\`\|\~\d\w\#]/g;
+var UA_NAME_ESCAPE_REGEX = /[^!$%&'*+\-.^_`|~\w]/g;
+var UA_VALUE_ESCAPE_REGEX = /[^!$%&'*+\-.^_`|~\w#]/g;
 var UA_ESCAPE_CHAR = "-";
 
 // node_modules/@aws-sdk/middleware-user-agent/dist-es/encode-features.js
@@ -8485,7 +8547,7 @@ var userAgentMiddleware = (options) => (next, context) => async (args) => {
   const customUserAgent = options?.customUserAgent?.map(escapeUserAgent) || [];
   const appId = await options.userAgentAppId();
   if (appId) {
-    defaultUserAgent.push(escapeUserAgent([`app/${appId}`]));
+    defaultUserAgent.push(escapeUserAgent([`app`, `${appId}`]));
   }
   const prefix = getUserAgentPrefix();
   const sdkUserAgentValue = (prefix ? [prefix] : []).concat([...defaultUserAgent, ...userAgent, ...customUserAgent]).join(SPACE);
@@ -8545,6 +8607,20 @@ var DEFAULT_USE_DUALSTACK_ENDPOINT = false;
 // node_modules/@smithy/config-resolver/dist-es/endpointsConfig/NodeUseFipsEndpointConfigOptions.js
 var DEFAULT_USE_FIPS_ENDPOINT = false;
 
+// node_modules/@smithy/config-resolver/dist-es/regionConfig/checkRegion.js
+var validRegions = /* @__PURE__ */ new Set();
+var checkRegion = (region, check = isValidHostLabel) => {
+  if (!validRegions.has(region) && !check(region)) {
+    if (region === "*") {
+      console.warn(`@smithy/config-resolver WARN - Please use the caller region instead of "*". See "sigv4a" in https://github.com/aws/aws-sdk-js-v3/blob/main/supplemental-docs/CLIENTS.md.`);
+    } else {
+      throw new Error(`Region not accepted: region="${region}" is not a valid hostname component.`);
+    }
+  } else {
+    validRegions.add(region);
+  }
+};
+
 // node_modules/@smithy/config-resolver/dist-es/regionConfig/isFipsRegion.js
 var isFipsRegion = (region) => typeof region === "string" && (region.startsWith("fips-") || region.endsWith("-fips"));
 
@@ -8559,11 +8635,10 @@ var resolveRegionConfig = (input) => {
   }
   return Object.assign(input, {
     region: async () => {
-      if (typeof region === "string") {
-        return getRealRegion(region);
-      }
-      const providedRegion = await region();
-      return getRealRegion(providedRegion);
+      const providedRegion = typeof region === "function" ? await region() : region;
+      const realRegion = getRealRegion(providedRegion);
+      checkRegion(realRegion);
+      return realRegion;
     },
     useFipsEndpoint: async () => {
       const providedRegion = typeof region === "string" ? region : await region();
@@ -8683,8 +8758,8 @@ var createConfigValueProvider = (configKey, canonicalEndpointParamKey, config) =
           return endpoint.url.href;
         }
         if ("hostname" in endpoint) {
-          const { protocol, hostname, port, path: path3 } = endpoint;
-          return `${protocol}//${hostname}${port ? ":" + port : ""}${path3}`;
+          const { protocol, hostname, port, path } = endpoint;
+          return `${protocol}//${hostname}${port ? ":" + port : ""}${path}`;
         }
       }
       return endpoint;
@@ -8867,6 +8942,7 @@ var NODEJS_TIMEOUT_ERROR_CODES = ["ECONNRESET", "ECONNREFUSED", "EPIPE", "ETIMED
 var NODEJS_NETWORK_ERROR_CODES = ["EHOSTUNREACH", "ENETUNREACH", "ENOTFOUND"];
 
 // node_modules/@smithy/service-error-classification/dist-es/index.js
+var isRetryableByTrait = (error) => error?.$retryable !== void 0;
 var isClockSkewCorrectedError = (error) => error.$metadata?.clockSkewCorrected;
 var isBrowserNetworkError = (error) => {
   const errorMessages = /* @__PURE__ */ new Set([
@@ -8883,7 +8959,7 @@ var isBrowserNetworkError = (error) => {
   return errorMessages.has(error.message);
 };
 var isThrottlingError = (error) => error.$metadata?.httpStatusCode === 429 || THROTTLING_ERROR_CODES.includes(error.name) || error.$retryable?.throttling == true;
-var isTransientError = (error, depth = 0) => isClockSkewCorrectedError(error) || TRANSIENT_ERROR_CODES.includes(error.name) || NODEJS_TIMEOUT_ERROR_CODES.includes(error?.code || "") || NODEJS_NETWORK_ERROR_CODES.includes(error?.code || "") || TRANSIENT_ERROR_STATUS_CODES.includes(error.$metadata?.httpStatusCode || 0) || isBrowserNetworkError(error) || error.cause !== void 0 && depth <= 10 && isTransientError(error.cause, depth + 1);
+var isTransientError = (error, depth = 0) => isRetryableByTrait(error) || isClockSkewCorrectedError(error) || TRANSIENT_ERROR_CODES.includes(error.name) || NODEJS_TIMEOUT_ERROR_CODES.includes(error?.code || "") || NODEJS_NETWORK_ERROR_CODES.includes(error?.code || "") || TRANSIENT_ERROR_STATUS_CODES.includes(error.$metadata?.httpStatusCode || 0) || isBrowserNetworkError(error) || error.cause !== void 0 && depth <= 10 && isTransientError(error.cause, depth + 1);
 var isServerError = (error) => {
   if (error.$metadata?.httpStatusCode !== void 0) {
     const statusCode = error.$metadata.httpStatusCode;
@@ -8896,15 +8972,24 @@ var isServerError = (error) => {
 };
 
 // node_modules/@smithy/util-retry/dist-es/DefaultRateLimiter.js
-var DefaultRateLimiter = class _DefaultRateLimiter {
+var _DefaultRateLimiter = class _DefaultRateLimiter {
   constructor(options) {
-    this.currentCapacity = 0;
-    this.enabled = false;
-    this.lastMaxRate = 0;
-    this.measuredTxRate = 0;
-    this.requestCount = 0;
-    this.lastTimestamp = 0;
-    this.timeWindow = 0;
+    __publicField(this, "beta");
+    __publicField(this, "minCapacity");
+    __publicField(this, "minFillRate");
+    __publicField(this, "scaleConstant");
+    __publicField(this, "smooth");
+    __publicField(this, "currentCapacity", 0);
+    __publicField(this, "enabled", false);
+    __publicField(this, "lastMaxRate", 0);
+    __publicField(this, "measuredTxRate", 0);
+    __publicField(this, "requestCount", 0);
+    __publicField(this, "fillRate");
+    __publicField(this, "lastThrottleTime");
+    __publicField(this, "lastTimestamp", 0);
+    __publicField(this, "lastTxRateBucket");
+    __publicField(this, "maxCapacity");
+    __publicField(this, "timeWindow", 0);
     this.beta = options?.beta ?? 0.7;
     this.minCapacity = options?.minCapacity ?? 1;
     this.minFillRate = options?.minFillRate ?? 0.5;
@@ -8993,7 +9078,8 @@ var DefaultRateLimiter = class _DefaultRateLimiter {
     return parseFloat(num.toFixed(8));
   }
 };
-DefaultRateLimiter.setTimeoutFn = setTimeout;
+__publicField(_DefaultRateLimiter, "setTimeoutFn", setTimeout);
+var DefaultRateLimiter = _DefaultRateLimiter;
 
 // node_modules/@smithy/util-retry/dist-es/constants.js
 var DEFAULT_RETRY_DELAY_BASE = 100;
@@ -9036,10 +9122,12 @@ var createDefaultRetryToken = ({ retryDelay, retryCount, retryCost }) => {
 // node_modules/@smithy/util-retry/dist-es/StandardRetryStrategy.js
 var StandardRetryStrategy = class {
   constructor(maxAttempts) {
+    __publicField(this, "maxAttempts");
+    __publicField(this, "mode", RETRY_MODES.STANDARD);
+    __publicField(this, "capacity", INITIAL_RETRY_TOKENS);
+    __publicField(this, "retryBackoffStrategy", getDefaultRetryBackoffStrategy());
+    __publicField(this, "maxAttemptsProvider");
     this.maxAttempts = maxAttempts;
-    this.mode = RETRY_MODES.STANDARD;
-    this.capacity = INITIAL_RETRY_TOKENS;
-    this.retryBackoffStrategy = getDefaultRetryBackoffStrategy();
     this.maxAttemptsProvider = typeof maxAttempts === "function" ? maxAttempts : async () => maxAttempts;
   }
   async acquireInitialRetryToken(retryTokenScope) {
@@ -9094,8 +9182,11 @@ var StandardRetryStrategy = class {
 // node_modules/@smithy/util-retry/dist-es/AdaptiveRetryStrategy.js
 var AdaptiveRetryStrategy = class {
   constructor(maxAttemptsProvider, options) {
+    __publicField(this, "maxAttemptsProvider");
+    __publicField(this, "rateLimiter");
+    __publicField(this, "standardRetryStrategy");
+    __publicField(this, "mode", RETRY_MODES.ADAPTIVE);
     this.maxAttemptsProvider = maxAttemptsProvider;
-    this.mode = RETRY_MODES.ADAPTIVE;
     const { rateLimiter } = options ?? {};
     this.rateLimiter = rateLimiter ?? new DefaultRateLimiter();
     this.standardRetryStrategy = new StandardRetryStrategy(maxAttemptsProvider);
@@ -9113,54 +9204,6 @@ var AdaptiveRetryStrategy = class {
     this.standardRetryStrategy.recordSuccess(token);
   }
 };
-
-// node_modules/@smithy/middleware-retry/node_modules/uuid/dist/esm-browser/rng.js
-var getRandomValues2;
-var rnds82 = new Uint8Array(16);
-function rng2() {
-  if (!getRandomValues2) {
-    getRandomValues2 = typeof crypto !== "undefined" && crypto.getRandomValues && crypto.getRandomValues.bind(crypto);
-    if (!getRandomValues2) {
-      throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
-    }
-  }
-  return getRandomValues2(rnds82);
-}
-
-// node_modules/@smithy/middleware-retry/node_modules/uuid/dist/esm-browser/stringify.js
-var byteToHex2 = [];
-for (let i2 = 0; i2 < 256; ++i2) {
-  byteToHex2.push((i2 + 256).toString(16).slice(1));
-}
-function unsafeStringify2(arr, offset = 0) {
-  return byteToHex2[arr[offset + 0]] + byteToHex2[arr[offset + 1]] + byteToHex2[arr[offset + 2]] + byteToHex2[arr[offset + 3]] + "-" + byteToHex2[arr[offset + 4]] + byteToHex2[arr[offset + 5]] + "-" + byteToHex2[arr[offset + 6]] + byteToHex2[arr[offset + 7]] + "-" + byteToHex2[arr[offset + 8]] + byteToHex2[arr[offset + 9]] + "-" + byteToHex2[arr[offset + 10]] + byteToHex2[arr[offset + 11]] + byteToHex2[arr[offset + 12]] + byteToHex2[arr[offset + 13]] + byteToHex2[arr[offset + 14]] + byteToHex2[arr[offset + 15]];
-}
-
-// node_modules/@smithy/middleware-retry/node_modules/uuid/dist/esm-browser/native.js
-var randomUUID2 = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
-var native_default2 = {
-  randomUUID: randomUUID2
-};
-
-// node_modules/@smithy/middleware-retry/node_modules/uuid/dist/esm-browser/v4.js
-function v42(options, buf, offset) {
-  if (native_default2.randomUUID && !buf && !options) {
-    return native_default2.randomUUID();
-  }
-  options = options || {};
-  const rnds = options.random || (options.rng || rng2)();
-  rnds[6] = rnds[6] & 15 | 64;
-  rnds[8] = rnds[8] & 63 | 128;
-  if (buf) {
-    offset = offset || 0;
-    for (let i2 = 0; i2 < 16; ++i2) {
-      buf[offset + i2] = rnds[i2];
-    }
-    return buf;
-  }
-  return unsafeStringify2(rnds);
-}
-var v4_default2 = v42;
 
 // node_modules/@smithy/middleware-retry/dist-es/util.js
 var asSdkError = (error) => {
@@ -9208,7 +9251,7 @@ var retryMiddleware = (options) => (next, context) => async (args) => {
     const { request } = args;
     const isRequest = HttpRequest.isInstance(request);
     if (isRequest) {
-      request.headers[INVOCATION_ID_HEADER] = v4_default2();
+      request.headers[INVOCATION_ID_HEADER] = v42();
     }
     while (true) {
       try {
@@ -9389,23 +9432,23 @@ var SignatureV4MultiRegion = class {
 };
 
 // node_modules/@aws-sdk/client-s3/dist-es/endpoint/ruleset.js
-var cp = "required";
-var cq = "type";
-var cr = "rules";
-var cs = "conditions";
-var ct = "fn";
-var cu = "argv";
-var cv = "ref";
-var cw = "assign";
-var cx = "url";
-var cy = "properties";
-var cz = "backend";
-var cA = "authSchemes";
-var cB = "disableDoubleEncoding";
-var cC = "signingName";
-var cD = "signingRegion";
-var cE = "headers";
-var cF = "signingRegionSet";
+var cs = "required";
+var ct = "type";
+var cu = "rules";
+var cv = "conditions";
+var cw = "fn";
+var cx = "argv";
+var cy = "ref";
+var cz = "assign";
+var cA = "url";
+var cB = "properties";
+var cC = "backend";
+var cD = "authSchemes";
+var cE = "disableDoubleEncoding";
+var cF = "signingName";
+var cG = "signingRegion";
+var cH = "headers";
+var cI = "signingRegionSet";
 var a = 6;
 var b = false;
 var c = true;
@@ -9451,133 +9494,136 @@ var P = "arnPrefix";
 var Q = "{url#scheme}://{url#authority}{url#normalizedPath}{uri_encoded_bucket}";
 var R = "https://s3.{partitionResult#dnsSuffix}/{uri_encoded_bucket}";
 var S = "https://s3.{partitionResult#dnsSuffix}";
-var T = { [cp]: false, [cq]: "String" };
-var U = { [cp]: true, "default": false, [cq]: "Boolean" };
-var V = { [cp]: false, [cq]: "Boolean" };
-var W = { [ct]: e, [cu]: [{ [cv]: "Accelerate" }, true] };
-var X = { [ct]: e, [cu]: [{ [cv]: "UseFIPS" }, true] };
-var Y = { [ct]: e, [cu]: [{ [cv]: "UseDualStack" }, true] };
-var Z = { [ct]: d, [cu]: [{ [cv]: "Endpoint" }] };
-var aa = { [ct]: g, [cu]: [{ [cv]: "Region" }], [cw]: "partitionResult" };
-var ab = { [ct]: h, [cu]: [{ [ct]: i, [cu]: [{ [cv]: "partitionResult" }, j] }, "aws-cn"] };
-var ac = { [ct]: d, [cu]: [{ [cv]: "Bucket" }] };
-var ad = { [cv]: "Bucket" };
-var ae = { [cs]: [Y], [f]: "S3Express does not support Dual-stack.", [cq]: f };
-var af = { [cs]: [W], [f]: "S3Express does not support S3 Accelerate.", [cq]: f };
-var ag = { [cs]: [Z, { [ct]: m, [cu]: [{ [cv]: "Endpoint" }], [cw]: "url" }], [cr]: [{ [cs]: [{ [ct]: d, [cu]: [{ [cv]: "DisableS3ExpressSessionAuth" }] }, { [ct]: e, [cu]: [{ [cv]: "DisableS3ExpressSessionAuth" }, true] }], [cr]: [{ [cs]: [{ [ct]: e, [cu]: [{ [ct]: i, [cu]: [{ [cv]: "url" }, "isIp"] }, true] }], [cr]: [{ [cs]: [{ [ct]: "uriEncode", [cu]: [ad], [cw]: "uri_encoded_bucket" }], [cr]: [{ [n]: { [cx]: "{url#scheme}://{url#authority}/{uri_encoded_bucket}{url#path}", [cy]: { [cz]: "S3Express", [cA]: [{ [cB]: true, [j]: "sigv4", [cC]: "s3express", [cD]: "{Region}" }] }, [cE]: {} }, [cq]: n }], [cq]: o }], [cq]: o }, { [cs]: [{ [ct]: p, [cu]: [ad, false] }], [cr]: [{ [n]: { [cx]: q, [cy]: { [cz]: "S3Express", [cA]: [{ [cB]: true, [j]: "sigv4", [cC]: "s3express", [cD]: "{Region}" }] }, [cE]: {} }, [cq]: n }], [cq]: o }, { [f]: "S3Express bucket name is not a valid virtual hostable name.", [cq]: f }], [cq]: o }, { [cs]: [{ [ct]: e, [cu]: [{ [ct]: i, [cu]: [{ [cv]: "url" }, "isIp"] }, true] }], [cr]: [{ [cs]: [{ [ct]: "uriEncode", [cu]: [ad], [cw]: "uri_encoded_bucket" }], [cr]: [{ [n]: { [cx]: "{url#scheme}://{url#authority}/{uri_encoded_bucket}{url#path}", [cy]: { [cz]: "S3Express", [cA]: [{ [cB]: true, [j]: "sigv4-s3express", [cC]: "s3express", [cD]: "{Region}" }] }, [cE]: {} }, [cq]: n }], [cq]: o }], [cq]: o }, { [cs]: [{ [ct]: p, [cu]: [ad, false] }], [cr]: [{ [n]: { [cx]: q, [cy]: { [cz]: "S3Express", [cA]: [{ [cB]: true, [j]: "sigv4-s3express", [cC]: "s3express", [cD]: "{Region}" }] }, [cE]: {} }, [cq]: n }], [cq]: o }, { [f]: "S3Express bucket name is not a valid virtual hostable name.", [cq]: f }], [cq]: o };
-var ah = { [ct]: m, [cu]: [{ [cv]: "Endpoint" }], [cw]: "url" };
-var ai = { [ct]: e, [cu]: [{ [ct]: i, [cu]: [{ [cv]: "url" }, "isIp"] }, true] };
-var aj = { [cv]: "url" };
-var ak = { [ct]: "uriEncode", [cu]: [ad], [cw]: "uri_encoded_bucket" };
-var al = { [cz]: "S3Express", [cA]: [{ [cB]: true, [j]: "sigv4", [cC]: "s3express", [cD]: "{Region}" }] };
-var am = {};
-var an = { [ct]: p, [cu]: [ad, false] };
-var ao = { [f]: "S3Express bucket name is not a valid virtual hostable name.", [cq]: f };
-var ap = { [ct]: d, [cu]: [{ [cv]: "UseS3ExpressControlEndpoint" }] };
-var aq = { [ct]: e, [cu]: [{ [cv]: "UseS3ExpressControlEndpoint" }, true] };
-var ar = { [ct]: r, [cu]: [Z] };
-var as = { [f]: "Unrecognized S3Express bucket name format.", [cq]: f };
-var at = { [ct]: r, [cu]: [ac] };
-var au = { [cv]: u };
-var av = { [cs]: [ar], [f]: "Expected a endpoint to be specified but no endpoint was found", [cq]: f };
-var aw = { [cA]: [{ [cB]: true, [j]: z, [cC]: A, [cF]: ["*"] }, { [cB]: true, [j]: "sigv4", [cC]: A, [cD]: "{Region}" }] };
-var ax = { [ct]: e, [cu]: [{ [cv]: "ForcePathStyle" }, false] };
-var ay = { [cv]: "ForcePathStyle" };
-var az = { [ct]: e, [cu]: [{ [cv]: "Accelerate" }, false] };
-var aA = { [ct]: h, [cu]: [{ [cv]: "Region" }, "aws-global"] };
-var aB = { [cA]: [{ [cB]: true, [j]: "sigv4", [cC]: B, [cD]: "us-east-1" }] };
-var aC = { [ct]: r, [cu]: [aA] };
-var aD = { [ct]: e, [cu]: [{ [cv]: "UseGlobalEndpoint" }, true] };
-var aE = { [cx]: "https://{Bucket}.s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}", [cy]: { [cA]: [{ [cB]: true, [j]: "sigv4", [cC]: B, [cD]: "{Region}" }] }, [cE]: {} };
-var aF = { [cA]: [{ [cB]: true, [j]: "sigv4", [cC]: B, [cD]: "{Region}" }] };
-var aG = { [ct]: e, [cu]: [{ [cv]: "UseGlobalEndpoint" }, false] };
-var aH = { [ct]: e, [cu]: [{ [cv]: "UseDualStack" }, false] };
-var aI = { [cx]: "https://{Bucket}.s3-fips.{Region}.{partitionResult#dnsSuffix}", [cy]: aF, [cE]: {} };
-var aJ = { [ct]: e, [cu]: [{ [cv]: "UseFIPS" }, false] };
-var aK = { [cx]: "https://{Bucket}.s3-accelerate.dualstack.{partitionResult#dnsSuffix}", [cy]: aF, [cE]: {} };
-var aL = { [cx]: "https://{Bucket}.s3.dualstack.{Region}.{partitionResult#dnsSuffix}", [cy]: aF, [cE]: {} };
-var aM = { [ct]: e, [cu]: [{ [ct]: i, [cu]: [aj, "isIp"] }, false] };
-var aN = { [cx]: C, [cy]: aF, [cE]: {} };
-var aO = { [cx]: q, [cy]: aF, [cE]: {} };
-var aP = { [n]: aO, [cq]: n };
-var aQ = { [cx]: D, [cy]: aF, [cE]: {} };
-var aR = { [cx]: "https://{Bucket}.s3.{Region}.{partitionResult#dnsSuffix}", [cy]: aF, [cE]: {} };
-var aS = { [f]: "Invalid region: region was not a valid DNS name.", [cq]: f };
-var aT = { [cv]: G };
-var aU = { [cv]: H };
-var aV = { [ct]: i, [cu]: [aT, "service"] };
-var aW = { [cv]: L };
-var aX = { [cs]: [Y], [f]: "S3 Object Lambda does not support Dual-stack", [cq]: f };
-var aY = { [cs]: [W], [f]: "S3 Object Lambda does not support S3 Accelerate", [cq]: f };
-var aZ = { [cs]: [{ [ct]: d, [cu]: [{ [cv]: "DisableAccessPoints" }] }, { [ct]: e, [cu]: [{ [cv]: "DisableAccessPoints" }, true] }], [f]: "Access points are not supported for this operation", [cq]: f };
-var ba = { [cs]: [{ [ct]: d, [cu]: [{ [cv]: "UseArnRegion" }] }, { [ct]: e, [cu]: [{ [cv]: "UseArnRegion" }, false] }, { [ct]: r, [cu]: [{ [ct]: h, [cu]: [{ [ct]: i, [cu]: [aT, "region"] }, "{Region}"] }] }], [f]: "Invalid configuration: region from ARN `{bucketArn#region}` does not match client region `{Region}` and UseArnRegion is `false`", [cq]: f };
-var bb = { [ct]: i, [cu]: [{ [cv]: "bucketPartition" }, j] };
-var bc = { [ct]: i, [cu]: [aT, "accountId"] };
-var bd = { [cA]: [{ [cB]: true, [j]: "sigv4", [cC]: J, [cD]: "{bucketArn#region}" }] };
-var be = { [f]: "Invalid ARN: The access point name may only contain a-z, A-Z, 0-9 and `-`. Found: `{accessPointName}`", [cq]: f };
-var bf = { [f]: "Invalid ARN: The account id may only contain a-z, A-Z, 0-9 and `-`. Found: `{bucketArn#accountId}`", [cq]: f };
-var bg = { [f]: "Invalid region in ARN: `{bucketArn#region}` (invalid DNS name)", [cq]: f };
-var bh = { [f]: "Client was configured for partition `{partitionResult#name}` but ARN (`{Bucket}`) has `{bucketPartition#name}`", [cq]: f };
-var bi = { [f]: "Invalid ARN: The ARN may only contain a single resource component after `accesspoint`.", [cq]: f };
-var bj = { [f]: "Invalid ARN: Expected a resource of the format `accesspoint:<accesspoint name>` but no name was provided", [cq]: f };
-var bk = { [cA]: [{ [cB]: true, [j]: "sigv4", [cC]: B, [cD]: "{bucketArn#region}" }] };
-var bl = { [cA]: [{ [cB]: true, [j]: z, [cC]: A, [cF]: ["*"] }, { [cB]: true, [j]: "sigv4", [cC]: A, [cD]: "{bucketArn#region}" }] };
-var bm = { [ct]: F, [cu]: [ad] };
-var bn = { [cx]: "https://s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cy]: aF, [cE]: {} };
-var bo = { [cx]: "https://s3-fips.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cy]: aF, [cE]: {} };
-var bp = { [cx]: "https://s3.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cy]: aF, [cE]: {} };
-var bq = { [cx]: Q, [cy]: aF, [cE]: {} };
-var br = { [cx]: "https://s3.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cy]: aF, [cE]: {} };
-var bs = { [cv]: "UseObjectLambdaEndpoint" };
-var bt = { [cA]: [{ [cB]: true, [j]: "sigv4", [cC]: J, [cD]: "{Region}" }] };
-var bu = { [cx]: "https://s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}", [cy]: aF, [cE]: {} };
-var bv = { [cx]: "https://s3-fips.{Region}.{partitionResult#dnsSuffix}", [cy]: aF, [cE]: {} };
-var bw = { [cx]: "https://s3.dualstack.{Region}.{partitionResult#dnsSuffix}", [cy]: aF, [cE]: {} };
-var bx = { [cx]: t, [cy]: aF, [cE]: {} };
-var by = { [cx]: "https://s3.{Region}.{partitionResult#dnsSuffix}", [cy]: aF, [cE]: {} };
-var bz = [{ [cv]: "Region" }];
-var bA = [{ [cv]: "Endpoint" }];
-var bB = [ad];
-var bC = [Y];
-var bD = [W];
-var bE = [Z, ah];
-var bF = [{ [ct]: d, [cu]: [{ [cv]: "DisableS3ExpressSessionAuth" }] }, { [ct]: e, [cu]: [{ [cv]: "DisableS3ExpressSessionAuth" }, true] }];
-var bG = [ak];
-var bH = [an];
-var bI = [aa];
-var bJ = [X];
-var bK = [{ [ct]: k, [cu]: [ad, 6, 14, true], [cw]: "s3expressAvailabilityZoneId" }, { [ct]: k, [cu]: [ad, 14, 16, true], [cw]: "s3expressAvailabilityZoneDelim" }, { [ct]: h, [cu]: [{ [cv]: "s3expressAvailabilityZoneDelim" }, "--"] }];
-var bL = [{ [cs]: [X], [n]: { [cx]: "https://{Bucket}.s3express-fips-{s3expressAvailabilityZoneId}.{Region}.{partitionResult#dnsSuffix}", [cy]: al, [cE]: {} }, [cq]: n }, { [n]: { [cx]: "https://{Bucket}.s3express-{s3expressAvailabilityZoneId}.{Region}.{partitionResult#dnsSuffix}", [cy]: al, [cE]: {} }, [cq]: n }];
-var bM = [{ [ct]: k, [cu]: [ad, 6, 15, true], [cw]: "s3expressAvailabilityZoneId" }, { [ct]: k, [cu]: [ad, 15, 17, true], [cw]: "s3expressAvailabilityZoneDelim" }, { [ct]: h, [cu]: [{ [cv]: "s3expressAvailabilityZoneDelim" }, "--"] }];
-var bN = [{ [ct]: k, [cu]: [ad, 6, 19, true], [cw]: "s3expressAvailabilityZoneId" }, { [ct]: k, [cu]: [ad, 19, 21, true], [cw]: "s3expressAvailabilityZoneDelim" }, { [ct]: h, [cu]: [{ [cv]: "s3expressAvailabilityZoneDelim" }, "--"] }];
-var bO = [{ [ct]: k, [cu]: [ad, 6, 20, true], [cw]: "s3expressAvailabilityZoneId" }, { [ct]: k, [cu]: [ad, 20, 22, true], [cw]: "s3expressAvailabilityZoneDelim" }, { [ct]: h, [cu]: [{ [cv]: "s3expressAvailabilityZoneDelim" }, "--"] }];
-var bP = [{ [ct]: k, [cu]: [ad, 6, 26, true], [cw]: "s3expressAvailabilityZoneId" }, { [ct]: k, [cu]: [ad, 26, 28, true], [cw]: "s3expressAvailabilityZoneDelim" }, { [ct]: h, [cu]: [{ [cv]: "s3expressAvailabilityZoneDelim" }, "--"] }];
-var bQ = [{ [cs]: [X], [n]: { [cx]: "https://{Bucket}.s3express-fips-{s3expressAvailabilityZoneId}.{Region}.{partitionResult#dnsSuffix}", [cy]: { [cz]: "S3Express", [cA]: [{ [cB]: true, [j]: "sigv4-s3express", [cC]: "s3express", [cD]: "{Region}" }] }, [cE]: {} }, [cq]: n }, { [n]: { [cx]: "https://{Bucket}.s3express-{s3expressAvailabilityZoneId}.{Region}.{partitionResult#dnsSuffix}", [cy]: { [cz]: "S3Express", [cA]: [{ [cB]: true, [j]: "sigv4-s3express", [cC]: "s3express", [cD]: "{Region}" }] }, [cE]: {} }, [cq]: n }];
-var bR = [ad, 0, 7, true];
-var bS = [{ [ct]: k, [cu]: [ad, 7, 15, true], [cw]: "s3expressAvailabilityZoneId" }, { [ct]: k, [cu]: [ad, 15, 17, true], [cw]: "s3expressAvailabilityZoneDelim" }, { [ct]: h, [cu]: [{ [cv]: "s3expressAvailabilityZoneDelim" }, "--"] }];
-var bT = [{ [ct]: k, [cu]: [ad, 7, 16, true], [cw]: "s3expressAvailabilityZoneId" }, { [ct]: k, [cu]: [ad, 16, 18, true], [cw]: "s3expressAvailabilityZoneDelim" }, { [ct]: h, [cu]: [{ [cv]: "s3expressAvailabilityZoneDelim" }, "--"] }];
-var bU = [{ [ct]: k, [cu]: [ad, 7, 20, true], [cw]: "s3expressAvailabilityZoneId" }, { [ct]: k, [cu]: [ad, 20, 22, true], [cw]: "s3expressAvailabilityZoneDelim" }, { [ct]: h, [cu]: [{ [cv]: "s3expressAvailabilityZoneDelim" }, "--"] }];
-var bV = [{ [ct]: k, [cu]: [ad, 7, 21, true], [cw]: "s3expressAvailabilityZoneId" }, { [ct]: k, [cu]: [ad, 21, 23, true], [cw]: "s3expressAvailabilityZoneDelim" }, { [ct]: h, [cu]: [{ [cv]: "s3expressAvailabilityZoneDelim" }, "--"] }];
-var bW = [{ [ct]: k, [cu]: [ad, 7, 27, true], [cw]: "s3expressAvailabilityZoneId" }, { [ct]: k, [cu]: [ad, 27, 29, true], [cw]: "s3expressAvailabilityZoneDelim" }, { [ct]: h, [cu]: [{ [cv]: "s3expressAvailabilityZoneDelim" }, "--"] }];
-var bX = [ac];
-var bY = [{ [ct]: y, [cu]: [{ [cv]: x }, false] }];
-var bZ = [{ [ct]: h, [cu]: [{ [cv]: v }, "beta"] }];
-var ca = ["*"];
-var cb = [{ [ct]: y, [cu]: [{ [cv]: "Region" }, false] }];
-var cc = [{ [ct]: h, [cu]: [{ [cv]: "Region" }, "us-east-1"] }];
-var cd = [{ [ct]: h, [cu]: [aU, K] }];
-var ce = [{ [ct]: i, [cu]: [aT, "resourceId[1]"], [cw]: L }, { [ct]: r, [cu]: [{ [ct]: h, [cu]: [aW, I] }] }];
-var cf = [aT, "resourceId[1]"];
-var cg = [{ [ct]: r, [cu]: [{ [ct]: h, [cu]: [{ [ct]: i, [cu]: [aT, "region"] }, I] }] }];
-var ch = [{ [ct]: r, [cu]: [{ [ct]: d, [cu]: [{ [ct]: i, [cu]: [aT, "resourceId[2]"] }] }] }];
-var ci = [aT, "resourceId[2]"];
-var cj = [{ [ct]: g, [cu]: [{ [ct]: i, [cu]: [aT, "region"] }], [cw]: "bucketPartition" }];
-var ck = [{ [ct]: h, [cu]: [bb, { [ct]: i, [cu]: [{ [cv]: "partitionResult" }, j] }] }];
-var cl = [{ [ct]: y, [cu]: [{ [ct]: i, [cu]: [aT, "region"] }, true] }];
-var cm = [{ [ct]: y, [cu]: [bc, false] }];
-var cn = [{ [ct]: y, [cu]: [aW, false] }];
-var co = [{ [ct]: y, [cu]: [{ [cv]: "Region" }, true] }];
-var _data = { version: "1.0", parameters: { Bucket: T, Region: T, UseFIPS: U, UseDualStack: U, Endpoint: T, ForcePathStyle: U, Accelerate: U, UseGlobalEndpoint: U, UseObjectLambdaEndpoint: V, Key: T, Prefix: T, CopySource: T, DisableAccessPoints: V, DisableMultiRegionAccessPoints: U, UseArnRegion: V, UseS3ExpressControlEndpoint: V, DisableS3ExpressSessionAuth: V }, [cr]: [{ [cs]: [{ [ct]: d, [cu]: bz }], [cr]: [{ [cs]: [W, X], error: "Accelerate cannot be used with FIPS", [cq]: f }, { [cs]: [Y, Z], error: "Cannot set dual-stack in combination with a custom endpoint.", [cq]: f }, { [cs]: [Z, X], error: "A custom endpoint cannot be combined with FIPS", [cq]: f }, { [cs]: [Z, W], error: "A custom endpoint cannot be combined with S3 Accelerate", [cq]: f }, { [cs]: [X, aa, ab], error: "Partition does not support FIPS", [cq]: f }, { [cs]: [ac, { [ct]: k, [cu]: [ad, 0, a, c], [cw]: l }, { [ct]: h, [cu]: [{ [cv]: l }, "--x-s3"] }], [cr]: [ae, af, ag, { [cs]: [ap, aq], [cr]: [{ [cs]: bI, [cr]: [{ [cs]: [ak, ar], [cr]: [{ [cs]: bJ, endpoint: { [cx]: "https://s3express-control-fips.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cy]: al, [cE]: am }, [cq]: n }, { endpoint: { [cx]: "https://s3express-control.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cy]: al, [cE]: am }, [cq]: n }], [cq]: o }], [cq]: o }], [cq]: o }, { [cs]: bH, [cr]: [{ [cs]: bI, [cr]: [{ [cs]: bF, [cr]: [{ [cs]: bK, [cr]: bL, [cq]: o }, { [cs]: bM, [cr]: bL, [cq]: o }, { [cs]: bN, [cr]: bL, [cq]: o }, { [cs]: bO, [cr]: bL, [cq]: o }, { [cs]: bP, [cr]: bL, [cq]: o }, as], [cq]: o }, { [cs]: bK, [cr]: bQ, [cq]: o }, { [cs]: bM, [cr]: bQ, [cq]: o }, { [cs]: bN, [cr]: bQ, [cq]: o }, { [cs]: bO, [cr]: bQ, [cq]: o }, { [cs]: bP, [cr]: bQ, [cq]: o }, as], [cq]: o }], [cq]: o }, ao], [cq]: o }, { [cs]: [ac, { [ct]: k, [cu]: bR, [cw]: s }, { [ct]: h, [cu]: [{ [cv]: s }, "--xa-s3"] }], [cr]: [ae, af, ag, { [cs]: bH, [cr]: [{ [cs]: bI, [cr]: [{ [cs]: bF, [cr]: [{ [cs]: bS, [cr]: bL, [cq]: o }, { [cs]: bT, [cr]: bL, [cq]: o }, { [cs]: bU, [cr]: bL, [cq]: o }, { [cs]: bV, [cr]: bL, [cq]: o }, { [cs]: bW, [cr]: bL, [cq]: o }, as], [cq]: o }, { [cs]: bS, [cr]: bQ, [cq]: o }, { [cs]: bT, [cr]: bQ, [cq]: o }, { [cs]: bU, [cr]: bQ, [cq]: o }, { [cs]: bV, [cr]: bQ, [cq]: o }, { [cs]: bW, [cr]: bQ, [cq]: o }, as], [cq]: o }], [cq]: o }, ao], [cq]: o }, { [cs]: [at, ap, aq], [cr]: [{ [cs]: bI, [cr]: [{ [cs]: bE, endpoint: { [cx]: t, [cy]: al, [cE]: am }, [cq]: n }, { [cs]: bJ, endpoint: { [cx]: "https://s3express-control-fips.{Region}.{partitionResult#dnsSuffix}", [cy]: al, [cE]: am }, [cq]: n }, { endpoint: { [cx]: "https://s3express-control.{Region}.{partitionResult#dnsSuffix}", [cy]: al, [cE]: am }, [cq]: n }], [cq]: o }], [cq]: o }, { [cs]: [ac, { [ct]: k, [cu]: [ad, 49, 50, c], [cw]: u }, { [ct]: k, [cu]: [ad, 8, 12, c], [cw]: v }, { [ct]: k, [cu]: bR, [cw]: w }, { [ct]: k, [cu]: [ad, 32, 49, c], [cw]: x }, { [ct]: g, [cu]: bz, [cw]: "regionPartition" }, { [ct]: h, [cu]: [{ [cv]: w }, "--op-s3"] }], [cr]: [{ [cs]: bY, [cr]: [{ [cs]: [{ [ct]: h, [cu]: [au, "e"] }], [cr]: [{ [cs]: bZ, [cr]: [av, { [cs]: bE, endpoint: { [cx]: "https://{Bucket}.ec2.{url#authority}", [cy]: aw, [cE]: am }, [cq]: n }], [cq]: o }, { endpoint: { [cx]: "https://{Bucket}.ec2.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [cy]: aw, [cE]: am }, [cq]: n }], [cq]: o }, { [cs]: [{ [ct]: h, [cu]: [au, "o"] }], [cr]: [{ [cs]: bZ, [cr]: [av, { [cs]: bE, endpoint: { [cx]: "https://{Bucket}.op-{outpostId}.{url#authority}", [cy]: aw, [cE]: am }, [cq]: n }], [cq]: o }, { endpoint: { [cx]: "https://{Bucket}.op-{outpostId}.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [cy]: aw, [cE]: am }, [cq]: n }], [cq]: o }, { error: 'Unrecognized hardware type: "Expected hardware type o or e but got {hardwareType}"', [cq]: f }], [cq]: o }, { error: "Invalid ARN: The outpost Id must only contain a-z, A-Z, 0-9 and `-`.", [cq]: f }], [cq]: o }, { [cs]: bX, [cr]: [{ [cs]: [Z, { [ct]: r, [cu]: [{ [ct]: d, [cu]: [{ [ct]: m, [cu]: bA }] }] }], error: "Custom endpoint `{Endpoint}` was not a valid URI", [cq]: f }, { [cs]: [ax, an], [cr]: [{ [cs]: bI, [cr]: [{ [cs]: cb, [cr]: [{ [cs]: [W, ab], error: "S3 Accelerate cannot be used in this region", [cq]: f }, { [cs]: [Y, X, az, ar, aA], endpoint: { [cx]: "https://{Bucket}.s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [Y, X, az, ar, aC, aD], [cr]: [{ endpoint: aE, [cq]: n }], [cq]: o }, { [cs]: [Y, X, az, ar, aC, aG], endpoint: aE, [cq]: n }, { [cs]: [aH, X, az, ar, aA], endpoint: { [cx]: "https://{Bucket}.s3-fips.us-east-1.{partitionResult#dnsSuffix}", [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [aH, X, az, ar, aC, aD], [cr]: [{ endpoint: aI, [cq]: n }], [cq]: o }, { [cs]: [aH, X, az, ar, aC, aG], endpoint: aI, [cq]: n }, { [cs]: [Y, aJ, W, ar, aA], endpoint: { [cx]: "https://{Bucket}.s3-accelerate.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [Y, aJ, W, ar, aC, aD], [cr]: [{ endpoint: aK, [cq]: n }], [cq]: o }, { [cs]: [Y, aJ, W, ar, aC, aG], endpoint: aK, [cq]: n }, { [cs]: [Y, aJ, az, ar, aA], endpoint: { [cx]: "https://{Bucket}.s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [Y, aJ, az, ar, aC, aD], [cr]: [{ endpoint: aL, [cq]: n }], [cq]: o }, { [cs]: [Y, aJ, az, ar, aC, aG], endpoint: aL, [cq]: n }, { [cs]: [aH, aJ, az, Z, ah, ai, aA], endpoint: { [cx]: C, [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [aH, aJ, az, Z, ah, aM, aA], endpoint: { [cx]: q, [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [aH, aJ, az, Z, ah, ai, aC, aD], [cr]: [{ [cs]: cc, endpoint: aN, [cq]: n }, { endpoint: aN, [cq]: n }], [cq]: o }, { [cs]: [aH, aJ, az, Z, ah, aM, aC, aD], [cr]: [{ [cs]: cc, endpoint: aO, [cq]: n }, aP], [cq]: o }, { [cs]: [aH, aJ, az, Z, ah, ai, aC, aG], endpoint: aN, [cq]: n }, { [cs]: [aH, aJ, az, Z, ah, aM, aC, aG], endpoint: aO, [cq]: n }, { [cs]: [aH, aJ, W, ar, aA], endpoint: { [cx]: D, [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [aH, aJ, W, ar, aC, aD], [cr]: [{ [cs]: cc, endpoint: aQ, [cq]: n }, { endpoint: aQ, [cq]: n }], [cq]: o }, { [cs]: [aH, aJ, W, ar, aC, aG], endpoint: aQ, [cq]: n }, { [cs]: [aH, aJ, az, ar, aA], endpoint: { [cx]: E, [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [aH, aJ, az, ar, aC, aD], [cr]: [{ [cs]: cc, endpoint: { [cx]: E, [cy]: aF, [cE]: am }, [cq]: n }, { endpoint: aR, [cq]: n }], [cq]: o }, { [cs]: [aH, aJ, az, ar, aC, aG], endpoint: aR, [cq]: n }], [cq]: o }, aS], [cq]: o }], [cq]: o }, { [cs]: [Z, ah, { [ct]: h, [cu]: [{ [ct]: i, [cu]: [aj, "scheme"] }, "http"] }, { [ct]: p, [cu]: [ad, c] }, ax, aJ, aH, az], [cr]: [{ [cs]: bI, [cr]: [{ [cs]: cb, [cr]: [aP], [cq]: o }, aS], [cq]: o }], [cq]: o }, { [cs]: [ax, { [ct]: F, [cu]: bB, [cw]: G }], [cr]: [{ [cs]: [{ [ct]: i, [cu]: [aT, "resourceId[0]"], [cw]: H }, { [ct]: r, [cu]: [{ [ct]: h, [cu]: [aU, I] }] }], [cr]: [{ [cs]: [{ [ct]: h, [cu]: [aV, J] }], [cr]: [{ [cs]: cd, [cr]: [{ [cs]: ce, [cr]: [aX, aY, { [cs]: cg, [cr]: [aZ, { [cs]: ch, [cr]: [ba, { [cs]: cj, [cr]: [{ [cs]: bI, [cr]: [{ [cs]: ck, [cr]: [{ [cs]: cl, [cr]: [{ [cs]: [{ [ct]: h, [cu]: [bc, I] }], error: "Invalid ARN: Missing account id", [cq]: f }, { [cs]: cm, [cr]: [{ [cs]: cn, [cr]: [{ [cs]: bE, endpoint: { [cx]: M, [cy]: bd, [cE]: am }, [cq]: n }, { [cs]: bJ, endpoint: { [cx]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cy]: bd, [cE]: am }, [cq]: n }, { endpoint: { [cx]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cy]: bd, [cE]: am }, [cq]: n }], [cq]: o }, be], [cq]: o }, bf], [cq]: o }, bg], [cq]: o }, bh], [cq]: o }], [cq]: o }], [cq]: o }, bi], [cq]: o }, { error: "Invalid ARN: bucket ARN is missing a region", [cq]: f }], [cq]: o }, bj], [cq]: o }, { error: "Invalid ARN: Object Lambda ARNs only support `accesspoint` arn types, but found: `{arnType}`", [cq]: f }], [cq]: o }, { [cs]: cd, [cr]: [{ [cs]: ce, [cr]: [{ [cs]: cg, [cr]: [{ [cs]: cd, [cr]: [{ [cs]: cg, [cr]: [aZ, { [cs]: ch, [cr]: [ba, { [cs]: cj, [cr]: [{ [cs]: bI, [cr]: [{ [cs]: [{ [ct]: h, [cu]: [bb, "{partitionResult#name}"] }], [cr]: [{ [cs]: cl, [cr]: [{ [cs]: [{ [ct]: h, [cu]: [aV, B] }], [cr]: [{ [cs]: cm, [cr]: [{ [cs]: cn, [cr]: [{ [cs]: bD, error: "Access Points do not support S3 Accelerate", [cq]: f }, { [cs]: [X, Y], endpoint: { [cx]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cy]: bk, [cE]: am }, [cq]: n }, { [cs]: [X, aH], endpoint: { [cx]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cy]: bk, [cE]: am }, [cq]: n }, { [cs]: [aJ, Y], endpoint: { [cx]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cy]: bk, [cE]: am }, [cq]: n }, { [cs]: [aJ, aH, Z, ah], endpoint: { [cx]: M, [cy]: bk, [cE]: am }, [cq]: n }, { [cs]: [aJ, aH], endpoint: { [cx]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cy]: bk, [cE]: am }, [cq]: n }], [cq]: o }, be], [cq]: o }, bf], [cq]: o }, { error: "Invalid ARN: The ARN was not for the S3 service, found: {bucketArn#service}", [cq]: f }], [cq]: o }, bg], [cq]: o }, bh], [cq]: o }], [cq]: o }], [cq]: o }, bi], [cq]: o }], [cq]: o }], [cq]: o }, { [cs]: [{ [ct]: y, [cu]: [aW, c] }], [cr]: [{ [cs]: bC, error: "S3 MRAP does not support dual-stack", [cq]: f }, { [cs]: bJ, error: "S3 MRAP does not support FIPS", [cq]: f }, { [cs]: bD, error: "S3 MRAP does not support S3 Accelerate", [cq]: f }, { [cs]: [{ [ct]: e, [cu]: [{ [cv]: "DisableMultiRegionAccessPoints" }, c] }], error: "Invalid configuration: Multi-Region Access Point ARNs are disabled.", [cq]: f }, { [cs]: [{ [ct]: g, [cu]: bz, [cw]: N }], [cr]: [{ [cs]: [{ [ct]: h, [cu]: [{ [ct]: i, [cu]: [{ [cv]: N }, j] }, { [ct]: i, [cu]: [aT, "partition"] }] }], [cr]: [{ endpoint: { [cx]: "https://{accessPointName}.accesspoint.s3-global.{mrapPartition#dnsSuffix}", [cy]: { [cA]: [{ [cB]: c, name: z, [cC]: B, [cF]: ca }] }, [cE]: am }, [cq]: n }], [cq]: o }, { error: "Client was configured for partition `{mrapPartition#name}` but bucket referred to partition `{bucketArn#partition}`", [cq]: f }], [cq]: o }], [cq]: o }, { error: "Invalid Access Point Name", [cq]: f }], [cq]: o }, bj], [cq]: o }, { [cs]: [{ [ct]: h, [cu]: [aV, A] }], [cr]: [{ [cs]: bC, error: "S3 Outposts does not support Dual-stack", [cq]: f }, { [cs]: bJ, error: "S3 Outposts does not support FIPS", [cq]: f }, { [cs]: bD, error: "S3 Outposts does not support S3 Accelerate", [cq]: f }, { [cs]: [{ [ct]: d, [cu]: [{ [ct]: i, [cu]: [aT, "resourceId[4]"] }] }], error: "Invalid Arn: Outpost Access Point ARN contains sub resources", [cq]: f }, { [cs]: [{ [ct]: i, [cu]: cf, [cw]: x }], [cr]: [{ [cs]: bY, [cr]: [ba, { [cs]: cj, [cr]: [{ [cs]: bI, [cr]: [{ [cs]: ck, [cr]: [{ [cs]: cl, [cr]: [{ [cs]: cm, [cr]: [{ [cs]: [{ [ct]: i, [cu]: ci, [cw]: O }], [cr]: [{ [cs]: [{ [ct]: i, [cu]: [aT, "resourceId[3]"], [cw]: L }], [cr]: [{ [cs]: [{ [ct]: h, [cu]: [{ [cv]: O }, K] }], [cr]: [{ [cs]: bE, endpoint: { [cx]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.{url#authority}", [cy]: bl, [cE]: am }, [cq]: n }, { endpoint: { [cx]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.s3-outposts.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cy]: bl, [cE]: am }, [cq]: n }], [cq]: o }, { error: "Expected an outpost type `accesspoint`, found {outpostType}", [cq]: f }], [cq]: o }, { error: "Invalid ARN: expected an access point name", [cq]: f }], [cq]: o }, { error: "Invalid ARN: Expected a 4-component resource", [cq]: f }], [cq]: o }, bf], [cq]: o }, bg], [cq]: o }, bh], [cq]: o }], [cq]: o }], [cq]: o }, { error: "Invalid ARN: The outpost Id may only contain a-z, A-Z, 0-9 and `-`. Found: `{outpostId}`", [cq]: f }], [cq]: o }, { error: "Invalid ARN: The Outpost Id was not set", [cq]: f }], [cq]: o }, { error: "Invalid ARN: Unrecognized format: {Bucket} (type: {arnType})", [cq]: f }], [cq]: o }, { error: "Invalid ARN: No ARN type specified", [cq]: f }], [cq]: o }, { [cs]: [{ [ct]: k, [cu]: [ad, 0, 4, b], [cw]: P }, { [ct]: h, [cu]: [{ [cv]: P }, "arn:"] }, { [ct]: r, [cu]: [{ [ct]: d, [cu]: [bm] }] }], error: "Invalid ARN: `{Bucket}` was not a valid ARN", [cq]: f }, { [cs]: [{ [ct]: e, [cu]: [ay, c] }, bm], error: "Path-style addressing cannot be used with ARN buckets", [cq]: f }, { [cs]: bG, [cr]: [{ [cs]: bI, [cr]: [{ [cs]: [az], [cr]: [{ [cs]: [Y, ar, X, aA], endpoint: { [cx]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [Y, ar, X, aC, aD], [cr]: [{ endpoint: bn, [cq]: n }], [cq]: o }, { [cs]: [Y, ar, X, aC, aG], endpoint: bn, [cq]: n }, { [cs]: [aH, ar, X, aA], endpoint: { [cx]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [aH, ar, X, aC, aD], [cr]: [{ endpoint: bo, [cq]: n }], [cq]: o }, { [cs]: [aH, ar, X, aC, aG], endpoint: bo, [cq]: n }, { [cs]: [Y, ar, aJ, aA], endpoint: { [cx]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [Y, ar, aJ, aC, aD], [cr]: [{ endpoint: bp, [cq]: n }], [cq]: o }, { [cs]: [Y, ar, aJ, aC, aG], endpoint: bp, [cq]: n }, { [cs]: [aH, Z, ah, aJ, aA], endpoint: { [cx]: Q, [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [aH, Z, ah, aJ, aC, aD], [cr]: [{ [cs]: cc, endpoint: bq, [cq]: n }, { endpoint: bq, [cq]: n }], [cq]: o }, { [cs]: [aH, Z, ah, aJ, aC, aG], endpoint: bq, [cq]: n }, { [cs]: [aH, ar, aJ, aA], endpoint: { [cx]: R, [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [aH, ar, aJ, aC, aD], [cr]: [{ [cs]: cc, endpoint: { [cx]: R, [cy]: aF, [cE]: am }, [cq]: n }, { endpoint: br, [cq]: n }], [cq]: o }, { [cs]: [aH, ar, aJ, aC, aG], endpoint: br, [cq]: n }], [cq]: o }, { error: "Path-style addressing cannot be used with S3 Accelerate", [cq]: f }], [cq]: o }], [cq]: o }], [cq]: o }, { [cs]: [{ [ct]: d, [cu]: [bs] }, { [ct]: e, [cu]: [bs, c] }], [cr]: [{ [cs]: bI, [cr]: [{ [cs]: co, [cr]: [aX, aY, { [cs]: bE, endpoint: { [cx]: t, [cy]: bt, [cE]: am }, [cq]: n }, { [cs]: bJ, endpoint: { [cx]: "https://s3-object-lambda-fips.{Region}.{partitionResult#dnsSuffix}", [cy]: bt, [cE]: am }, [cq]: n }, { endpoint: { [cx]: "https://s3-object-lambda.{Region}.{partitionResult#dnsSuffix}", [cy]: bt, [cE]: am }, [cq]: n }], [cq]: o }, aS], [cq]: o }], [cq]: o }, { [cs]: [at], [cr]: [{ [cs]: bI, [cr]: [{ [cs]: co, [cr]: [{ [cs]: [X, Y, ar, aA], endpoint: { [cx]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [X, Y, ar, aC, aD], [cr]: [{ endpoint: bu, [cq]: n }], [cq]: o }, { [cs]: [X, Y, ar, aC, aG], endpoint: bu, [cq]: n }, { [cs]: [X, aH, ar, aA], endpoint: { [cx]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}", [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [X, aH, ar, aC, aD], [cr]: [{ endpoint: bv, [cq]: n }], [cq]: o }, { [cs]: [X, aH, ar, aC, aG], endpoint: bv, [cq]: n }, { [cs]: [aJ, Y, ar, aA], endpoint: { [cx]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [aJ, Y, ar, aC, aD], [cr]: [{ endpoint: bw, [cq]: n }], [cq]: o }, { [cs]: [aJ, Y, ar, aC, aG], endpoint: bw, [cq]: n }, { [cs]: [aJ, aH, Z, ah, aA], endpoint: { [cx]: t, [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [aJ, aH, Z, ah, aC, aD], [cr]: [{ [cs]: cc, endpoint: bx, [cq]: n }, { endpoint: bx, [cq]: n }], [cq]: o }, { [cs]: [aJ, aH, Z, ah, aC, aG], endpoint: bx, [cq]: n }, { [cs]: [aJ, aH, ar, aA], endpoint: { [cx]: S, [cy]: aB, [cE]: am }, [cq]: n }, { [cs]: [aJ, aH, ar, aC, aD], [cr]: [{ [cs]: cc, endpoint: { [cx]: S, [cy]: aF, [cE]: am }, [cq]: n }, { endpoint: by, [cq]: n }], [cq]: o }, { [cs]: [aJ, aH, ar, aC, aG], endpoint: by, [cq]: n }], [cq]: o }, aS], [cq]: o }], [cq]: o }], [cq]: o }, { error: "A region must be set when sending requests to S3.", [cq]: f }] };
+var T = { [cs]: false, [ct]: "string" };
+var U = { [cs]: true, "default": false, [ct]: "boolean" };
+var V = { [cs]: false, [ct]: "boolean" };
+var W = { [cw]: e, [cx]: [{ [cy]: "Accelerate" }, true] };
+var X = { [cw]: e, [cx]: [{ [cy]: "UseFIPS" }, true] };
+var Y = { [cw]: e, [cx]: [{ [cy]: "UseDualStack" }, true] };
+var Z = { [cw]: d, [cx]: [{ [cy]: "Endpoint" }] };
+var aa = { [cw]: g, [cx]: [{ [cy]: "Region" }], [cz]: "partitionResult" };
+var ab = { [cw]: h, [cx]: [{ [cw]: i, [cx]: [{ [cy]: "partitionResult" }, j] }, "aws-cn"] };
+var ac = { [cw]: d, [cx]: [{ [cy]: "Bucket" }] };
+var ad = { [cy]: "Bucket" };
+var ae = { [cv]: [W], [f]: "S3Express does not support S3 Accelerate.", [ct]: f };
+var af = { [cv]: [Z, { [cw]: m, [cx]: [{ [cy]: "Endpoint" }], [cz]: "url" }], [cu]: [{ [cv]: [{ [cw]: d, [cx]: [{ [cy]: "DisableS3ExpressSessionAuth" }] }, { [cw]: e, [cx]: [{ [cy]: "DisableS3ExpressSessionAuth" }, true] }], [cu]: [{ [cv]: [{ [cw]: e, [cx]: [{ [cw]: i, [cx]: [{ [cy]: "url" }, "isIp"] }, true] }], [cu]: [{ [cv]: [{ [cw]: "uriEncode", [cx]: [ad], [cz]: "uri_encoded_bucket" }], [cu]: [{ [n]: { [cA]: "{url#scheme}://{url#authority}/{uri_encoded_bucket}{url#path}", [cB]: { [cC]: "S3Express", [cD]: [{ [cE]: true, [j]: "sigv4", [cF]: "s3express", [cG]: "{Region}" }] }, [cH]: {} }, [ct]: n }], [ct]: o }], [ct]: o }, { [cv]: [{ [cw]: p, [cx]: [ad, false] }], [cu]: [{ [n]: { [cA]: q, [cB]: { [cC]: "S3Express", [cD]: [{ [cE]: true, [j]: "sigv4", [cF]: "s3express", [cG]: "{Region}" }] }, [cH]: {} }, [ct]: n }], [ct]: o }, { [f]: "S3Express bucket name is not a valid virtual hostable name.", [ct]: f }], [ct]: o }, { [cv]: [{ [cw]: e, [cx]: [{ [cw]: i, [cx]: [{ [cy]: "url" }, "isIp"] }, true] }], [cu]: [{ [cv]: [{ [cw]: "uriEncode", [cx]: [ad], [cz]: "uri_encoded_bucket" }], [cu]: [{ [n]: { [cA]: "{url#scheme}://{url#authority}/{uri_encoded_bucket}{url#path}", [cB]: { [cC]: "S3Express", [cD]: [{ [cE]: true, [j]: "sigv4-s3express", [cF]: "s3express", [cG]: "{Region}" }] }, [cH]: {} }, [ct]: n }], [ct]: o }], [ct]: o }, { [cv]: [{ [cw]: p, [cx]: [ad, false] }], [cu]: [{ [n]: { [cA]: q, [cB]: { [cC]: "S3Express", [cD]: [{ [cE]: true, [j]: "sigv4-s3express", [cF]: "s3express", [cG]: "{Region}" }] }, [cH]: {} }, [ct]: n }], [ct]: o }, { [f]: "S3Express bucket name is not a valid virtual hostable name.", [ct]: f }], [ct]: o };
+var ag = { [cw]: m, [cx]: [{ [cy]: "Endpoint" }], [cz]: "url" };
+var ah = { [cw]: e, [cx]: [{ [cw]: i, [cx]: [{ [cy]: "url" }, "isIp"] }, true] };
+var ai = { [cy]: "url" };
+var aj = { [cw]: "uriEncode", [cx]: [ad], [cz]: "uri_encoded_bucket" };
+var ak = { [cC]: "S3Express", [cD]: [{ [cE]: true, [j]: "sigv4", [cF]: "s3express", [cG]: "{Region}" }] };
+var al = {};
+var am = { [cw]: p, [cx]: [ad, false] };
+var an = { [f]: "S3Express bucket name is not a valid virtual hostable name.", [ct]: f };
+var ao = { [cw]: d, [cx]: [{ [cy]: "UseS3ExpressControlEndpoint" }] };
+var ap = { [cw]: e, [cx]: [{ [cy]: "UseS3ExpressControlEndpoint" }, true] };
+var aq = { [cw]: r, [cx]: [Z] };
+var ar = { [cw]: e, [cx]: [{ [cy]: "UseDualStack" }, false] };
+var as = { [cw]: e, [cx]: [{ [cy]: "UseFIPS" }, false] };
+var at = { [f]: "Unrecognized S3Express bucket name format.", [ct]: f };
+var au = { [cw]: r, [cx]: [ac] };
+var av = { [cy]: u };
+var aw = { [cv]: [aq], [f]: "Expected a endpoint to be specified but no endpoint was found", [ct]: f };
+var ax = { [cD]: [{ [cE]: true, [j]: z, [cF]: A, [cI]: ["*"] }, { [cE]: true, [j]: "sigv4", [cF]: A, [cG]: "{Region}" }] };
+var ay = { [cw]: e, [cx]: [{ [cy]: "ForcePathStyle" }, false] };
+var az = { [cy]: "ForcePathStyle" };
+var aA = { [cw]: e, [cx]: [{ [cy]: "Accelerate" }, false] };
+var aB = { [cw]: h, [cx]: [{ [cy]: "Region" }, "aws-global"] };
+var aC = { [cD]: [{ [cE]: true, [j]: "sigv4", [cF]: B, [cG]: "us-east-1" }] };
+var aD = { [cw]: r, [cx]: [aB] };
+var aE = { [cw]: e, [cx]: [{ [cy]: "UseGlobalEndpoint" }, true] };
+var aF = { [cA]: "https://{Bucket}.s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}", [cB]: { [cD]: [{ [cE]: true, [j]: "sigv4", [cF]: B, [cG]: "{Region}" }] }, [cH]: {} };
+var aG = { [cD]: [{ [cE]: true, [j]: "sigv4", [cF]: B, [cG]: "{Region}" }] };
+var aH = { [cw]: e, [cx]: [{ [cy]: "UseGlobalEndpoint" }, false] };
+var aI = { [cA]: "https://{Bucket}.s3-fips.{Region}.{partitionResult#dnsSuffix}", [cB]: aG, [cH]: {} };
+var aJ = { [cA]: "https://{Bucket}.s3-accelerate.dualstack.{partitionResult#dnsSuffix}", [cB]: aG, [cH]: {} };
+var aK = { [cA]: "https://{Bucket}.s3.dualstack.{Region}.{partitionResult#dnsSuffix}", [cB]: aG, [cH]: {} };
+var aL = { [cw]: e, [cx]: [{ [cw]: i, [cx]: [ai, "isIp"] }, false] };
+var aM = { [cA]: C, [cB]: aG, [cH]: {} };
+var aN = { [cA]: q, [cB]: aG, [cH]: {} };
+var aO = { [n]: aN, [ct]: n };
+var aP = { [cA]: D, [cB]: aG, [cH]: {} };
+var aQ = { [cA]: "https://{Bucket}.s3.{Region}.{partitionResult#dnsSuffix}", [cB]: aG, [cH]: {} };
+var aR = { [f]: "Invalid region: region was not a valid DNS name.", [ct]: f };
+var aS = { [cy]: G };
+var aT = { [cy]: H };
+var aU = { [cw]: i, [cx]: [aS, "service"] };
+var aV = { [cy]: L };
+var aW = { [cv]: [Y], [f]: "S3 Object Lambda does not support Dual-stack", [ct]: f };
+var aX = { [cv]: [W], [f]: "S3 Object Lambda does not support S3 Accelerate", [ct]: f };
+var aY = { [cv]: [{ [cw]: d, [cx]: [{ [cy]: "DisableAccessPoints" }] }, { [cw]: e, [cx]: [{ [cy]: "DisableAccessPoints" }, true] }], [f]: "Access points are not supported for this operation", [ct]: f };
+var aZ = { [cv]: [{ [cw]: d, [cx]: [{ [cy]: "UseArnRegion" }] }, { [cw]: e, [cx]: [{ [cy]: "UseArnRegion" }, false] }, { [cw]: r, [cx]: [{ [cw]: h, [cx]: [{ [cw]: i, [cx]: [aS, "region"] }, "{Region}"] }] }], [f]: "Invalid configuration: region from ARN `{bucketArn#region}` does not match client region `{Region}` and UseArnRegion is `false`", [ct]: f };
+var ba = { [cw]: i, [cx]: [{ [cy]: "bucketPartition" }, j] };
+var bb = { [cw]: i, [cx]: [aS, "accountId"] };
+var bc = { [cD]: [{ [cE]: true, [j]: "sigv4", [cF]: J, [cG]: "{bucketArn#region}" }] };
+var bd = { [f]: "Invalid ARN: The access point name may only contain a-z, A-Z, 0-9 and `-`. Found: `{accessPointName}`", [ct]: f };
+var be = { [f]: "Invalid ARN: The account id may only contain a-z, A-Z, 0-9 and `-`. Found: `{bucketArn#accountId}`", [ct]: f };
+var bf = { [f]: "Invalid region in ARN: `{bucketArn#region}` (invalid DNS name)", [ct]: f };
+var bg = { [f]: "Client was configured for partition `{partitionResult#name}` but ARN (`{Bucket}`) has `{bucketPartition#name}`", [ct]: f };
+var bh = { [f]: "Invalid ARN: The ARN may only contain a single resource component after `accesspoint`.", [ct]: f };
+var bi = { [f]: "Invalid ARN: Expected a resource of the format `accesspoint:<accesspoint name>` but no name was provided", [ct]: f };
+var bj = { [cD]: [{ [cE]: true, [j]: "sigv4", [cF]: B, [cG]: "{bucketArn#region}" }] };
+var bk = { [cD]: [{ [cE]: true, [j]: z, [cF]: A, [cI]: ["*"] }, { [cE]: true, [j]: "sigv4", [cF]: A, [cG]: "{bucketArn#region}" }] };
+var bl = { [cw]: F, [cx]: [ad] };
+var bm = { [cA]: "https://s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cB]: aG, [cH]: {} };
+var bn = { [cA]: "https://s3-fips.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cB]: aG, [cH]: {} };
+var bo = { [cA]: "https://s3.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cB]: aG, [cH]: {} };
+var bp = { [cA]: Q, [cB]: aG, [cH]: {} };
+var bq = { [cA]: "https://s3.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cB]: aG, [cH]: {} };
+var br = { [cy]: "UseObjectLambdaEndpoint" };
+var bs = { [cD]: [{ [cE]: true, [j]: "sigv4", [cF]: J, [cG]: "{Region}" }] };
+var bt = { [cA]: "https://s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}", [cB]: aG, [cH]: {} };
+var bu = { [cA]: "https://s3-fips.{Region}.{partitionResult#dnsSuffix}", [cB]: aG, [cH]: {} };
+var bv = { [cA]: "https://s3.dualstack.{Region}.{partitionResult#dnsSuffix}", [cB]: aG, [cH]: {} };
+var bw = { [cA]: t, [cB]: aG, [cH]: {} };
+var bx = { [cA]: "https://s3.{Region}.{partitionResult#dnsSuffix}", [cB]: aG, [cH]: {} };
+var by = [{ [cy]: "Region" }];
+var bz = [{ [cy]: "Endpoint" }];
+var bA = [ad];
+var bB = [W];
+var bC = [Z, ag];
+var bD = [{ [cw]: d, [cx]: [{ [cy]: "DisableS3ExpressSessionAuth" }] }, { [cw]: e, [cx]: [{ [cy]: "DisableS3ExpressSessionAuth" }, true] }];
+var bE = [aj];
+var bF = [am];
+var bG = [aa];
+var bH = [X, Y];
+var bI = [X, ar];
+var bJ = [as, Y];
+var bK = [as, ar];
+var bL = [{ [cw]: k, [cx]: [ad, 6, 14, true], [cz]: "s3expressAvailabilityZoneId" }, { [cw]: k, [cx]: [ad, 14, 16, true], [cz]: "s3expressAvailabilityZoneDelim" }, { [cw]: h, [cx]: [{ [cy]: "s3expressAvailabilityZoneDelim" }, "--"] }];
+var bM = [{ [cv]: [X, Y], [n]: { [cA]: "https://{Bucket}.s3express-fips-{s3expressAvailabilityZoneId}.dualstack.{Region}.{partitionResult#dnsSuffix}", [cB]: ak, [cH]: {} }, [ct]: n }, { [cv]: bI, [n]: { [cA]: "https://{Bucket}.s3express-fips-{s3expressAvailabilityZoneId}.{Region}.{partitionResult#dnsSuffix}", [cB]: ak, [cH]: {} }, [ct]: n }, { [cv]: bJ, [n]: { [cA]: "https://{Bucket}.s3express-{s3expressAvailabilityZoneId}.dualstack.{Region}.{partitionResult#dnsSuffix}", [cB]: ak, [cH]: {} }, [ct]: n }, { [cv]: bK, [n]: { [cA]: "https://{Bucket}.s3express-{s3expressAvailabilityZoneId}.{Region}.{partitionResult#dnsSuffix}", [cB]: ak, [cH]: {} }, [ct]: n }];
+var bN = [{ [cw]: k, [cx]: [ad, 6, 15, true], [cz]: "s3expressAvailabilityZoneId" }, { [cw]: k, [cx]: [ad, 15, 17, true], [cz]: "s3expressAvailabilityZoneDelim" }, { [cw]: h, [cx]: [{ [cy]: "s3expressAvailabilityZoneDelim" }, "--"] }];
+var bO = [{ [cw]: k, [cx]: [ad, 6, 19, true], [cz]: "s3expressAvailabilityZoneId" }, { [cw]: k, [cx]: [ad, 19, 21, true], [cz]: "s3expressAvailabilityZoneDelim" }, { [cw]: h, [cx]: [{ [cy]: "s3expressAvailabilityZoneDelim" }, "--"] }];
+var bP = [{ [cw]: k, [cx]: [ad, 6, 20, true], [cz]: "s3expressAvailabilityZoneId" }, { [cw]: k, [cx]: [ad, 20, 22, true], [cz]: "s3expressAvailabilityZoneDelim" }, { [cw]: h, [cx]: [{ [cy]: "s3expressAvailabilityZoneDelim" }, "--"] }];
+var bQ = [{ [cw]: k, [cx]: [ad, 6, 26, true], [cz]: "s3expressAvailabilityZoneId" }, { [cw]: k, [cx]: [ad, 26, 28, true], [cz]: "s3expressAvailabilityZoneDelim" }, { [cw]: h, [cx]: [{ [cy]: "s3expressAvailabilityZoneDelim" }, "--"] }];
+var bR = [{ [cv]: [X, Y], [n]: { [cA]: "https://{Bucket}.s3express-fips-{s3expressAvailabilityZoneId}.dualstack.{Region}.{partitionResult#dnsSuffix}", [cB]: { [cC]: "S3Express", [cD]: [{ [cE]: true, [j]: "sigv4-s3express", [cF]: "s3express", [cG]: "{Region}" }] }, [cH]: {} }, [ct]: n }, { [cv]: bI, [n]: { [cA]: "https://{Bucket}.s3express-fips-{s3expressAvailabilityZoneId}.{Region}.{partitionResult#dnsSuffix}", [cB]: { [cC]: "S3Express", [cD]: [{ [cE]: true, [j]: "sigv4-s3express", [cF]: "s3express", [cG]: "{Region}" }] }, [cH]: {} }, [ct]: n }, { [cv]: bJ, [n]: { [cA]: "https://{Bucket}.s3express-{s3expressAvailabilityZoneId}.dualstack.{Region}.{partitionResult#dnsSuffix}", [cB]: { [cC]: "S3Express", [cD]: [{ [cE]: true, [j]: "sigv4-s3express", [cF]: "s3express", [cG]: "{Region}" }] }, [cH]: {} }, [ct]: n }, { [cv]: bK, [n]: { [cA]: "https://{Bucket}.s3express-{s3expressAvailabilityZoneId}.{Region}.{partitionResult#dnsSuffix}", [cB]: { [cC]: "S3Express", [cD]: [{ [cE]: true, [j]: "sigv4-s3express", [cF]: "s3express", [cG]: "{Region}" }] }, [cH]: {} }, [ct]: n }];
+var bS = [ad, 0, 7, true];
+var bT = [{ [cw]: k, [cx]: [ad, 7, 15, true], [cz]: "s3expressAvailabilityZoneId" }, { [cw]: k, [cx]: [ad, 15, 17, true], [cz]: "s3expressAvailabilityZoneDelim" }, { [cw]: h, [cx]: [{ [cy]: "s3expressAvailabilityZoneDelim" }, "--"] }];
+var bU = [{ [cw]: k, [cx]: [ad, 7, 16, true], [cz]: "s3expressAvailabilityZoneId" }, { [cw]: k, [cx]: [ad, 16, 18, true], [cz]: "s3expressAvailabilityZoneDelim" }, { [cw]: h, [cx]: [{ [cy]: "s3expressAvailabilityZoneDelim" }, "--"] }];
+var bV = [{ [cw]: k, [cx]: [ad, 7, 20, true], [cz]: "s3expressAvailabilityZoneId" }, { [cw]: k, [cx]: [ad, 20, 22, true], [cz]: "s3expressAvailabilityZoneDelim" }, { [cw]: h, [cx]: [{ [cy]: "s3expressAvailabilityZoneDelim" }, "--"] }];
+var bW = [{ [cw]: k, [cx]: [ad, 7, 21, true], [cz]: "s3expressAvailabilityZoneId" }, { [cw]: k, [cx]: [ad, 21, 23, true], [cz]: "s3expressAvailabilityZoneDelim" }, { [cw]: h, [cx]: [{ [cy]: "s3expressAvailabilityZoneDelim" }, "--"] }];
+var bX = [{ [cw]: k, [cx]: [ad, 7, 27, true], [cz]: "s3expressAvailabilityZoneId" }, { [cw]: k, [cx]: [ad, 27, 29, true], [cz]: "s3expressAvailabilityZoneDelim" }, { [cw]: h, [cx]: [{ [cy]: "s3expressAvailabilityZoneDelim" }, "--"] }];
+var bY = [ac];
+var bZ = [{ [cw]: y, [cx]: [{ [cy]: x }, false] }];
+var ca = [{ [cw]: h, [cx]: [{ [cy]: v }, "beta"] }];
+var cb = ["*"];
+var cc = [{ [cw]: y, [cx]: [{ [cy]: "Region" }, false] }];
+var cd = [{ [cw]: h, [cx]: [{ [cy]: "Region" }, "us-east-1"] }];
+var ce = [{ [cw]: h, [cx]: [aT, K] }];
+var cf = [{ [cw]: i, [cx]: [aS, "resourceId[1]"], [cz]: L }, { [cw]: r, [cx]: [{ [cw]: h, [cx]: [aV, I] }] }];
+var cg = [aS, "resourceId[1]"];
+var ch = [Y];
+var ci = [{ [cw]: r, [cx]: [{ [cw]: h, [cx]: [{ [cw]: i, [cx]: [aS, "region"] }, I] }] }];
+var cj = [{ [cw]: r, [cx]: [{ [cw]: d, [cx]: [{ [cw]: i, [cx]: [aS, "resourceId[2]"] }] }] }];
+var ck = [aS, "resourceId[2]"];
+var cl = [{ [cw]: g, [cx]: [{ [cw]: i, [cx]: [aS, "region"] }], [cz]: "bucketPartition" }];
+var cm = [{ [cw]: h, [cx]: [ba, { [cw]: i, [cx]: [{ [cy]: "partitionResult" }, j] }] }];
+var cn = [{ [cw]: y, [cx]: [{ [cw]: i, [cx]: [aS, "region"] }, true] }];
+var co = [{ [cw]: y, [cx]: [bb, false] }];
+var cp = [{ [cw]: y, [cx]: [aV, false] }];
+var cq = [X];
+var cr = [{ [cw]: y, [cx]: [{ [cy]: "Region" }, true] }];
+var _data = { version: "1.0", parameters: { Bucket: T, Region: T, UseFIPS: U, UseDualStack: U, Endpoint: T, ForcePathStyle: U, Accelerate: U, UseGlobalEndpoint: U, UseObjectLambdaEndpoint: V, Key: T, Prefix: T, CopySource: T, DisableAccessPoints: V, DisableMultiRegionAccessPoints: U, UseArnRegion: V, UseS3ExpressControlEndpoint: V, DisableS3ExpressSessionAuth: V }, [cu]: [{ [cv]: [{ [cw]: d, [cx]: by }], [cu]: [{ [cv]: [W, X], error: "Accelerate cannot be used with FIPS", [ct]: f }, { [cv]: [Y, Z], error: "Cannot set dual-stack in combination with a custom endpoint.", [ct]: f }, { [cv]: [Z, X], error: "A custom endpoint cannot be combined with FIPS", [ct]: f }, { [cv]: [Z, W], error: "A custom endpoint cannot be combined with S3 Accelerate", [ct]: f }, { [cv]: [X, aa, ab], error: "Partition does not support FIPS", [ct]: f }, { [cv]: [ac, { [cw]: k, [cx]: [ad, 0, a, c], [cz]: l }, { [cw]: h, [cx]: [{ [cy]: l }, "--x-s3"] }], [cu]: [ae, af, { [cv]: [ao, ap], [cu]: [{ [cv]: bG, [cu]: [{ [cv]: [aj, aq], [cu]: [{ [cv]: bH, endpoint: { [cA]: "https://s3express-control-fips.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cB]: ak, [cH]: al }, [ct]: n }, { [cv]: bI, endpoint: { [cA]: "https://s3express-control-fips.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cB]: ak, [cH]: al }, [ct]: n }, { [cv]: bJ, endpoint: { [cA]: "https://s3express-control.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cB]: ak, [cH]: al }, [ct]: n }, { [cv]: bK, endpoint: { [cA]: "https://s3express-control.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cB]: ak, [cH]: al }, [ct]: n }], [ct]: o }], [ct]: o }], [ct]: o }, { [cv]: bF, [cu]: [{ [cv]: bG, [cu]: [{ [cv]: bD, [cu]: [{ [cv]: bL, [cu]: bM, [ct]: o }, { [cv]: bN, [cu]: bM, [ct]: o }, { [cv]: bO, [cu]: bM, [ct]: o }, { [cv]: bP, [cu]: bM, [ct]: o }, { [cv]: bQ, [cu]: bM, [ct]: o }, at], [ct]: o }, { [cv]: bL, [cu]: bR, [ct]: o }, { [cv]: bN, [cu]: bR, [ct]: o }, { [cv]: bO, [cu]: bR, [ct]: o }, { [cv]: bP, [cu]: bR, [ct]: o }, { [cv]: bQ, [cu]: bR, [ct]: o }, at], [ct]: o }], [ct]: o }, an], [ct]: o }, { [cv]: [ac, { [cw]: k, [cx]: bS, [cz]: s }, { [cw]: h, [cx]: [{ [cy]: s }, "--xa-s3"] }], [cu]: [ae, af, { [cv]: bF, [cu]: [{ [cv]: bG, [cu]: [{ [cv]: bD, [cu]: [{ [cv]: bT, [cu]: bM, [ct]: o }, { [cv]: bU, [cu]: bM, [ct]: o }, { [cv]: bV, [cu]: bM, [ct]: o }, { [cv]: bW, [cu]: bM, [ct]: o }, { [cv]: bX, [cu]: bM, [ct]: o }, at], [ct]: o }, { [cv]: bT, [cu]: bR, [ct]: o }, { [cv]: bU, [cu]: bR, [ct]: o }, { [cv]: bV, [cu]: bR, [ct]: o }, { [cv]: bW, [cu]: bR, [ct]: o }, { [cv]: bX, [cu]: bR, [ct]: o }, at], [ct]: o }], [ct]: o }, an], [ct]: o }, { [cv]: [au, ao, ap], [cu]: [{ [cv]: bG, [cu]: [{ [cv]: bC, endpoint: { [cA]: t, [cB]: ak, [cH]: al }, [ct]: n }, { [cv]: bH, endpoint: { [cA]: "https://s3express-control-fips.dualstack.{Region}.{partitionResult#dnsSuffix}", [cB]: ak, [cH]: al }, [ct]: n }, { [cv]: bI, endpoint: { [cA]: "https://s3express-control-fips.{Region}.{partitionResult#dnsSuffix}", [cB]: ak, [cH]: al }, [ct]: n }, { [cv]: bJ, endpoint: { [cA]: "https://s3express-control.dualstack.{Region}.{partitionResult#dnsSuffix}", [cB]: ak, [cH]: al }, [ct]: n }, { [cv]: bK, endpoint: { [cA]: "https://s3express-control.{Region}.{partitionResult#dnsSuffix}", [cB]: ak, [cH]: al }, [ct]: n }], [ct]: o }], [ct]: o }, { [cv]: [ac, { [cw]: k, [cx]: [ad, 49, 50, c], [cz]: u }, { [cw]: k, [cx]: [ad, 8, 12, c], [cz]: v }, { [cw]: k, [cx]: bS, [cz]: w }, { [cw]: k, [cx]: [ad, 32, 49, c], [cz]: x }, { [cw]: g, [cx]: by, [cz]: "regionPartition" }, { [cw]: h, [cx]: [{ [cy]: w }, "--op-s3"] }], [cu]: [{ [cv]: bZ, [cu]: [{ [cv]: [{ [cw]: h, [cx]: [av, "e"] }], [cu]: [{ [cv]: ca, [cu]: [aw, { [cv]: bC, endpoint: { [cA]: "https://{Bucket}.ec2.{url#authority}", [cB]: ax, [cH]: al }, [ct]: n }], [ct]: o }, { endpoint: { [cA]: "https://{Bucket}.ec2.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [cB]: ax, [cH]: al }, [ct]: n }], [ct]: o }, { [cv]: [{ [cw]: h, [cx]: [av, "o"] }], [cu]: [{ [cv]: ca, [cu]: [aw, { [cv]: bC, endpoint: { [cA]: "https://{Bucket}.op-{outpostId}.{url#authority}", [cB]: ax, [cH]: al }, [ct]: n }], [ct]: o }, { endpoint: { [cA]: "https://{Bucket}.op-{outpostId}.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [cB]: ax, [cH]: al }, [ct]: n }], [ct]: o }, { error: 'Unrecognized hardware type: "Expected hardware type o or e but got {hardwareType}"', [ct]: f }], [ct]: o }, { error: "Invalid ARN: The outpost Id must only contain a-z, A-Z, 0-9 and `-`.", [ct]: f }], [ct]: o }, { [cv]: bY, [cu]: [{ [cv]: [Z, { [cw]: r, [cx]: [{ [cw]: d, [cx]: [{ [cw]: m, [cx]: bz }] }] }], error: "Custom endpoint `{Endpoint}` was not a valid URI", [ct]: f }, { [cv]: [ay, am], [cu]: [{ [cv]: bG, [cu]: [{ [cv]: cc, [cu]: [{ [cv]: [W, ab], error: "S3 Accelerate cannot be used in this region", [ct]: f }, { [cv]: [Y, X, aA, aq, aB], endpoint: { [cA]: "https://{Bucket}.s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [Y, X, aA, aq, aD, aE], [cu]: [{ endpoint: aF, [ct]: n }], [ct]: o }, { [cv]: [Y, X, aA, aq, aD, aH], endpoint: aF, [ct]: n }, { [cv]: [ar, X, aA, aq, aB], endpoint: { [cA]: "https://{Bucket}.s3-fips.us-east-1.{partitionResult#dnsSuffix}", [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [ar, X, aA, aq, aD, aE], [cu]: [{ endpoint: aI, [ct]: n }], [ct]: o }, { [cv]: [ar, X, aA, aq, aD, aH], endpoint: aI, [ct]: n }, { [cv]: [Y, as, W, aq, aB], endpoint: { [cA]: "https://{Bucket}.s3-accelerate.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [Y, as, W, aq, aD, aE], [cu]: [{ endpoint: aJ, [ct]: n }], [ct]: o }, { [cv]: [Y, as, W, aq, aD, aH], endpoint: aJ, [ct]: n }, { [cv]: [Y, as, aA, aq, aB], endpoint: { [cA]: "https://{Bucket}.s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [Y, as, aA, aq, aD, aE], [cu]: [{ endpoint: aK, [ct]: n }], [ct]: o }, { [cv]: [Y, as, aA, aq, aD, aH], endpoint: aK, [ct]: n }, { [cv]: [ar, as, aA, Z, ag, ah, aB], endpoint: { [cA]: C, [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [ar, as, aA, Z, ag, aL, aB], endpoint: { [cA]: q, [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [ar, as, aA, Z, ag, ah, aD, aE], [cu]: [{ [cv]: cd, endpoint: aM, [ct]: n }, { endpoint: aM, [ct]: n }], [ct]: o }, { [cv]: [ar, as, aA, Z, ag, aL, aD, aE], [cu]: [{ [cv]: cd, endpoint: aN, [ct]: n }, aO], [ct]: o }, { [cv]: [ar, as, aA, Z, ag, ah, aD, aH], endpoint: aM, [ct]: n }, { [cv]: [ar, as, aA, Z, ag, aL, aD, aH], endpoint: aN, [ct]: n }, { [cv]: [ar, as, W, aq, aB], endpoint: { [cA]: D, [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [ar, as, W, aq, aD, aE], [cu]: [{ [cv]: cd, endpoint: aP, [ct]: n }, { endpoint: aP, [ct]: n }], [ct]: o }, { [cv]: [ar, as, W, aq, aD, aH], endpoint: aP, [ct]: n }, { [cv]: [ar, as, aA, aq, aB], endpoint: { [cA]: E, [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [ar, as, aA, aq, aD, aE], [cu]: [{ [cv]: cd, endpoint: { [cA]: E, [cB]: aG, [cH]: al }, [ct]: n }, { endpoint: aQ, [ct]: n }], [ct]: o }, { [cv]: [ar, as, aA, aq, aD, aH], endpoint: aQ, [ct]: n }], [ct]: o }, aR], [ct]: o }], [ct]: o }, { [cv]: [Z, ag, { [cw]: h, [cx]: [{ [cw]: i, [cx]: [ai, "scheme"] }, "http"] }, { [cw]: p, [cx]: [ad, c] }, ay, as, ar, aA], [cu]: [{ [cv]: bG, [cu]: [{ [cv]: cc, [cu]: [aO], [ct]: o }, aR], [ct]: o }], [ct]: o }, { [cv]: [ay, { [cw]: F, [cx]: bA, [cz]: G }], [cu]: [{ [cv]: [{ [cw]: i, [cx]: [aS, "resourceId[0]"], [cz]: H }, { [cw]: r, [cx]: [{ [cw]: h, [cx]: [aT, I] }] }], [cu]: [{ [cv]: [{ [cw]: h, [cx]: [aU, J] }], [cu]: [{ [cv]: ce, [cu]: [{ [cv]: cf, [cu]: [aW, aX, { [cv]: ci, [cu]: [aY, { [cv]: cj, [cu]: [aZ, { [cv]: cl, [cu]: [{ [cv]: bG, [cu]: [{ [cv]: cm, [cu]: [{ [cv]: cn, [cu]: [{ [cv]: [{ [cw]: h, [cx]: [bb, I] }], error: "Invalid ARN: Missing account id", [ct]: f }, { [cv]: co, [cu]: [{ [cv]: cp, [cu]: [{ [cv]: bC, endpoint: { [cA]: M, [cB]: bc, [cH]: al }, [ct]: n }, { [cv]: cq, endpoint: { [cA]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cB]: bc, [cH]: al }, [ct]: n }, { endpoint: { [cA]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cB]: bc, [cH]: al }, [ct]: n }], [ct]: o }, bd], [ct]: o }, be], [ct]: o }, bf], [ct]: o }, bg], [ct]: o }], [ct]: o }], [ct]: o }, bh], [ct]: o }, { error: "Invalid ARN: bucket ARN is missing a region", [ct]: f }], [ct]: o }, bi], [ct]: o }, { error: "Invalid ARN: Object Lambda ARNs only support `accesspoint` arn types, but found: `{arnType}`", [ct]: f }], [ct]: o }, { [cv]: ce, [cu]: [{ [cv]: cf, [cu]: [{ [cv]: ci, [cu]: [{ [cv]: ce, [cu]: [{ [cv]: ci, [cu]: [aY, { [cv]: cj, [cu]: [aZ, { [cv]: cl, [cu]: [{ [cv]: bG, [cu]: [{ [cv]: [{ [cw]: h, [cx]: [ba, "{partitionResult#name}"] }], [cu]: [{ [cv]: cn, [cu]: [{ [cv]: [{ [cw]: h, [cx]: [aU, B] }], [cu]: [{ [cv]: co, [cu]: [{ [cv]: cp, [cu]: [{ [cv]: bB, error: "Access Points do not support S3 Accelerate", [ct]: f }, { [cv]: bH, endpoint: { [cA]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cB]: bj, [cH]: al }, [ct]: n }, { [cv]: bI, endpoint: { [cA]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cB]: bj, [cH]: al }, [ct]: n }, { [cv]: bJ, endpoint: { [cA]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cB]: bj, [cH]: al }, [ct]: n }, { [cv]: [as, ar, Z, ag], endpoint: { [cA]: M, [cB]: bj, [cH]: al }, [ct]: n }, { [cv]: bK, endpoint: { [cA]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cB]: bj, [cH]: al }, [ct]: n }], [ct]: o }, bd], [ct]: o }, be], [ct]: o }, { error: "Invalid ARN: The ARN was not for the S3 service, found: {bucketArn#service}", [ct]: f }], [ct]: o }, bf], [ct]: o }, bg], [ct]: o }], [ct]: o }], [ct]: o }, bh], [ct]: o }], [ct]: o }], [ct]: o }, { [cv]: [{ [cw]: y, [cx]: [aV, c] }], [cu]: [{ [cv]: ch, error: "S3 MRAP does not support dual-stack", [ct]: f }, { [cv]: cq, error: "S3 MRAP does not support FIPS", [ct]: f }, { [cv]: bB, error: "S3 MRAP does not support S3 Accelerate", [ct]: f }, { [cv]: [{ [cw]: e, [cx]: [{ [cy]: "DisableMultiRegionAccessPoints" }, c] }], error: "Invalid configuration: Multi-Region Access Point ARNs are disabled.", [ct]: f }, { [cv]: [{ [cw]: g, [cx]: by, [cz]: N }], [cu]: [{ [cv]: [{ [cw]: h, [cx]: [{ [cw]: i, [cx]: [{ [cy]: N }, j] }, { [cw]: i, [cx]: [aS, "partition"] }] }], [cu]: [{ endpoint: { [cA]: "https://{accessPointName}.accesspoint.s3-global.{mrapPartition#dnsSuffix}", [cB]: { [cD]: [{ [cE]: c, name: z, [cF]: B, [cI]: cb }] }, [cH]: al }, [ct]: n }], [ct]: o }, { error: "Client was configured for partition `{mrapPartition#name}` but bucket referred to partition `{bucketArn#partition}`", [ct]: f }], [ct]: o }], [ct]: o }, { error: "Invalid Access Point Name", [ct]: f }], [ct]: o }, bi], [ct]: o }, { [cv]: [{ [cw]: h, [cx]: [aU, A] }], [cu]: [{ [cv]: ch, error: "S3 Outposts does not support Dual-stack", [ct]: f }, { [cv]: cq, error: "S3 Outposts does not support FIPS", [ct]: f }, { [cv]: bB, error: "S3 Outposts does not support S3 Accelerate", [ct]: f }, { [cv]: [{ [cw]: d, [cx]: [{ [cw]: i, [cx]: [aS, "resourceId[4]"] }] }], error: "Invalid Arn: Outpost Access Point ARN contains sub resources", [ct]: f }, { [cv]: [{ [cw]: i, [cx]: cg, [cz]: x }], [cu]: [{ [cv]: bZ, [cu]: [aZ, { [cv]: cl, [cu]: [{ [cv]: bG, [cu]: [{ [cv]: cm, [cu]: [{ [cv]: cn, [cu]: [{ [cv]: co, [cu]: [{ [cv]: [{ [cw]: i, [cx]: ck, [cz]: O }], [cu]: [{ [cv]: [{ [cw]: i, [cx]: [aS, "resourceId[3]"], [cz]: L }], [cu]: [{ [cv]: [{ [cw]: h, [cx]: [{ [cy]: O }, K] }], [cu]: [{ [cv]: bC, endpoint: { [cA]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.{url#authority}", [cB]: bk, [cH]: al }, [ct]: n }, { endpoint: { [cA]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.s3-outposts.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cB]: bk, [cH]: al }, [ct]: n }], [ct]: o }, { error: "Expected an outpost type `accesspoint`, found {outpostType}", [ct]: f }], [ct]: o }, { error: "Invalid ARN: expected an access point name", [ct]: f }], [ct]: o }, { error: "Invalid ARN: Expected a 4-component resource", [ct]: f }], [ct]: o }, be], [ct]: o }, bf], [ct]: o }, bg], [ct]: o }], [ct]: o }], [ct]: o }, { error: "Invalid ARN: The outpost Id may only contain a-z, A-Z, 0-9 and `-`. Found: `{outpostId}`", [ct]: f }], [ct]: o }, { error: "Invalid ARN: The Outpost Id was not set", [ct]: f }], [ct]: o }, { error: "Invalid ARN: Unrecognized format: {Bucket} (type: {arnType})", [ct]: f }], [ct]: o }, { error: "Invalid ARN: No ARN type specified", [ct]: f }], [ct]: o }, { [cv]: [{ [cw]: k, [cx]: [ad, 0, 4, b], [cz]: P }, { [cw]: h, [cx]: [{ [cy]: P }, "arn:"] }, { [cw]: r, [cx]: [{ [cw]: d, [cx]: [bl] }] }], error: "Invalid ARN: `{Bucket}` was not a valid ARN", [ct]: f }, { [cv]: [{ [cw]: e, [cx]: [az, c] }, bl], error: "Path-style addressing cannot be used with ARN buckets", [ct]: f }, { [cv]: bE, [cu]: [{ [cv]: bG, [cu]: [{ [cv]: [aA], [cu]: [{ [cv]: [Y, aq, X, aB], endpoint: { [cA]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [Y, aq, X, aD, aE], [cu]: [{ endpoint: bm, [ct]: n }], [ct]: o }, { [cv]: [Y, aq, X, aD, aH], endpoint: bm, [ct]: n }, { [cv]: [ar, aq, X, aB], endpoint: { [cA]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [ar, aq, X, aD, aE], [cu]: [{ endpoint: bn, [ct]: n }], [ct]: o }, { [cv]: [ar, aq, X, aD, aH], endpoint: bn, [ct]: n }, { [cv]: [Y, aq, as, aB], endpoint: { [cA]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [Y, aq, as, aD, aE], [cu]: [{ endpoint: bo, [ct]: n }], [ct]: o }, { [cv]: [Y, aq, as, aD, aH], endpoint: bo, [ct]: n }, { [cv]: [ar, Z, ag, as, aB], endpoint: { [cA]: Q, [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [ar, Z, ag, as, aD, aE], [cu]: [{ [cv]: cd, endpoint: bp, [ct]: n }, { endpoint: bp, [ct]: n }], [ct]: o }, { [cv]: [ar, Z, ag, as, aD, aH], endpoint: bp, [ct]: n }, { [cv]: [ar, aq, as, aB], endpoint: { [cA]: R, [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [ar, aq, as, aD, aE], [cu]: [{ [cv]: cd, endpoint: { [cA]: R, [cB]: aG, [cH]: al }, [ct]: n }, { endpoint: bq, [ct]: n }], [ct]: o }, { [cv]: [ar, aq, as, aD, aH], endpoint: bq, [ct]: n }], [ct]: o }, { error: "Path-style addressing cannot be used with S3 Accelerate", [ct]: f }], [ct]: o }], [ct]: o }], [ct]: o }, { [cv]: [{ [cw]: d, [cx]: [br] }, { [cw]: e, [cx]: [br, c] }], [cu]: [{ [cv]: bG, [cu]: [{ [cv]: cr, [cu]: [aW, aX, { [cv]: bC, endpoint: { [cA]: t, [cB]: bs, [cH]: al }, [ct]: n }, { [cv]: cq, endpoint: { [cA]: "https://s3-object-lambda-fips.{Region}.{partitionResult#dnsSuffix}", [cB]: bs, [cH]: al }, [ct]: n }, { endpoint: { [cA]: "https://s3-object-lambda.{Region}.{partitionResult#dnsSuffix}", [cB]: bs, [cH]: al }, [ct]: n }], [ct]: o }, aR], [ct]: o }], [ct]: o }, { [cv]: [au], [cu]: [{ [cv]: bG, [cu]: [{ [cv]: cr, [cu]: [{ [cv]: [X, Y, aq, aB], endpoint: { [cA]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [X, Y, aq, aD, aE], [cu]: [{ endpoint: bt, [ct]: n }], [ct]: o }, { [cv]: [X, Y, aq, aD, aH], endpoint: bt, [ct]: n }, { [cv]: [X, ar, aq, aB], endpoint: { [cA]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}", [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [X, ar, aq, aD, aE], [cu]: [{ endpoint: bu, [ct]: n }], [ct]: o }, { [cv]: [X, ar, aq, aD, aH], endpoint: bu, [ct]: n }, { [cv]: [as, Y, aq, aB], endpoint: { [cA]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [as, Y, aq, aD, aE], [cu]: [{ endpoint: bv, [ct]: n }], [ct]: o }, { [cv]: [as, Y, aq, aD, aH], endpoint: bv, [ct]: n }, { [cv]: [as, ar, Z, ag, aB], endpoint: { [cA]: t, [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [as, ar, Z, ag, aD, aE], [cu]: [{ [cv]: cd, endpoint: bw, [ct]: n }, { endpoint: bw, [ct]: n }], [ct]: o }, { [cv]: [as, ar, Z, ag, aD, aH], endpoint: bw, [ct]: n }, { [cv]: [as, ar, aq, aB], endpoint: { [cA]: S, [cB]: aC, [cH]: al }, [ct]: n }, { [cv]: [as, ar, aq, aD, aE], [cu]: [{ [cv]: cd, endpoint: { [cA]: S, [cB]: aG, [cH]: al }, [ct]: n }, { endpoint: bx, [ct]: n }], [ct]: o }, { [cv]: [as, ar, aq, aD, aH], endpoint: bx, [ct]: n }], [ct]: o }, aR], [ct]: o }], [ct]: o }], [ct]: o }, { error: "A region must be set when sending requests to S3.", [ct]: f }] };
 var ruleSet = _data;
 
 // node_modules/@aws-sdk/client-s3/dist-es/endpoint/endpointResolver.js
@@ -9757,7 +9803,7 @@ var S3ServiceException = class _S3ServiceException extends ServiceException {
   }
 };
 
-// node_modules/@aws-sdk/client-s3/dist-es/models/models_0.js
+// node_modules/@aws-sdk/client-s3/dist-es/models/errors.js
 var NoSuchUpload = class _NoSuchUpload extends S3ServiceException {
   constructor(opts) {
     super({
@@ -9818,32 +9864,6 @@ var NoSuchBucket = class _NoSuchBucket extends S3ServiceException {
     Object.setPrototypeOf(this, _NoSuchBucket.prototype);
   }
 };
-var AnalyticsFilter;
-(function(AnalyticsFilter2) {
-  AnalyticsFilter2.visit = (value, visitor) => {
-    if (value.Prefix !== void 0)
-      return visitor.Prefix(value.Prefix);
-    if (value.Tag !== void 0)
-      return visitor.Tag(value.Tag);
-    if (value.And !== void 0)
-      return visitor.And(value.And);
-    return visitor._(value.$unknown[0], value.$unknown[1]);
-  };
-})(AnalyticsFilter || (AnalyticsFilter = {}));
-var MetricsFilter;
-(function(MetricsFilter2) {
-  MetricsFilter2.visit = (value, visitor) => {
-    if (value.Prefix !== void 0)
-      return visitor.Prefix(value.Prefix);
-    if (value.Tag !== void 0)
-      return visitor.Tag(value.Tag);
-    if (value.AccessPointArn !== void 0)
-      return visitor.AccessPointArn(value.AccessPointArn);
-    if (value.And !== void 0)
-      return visitor.And(value.And);
-    return visitor._(value.$unknown[0], value.$unknown[1]);
-  };
-})(MetricsFilter || (MetricsFilter = {}));
 var InvalidObjectState = class _InvalidObjectState extends S3ServiceException {
   constructor(opts) {
     super({
@@ -9884,24 +9904,6 @@ var NotFound = class _NotFound extends S3ServiceException {
     Object.setPrototypeOf(this, _NotFound.prototype);
   }
 };
-var SessionCredentialsFilterSensitiveLog = (obj) => ({
-  ...obj,
-  ...obj.SecretAccessKey && { SecretAccessKey: SENSITIVE_STRING },
-  ...obj.SessionToken && { SessionToken: SENSITIVE_STRING }
-});
-var CreateSessionOutputFilterSensitiveLog = (obj) => ({
-  ...obj,
-  ...obj.SSEKMSKeyId && { SSEKMSKeyId: SENSITIVE_STRING },
-  ...obj.SSEKMSEncryptionContext && { SSEKMSEncryptionContext: SENSITIVE_STRING },
-  ...obj.Credentials && { Credentials: SessionCredentialsFilterSensitiveLog(obj.Credentials) }
-});
-var CreateSessionRequestFilterSensitiveLog = (obj) => ({
-  ...obj,
-  ...obj.SSEKMSKeyId && { SSEKMSKeyId: SENSITIVE_STRING },
-  ...obj.SSEKMSEncryptionContext && { SSEKMSEncryptionContext: SENSITIVE_STRING }
-});
-
-// node_modules/@aws-sdk/client-s3/dist-es/models/models_1.js
 var EncryptionTypeMismatch = class _EncryptionTypeMismatch extends S3ServiceException {
   constructor(opts) {
     super({
@@ -9974,465 +9976,5422 @@ var ObjectAlreadyInActiveTierError = class _ObjectAlreadyInActiveTierError exten
     Object.setPrototypeOf(this, _ObjectAlreadyInActiveTierError.prototype);
   }
 };
-var SelectObjectContentEventStream;
-(function(SelectObjectContentEventStream2) {
-  SelectObjectContentEventStream2.visit = (value, visitor) => {
-    if (value.Records !== void 0)
-      return visitor.Records(value.Records);
-    if (value.Stats !== void 0)
-      return visitor.Stats(value.Stats);
-    if (value.Progress !== void 0)
-      return visitor.Progress(value.Progress);
-    if (value.Cont !== void 0)
-      return visitor.Cont(value.Cont);
-    if (value.End !== void 0)
-      return visitor.End(value.End);
-    return visitor._(value.$unknown[0], value.$unknown[1]);
-  };
-})(SelectObjectContentEventStream || (SelectObjectContentEventStream = {}));
-var PutObjectOutputFilterSensitiveLog = (obj) => ({
-  ...obj,
-  ...obj.SSEKMSKeyId && { SSEKMSKeyId: SENSITIVE_STRING },
-  ...obj.SSEKMSEncryptionContext && { SSEKMSEncryptionContext: SENSITIVE_STRING }
-});
-var PutObjectRequestFilterSensitiveLog = (obj) => ({
-  ...obj,
-  ...obj.SSECustomerKey && { SSECustomerKey: SENSITIVE_STRING },
-  ...obj.SSEKMSKeyId && { SSEKMSKeyId: SENSITIVE_STRING },
-  ...obj.SSEKMSEncryptionContext && { SSEKMSEncryptionContext: SENSITIVE_STRING }
-});
 
-// node_modules/@aws-sdk/client-s3/dist-es/protocols/Aws_restXml.js
-var se_CreateSessionCommand = async (input, context) => {
-  const b2 = requestBuilder(input, context);
-  const headers = map({}, isSerializableHeaderValue, {
-    [_xacsm]: input[_SM],
-    [_xasse]: input[_SSE],
-    [_xasseakki]: input[_SSEKMSKI],
-    [_xassec]: input[_SSEKMSEC],
-    [_xassebke]: [() => isSerializableHeaderValue(input[_BKE]), () => input[_BKE].toString()]
-  });
-  b2.bp("/");
-  b2.p("Bucket", () => input.Bucket, "{Bucket}", false);
-  const query = map({
-    [_s]: [, ""]
-  });
-  let body;
-  b2.m("GET").h(headers).q(query).b(body);
-  return b2.build();
-};
-var se_PutObjectCommand = async (input, context) => {
-  const b2 = requestBuilder(input, context);
-  const headers = map({}, isSerializableHeaderValue, {
-    ...input.Metadata !== void 0 && Object.keys(input.Metadata).reduce((acc, suffix) => {
-      acc[`x-amz-meta-${suffix.toLowerCase()}`] = input.Metadata[suffix];
-      return acc;
-    }, {}),
-    [_ct]: input[_CTo] || "application/octet-stream",
-    [_xaa]: input[_ACL],
-    [_cc]: input[_CC],
-    [_cd]: input[_CD],
-    [_ce]: input[_CE],
-    [_cl]: input[_CL],
-    [_cl_]: [() => isSerializableHeaderValue(input[_CLo]), () => input[_CLo].toString()],
-    [_cm]: input[_CMD],
-    [_xasca]: input[_CA],
-    [_xacc]: input[_CCRC],
-    [_xacc_]: input[_CCRCC],
-    [_xacc__]: input[_CCRCNVME],
-    [_xacs]: input[_CSHA],
-    [_xacs_]: input[_CSHAh],
-    [_e]: [() => isSerializableHeaderValue(input[_E]), () => dateToUtcString(input[_E]).toString()],
-    [_im]: input[_IM],
-    [_inm]: input[_INM],
-    [_xagfc]: input[_GFC],
-    [_xagr]: input[_GR],
-    [_xagra]: input[_GRACP],
-    [_xagwa]: input[_GWACP],
-    [_xawob]: [() => isSerializableHeaderValue(input[_WOB]), () => input[_WOB].toString()],
-    [_xasse]: input[_SSE],
-    [_xasc]: input[_SC],
-    [_xawrl]: input[_WRL],
-    [_xasseca]: input[_SSECA],
-    [_xasseck]: input[_SSECK],
-    [_xasseckm]: input[_SSECKMD],
-    [_xasseakki]: input[_SSEKMSKI],
-    [_xassec]: input[_SSEKMSEC],
-    [_xassebke]: [() => isSerializableHeaderValue(input[_BKE]), () => input[_BKE].toString()],
-    [_xarp]: input[_RP],
-    [_xat]: input[_T],
-    [_xaolm]: input[_OLM],
-    [_xaolrud]: [() => isSerializableHeaderValue(input[_OLRUD]), () => serializeDateTime(input[_OLRUD]).toString()],
-    [_xaollh]: input[_OLLHS],
-    [_xaebo]: input[_EBO]
-  });
-  b2.bp("/{Key+}");
-  b2.p("Bucket", () => input.Bucket, "{Bucket}", false);
-  b2.p("Key", () => input.Key, "{Key+}", true);
-  const query = map({
-    [_xi]: [, "PutObject"]
-  });
-  let body;
-  let contents;
-  if (input.Body !== void 0) {
-    contents = input.Body;
-    body = contents;
-  }
-  b2.m("PUT").h(headers).q(query).b(body);
-  return b2.build();
-};
-var de_CreateSessionCommand = async (output, context) => {
-  if (output.statusCode !== 200 && output.statusCode >= 300) {
-    return de_CommandError(output, context);
-  }
-  const contents = map({
-    $metadata: deserializeMetadata2(output),
-    [_SSE]: [, output.headers[_xasse]],
-    [_SSEKMSKI]: [, output.headers[_xasseakki]],
-    [_SSEKMSEC]: [, output.headers[_xassec]],
-    [_BKE]: [() => void 0 !== output.headers[_xassebke], () => parseBoolean(output.headers[_xassebke])]
-  });
-  const data = expectNonNull(expectObject(await parseXmlBody(output.body, context)), "body");
-  if (data[_C] != null) {
-    contents[_C] = de_SessionCredentials(data[_C], context);
-  }
-  return contents;
-};
-var de_PutObjectCommand = async (output, context) => {
-  if (output.statusCode !== 200 && output.statusCode >= 300) {
-    return de_CommandError(output, context);
-  }
-  const contents = map({
-    $metadata: deserializeMetadata2(output),
-    [_Exp]: [, output.headers[_xae]],
-    [_ETa]: [, output.headers[_eta]],
-    [_CCRC]: [, output.headers[_xacc]],
-    [_CCRCC]: [, output.headers[_xacc_]],
-    [_CCRCNVME]: [, output.headers[_xacc__]],
-    [_CSHA]: [, output.headers[_xacs]],
-    [_CSHAh]: [, output.headers[_xacs_]],
-    [_CT]: [, output.headers[_xact]],
-    [_SSE]: [, output.headers[_xasse]],
-    [_VI]: [, output.headers[_xavi]],
-    [_SSECA]: [, output.headers[_xasseca]],
-    [_SSECKMD]: [, output.headers[_xasseckm]],
-    [_SSEKMSKI]: [, output.headers[_xasseakki]],
-    [_SSEKMSEC]: [, output.headers[_xassec]],
-    [_BKE]: [() => void 0 !== output.headers[_xassebke], () => parseBoolean(output.headers[_xassebke])],
-    [_Si]: [() => void 0 !== output.headers[_xaos], () => strictParseLong(output.headers[_xaos])],
-    [_RC]: [, output.headers[_xarc]]
-  });
-  await collectBody(output.body, context);
-  return contents;
-};
-var de_CommandError = async (output, context) => {
-  const parsedOutput = {
-    ...output,
-    body: await parseXmlErrorBody(output.body, context)
-  };
-  const errorCode = loadRestXmlErrorCode(output, parsedOutput.body);
-  switch (errorCode) {
-    case "NoSuchUpload":
-    case "com.amazonaws.s3#NoSuchUpload":
-      throw await de_NoSuchUploadRes(parsedOutput, context);
-    case "ObjectNotInActiveTierError":
-    case "com.amazonaws.s3#ObjectNotInActiveTierError":
-      throw await de_ObjectNotInActiveTierErrorRes(parsedOutput, context);
-    case "BucketAlreadyExists":
-    case "com.amazonaws.s3#BucketAlreadyExists":
-      throw await de_BucketAlreadyExistsRes(parsedOutput, context);
-    case "BucketAlreadyOwnedByYou":
-    case "com.amazonaws.s3#BucketAlreadyOwnedByYou":
-      throw await de_BucketAlreadyOwnedByYouRes(parsedOutput, context);
-    case "NoSuchBucket":
-    case "com.amazonaws.s3#NoSuchBucket":
-      throw await de_NoSuchBucketRes(parsedOutput, context);
-    case "InvalidObjectState":
-    case "com.amazonaws.s3#InvalidObjectState":
-      throw await de_InvalidObjectStateRes(parsedOutput, context);
-    case "NoSuchKey":
-    case "com.amazonaws.s3#NoSuchKey":
-      throw await de_NoSuchKeyRes(parsedOutput, context);
-    case "NotFound":
-    case "com.amazonaws.s3#NotFound":
-      throw await de_NotFoundRes(parsedOutput, context);
-    case "EncryptionTypeMismatch":
-    case "com.amazonaws.s3#EncryptionTypeMismatch":
-      throw await de_EncryptionTypeMismatchRes(parsedOutput, context);
-    case "InvalidRequest":
-    case "com.amazonaws.s3#InvalidRequest":
-      throw await de_InvalidRequestRes(parsedOutput, context);
-    case "InvalidWriteOffset":
-    case "com.amazonaws.s3#InvalidWriteOffset":
-      throw await de_InvalidWriteOffsetRes(parsedOutput, context);
-    case "TooManyParts":
-    case "com.amazonaws.s3#TooManyParts":
-      throw await de_TooManyPartsRes(parsedOutput, context);
-    case "IdempotencyParameterMismatch":
-    case "com.amazonaws.s3#IdempotencyParameterMismatch":
-      throw await de_IdempotencyParameterMismatchRes(parsedOutput, context);
-    case "ObjectAlreadyInActiveTierError":
-    case "com.amazonaws.s3#ObjectAlreadyInActiveTierError":
-      throw await de_ObjectAlreadyInActiveTierErrorRes(parsedOutput, context);
-    default:
-      const parsedBody = parsedOutput.body;
-      return throwDefaultError2({
-        output,
-        parsedBody,
-        errorCode
-      });
-  }
-};
-var throwDefaultError2 = withBaseException(S3ServiceException);
-var de_BucketAlreadyExistsRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new BucketAlreadyExists({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_BucketAlreadyOwnedByYouRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new BucketAlreadyOwnedByYou({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_EncryptionTypeMismatchRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new EncryptionTypeMismatch({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_IdempotencyParameterMismatchRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new IdempotencyParameterMismatch({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_InvalidObjectStateRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  if (data[_AT] != null) {
-    contents[_AT] = expectString(data[_AT]);
-  }
-  if (data[_SC] != null) {
-    contents[_SC] = expectString(data[_SC]);
-  }
-  const exception = new InvalidObjectState({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_InvalidRequestRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new InvalidRequest({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_InvalidWriteOffsetRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new InvalidWriteOffset({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_NoSuchBucketRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new NoSuchBucket({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_NoSuchKeyRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new NoSuchKey({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_NoSuchUploadRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new NoSuchUpload({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_NotFoundRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new NotFound({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_ObjectAlreadyInActiveTierErrorRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new ObjectAlreadyInActiveTierError({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_ObjectNotInActiveTierErrorRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new ObjectNotInActiveTierError({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_TooManyPartsRes = async (parsedOutput, context) => {
-  const contents = map({});
-  const data = parsedOutput.body;
-  const exception = new TooManyParts({
-    $metadata: deserializeMetadata2(parsedOutput),
-    ...contents
-  });
-  return decorateServiceException(exception, parsedOutput.body);
-};
-var de_SessionCredentials = (output, context) => {
-  const contents = {};
-  if (output[_AKI] != null) {
-    contents[_AKI] = expectString(output[_AKI]);
-  }
-  if (output[_SAK] != null) {
-    contents[_SAK] = expectString(output[_SAK]);
-  }
-  if (output[_ST] != null) {
-    contents[_ST] = expectString(output[_ST]);
-  }
-  if (output[_Exp] != null) {
-    contents[_Exp] = expectNonNull(parseRfc3339DateTimeWithOffset(output[_Exp]));
-  }
-  return contents;
-};
-var deserializeMetadata2 = (output) => ({
-  httpStatusCode: output.statusCode,
-  requestId: output.headers["x-amzn-requestid"] ?? output.headers["x-amzn-request-id"] ?? output.headers["x-amz-request-id"],
-  extendedRequestId: output.headers["x-amz-id-2"],
-  cfId: output.headers["x-amz-cf-id"]
-});
-var _ACL = "ACL";
+// node_modules/@aws-sdk/client-s3/dist-es/schemas/schemas_0.js
+var _A = "Account";
+var _AAO = "AnalyticsAndOperator";
+var _AC = "AccelerateConfiguration";
+var _ACL = "AccessControlList";
+var _ACL_ = "ACL";
+var _ACLn = "AnalyticsConfigurationList";
+var _ACP = "AccessControlPolicy";
+var _ACT = "AccessControlTranslation";
+var _ACn = "AnalyticsConfiguration";
+var _AD = "AbortDate";
+var _AED = "AnalyticsExportDestination";
+var _AF = "AnalyticsFilter";
+var _AH = "AllowedHeaders";
+var _AHl = "AllowedHeader";
+var _AI = "AccountId";
+var _AIMU = "AbortIncompleteMultipartUpload";
 var _AKI = "AccessKeyId";
+var _AM = "AllowedMethods";
+var _AMU = "AbortMultipartUpload";
+var _AMUO = "AbortMultipartUploadOutput";
+var _AMUR = "AbortMultipartUploadRequest";
+var _AMl = "AllowedMethod";
+var _AO = "AllowedOrigins";
+var _AOl = "AllowedOrigin";
+var _APA = "AccessPointAlias";
+var _APAc = "AccessPointArn";
+var _AQRD = "AllowQuotedRecordDelimiter";
+var _AR = "AcceptRanges";
+var _ARI = "AbortRuleId";
+var _AS = "AbacStatus";
+var _ASBD = "AnalyticsS3BucketDestination";
+var _ASSEBD = "ApplyServerSideEncryptionByDefault";
+var _ASr = "ArchiveStatus";
 var _AT = "AccessTier";
+var _An = "And";
+var _B = "Bucket";
+var _BA = "BucketArn";
+var _BAE = "BucketAlreadyExists";
+var _BAI = "BucketAccountId";
+var _BAOBY = "BucketAlreadyOwnedByYou";
+var _BET = "BlockedEncryptionTypes";
+var _BGR = "BypassGovernanceRetention";
+var _BI = "BucketInfo";
 var _BKE = "BucketKeyEnabled";
-var _C = "Credentials";
+var _BLC = "BucketLifecycleConfiguration";
+var _BLN = "BucketLocationName";
+var _BLS = "BucketLoggingStatus";
+var _BLT = "BucketLocationType";
+var _BN = "BucketName";
+var _BP = "BytesProcessed";
+var _BPA = "BlockPublicAcls";
+var _BPP = "BlockPublicPolicy";
+var _BR = "BucketRegion";
+var _BRy = "BytesReturned";
+var _BS = "BytesScanned";
+var _Bo = "Body";
+var _Bu = "Buckets";
+var _C = "Checksum";
 var _CA = "ChecksumAlgorithm";
+var _CACL = "CannedACL";
+var _CB = "CreateBucket";
+var _CBC = "CreateBucketConfiguration";
+var _CBMC = "CreateBucketMetadataConfiguration";
+var _CBMCR = "CreateBucketMetadataConfigurationRequest";
+var _CBMTC = "CreateBucketMetadataTableConfiguration";
+var _CBMTCR = "CreateBucketMetadataTableConfigurationRequest";
+var _CBO = "CreateBucketOutput";
+var _CBR = "CreateBucketRequest";
 var _CC = "CacheControl";
 var _CCRC = "ChecksumCRC32";
 var _CCRCC = "ChecksumCRC32C";
 var _CCRCNVME = "ChecksumCRC64NVME";
-var _CD = "ContentDisposition";
-var _CE = "ContentEncoding";
+var _CC_ = "Cache-Control";
+var _CD = "CreationDate";
+var _CD_ = "Content-Disposition";
+var _CDo = "ContentDisposition";
+var _CE = "ContinuationEvent";
+var _CE_ = "Content-Encoding";
+var _CEo = "ContentEncoding";
+var _CF = "CloudFunction";
+var _CFC = "CloudFunctionConfiguration";
 var _CL = "ContentLanguage";
+var _CL_ = "Content-Language";
+var _CL__ = "Content-Length";
 var _CLo = "ContentLength";
+var _CM = "Content-MD5";
 var _CMD = "ContentMD5";
+var _CMU = "CompletedMultipartUpload";
+var _CMUO = "CompleteMultipartUploadOutput";
+var _CMUOr = "CreateMultipartUploadOutput";
+var _CMUR = "CompleteMultipartUploadResult";
+var _CMURo = "CompleteMultipartUploadRequest";
+var _CMURr = "CreateMultipartUploadRequest";
+var _CMUo = "CompleteMultipartUpload";
+var _CMUr = "CreateMultipartUpload";
+var _CMh = "ChecksumMode";
+var _CO = "CopyObject";
+var _COO = "CopyObjectOutput";
+var _COR = "CopyObjectResult";
+var _CORSC = "CORSConfiguration";
+var _CORSR = "CORSRules";
+var _CORSRu = "CORSRule";
+var _CORo = "CopyObjectRequest";
+var _CP = "CommonPrefix";
+var _CPL = "CommonPrefixList";
+var _CPLo = "CompletedPartList";
+var _CPR = "CopyPartResult";
+var _CPo = "CompletedPart";
+var _CPom = "CommonPrefixes";
+var _CR = "ContentRange";
+var _CRSBA = "ConfirmRemoveSelfBucketAccess";
+var _CR_ = "Content-Range";
+var _CS = "CopySource";
 var _CSHA = "ChecksumSHA1";
 var _CSHAh = "ChecksumSHA256";
+var _CSIM = "CopySourceIfMatch";
+var _CSIMS = "CopySourceIfModifiedSince";
+var _CSINM = "CopySourceIfNoneMatch";
+var _CSIUS = "CopySourceIfUnmodifiedSince";
+var _CSO = "CreateSessionOutput";
+var _CSR = "CreateSessionResult";
+var _CSRo = "CopySourceRange";
+var _CSRr = "CreateSessionRequest";
+var _CSSSECA = "CopySourceSSECustomerAlgorithm";
+var _CSSSECK = "CopySourceSSECustomerKey";
+var _CSSSECKMD = "CopySourceSSECustomerKeyMD5";
+var _CSV = "CSV";
+var _CSVI = "CopySourceVersionId";
+var _CSVIn = "CSVInput";
+var _CSVO = "CSVOutput";
+var _CSo = "ConfigurationState";
+var _CSr = "CreateSession";
 var _CT = "ChecksumType";
+var _CT_ = "Content-Type";
+var _CTl = "ClientToken";
 var _CTo = "ContentType";
-var _E = "Expires";
+var _CTom = "CompressionType";
+var _CTon = "ContinuationToken";
+var _Co = "Condition";
+var _Cod = "Code";
+var _Com = "Comments";
+var _Con = "Contents";
+var _Cont = "Cont";
+var _Cr = "Credentials";
+var _D = "Days";
+var _DAI = "DaysAfterInitiation";
+var _DB = "DeleteBucket";
+var _DBAC = "DeleteBucketAnalyticsConfiguration";
+var _DBACR = "DeleteBucketAnalyticsConfigurationRequest";
+var _DBC = "DeleteBucketCors";
+var _DBCR = "DeleteBucketCorsRequest";
+var _DBE = "DeleteBucketEncryption";
+var _DBER = "DeleteBucketEncryptionRequest";
+var _DBIC = "DeleteBucketInventoryConfiguration";
+var _DBICR = "DeleteBucketInventoryConfigurationRequest";
+var _DBITC = "DeleteBucketIntelligentTieringConfiguration";
+var _DBITCR = "DeleteBucketIntelligentTieringConfigurationRequest";
+var _DBL = "DeleteBucketLifecycle";
+var _DBLR = "DeleteBucketLifecycleRequest";
+var _DBMC = "DeleteBucketMetadataConfiguration";
+var _DBMCR = "DeleteBucketMetadataConfigurationRequest";
+var _DBMCRe = "DeleteBucketMetricsConfigurationRequest";
+var _DBMCe = "DeleteBucketMetricsConfiguration";
+var _DBMTC = "DeleteBucketMetadataTableConfiguration";
+var _DBMTCR = "DeleteBucketMetadataTableConfigurationRequest";
+var _DBOC = "DeleteBucketOwnershipControls";
+var _DBOCR = "DeleteBucketOwnershipControlsRequest";
+var _DBP = "DeleteBucketPolicy";
+var _DBPR = "DeleteBucketPolicyRequest";
+var _DBR = "DeleteBucketRequest";
+var _DBRR = "DeleteBucketReplicationRequest";
+var _DBRe = "DeleteBucketReplication";
+var _DBT = "DeleteBucketTagging";
+var _DBTR = "DeleteBucketTaggingRequest";
+var _DBW = "DeleteBucketWebsite";
+var _DBWR = "DeleteBucketWebsiteRequest";
+var _DE = "DataExport";
+var _DIM = "DestinationIfMatch";
+var _DIMS = "DestinationIfModifiedSince";
+var _DINM = "DestinationIfNoneMatch";
+var _DIUS = "DestinationIfUnmodifiedSince";
+var _DM = "DeleteMarker";
+var _DME = "DeleteMarkerEntry";
+var _DMR = "DeleteMarkerReplication";
+var _DMVI = "DeleteMarkerVersionId";
+var _DMe = "DeleteMarkers";
+var _DN = "DisplayName";
+var _DO = "DeletedObject";
+var _DOO = "DeleteObjectOutput";
+var _DOOe = "DeleteObjectsOutput";
+var _DOR = "DeleteObjectRequest";
+var _DORe = "DeleteObjectsRequest";
+var _DOT = "DeleteObjectTagging";
+var _DOTO = "DeleteObjectTaggingOutput";
+var _DOTR = "DeleteObjectTaggingRequest";
+var _DOe = "DeletedObjects";
+var _DOel = "DeleteObject";
+var _DOele = "DeleteObjects";
+var _DPAB = "DeletePublicAccessBlock";
+var _DPABR = "DeletePublicAccessBlockRequest";
+var _DR = "DataRedundancy";
+var _DRe = "DefaultRetention";
+var _DRel = "DeleteResult";
+var _DRes = "DestinationResult";
+var _Da = "Date";
+var _De = "Delete";
+var _Del = "Deleted";
+var _Deli = "Delimiter";
+var _Des = "Destination";
+var _Desc = "Description";
+var _Det = "Details";
+var _E = "Expiration";
+var _EA = "EmailAddress";
+var _EBC = "EventBridgeConfiguration";
 var _EBO = "ExpectedBucketOwner";
+var _EC = "EncryptionConfiguration";
+var _ECr = "ErrorCode";
+var _ED = "ErrorDetails";
+var _EDr = "ErrorDocument";
+var _EE = "EndEvent";
+var _EH = "ExposeHeaders";
+var _EHx = "ExposeHeader";
+var _EM = "ErrorMessage";
+var _EODM = "ExpiredObjectDeleteMarker";
+var _EOR = "ExistingObjectReplication";
+var _ES = "ExpiresString";
+var _ESBO = "ExpectedSourceBucketOwner";
+var _ET = "EncryptionType";
+var _ETL = "EncryptionTypeList";
+var _ETM = "EncryptionTypeMismatch";
 var _ETa = "ETag";
-var _Exp = "Expiration";
+var _ETn = "EncodingType";
+var _ETv = "EventThreshold";
+var _ETx = "ExpressionType";
+var _En = "Encryption";
+var _Ena = "Enabled";
+var _End = "End";
+var _Er = "Errors";
+var _Err = "Error";
+var _Ev = "Events";
+var _Eve = "Event";
+var _Ex = "Expires";
+var _Exp = "Expression";
+var _F = "Filter";
+var _FD = "FieldDelimiter";
+var _FHI = "FileHeaderInfo";
+var _FO = "FetchOwner";
+var _FR = "FilterRule";
+var _FRL = "FilterRuleList";
+var _FRi = "FilterRules";
+var _Fi = "Field";
+var _Fo = "Format";
+var _Fr = "Frequency";
+var _G = "Grants";
+var _GBA = "GetBucketAbac";
+var _GBAC = "GetBucketAccelerateConfiguration";
+var _GBACO = "GetBucketAccelerateConfigurationOutput";
+var _GBACOe = "GetBucketAnalyticsConfigurationOutput";
+var _GBACR = "GetBucketAccelerateConfigurationRequest";
+var _GBACRe = "GetBucketAnalyticsConfigurationRequest";
+var _GBACe = "GetBucketAnalyticsConfiguration";
+var _GBAO = "GetBucketAbacOutput";
+var _GBAOe = "GetBucketAclOutput";
+var _GBAR = "GetBucketAbacRequest";
+var _GBARe = "GetBucketAclRequest";
+var _GBAe = "GetBucketAcl";
+var _GBC = "GetBucketCors";
+var _GBCO = "GetBucketCorsOutput";
+var _GBCR = "GetBucketCorsRequest";
+var _GBE = "GetBucketEncryption";
+var _GBEO = "GetBucketEncryptionOutput";
+var _GBER = "GetBucketEncryptionRequest";
+var _GBIC = "GetBucketInventoryConfiguration";
+var _GBICO = "GetBucketInventoryConfigurationOutput";
+var _GBICR = "GetBucketInventoryConfigurationRequest";
+var _GBITC = "GetBucketIntelligentTieringConfiguration";
+var _GBITCO = "GetBucketIntelligentTieringConfigurationOutput";
+var _GBITCR = "GetBucketIntelligentTieringConfigurationRequest";
+var _GBL = "GetBucketLocation";
+var _GBLC = "GetBucketLifecycleConfiguration";
+var _GBLCO = "GetBucketLifecycleConfigurationOutput";
+var _GBLCR = "GetBucketLifecycleConfigurationRequest";
+var _GBLO = "GetBucketLocationOutput";
+var _GBLOe = "GetBucketLoggingOutput";
+var _GBLR = "GetBucketLocationRequest";
+var _GBLRe = "GetBucketLoggingRequest";
+var _GBLe = "GetBucketLogging";
+var _GBMC = "GetBucketMetadataConfiguration";
+var _GBMCO = "GetBucketMetadataConfigurationOutput";
+var _GBMCOe = "GetBucketMetricsConfigurationOutput";
+var _GBMCR = "GetBucketMetadataConfigurationResult";
+var _GBMCRe = "GetBucketMetadataConfigurationRequest";
+var _GBMCRet = "GetBucketMetricsConfigurationRequest";
+var _GBMCe = "GetBucketMetricsConfiguration";
+var _GBMTC = "GetBucketMetadataTableConfiguration";
+var _GBMTCO = "GetBucketMetadataTableConfigurationOutput";
+var _GBMTCR = "GetBucketMetadataTableConfigurationResult";
+var _GBMTCRe = "GetBucketMetadataTableConfigurationRequest";
+var _GBNC = "GetBucketNotificationConfiguration";
+var _GBNCR = "GetBucketNotificationConfigurationRequest";
+var _GBOC = "GetBucketOwnershipControls";
+var _GBOCO = "GetBucketOwnershipControlsOutput";
+var _GBOCR = "GetBucketOwnershipControlsRequest";
+var _GBP = "GetBucketPolicy";
+var _GBPO = "GetBucketPolicyOutput";
+var _GBPR = "GetBucketPolicyRequest";
+var _GBPS = "GetBucketPolicyStatus";
+var _GBPSO = "GetBucketPolicyStatusOutput";
+var _GBPSR = "GetBucketPolicyStatusRequest";
+var _GBR = "GetBucketReplication";
+var _GBRO = "GetBucketReplicationOutput";
+var _GBRP = "GetBucketRequestPayment";
+var _GBRPO = "GetBucketRequestPaymentOutput";
+var _GBRPR = "GetBucketRequestPaymentRequest";
+var _GBRR = "GetBucketReplicationRequest";
+var _GBT = "GetBucketTagging";
+var _GBTO = "GetBucketTaggingOutput";
+var _GBTR = "GetBucketTaggingRequest";
+var _GBV = "GetBucketVersioning";
+var _GBVO = "GetBucketVersioningOutput";
+var _GBVR = "GetBucketVersioningRequest";
+var _GBW = "GetBucketWebsite";
+var _GBWO = "GetBucketWebsiteOutput";
+var _GBWR = "GetBucketWebsiteRequest";
 var _GFC = "GrantFullControl";
+var _GJP = "GlacierJobParameters";
+var _GO = "GetObject";
+var _GOA = "GetObjectAcl";
+var _GOAO = "GetObjectAclOutput";
+var _GOAOe = "GetObjectAttributesOutput";
+var _GOAP = "GetObjectAttributesParts";
+var _GOAR = "GetObjectAclRequest";
+var _GOARe = "GetObjectAttributesResponse";
+var _GOARet = "GetObjectAttributesRequest";
+var _GOAe = "GetObjectAttributes";
+var _GOLC = "GetObjectLockConfiguration";
+var _GOLCO = "GetObjectLockConfigurationOutput";
+var _GOLCR = "GetObjectLockConfigurationRequest";
+var _GOLH = "GetObjectLegalHold";
+var _GOLHO = "GetObjectLegalHoldOutput";
+var _GOLHR = "GetObjectLegalHoldRequest";
+var _GOO = "GetObjectOutput";
+var _GOR = "GetObjectRequest";
+var _GORO = "GetObjectRetentionOutput";
+var _GORR = "GetObjectRetentionRequest";
+var _GORe = "GetObjectRetention";
+var _GOT = "GetObjectTagging";
+var _GOTO = "GetObjectTaggingOutput";
+var _GOTOe = "GetObjectTorrentOutput";
+var _GOTR = "GetObjectTaggingRequest";
+var _GOTRe = "GetObjectTorrentRequest";
+var _GOTe = "GetObjectTorrent";
+var _GPAB = "GetPublicAccessBlock";
+var _GPABO = "GetPublicAccessBlockOutput";
+var _GPABR = "GetPublicAccessBlockRequest";
 var _GR = "GrantRead";
 var _GRACP = "GrantReadACP";
+var _GW = "GrantWrite";
 var _GWACP = "GrantWriteACP";
+var _Gr = "Grant";
+var _Gra = "Grantee";
+var _HB = "HeadBucket";
+var _HBO = "HeadBucketOutput";
+var _HBR = "HeadBucketRequest";
+var _HECRE = "HttpErrorCodeReturnedEquals";
+var _HN = "HostName";
+var _HO = "HeadObject";
+var _HOO = "HeadObjectOutput";
+var _HOR = "HeadObjectRequest";
+var _HRC = "HttpRedirectCode";
+var _I = "Id";
+var _IC = "InventoryConfiguration";
+var _ICL = "InventoryConfigurationList";
+var _ID = "ID";
+var _IDn = "IndexDocument";
+var _IDnv = "InventoryDestination";
+var _IE = "IsEnabled";
+var _IEn = "InventoryEncryption";
+var _IF = "InventoryFilter";
+var _IL = "IsLatest";
 var _IM = "IfMatch";
+var _IMIT = "IfMatchInitiatedTime";
+var _IMLMT = "IfMatchLastModifiedTime";
+var _IMS = "IfMatchSize";
+var _IMS_ = "If-Modified-Since";
+var _IMSf = "IfModifiedSince";
+var _IMUR = "InitiateMultipartUploadResult";
+var _IM_ = "If-Match";
 var _INM = "IfNoneMatch";
+var _INM_ = "If-None-Match";
+var _IOF = "InventoryOptionalFields";
+var _IOS = "InvalidObjectState";
+var _IOV = "IncludedObjectVersions";
+var _IP = "IsPublic";
+var _IPA = "IgnorePublicAcls";
+var _IPM = "IdempotencyParameterMismatch";
+var _IR = "InvalidRequest";
+var _IRIP = "IsRestoreInProgress";
+var _IS = "InputSerialization";
+var _ISBD = "InventoryS3BucketDestination";
+var _ISn = "InventorySchedule";
+var _IT = "IsTruncated";
+var _ITAO = "IntelligentTieringAndOperator";
+var _ITC = "IntelligentTieringConfiguration";
+var _ITCL = "IntelligentTieringConfigurationList";
+var _ITCR = "InventoryTableConfigurationResult";
+var _ITCU = "InventoryTableConfigurationUpdates";
+var _ITCn = "InventoryTableConfiguration";
+var _ITF = "IntelligentTieringFilter";
+var _IUS = "IfUnmodifiedSince";
+var _IUS_ = "If-Unmodified-Since";
+var _IWO = "InvalidWriteOffset";
+var _In = "Initiator";
+var _Ini = "Initiated";
+var _JSON = "JSON";
+var _JSONI = "JSONInput";
+var _JSONO = "JSONOutput";
+var _JTC = "JournalTableConfiguration";
+var _JTCR = "JournalTableConfigurationResult";
+var _JTCU = "JournalTableConfigurationUpdates";
+var _K = "Key";
+var _KC = "KeyCount";
+var _KI = "KeyId";
+var _KKA = "KmsKeyArn";
+var _KM = "KeyMarker";
+var _KMSC = "KMSContext";
+var _KMSKI = "KMSKeyId";
+var _KMSMKID = "KMSMasterKeyID";
+var _KPE = "KeyPrefixEquals";
+var _L = "Location";
+var _LAMBR = "ListAllMyBucketsResult";
+var _LAMDBR = "ListAllMyDirectoryBucketsResult";
+var _LB = "ListBuckets";
+var _LBAC = "ListBucketAnalyticsConfigurations";
+var _LBACO = "ListBucketAnalyticsConfigurationsOutput";
+var _LBACR = "ListBucketAnalyticsConfigurationResult";
+var _LBACRi = "ListBucketAnalyticsConfigurationsRequest";
+var _LBIC = "ListBucketInventoryConfigurations";
+var _LBICO = "ListBucketInventoryConfigurationsOutput";
+var _LBICR = "ListBucketInventoryConfigurationsRequest";
+var _LBITC = "ListBucketIntelligentTieringConfigurations";
+var _LBITCO = "ListBucketIntelligentTieringConfigurationsOutput";
+var _LBITCR = "ListBucketIntelligentTieringConfigurationsRequest";
+var _LBMC = "ListBucketMetricsConfigurations";
+var _LBMCO = "ListBucketMetricsConfigurationsOutput";
+var _LBMCR = "ListBucketMetricsConfigurationsRequest";
+var _LBO = "ListBucketsOutput";
+var _LBR = "ListBucketsRequest";
+var _LBRi = "ListBucketResult";
+var _LC = "LocationConstraint";
+var _LCi = "LifecycleConfiguration";
+var _LDB = "ListDirectoryBuckets";
+var _LDBO = "ListDirectoryBucketsOutput";
+var _LDBR = "ListDirectoryBucketsRequest";
+var _LE = "LoggingEnabled";
+var _LEi = "LifecycleExpiration";
+var _LFA = "LambdaFunctionArn";
+var _LFC = "LambdaFunctionConfiguration";
+var _LFCL = "LambdaFunctionConfigurationList";
+var _LFCa = "LambdaFunctionConfigurations";
+var _LH = "LegalHold";
+var _LI = "LocationInfo";
+var _LICR = "ListInventoryConfigurationsResult";
+var _LM = "LastModified";
+var _LMCR = "ListMetricsConfigurationsResult";
+var _LMT = "LastModifiedTime";
+var _LMU = "ListMultipartUploads";
+var _LMUO = "ListMultipartUploadsOutput";
+var _LMUR = "ListMultipartUploadsResult";
+var _LMURi = "ListMultipartUploadsRequest";
+var _LM_ = "Last-Modified";
+var _LO = "ListObjects";
+var _LOO = "ListObjectsOutput";
+var _LOR = "ListObjectsRequest";
+var _LOV = "ListObjectsV2";
+var _LOVO = "ListObjectsV2Output";
+var _LOVOi = "ListObjectVersionsOutput";
+var _LOVR = "ListObjectsV2Request";
+var _LOVRi = "ListObjectVersionsRequest";
+var _LOVi = "ListObjectVersions";
+var _LP = "ListParts";
+var _LPO = "ListPartsOutput";
+var _LPR = "ListPartsResult";
+var _LPRi = "ListPartsRequest";
+var _LR = "LifecycleRule";
+var _LRAO = "LifecycleRuleAndOperator";
+var _LRF = "LifecycleRuleFilter";
+var _LRi = "LifecycleRules";
+var _LVR = "ListVersionsResult";
+var _M = "Metadata";
+var _MAO = "MetricsAndOperator";
+var _MAS = "MaxAgeSeconds";
+var _MB = "MaxBuckets";
+var _MC = "MetadataConfiguration";
+var _MCL = "MetricsConfigurationList";
+var _MCR = "MetadataConfigurationResult";
+var _MCe = "MetricsConfiguration";
+var _MD = "MetadataDirective";
+var _MDB = "MaxDirectoryBuckets";
+var _MDf = "MfaDelete";
+var _ME = "MetadataEntry";
+var _MF = "MetricsFilter";
+var _MFA = "MFA";
+var _MFAD = "MFADelete";
+var _MK = "MaxKeys";
+var _MM = "MissingMeta";
+var _MOS = "MpuObjectSize";
+var _MP = "MaxParts";
+var _MTC = "MetadataTableConfiguration";
+var _MTCR = "MetadataTableConfigurationResult";
+var _MTEC = "MetadataTableEncryptionConfiguration";
+var _MU = "MultipartUpload";
+var _MUL = "MultipartUploadList";
+var _MUa = "MaxUploads";
+var _Ma = "Marker";
+var _Me = "Metrics";
+var _Mes = "Message";
+var _Mi = "Minutes";
+var _Mo = "Mode";
+var _N = "Name";
+var _NC = "NotificationConfiguration";
+var _NCF = "NotificationConfigurationFilter";
+var _NCT = "NextContinuationToken";
+var _ND = "NoncurrentDays";
+var _NF = "NotFound";
+var _NKM = "NextKeyMarker";
+var _NM = "NextMarker";
+var _NNV = "NewerNoncurrentVersions";
+var _NPNM = "NextPartNumberMarker";
+var _NSB = "NoSuchBucket";
+var _NSK = "NoSuchKey";
+var _NSU = "NoSuchUpload";
+var _NUIM = "NextUploadIdMarker";
+var _NVE = "NoncurrentVersionExpiration";
+var _NVIM = "NextVersionIdMarker";
+var _NVT = "NoncurrentVersionTransitions";
+var _NVTL = "NoncurrentVersionTransitionList";
+var _NVTo = "NoncurrentVersionTransition";
+var _O = "Owner";
+var _OA = "ObjectAttributes";
+var _OAIATE = "ObjectAlreadyInActiveTierError";
+var _OC = "OwnershipControls";
+var _OCR = "OwnershipControlsRule";
+var _OCRw = "OwnershipControlsRules";
+var _OF = "OptionalFields";
+var _OI = "ObjectIdentifier";
+var _OIL = "ObjectIdentifierList";
+var _OL = "OutputLocation";
+var _OLC = "ObjectLockConfiguration";
+var _OLE = "ObjectLockEnabled";
+var _OLEFB = "ObjectLockEnabledForBucket";
+var _OLLH = "ObjectLockLegalHold";
 var _OLLHS = "ObjectLockLegalHoldStatus";
 var _OLM = "ObjectLockMode";
+var _OLR = "ObjectLockRetention";
 var _OLRUD = "ObjectLockRetainUntilDate";
+var _OLRb = "ObjectLockRule";
+var _OLb = "ObjectList";
+var _ONIATE = "ObjectNotInActiveTierError";
+var _OO = "ObjectOwnership";
+var _OOA = "OptionalObjectAttributes";
+var _OP = "ObjectParts";
+var _OPb = "ObjectPart";
+var _OS = "ObjectSize";
+var _OSGT = "ObjectSizeGreaterThan";
+var _OSLT = "ObjectSizeLessThan";
+var _OSV = "OutputSchemaVersion";
+var _OSu = "OutputSerialization";
+var _OV = "ObjectVersion";
+var _OVL = "ObjectVersionList";
+var _Ob = "Objects";
+var _Obj = "Object";
+var _P = "Prefix";
+var _PABC = "PublicAccessBlockConfiguration";
+var _PBA = "PutBucketAbac";
+var _PBAC = "PutBucketAccelerateConfiguration";
+var _PBACR = "PutBucketAccelerateConfigurationRequest";
+var _PBACRu = "PutBucketAnalyticsConfigurationRequest";
+var _PBACu = "PutBucketAnalyticsConfiguration";
+var _PBAR = "PutBucketAbacRequest";
+var _PBARu = "PutBucketAclRequest";
+var _PBAu = "PutBucketAcl";
+var _PBC = "PutBucketCors";
+var _PBCR = "PutBucketCorsRequest";
+var _PBE = "PutBucketEncryption";
+var _PBER = "PutBucketEncryptionRequest";
+var _PBIC = "PutBucketInventoryConfiguration";
+var _PBICR = "PutBucketInventoryConfigurationRequest";
+var _PBITC = "PutBucketIntelligentTieringConfiguration";
+var _PBITCR = "PutBucketIntelligentTieringConfigurationRequest";
+var _PBL = "PutBucketLogging";
+var _PBLC = "PutBucketLifecycleConfiguration";
+var _PBLCO = "PutBucketLifecycleConfigurationOutput";
+var _PBLCR = "PutBucketLifecycleConfigurationRequest";
+var _PBLR = "PutBucketLoggingRequest";
+var _PBMC = "PutBucketMetricsConfiguration";
+var _PBMCR = "PutBucketMetricsConfigurationRequest";
+var _PBNC = "PutBucketNotificationConfiguration";
+var _PBNCR = "PutBucketNotificationConfigurationRequest";
+var _PBOC = "PutBucketOwnershipControls";
+var _PBOCR = "PutBucketOwnershipControlsRequest";
+var _PBP = "PutBucketPolicy";
+var _PBPR = "PutBucketPolicyRequest";
+var _PBR = "PutBucketReplication";
+var _PBRP = "PutBucketRequestPayment";
+var _PBRPR = "PutBucketRequestPaymentRequest";
+var _PBRR = "PutBucketReplicationRequest";
+var _PBT = "PutBucketTagging";
+var _PBTR = "PutBucketTaggingRequest";
+var _PBV = "PutBucketVersioning";
+var _PBVR = "PutBucketVersioningRequest";
+var _PBW = "PutBucketWebsite";
+var _PBWR = "PutBucketWebsiteRequest";
+var _PC = "PartsCount";
+var _PDS = "PartitionDateSource";
+var _PE = "ProgressEvent";
+var _PI = "ParquetInput";
+var _PL = "PartsList";
+var _PN = "PartNumber";
+var _PNM = "PartNumberMarker";
+var _PO = "PutObject";
+var _POA = "PutObjectAcl";
+var _POAO = "PutObjectAclOutput";
+var _POAR = "PutObjectAclRequest";
+var _POLC = "PutObjectLockConfiguration";
+var _POLCO = "PutObjectLockConfigurationOutput";
+var _POLCR = "PutObjectLockConfigurationRequest";
+var _POLH = "PutObjectLegalHold";
+var _POLHO = "PutObjectLegalHoldOutput";
+var _POLHR = "PutObjectLegalHoldRequest";
+var _POO = "PutObjectOutput";
+var _POR = "PutObjectRequest";
+var _PORO = "PutObjectRetentionOutput";
+var _PORR = "PutObjectRetentionRequest";
+var _PORu = "PutObjectRetention";
+var _POT = "PutObjectTagging";
+var _POTO = "PutObjectTaggingOutput";
+var _POTR = "PutObjectTaggingRequest";
+var _PP = "PartitionedPrefix";
+var _PPAB = "PutPublicAccessBlock";
+var _PPABR = "PutPublicAccessBlockRequest";
+var _PS = "PolicyStatus";
+var _Pa = "Parts";
+var _Par = "Part";
+var _Parq = "Parquet";
+var _Pay = "Payer";
+var _Payl = "Payload";
+var _Pe = "Permission";
+var _Po = "Policy";
+var _Pr = "Progress";
+var _Pri = "Priority";
+var _Pro = "Protocol";
+var _Q = "Quiet";
+var _QA = "QueueArn";
+var _QC = "QuoteCharacter";
+var _QCL = "QueueConfigurationList";
+var _QCu = "QueueConfigurations";
+var _QCue = "QueueConfiguration";
+var _QEC = "QuoteEscapeCharacter";
+var _QF = "QuoteFields";
+var _Qu = "Queue";
+var _R = "Rules";
+var _RART = "RedirectAllRequestsTo";
 var _RC = "RequestCharged";
+var _RCC = "ResponseCacheControl";
+var _RCD = "ResponseContentDisposition";
+var _RCE = "ResponseContentEncoding";
+var _RCL = "ResponseContentLanguage";
+var _RCT = "ResponseContentType";
+var _RCe = "ReplicationConfiguration";
+var _RD = "RecordDelimiter";
+var _RE = "ResponseExpires";
+var _RED = "RestoreExpiryDate";
+var _REe = "RecordExpiration";
+var _REec = "RecordsEvent";
+var _RKKID = "ReplicaKmsKeyID";
+var _RKPW = "ReplaceKeyPrefixWith";
+var _RKW = "ReplaceKeyWith";
+var _RM = "ReplicaModifications";
+var _RO = "RenameObject";
+var _ROO = "RenameObjectOutput";
+var _ROOe = "RestoreObjectOutput";
+var _ROP = "RestoreOutputPath";
+var _ROR = "RenameObjectRequest";
+var _RORe = "RestoreObjectRequest";
+var _ROe = "RestoreObject";
 var _RP = "RequestPayer";
+var _RPB = "RestrictPublicBuckets";
+var _RPC = "RequestPaymentConfiguration";
+var _RPe = "RequestProgress";
+var _RR = "RoutingRules";
+var _RRAO = "ReplicationRuleAndOperator";
+var _RRF = "ReplicationRuleFilter";
+var _RRe = "ReplicationRule";
+var _RRep = "ReplicationRules";
+var _RReq = "RequestRoute";
+var _RRes = "RestoreRequest";
+var _RRo = "RoutingRule";
+var _RS = "ReplicationStatus";
+var _RSe = "RestoreStatus";
+var _RSen = "RenameSource";
+var _RT = "ReplicationTime";
+var _RTV = "ReplicationTimeValue";
+var _RTe = "RequestToken";
+var _RUD = "RetainUntilDate";
+var _Ra = "Range";
+var _Re = "Restore";
+var _Rec = "Records";
+var _Red = "Redirect";
+var _Ret = "Retention";
+var _Ro = "Role";
+var _Ru = "Rule";
+var _S = "Status";
+var _SA = "StartAfter";
 var _SAK = "SecretAccessKey";
+var _SAs = "SseAlgorithm";
+var _SB = "StreamingBlob";
+var _SBD = "S3BucketDestination";
 var _SC = "StorageClass";
+var _SCA = "StorageClassAnalysis";
+var _SCADE = "StorageClassAnalysisDataExport";
+var _SCV = "SessionCredentialValue";
+var _SCe = "SessionCredentials";
+var _SCt = "StatusCode";
+var _SDV = "SkipDestinationValidation";
+var _SE = "StatsEvent";
+var _SIM = "SourceIfMatch";
+var _SIMS = "SourceIfModifiedSince";
+var _SINM = "SourceIfNoneMatch";
+var _SIUS = "SourceIfUnmodifiedSince";
+var _SK = "SSE-KMS";
+var _SKEO = "SseKmsEncryptedObjects";
+var _SKF = "S3KeyFilter";
+var _SKe = "S3Key";
+var _SL = "S3Location";
 var _SM = "SessionMode";
+var _SOC = "SelectObjectContent";
+var _SOCES = "SelectObjectContentEventStream";
+var _SOCO = "SelectObjectContentOutput";
+var _SOCR = "SelectObjectContentRequest";
+var _SP = "SelectParameters";
+var _SPi = "SimplePrefix";
+var _SR = "ScanRange";
+var _SS = "SSE-S3";
+var _SSC = "SourceSelectionCriteria";
 var _SSE = "ServerSideEncryption";
+var _SSEA = "SSEAlgorithm";
+var _SSEBD = "ServerSideEncryptionByDefault";
+var _SSEC = "ServerSideEncryptionConfiguration";
 var _SSECA = "SSECustomerAlgorithm";
 var _SSECK = "SSECustomerKey";
 var _SSECKMD = "SSECustomerKeyMD5";
+var _SSEKMS = "SSEKMS";
 var _SSEKMSEC = "SSEKMSEncryptionContext";
 var _SSEKMSKI = "SSEKMSKeyId";
+var _SSER = "ServerSideEncryptionRule";
+var _SSERe = "ServerSideEncryptionRules";
+var _SSES = "SSES3";
 var _ST = "SessionToken";
+var _STD = "S3TablesDestination";
+var _STDR = "S3TablesDestinationResult";
+var _S_ = "S3";
+var _Sc = "Schedule";
 var _Si = "Size";
-var _T = "Tagging";
+var _St = "Start";
+var _Sta = "Stats";
+var _Su = "Suffix";
+var _T = "Tags";
+var _TA = "TableArn";
+var _TAo = "TopicArn";
+var _TB = "TargetBucket";
+var _TBA = "TableBucketArn";
+var _TBT = "TableBucketType";
+var _TC = "TagCount";
+var _TCL = "TopicConfigurationList";
+var _TCo = "TopicConfigurations";
+var _TCop = "TopicConfiguration";
+var _TD = "TaggingDirective";
+var _TDMOS = "TransitionDefaultMinimumObjectSize";
+var _TG = "TargetGrants";
+var _TGa = "TargetGrant";
+var _TL = "TieringList";
+var _TLr = "TransitionList";
+var _TMP = "TooManyParts";
+var _TN = "TableNamespace";
+var _TNa = "TableName";
+var _TOKF = "TargetObjectKeyFormat";
+var _TP = "TargetPrefix";
+var _TPC = "TotalPartsCount";
+var _TS = "TagSet";
+var _TSa = "TableStatus";
+var _Ta = "Tag";
+var _Tag = "Tagging";
+var _Ti = "Tier";
+var _Tie = "Tierings";
+var _Tier = "Tiering";
+var _Tim = "Time";
+var _To = "Token";
+var _Top = "Topic";
+var _Tr = "Transitions";
+var _Tra = "Transition";
+var _Ty = "Type";
+var _U = "Uploads";
+var _UBMITC = "UpdateBucketMetadataInventoryTableConfiguration";
+var _UBMITCR = "UpdateBucketMetadataInventoryTableConfigurationRequest";
+var _UBMJTC = "UpdateBucketMetadataJournalTableConfiguration";
+var _UBMJTCR = "UpdateBucketMetadataJournalTableConfigurationRequest";
+var _UI = "UploadId";
+var _UIM = "UploadIdMarker";
+var _UM = "UserMetadata";
+var _UP = "UploadPart";
+var _UPC = "UploadPartCopy";
+var _UPCO = "UploadPartCopyOutput";
+var _UPCR = "UploadPartCopyRequest";
+var _UPO = "UploadPartOutput";
+var _UPR = "UploadPartRequest";
+var _URI = "URI";
+var _Up = "Upload";
+var _V = "Value";
+var _VC = "VersioningConfiguration";
 var _VI = "VersionId";
+var _VIM = "VersionIdMarker";
+var _Ve = "Versions";
+var _Ver = "Version";
+var _WC = "WebsiteConfiguration";
+var _WGOR = "WriteGetObjectResponse";
+var _WGORR = "WriteGetObjectResponseRequest";
 var _WOB = "WriteOffsetBytes";
 var _WRL = "WebsiteRedirectLocation";
-var _cc = "cache-control";
-var _cd = "content-disposition";
-var _ce = "content-encoding";
-var _cl = "content-language";
-var _cl_ = "content-length";
-var _cm = "content-md5";
-var _ct = "content-type";
-var _e = "expires";
-var _eta = "etag";
-var _im = "if-match";
-var _inm = "if-none-match";
-var _s = "session";
+var _Y = "Years";
+var _ar = "accept-ranges";
+var _br = "bucket-region";
+var _c = "client";
+var _ct = "continuation-token";
+var _d = "delimiter";
+var _e = "error";
+var _eP = "eventPayload";
+var _en = "endpoint";
+var _et = "encoding-type";
+var _fo = "fetch-owner";
+var _h = "http";
+var _hE = "httpError";
+var _hH = "httpHeader";
+var _hL = "hostLabel";
+var _hP = "httpPayload";
+var _hPH = "httpPrefixHeaders";
+var _hQ = "httpQuery";
+var _hi = "http://www.w3.org/2001/XMLSchema-instance";
+var _i = "id";
+var _iT = "idempotencyToken";
+var _km = "key-marker";
+var _m = "marker";
+var _mb = "max-buckets";
+var _mdb = "max-directory-buckets";
+var _mk = "max-keys";
+var _mp = "max-parts";
+var _mu = "max-uploads";
+var _p = "prefix";
+var _pN = "partNumber";
+var _pnm = "part-number-marker";
+var _rcc = "response-cache-control";
+var _rcd = "response-content-disposition";
+var _rce = "response-content-encoding";
+var _rcl = "response-content-language";
+var _rct = "response-content-type";
+var _re = "response-expires";
+var _s = "streaming";
+var _sa = "start-after";
+var _sm = "smithy.ts.sdk.synthetic.com.amazonaws.s3";
+var _uI = "uploadId";
+var _uim = "upload-id-marker";
+var _vI = "versionId";
+var _vim = "version-id-marker";
+var _x = "xsi";
+var _xA = "xmlAttribute";
+var _xF = "xmlFlattened";
+var _xN = "xmlName";
+var _xNm = "xmlNamespace";
 var _xaa = "x-amz-acl";
+var _xaad = "x-amz-abort-date";
+var _xaapa = "x-amz-access-point-alias";
+var _xaari = "x-amz-abort-rule-id";
+var _xaas = "x-amz-archive-status";
+var _xaba = "x-amz-bucket-arn";
+var _xabgr = "x-amz-bypass-governance-retention";
+var _xabln = "x-amz-bucket-location-name";
+var _xablt = "x-amz-bucket-location-type";
+var _xabole = "x-amz-bucket-object-lock-enabled";
+var _xabolt = "x-amz-bucket-object-lock-token";
+var _xabr = "x-amz-bucket-region";
+var _xaca = "x-amz-checksum-algorithm";
 var _xacc = "x-amz-checksum-crc32";
 var _xacc_ = "x-amz-checksum-crc32c";
 var _xacc__ = "x-amz-checksum-crc64nvme";
+var _xacm = "x-amz-checksum-mode";
+var _xacrsba = "x-amz-confirm-remove-self-bucket-access";
 var _xacs = "x-amz-checksum-sha1";
 var _xacs_ = "x-amz-checksum-sha256";
+var _xacs__ = "x-amz-copy-source";
+var _xacsim = "x-amz-copy-source-if-match";
+var _xacsims = "x-amz-copy-source-if-modified-since";
+var _xacsinm = "x-amz-copy-source-if-none-match";
+var _xacsius = "x-amz-copy-source-if-unmodified-since";
 var _xacsm = "x-amz-create-session-mode";
+var _xacsr = "x-amz-copy-source-range";
+var _xacssseca = "x-amz-copy-source-server-side-encryption-customer-algorithm";
+var _xacssseck = "x-amz-copy-source-server-side-encryption-customer-key";
+var _xacssseckM = "x-amz-copy-source-server-side-encryption-customer-key-MD5";
+var _xacsvi = "x-amz-copy-source-version-id";
 var _xact = "x-amz-checksum-type";
+var _xact_ = "x-amz-client-token";
+var _xadm = "x-amz-delete-marker";
 var _xae = "x-amz-expiration";
 var _xaebo = "x-amz-expected-bucket-owner";
+var _xafec = "x-amz-fwd-error-code";
+var _xafem = "x-amz-fwd-error-message";
+var _xafhCC = "x-amz-fwd-header-Cache-Control";
+var _xafhCD = "x-amz-fwd-header-Content-Disposition";
+var _xafhCE = "x-amz-fwd-header-Content-Encoding";
+var _xafhCL = "x-amz-fwd-header-Content-Language";
+var _xafhCR = "x-amz-fwd-header-Content-Range";
+var _xafhCT = "x-amz-fwd-header-Content-Type";
+var _xafhE = "x-amz-fwd-header-ETag";
+var _xafhE_ = "x-amz-fwd-header-Expires";
+var _xafhLM = "x-amz-fwd-header-Last-Modified";
+var _xafhar = "x-amz-fwd-header-accept-ranges";
+var _xafhxacc = "x-amz-fwd-header-x-amz-checksum-crc32";
+var _xafhxacc_ = "x-amz-fwd-header-x-amz-checksum-crc32c";
+var _xafhxacc__ = "x-amz-fwd-header-x-amz-checksum-crc64nvme";
+var _xafhxacs = "x-amz-fwd-header-x-amz-checksum-sha1";
+var _xafhxacs_ = "x-amz-fwd-header-x-amz-checksum-sha256";
+var _xafhxadm = "x-amz-fwd-header-x-amz-delete-marker";
+var _xafhxae = "x-amz-fwd-header-x-amz-expiration";
+var _xafhxamm = "x-amz-fwd-header-x-amz-missing-meta";
+var _xafhxampc = "x-amz-fwd-header-x-amz-mp-parts-count";
+var _xafhxaollh = "x-amz-fwd-header-x-amz-object-lock-legal-hold";
+var _xafhxaolm = "x-amz-fwd-header-x-amz-object-lock-mode";
+var _xafhxaolrud = "x-amz-fwd-header-x-amz-object-lock-retain-until-date";
+var _xafhxar = "x-amz-fwd-header-x-amz-restore";
+var _xafhxarc = "x-amz-fwd-header-x-amz-request-charged";
+var _xafhxars = "x-amz-fwd-header-x-amz-replication-status";
+var _xafhxasc = "x-amz-fwd-header-x-amz-storage-class";
+var _xafhxasse = "x-amz-fwd-header-x-amz-server-side-encryption";
+var _xafhxasseakki = "x-amz-fwd-header-x-amz-server-side-encryption-aws-kms-key-id";
+var _xafhxassebke = "x-amz-fwd-header-x-amz-server-side-encryption-bucket-key-enabled";
+var _xafhxasseca = "x-amz-fwd-header-x-amz-server-side-encryption-customer-algorithm";
+var _xafhxasseckM = "x-amz-fwd-header-x-amz-server-side-encryption-customer-key-MD5";
+var _xafhxatc = "x-amz-fwd-header-x-amz-tagging-count";
+var _xafhxavi = "x-amz-fwd-header-x-amz-version-id";
+var _xafs = "x-amz-fwd-status";
 var _xagfc = "x-amz-grant-full-control";
 var _xagr = "x-amz-grant-read";
 var _xagra = "x-amz-grant-read-acp";
+var _xagw = "x-amz-grant-write";
 var _xagwa = "x-amz-grant-write-acp";
+var _xaimit = "x-amz-if-match-initiated-time";
+var _xaimlmt = "x-amz-if-match-last-modified-time";
+var _xaims = "x-amz-if-match-size";
+var _xam = "x-amz-meta-";
+var _xam_ = "x-amz-mfa";
+var _xamd = "x-amz-metadata-directive";
+var _xamm = "x-amz-missing-meta";
+var _xamos = "x-amz-mp-object-size";
+var _xamp = "x-amz-max-parts";
+var _xampc = "x-amz-mp-parts-count";
+var _xaoa = "x-amz-object-attributes";
 var _xaollh = "x-amz-object-lock-legal-hold";
 var _xaolm = "x-amz-object-lock-mode";
 var _xaolrud = "x-amz-object-lock-retain-until-date";
+var _xaoo = "x-amz-object-ownership";
+var _xaooa = "x-amz-optional-object-attributes";
 var _xaos = "x-amz-object-size";
+var _xapnm = "x-amz-part-number-marker";
+var _xar = "x-amz-restore";
 var _xarc = "x-amz-request-charged";
+var _xarop = "x-amz-restore-output-path";
 var _xarp = "x-amz-request-payer";
+var _xarr = "x-amz-request-route";
+var _xars = "x-amz-replication-status";
+var _xars_ = "x-amz-rename-source";
+var _xarsim = "x-amz-rename-source-if-match";
+var _xarsims = "x-amz-rename-source-if-modified-since";
+var _xarsinm = "x-amz-rename-source-if-none-match";
+var _xarsius = "x-amz-rename-source-if-unmodified-since";
+var _xart = "x-amz-request-token";
 var _xasc = "x-amz-storage-class";
 var _xasca = "x-amz-sdk-checksum-algorithm";
+var _xasdv = "x-amz-skip-destination-validation";
+var _xasebo = "x-amz-source-expected-bucket-owner";
 var _xasse = "x-amz-server-side-encryption";
 var _xasseakki = "x-amz-server-side-encryption-aws-kms-key-id";
 var _xassebke = "x-amz-server-side-encryption-bucket-key-enabled";
 var _xassec = "x-amz-server-side-encryption-context";
 var _xasseca = "x-amz-server-side-encryption-customer-algorithm";
 var _xasseck = "x-amz-server-side-encryption-customer-key";
-var _xasseckm = "x-amz-server-side-encryption-customer-key-md5";
+var _xasseckM = "x-amz-server-side-encryption-customer-key-MD5";
 var _xat = "x-amz-tagging";
+var _xatc = "x-amz-tagging-count";
+var _xatd = "x-amz-tagging-directive";
+var _xatdmos = "x-amz-transition-default-minimum-object-size";
 var _xavi = "x-amz-version-id";
 var _xawob = "x-amz-write-offset-bytes";
 var _xawrl = "x-amz-website-redirect-location";
-var _xi = "x-id";
+var _xs = "xsi:type";
+var n0 = "com.amazonaws.s3";
+var CopySourceSSECustomerKey = [0, n0, _CSSSECK, 8, 0];
+var SessionCredentialValue = [0, n0, _SCV, 8, 0];
+var SSECustomerKey = [0, n0, _SSECK, 8, 0];
+var SSEKMSEncryptionContext = [0, n0, _SSEKMSEC, 8, 0];
+var SSEKMSKeyId = [0, n0, _SSEKMSKI, 8, 0];
+var StreamingBlob = [0, n0, _SB, { [_s]: 1 }, 42];
+var AbacStatus = [3, n0, _AS, 0, [_S], [0]];
+var AbortIncompleteMultipartUpload = [3, n0, _AIMU, 0, [_DAI], [1]];
+var AbortMultipartUploadOutput = [3, n0, _AMUO, 0, [_RC], [[0, { [_hH]: _xarc }]]];
+var AbortMultipartUploadRequest = [
+  3,
+  n0,
+  _AMUR,
+  0,
+  [_B, _K, _UI, _RP, _EBO, _IMIT],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hQ]: _uI }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }],
+    [6, { [_hH]: _xaimit }]
+  ]
+];
+var AccelerateConfiguration = [3, n0, _AC, 0, [_S], [0]];
+var AccessControlPolicy = [
+  3,
+  n0,
+  _ACP,
+  0,
+  [_G, _O],
+  [[() => Grants, { [_xN]: _ACL }], () => Owner]
+];
+var AccessControlTranslation = [3, n0, _ACT, 0, [_O], [0]];
+var AnalyticsAndOperator = [
+  3,
+  n0,
+  _AAO,
+  0,
+  [_P, _T],
+  [0, [() => TagSet, { [_xN]: _Ta, [_xF]: 1 }]]
+];
+var AnalyticsConfiguration = [
+  3,
+  n0,
+  _ACn,
+  0,
+  [_I, _F, _SCA],
+  [0, [() => AnalyticsFilter, 0], () => StorageClassAnalysis]
+];
+var AnalyticsExportDestination = [
+  3,
+  n0,
+  _AED,
+  0,
+  [_SBD],
+  [() => AnalyticsS3BucketDestination]
+];
+var AnalyticsS3BucketDestination = [3, n0, _ASBD, 0, [_Fo, _BAI, _B, _P], [0, 0, 0, 0]];
+var BlockedEncryptionTypes = [
+  3,
+  n0,
+  _BET,
+  0,
+  [_ET],
+  [[() => EncryptionTypeList, { [_xF]: 1 }]]
+];
+var Bucket = [3, n0, _B, 0, [_N, _CD, _BR, _BA], [0, 4, 0, 0]];
+var BucketAlreadyExists2 = [-3, n0, _BAE, { [_e]: _c, [_hE]: 409 }, [], []];
+TypeRegistry.for(n0).registerError(BucketAlreadyExists2, BucketAlreadyExists);
+var BucketAlreadyOwnedByYou2 = [-3, n0, _BAOBY, { [_e]: _c, [_hE]: 409 }, [], []];
+TypeRegistry.for(n0).registerError(BucketAlreadyOwnedByYou2, BucketAlreadyOwnedByYou);
+var BucketInfo = [3, n0, _BI, 0, [_DR, _Ty], [0, 0]];
+var BucketLifecycleConfiguration = [
+  3,
+  n0,
+  _BLC,
+  0,
+  [_R],
+  [[() => LifecycleRules, { [_xN]: _Ru, [_xF]: 1 }]]
+];
+var BucketLoggingStatus = [3, n0, _BLS, 0, [_LE], [[() => LoggingEnabled, 0]]];
+var Checksum = [
+  3,
+  n0,
+  _C,
+  0,
+  [_CCRC, _CCRCC, _CCRCNVME, _CSHA, _CSHAh, _CT],
+  [0, 0, 0, 0, 0, 0]
+];
+var CommonPrefix = [3, n0, _CP, 0, [_P], [0]];
+var CompletedMultipartUpload = [
+  3,
+  n0,
+  _CMU,
+  0,
+  [_Pa],
+  [[() => CompletedPartList, { [_xN]: _Par, [_xF]: 1 }]]
+];
+var CompletedPart = [
+  3,
+  n0,
+  _CPo,
+  0,
+  [_ETa, _CCRC, _CCRCC, _CCRCNVME, _CSHA, _CSHAh, _PN],
+  [0, 0, 0, 0, 0, 0, 1]
+];
+var CompleteMultipartUploadOutput = [
+  3,
+  n0,
+  _CMUO,
+  { [_xN]: _CMUR },
+  [_L, _B, _K, _E, _ETa, _CCRC, _CCRCC, _CCRCNVME, _CSHA, _CSHAh, _CT, _SSE, _VI, _SSEKMSKI, _BKE, _RC],
+  [
+    0,
+    0,
+    0,
+    [0, { [_hH]: _xae }],
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    [0, { [_hH]: _xasse }],
+    [0, { [_hH]: _xavi }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [2, { [_hH]: _xassebke }],
+    [0, { [_hH]: _xarc }]
+  ]
+];
+var CompleteMultipartUploadRequest = [
+  3,
+  n0,
+  _CMURo,
+  0,
+  [
+    _B,
+    _K,
+    _MU,
+    _UI,
+    _CCRC,
+    _CCRCC,
+    _CCRCNVME,
+    _CSHA,
+    _CSHAh,
+    _CT,
+    _MOS,
+    _RP,
+    _EBO,
+    _IM,
+    _INM,
+    _SSECA,
+    _SSECK,
+    _SSECKMD
+  ],
+  [
+    [0, 1],
+    [0, 1],
+    [() => CompletedMultipartUpload, { [_xN]: _CMUo, [_hP]: 1 }],
+    [0, { [_hQ]: _uI }],
+    [0, { [_hH]: _xacc }],
+    [0, { [_hH]: _xacc_ }],
+    [0, { [_hH]: _xacc__ }],
+    [0, { [_hH]: _xacs }],
+    [0, { [_hH]: _xacs_ }],
+    [0, { [_hH]: _xact }],
+    [1, { [_hH]: _xamos }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _IM_ }],
+    [0, { [_hH]: _INM_ }],
+    [0, { [_hH]: _xasseca }],
+    [() => SSECustomerKey, { [_hH]: _xasseck }],
+    [0, { [_hH]: _xasseckM }]
+  ]
+];
+var Condition = [3, n0, _Co, 0, [_HECRE, _KPE], [0, 0]];
+var ContinuationEvent = [3, n0, _CE, 0, [], []];
+var CopyObjectOutput = [
+  3,
+  n0,
+  _COO,
+  0,
+  [_COR, _E, _CSVI, _VI, _SSE, _SSECA, _SSECKMD, _SSEKMSKI, _SSEKMSEC, _BKE, _RC],
+  [
+    [() => CopyObjectResult, 16],
+    [0, { [_hH]: _xae }],
+    [0, { [_hH]: _xacsvi }],
+    [0, { [_hH]: _xavi }],
+    [0, { [_hH]: _xasse }],
+    [0, { [_hH]: _xasseca }],
+    [0, { [_hH]: _xasseckM }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [() => SSEKMSEncryptionContext, { [_hH]: _xassec }],
+    [2, { [_hH]: _xassebke }],
+    [0, { [_hH]: _xarc }]
+  ]
+];
+var CopyObjectRequest = [
+  3,
+  n0,
+  _CORo,
+  0,
+  [
+    _ACL_,
+    _B,
+    _CC,
+    _CA,
+    _CDo,
+    _CEo,
+    _CL,
+    _CTo,
+    _CS,
+    _CSIM,
+    _CSIMS,
+    _CSINM,
+    _CSIUS,
+    _Ex,
+    _GFC,
+    _GR,
+    _GRACP,
+    _GWACP,
+    _IM,
+    _INM,
+    _K,
+    _M,
+    _MD,
+    _TD,
+    _SSE,
+    _SC,
+    _WRL,
+    _SSECA,
+    _SSECK,
+    _SSECKMD,
+    _SSEKMSKI,
+    _SSEKMSEC,
+    _BKE,
+    _CSSSECA,
+    _CSSSECK,
+    _CSSSECKMD,
+    _RP,
+    _Tag,
+    _OLM,
+    _OLRUD,
+    _OLLHS,
+    _EBO,
+    _ESBO
+  ],
+  [
+    [0, { [_hH]: _xaa }],
+    [0, 1],
+    [0, { [_hH]: _CC_ }],
+    [0, { [_hH]: _xaca }],
+    [0, { [_hH]: _CD_ }],
+    [0, { [_hH]: _CE_ }],
+    [0, { [_hH]: _CL_ }],
+    [0, { [_hH]: _CT_ }],
+    [0, { [_hH]: _xacs__ }],
+    [0, { [_hH]: _xacsim }],
+    [4, { [_hH]: _xacsims }],
+    [0, { [_hH]: _xacsinm }],
+    [4, { [_hH]: _xacsius }],
+    [4, { [_hH]: _Ex }],
+    [0, { [_hH]: _xagfc }],
+    [0, { [_hH]: _xagr }],
+    [0, { [_hH]: _xagra }],
+    [0, { [_hH]: _xagwa }],
+    [0, { [_hH]: _IM_ }],
+    [0, { [_hH]: _INM_ }],
+    [0, 1],
+    [128 | 0, { [_hPH]: _xam }],
+    [0, { [_hH]: _xamd }],
+    [0, { [_hH]: _xatd }],
+    [0, { [_hH]: _xasse }],
+    [0, { [_hH]: _xasc }],
+    [0, { [_hH]: _xawrl }],
+    [0, { [_hH]: _xasseca }],
+    [() => SSECustomerKey, { [_hH]: _xasseck }],
+    [0, { [_hH]: _xasseckM }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [() => SSEKMSEncryptionContext, { [_hH]: _xassec }],
+    [2, { [_hH]: _xassebke }],
+    [0, { [_hH]: _xacssseca }],
+    [() => CopySourceSSECustomerKey, { [_hH]: _xacssseck }],
+    [0, { [_hH]: _xacssseckM }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xat }],
+    [0, { [_hH]: _xaolm }],
+    [5, { [_hH]: _xaolrud }],
+    [0, { [_hH]: _xaollh }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xasebo }]
+  ]
+];
+var CopyObjectResult = [
+  3,
+  n0,
+  _COR,
+  0,
+  [_ETa, _LM, _CT, _CCRC, _CCRCC, _CCRCNVME, _CSHA, _CSHAh],
+  [0, 4, 0, 0, 0, 0, 0, 0]
+];
+var CopyPartResult = [
+  3,
+  n0,
+  _CPR,
+  0,
+  [_ETa, _LM, _CCRC, _CCRCC, _CCRCNVME, _CSHA, _CSHAh],
+  [0, 4, 0, 0, 0, 0, 0]
+];
+var CORSConfiguration = [
+  3,
+  n0,
+  _CORSC,
+  0,
+  [_CORSR],
+  [[() => CORSRules, { [_xN]: _CORSRu, [_xF]: 1 }]]
+];
+var CORSRule = [
+  3,
+  n0,
+  _CORSRu,
+  0,
+  [_ID, _AH, _AM, _AO, _EH, _MAS],
+  [
+    0,
+    [64 | 0, { [_xN]: _AHl, [_xF]: 1 }],
+    [64 | 0, { [_xN]: _AMl, [_xF]: 1 }],
+    [64 | 0, { [_xN]: _AOl, [_xF]: 1 }],
+    [64 | 0, { [_xN]: _EHx, [_xF]: 1 }],
+    1
+  ]
+];
+var CreateBucketConfiguration = [
+  3,
+  n0,
+  _CBC,
+  0,
+  [_LC, _L, _B, _T],
+  [0, () => LocationInfo, () => BucketInfo, [() => TagSet, 0]]
+];
+var CreateBucketMetadataConfigurationRequest = [
+  3,
+  n0,
+  _CBMCR,
+  0,
+  [_B, _CMD, _CA, _MC, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [() => MetadataConfiguration, { [_xN]: _MC, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var CreateBucketMetadataTableConfigurationRequest = [
+  3,
+  n0,
+  _CBMTCR,
+  0,
+  [_B, _CMD, _CA, _MTC, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [() => MetadataTableConfiguration, { [_xN]: _MTC, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var CreateBucketOutput = [
+  3,
+  n0,
+  _CBO,
+  0,
+  [_L, _BA],
+  [
+    [0, { [_hH]: _L }],
+    [0, { [_hH]: _xaba }]
+  ]
+];
+var CreateBucketRequest = [
+  3,
+  n0,
+  _CBR,
+  0,
+  [_ACL_, _B, _CBC, _GFC, _GR, _GRACP, _GW, _GWACP, _OLEFB, _OO],
+  [
+    [0, { [_hH]: _xaa }],
+    [0, 1],
+    [() => CreateBucketConfiguration, { [_xN]: _CBC, [_hP]: 1 }],
+    [0, { [_hH]: _xagfc }],
+    [0, { [_hH]: _xagr }],
+    [0, { [_hH]: _xagra }],
+    [0, { [_hH]: _xagw }],
+    [0, { [_hH]: _xagwa }],
+    [2, { [_hH]: _xabole }],
+    [0, { [_hH]: _xaoo }]
+  ]
+];
+var CreateMultipartUploadOutput = [
+  3,
+  n0,
+  _CMUOr,
+  { [_xN]: _IMUR },
+  [_AD, _ARI, _B, _K, _UI, _SSE, _SSECA, _SSECKMD, _SSEKMSKI, _SSEKMSEC, _BKE, _RC, _CA, _CT],
+  [
+    [4, { [_hH]: _xaad }],
+    [0, { [_hH]: _xaari }],
+    [0, { [_xN]: _B }],
+    0,
+    0,
+    [0, { [_hH]: _xasse }],
+    [0, { [_hH]: _xasseca }],
+    [0, { [_hH]: _xasseckM }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [() => SSEKMSEncryptionContext, { [_hH]: _xassec }],
+    [2, { [_hH]: _xassebke }],
+    [0, { [_hH]: _xarc }],
+    [0, { [_hH]: _xaca }],
+    [0, { [_hH]: _xact }]
+  ]
+];
+var CreateMultipartUploadRequest = [
+  3,
+  n0,
+  _CMURr,
+  0,
+  [
+    _ACL_,
+    _B,
+    _CC,
+    _CDo,
+    _CEo,
+    _CL,
+    _CTo,
+    _Ex,
+    _GFC,
+    _GR,
+    _GRACP,
+    _GWACP,
+    _K,
+    _M,
+    _SSE,
+    _SC,
+    _WRL,
+    _SSECA,
+    _SSECK,
+    _SSECKMD,
+    _SSEKMSKI,
+    _SSEKMSEC,
+    _BKE,
+    _RP,
+    _Tag,
+    _OLM,
+    _OLRUD,
+    _OLLHS,
+    _EBO,
+    _CA,
+    _CT
+  ],
+  [
+    [0, { [_hH]: _xaa }],
+    [0, 1],
+    [0, { [_hH]: _CC_ }],
+    [0, { [_hH]: _CD_ }],
+    [0, { [_hH]: _CE_ }],
+    [0, { [_hH]: _CL_ }],
+    [0, { [_hH]: _CT_ }],
+    [4, { [_hH]: _Ex }],
+    [0, { [_hH]: _xagfc }],
+    [0, { [_hH]: _xagr }],
+    [0, { [_hH]: _xagra }],
+    [0, { [_hH]: _xagwa }],
+    [0, 1],
+    [128 | 0, { [_hPH]: _xam }],
+    [0, { [_hH]: _xasse }],
+    [0, { [_hH]: _xasc }],
+    [0, { [_hH]: _xawrl }],
+    [0, { [_hH]: _xasseca }],
+    [() => SSECustomerKey, { [_hH]: _xasseck }],
+    [0, { [_hH]: _xasseckM }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [() => SSEKMSEncryptionContext, { [_hH]: _xassec }],
+    [2, { [_hH]: _xassebke }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xat }],
+    [0, { [_hH]: _xaolm }],
+    [5, { [_hH]: _xaolrud }],
+    [0, { [_hH]: _xaollh }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xaca }],
+    [0, { [_hH]: _xact }]
+  ]
+];
+var CreateSessionOutput = [
+  3,
+  n0,
+  _CSO,
+  { [_xN]: _CSR },
+  [_SSE, _SSEKMSKI, _SSEKMSEC, _BKE, _Cr],
+  [
+    [0, { [_hH]: _xasse }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [() => SSEKMSEncryptionContext, { [_hH]: _xassec }],
+    [2, { [_hH]: _xassebke }],
+    [() => SessionCredentials, { [_xN]: _Cr }]
+  ]
+];
+var CreateSessionRequest = [
+  3,
+  n0,
+  _CSRr,
+  0,
+  [_SM, _B, _SSE, _SSEKMSKI, _SSEKMSEC, _BKE],
+  [
+    [0, { [_hH]: _xacsm }],
+    [0, 1],
+    [0, { [_hH]: _xasse }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [() => SSEKMSEncryptionContext, { [_hH]: _xassec }],
+    [2, { [_hH]: _xassebke }]
+  ]
+];
+var CSVInput = [
+  3,
+  n0,
+  _CSVIn,
+  0,
+  [_FHI, _Com, _QEC, _RD, _FD, _QC, _AQRD],
+  [0, 0, 0, 0, 0, 0, 2]
+];
+var CSVOutput = [3, n0, _CSVO, 0, [_QF, _QEC, _RD, _FD, _QC], [0, 0, 0, 0, 0]];
+var DefaultRetention = [3, n0, _DRe, 0, [_Mo, _D, _Y], [0, 1, 1]];
+var Delete = [
+  3,
+  n0,
+  _De,
+  0,
+  [_Ob, _Q],
+  [[() => ObjectIdentifierList, { [_xN]: _Obj, [_xF]: 1 }], 2]
+];
+var DeleteBucketAnalyticsConfigurationRequest = [
+  3,
+  n0,
+  _DBACR,
+  0,
+  [_B, _I, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketCorsRequest = [
+  3,
+  n0,
+  _DBCR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketEncryptionRequest = [
+  3,
+  n0,
+  _DBER,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketIntelligentTieringConfigurationRequest = [
+  3,
+  n0,
+  _DBITCR,
+  0,
+  [_B, _I, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketInventoryConfigurationRequest = [
+  3,
+  n0,
+  _DBICR,
+  0,
+  [_B, _I, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketLifecycleRequest = [
+  3,
+  n0,
+  _DBLR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketMetadataConfigurationRequest = [
+  3,
+  n0,
+  _DBMCR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketMetadataTableConfigurationRequest = [
+  3,
+  n0,
+  _DBMTCR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketMetricsConfigurationRequest = [
+  3,
+  n0,
+  _DBMCRe,
+  0,
+  [_B, _I, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketOwnershipControlsRequest = [
+  3,
+  n0,
+  _DBOCR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketPolicyRequest = [
+  3,
+  n0,
+  _DBPR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketReplicationRequest = [
+  3,
+  n0,
+  _DBRR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketRequest = [
+  3,
+  n0,
+  _DBR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketTaggingRequest = [
+  3,
+  n0,
+  _DBTR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeleteBucketWebsiteRequest = [
+  3,
+  n0,
+  _DBWR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeletedObject = [3, n0, _DO, 0, [_K, _VI, _DM, _DMVI], [0, 0, 2, 0]];
+var DeleteMarkerEntry = [
+  3,
+  n0,
+  _DME,
+  0,
+  [_O, _K, _VI, _IL, _LM],
+  [() => Owner, 0, 0, 2, 4]
+];
+var DeleteMarkerReplication = [3, n0, _DMR, 0, [_S], [0]];
+var DeleteObjectOutput = [
+  3,
+  n0,
+  _DOO,
+  0,
+  [_DM, _VI, _RC],
+  [
+    [2, { [_hH]: _xadm }],
+    [0, { [_hH]: _xavi }],
+    [0, { [_hH]: _xarc }]
+  ]
+];
+var DeleteObjectRequest = [
+  3,
+  n0,
+  _DOR,
+  0,
+  [_B, _K, _MFA, _VI, _RP, _BGR, _EBO, _IM, _IMLMT, _IMS],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hH]: _xam_ }],
+    [0, { [_hQ]: _vI }],
+    [0, { [_hH]: _xarp }],
+    [2, { [_hH]: _xabgr }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _IM_ }],
+    [6, { [_hH]: _xaimlmt }],
+    [1, { [_hH]: _xaims }]
+  ]
+];
+var DeleteObjectsOutput = [
+  3,
+  n0,
+  _DOOe,
+  { [_xN]: _DRel },
+  [_Del, _RC, _Er],
+  [
+    [() => DeletedObjects, { [_xF]: 1 }],
+    [0, { [_hH]: _xarc }],
+    [() => Errors, { [_xN]: _Err, [_xF]: 1 }]
+  ]
+];
+var DeleteObjectsRequest = [
+  3,
+  n0,
+  _DORe,
+  0,
+  [_B, _De, _MFA, _RP, _BGR, _EBO, _CA],
+  [
+    [0, 1],
+    [() => Delete, { [_xN]: _De, [_hP]: 1 }],
+    [0, { [_hH]: _xam_ }],
+    [0, { [_hH]: _xarp }],
+    [2, { [_hH]: _xabgr }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xasca }]
+  ]
+];
+var DeleteObjectTaggingOutput = [3, n0, _DOTO, 0, [_VI], [[0, { [_hH]: _xavi }]]];
+var DeleteObjectTaggingRequest = [
+  3,
+  n0,
+  _DOTR,
+  0,
+  [_B, _K, _VI, _EBO],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hQ]: _vI }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var DeletePublicAccessBlockRequest = [
+  3,
+  n0,
+  _DPABR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var Destination = [
+  3,
+  n0,
+  _Des,
+  0,
+  [_B, _A, _SC, _ACT, _EC, _RT, _Me],
+  [0, 0, 0, () => AccessControlTranslation, () => EncryptionConfiguration, () => ReplicationTime, () => Metrics]
+];
+var DestinationResult = [3, n0, _DRes, 0, [_TBT, _TBA, _TN], [0, 0, 0]];
+var Encryption = [3, n0, _En, 0, [_ET, _KMSKI, _KMSC], [0, [() => SSEKMSKeyId, 0], 0]];
+var EncryptionConfiguration = [3, n0, _EC, 0, [_RKKID], [0]];
+var EncryptionTypeMismatch2 = [-3, n0, _ETM, { [_e]: _c, [_hE]: 400 }, [], []];
+TypeRegistry.for(n0).registerError(EncryptionTypeMismatch2, EncryptionTypeMismatch);
+var EndEvent = [3, n0, _EE, 0, [], []];
+var _Error = [3, n0, _Err, 0, [_K, _VI, _Cod, _Mes], [0, 0, 0, 0]];
+var ErrorDetails = [3, n0, _ED, 0, [_ECr, _EM], [0, 0]];
+var ErrorDocument = [3, n0, _EDr, 0, [_K], [0]];
+var EventBridgeConfiguration = [3, n0, _EBC, 0, [], []];
+var ExistingObjectReplication = [3, n0, _EOR, 0, [_S], [0]];
+var FilterRule = [3, n0, _FR, 0, [_N, _V], [0, 0]];
+var GetBucketAbacOutput = [3, n0, _GBAO, 0, [_AS], [[() => AbacStatus, 16]]];
+var GetBucketAbacRequest = [
+  3,
+  n0,
+  _GBAR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketAccelerateConfigurationOutput = [
+  3,
+  n0,
+  _GBACO,
+  { [_xN]: _AC },
+  [_S, _RC],
+  [0, [0, { [_hH]: _xarc }]]
+];
+var GetBucketAccelerateConfigurationRequest = [
+  3,
+  n0,
+  _GBACR,
+  0,
+  [_B, _EBO, _RP],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xarp }]
+  ]
+];
+var GetBucketAclOutput = [
+  3,
+  n0,
+  _GBAOe,
+  { [_xN]: _ACP },
+  [_O, _G],
+  [() => Owner, [() => Grants, { [_xN]: _ACL }]]
+];
+var GetBucketAclRequest = [
+  3,
+  n0,
+  _GBARe,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketAnalyticsConfigurationOutput = [
+  3,
+  n0,
+  _GBACOe,
+  0,
+  [_ACn],
+  [[() => AnalyticsConfiguration, 16]]
+];
+var GetBucketAnalyticsConfigurationRequest = [
+  3,
+  n0,
+  _GBACRe,
+  0,
+  [_B, _I, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketCorsOutput = [
+  3,
+  n0,
+  _GBCO,
+  { [_xN]: _CORSC },
+  [_CORSR],
+  [[() => CORSRules, { [_xN]: _CORSRu, [_xF]: 1 }]]
+];
+var GetBucketCorsRequest = [
+  3,
+  n0,
+  _GBCR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketEncryptionOutput = [
+  3,
+  n0,
+  _GBEO,
+  0,
+  [_SSEC],
+  [[() => ServerSideEncryptionConfiguration, 16]]
+];
+var GetBucketEncryptionRequest = [
+  3,
+  n0,
+  _GBER,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketIntelligentTieringConfigurationOutput = [
+  3,
+  n0,
+  _GBITCO,
+  0,
+  [_ITC],
+  [[() => IntelligentTieringConfiguration, 16]]
+];
+var GetBucketIntelligentTieringConfigurationRequest = [
+  3,
+  n0,
+  _GBITCR,
+  0,
+  [_B, _I, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketInventoryConfigurationOutput = [
+  3,
+  n0,
+  _GBICO,
+  0,
+  [_IC],
+  [[() => InventoryConfiguration, 16]]
+];
+var GetBucketInventoryConfigurationRequest = [
+  3,
+  n0,
+  _GBICR,
+  0,
+  [_B, _I, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketLifecycleConfigurationOutput = [
+  3,
+  n0,
+  _GBLCO,
+  { [_xN]: _LCi },
+  [_R, _TDMOS],
+  [
+    [() => LifecycleRules, { [_xN]: _Ru, [_xF]: 1 }],
+    [0, { [_hH]: _xatdmos }]
+  ]
+];
+var GetBucketLifecycleConfigurationRequest = [
+  3,
+  n0,
+  _GBLCR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketLocationOutput = [3, n0, _GBLO, { [_xN]: _LC }, [_LC], [0]];
+var GetBucketLocationRequest = [
+  3,
+  n0,
+  _GBLR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketLoggingOutput = [
+  3,
+  n0,
+  _GBLOe,
+  { [_xN]: _BLS },
+  [_LE],
+  [[() => LoggingEnabled, 0]]
+];
+var GetBucketLoggingRequest = [
+  3,
+  n0,
+  _GBLRe,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketMetadataConfigurationOutput = [
+  3,
+  n0,
+  _GBMCO,
+  0,
+  [_GBMCR],
+  [[() => GetBucketMetadataConfigurationResult, 16]]
+];
+var GetBucketMetadataConfigurationRequest = [
+  3,
+  n0,
+  _GBMCRe,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketMetadataConfigurationResult = [
+  3,
+  n0,
+  _GBMCR,
+  0,
+  [_MCR],
+  [() => MetadataConfigurationResult]
+];
+var GetBucketMetadataTableConfigurationOutput = [
+  3,
+  n0,
+  _GBMTCO,
+  0,
+  [_GBMTCR],
+  [[() => GetBucketMetadataTableConfigurationResult, 16]]
+];
+var GetBucketMetadataTableConfigurationRequest = [
+  3,
+  n0,
+  _GBMTCRe,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketMetadataTableConfigurationResult = [
+  3,
+  n0,
+  _GBMTCR,
+  0,
+  [_MTCR, _S, _Err],
+  [() => MetadataTableConfigurationResult, 0, () => ErrorDetails]
+];
+var GetBucketMetricsConfigurationOutput = [
+  3,
+  n0,
+  _GBMCOe,
+  0,
+  [_MCe],
+  [[() => MetricsConfiguration, 16]]
+];
+var GetBucketMetricsConfigurationRequest = [
+  3,
+  n0,
+  _GBMCRet,
+  0,
+  [_B, _I, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketNotificationConfigurationRequest = [
+  3,
+  n0,
+  _GBNCR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketOwnershipControlsOutput = [
+  3,
+  n0,
+  _GBOCO,
+  0,
+  [_OC],
+  [[() => OwnershipControls, 16]]
+];
+var GetBucketOwnershipControlsRequest = [
+  3,
+  n0,
+  _GBOCR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketPolicyOutput = [3, n0, _GBPO, 0, [_Po], [[0, 16]]];
+var GetBucketPolicyRequest = [
+  3,
+  n0,
+  _GBPR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketPolicyStatusOutput = [3, n0, _GBPSO, 0, [_PS], [[() => PolicyStatus, 16]]];
+var GetBucketPolicyStatusRequest = [
+  3,
+  n0,
+  _GBPSR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketReplicationOutput = [
+  3,
+  n0,
+  _GBRO,
+  0,
+  [_RCe],
+  [[() => ReplicationConfiguration, 16]]
+];
+var GetBucketReplicationRequest = [
+  3,
+  n0,
+  _GBRR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketRequestPaymentOutput = [3, n0, _GBRPO, { [_xN]: _RPC }, [_Pay], [0]];
+var GetBucketRequestPaymentRequest = [
+  3,
+  n0,
+  _GBRPR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketTaggingOutput = [3, n0, _GBTO, { [_xN]: _Tag }, [_TS], [[() => TagSet, 0]]];
+var GetBucketTaggingRequest = [
+  3,
+  n0,
+  _GBTR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketVersioningOutput = [
+  3,
+  n0,
+  _GBVO,
+  { [_xN]: _VC },
+  [_S, _MFAD],
+  [0, [0, { [_xN]: _MDf }]]
+];
+var GetBucketVersioningRequest = [
+  3,
+  n0,
+  _GBVR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetBucketWebsiteOutput = [
+  3,
+  n0,
+  _GBWO,
+  { [_xN]: _WC },
+  [_RART, _IDn, _EDr, _RR],
+  [() => RedirectAllRequestsTo, () => IndexDocument, () => ErrorDocument, [() => RoutingRules, 0]]
+];
+var GetBucketWebsiteRequest = [
+  3,
+  n0,
+  _GBWR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetObjectAclOutput = [
+  3,
+  n0,
+  _GOAO,
+  { [_xN]: _ACP },
+  [_O, _G, _RC],
+  [() => Owner, [() => Grants, { [_xN]: _ACL }], [0, { [_hH]: _xarc }]]
+];
+var GetObjectAclRequest = [
+  3,
+  n0,
+  _GOAR,
+  0,
+  [_B, _K, _VI, _RP, _EBO],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hQ]: _vI }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetObjectAttributesOutput = [
+  3,
+  n0,
+  _GOAOe,
+  { [_xN]: _GOARe },
+  [_DM, _LM, _VI, _RC, _ETa, _C, _OP, _SC, _OS],
+  [
+    [2, { [_hH]: _xadm }],
+    [4, { [_hH]: _LM_ }],
+    [0, { [_hH]: _xavi }],
+    [0, { [_hH]: _xarc }],
+    0,
+    () => Checksum,
+    [() => GetObjectAttributesParts, 0],
+    0,
+    1
+  ]
+];
+var GetObjectAttributesParts = [
+  3,
+  n0,
+  _GOAP,
+  0,
+  [_TPC, _PNM, _NPNM, _MP, _IT, _Pa],
+  [[1, { [_xN]: _PC }], 0, 0, 1, 2, [() => PartsList, { [_xN]: _Par, [_xF]: 1 }]]
+];
+var GetObjectAttributesRequest = [
+  3,
+  n0,
+  _GOARet,
+  0,
+  [_B, _K, _VI, _MP, _PNM, _SSECA, _SSECK, _SSECKMD, _RP, _EBO, _OA],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hQ]: _vI }],
+    [1, { [_hH]: _xamp }],
+    [0, { [_hH]: _xapnm }],
+    [0, { [_hH]: _xasseca }],
+    [() => SSECustomerKey, { [_hH]: _xasseck }],
+    [0, { [_hH]: _xasseckM }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }],
+    [64 | 0, { [_hH]: _xaoa }]
+  ]
+];
+var GetObjectLegalHoldOutput = [
+  3,
+  n0,
+  _GOLHO,
+  0,
+  [_LH],
+  [[() => ObjectLockLegalHold, { [_xN]: _LH, [_hP]: 1 }]]
+];
+var GetObjectLegalHoldRequest = [
+  3,
+  n0,
+  _GOLHR,
+  0,
+  [_B, _K, _VI, _RP, _EBO],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hQ]: _vI }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetObjectLockConfigurationOutput = [
+  3,
+  n0,
+  _GOLCO,
+  0,
+  [_OLC],
+  [[() => ObjectLockConfiguration, 16]]
+];
+var GetObjectLockConfigurationRequest = [
+  3,
+  n0,
+  _GOLCR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetObjectOutput = [
+  3,
+  n0,
+  _GOO,
+  0,
+  [
+    _Bo,
+    _DM,
+    _AR,
+    _E,
+    _Re,
+    _LM,
+    _CLo,
+    _ETa,
+    _CCRC,
+    _CCRCC,
+    _CCRCNVME,
+    _CSHA,
+    _CSHAh,
+    _CT,
+    _MM,
+    _VI,
+    _CC,
+    _CDo,
+    _CEo,
+    _CL,
+    _CR,
+    _CTo,
+    _Ex,
+    _ES,
+    _WRL,
+    _SSE,
+    _M,
+    _SSECA,
+    _SSECKMD,
+    _SSEKMSKI,
+    _BKE,
+    _SC,
+    _RC,
+    _RS,
+    _PC,
+    _TC,
+    _OLM,
+    _OLRUD,
+    _OLLHS
+  ],
+  [
+    [() => StreamingBlob, 16],
+    [2, { [_hH]: _xadm }],
+    [0, { [_hH]: _ar }],
+    [0, { [_hH]: _xae }],
+    [0, { [_hH]: _xar }],
+    [4, { [_hH]: _LM_ }],
+    [1, { [_hH]: _CL__ }],
+    [0, { [_hH]: _ETa }],
+    [0, { [_hH]: _xacc }],
+    [0, { [_hH]: _xacc_ }],
+    [0, { [_hH]: _xacc__ }],
+    [0, { [_hH]: _xacs }],
+    [0, { [_hH]: _xacs_ }],
+    [0, { [_hH]: _xact }],
+    [1, { [_hH]: _xamm }],
+    [0, { [_hH]: _xavi }],
+    [0, { [_hH]: _CC_ }],
+    [0, { [_hH]: _CD_ }],
+    [0, { [_hH]: _CE_ }],
+    [0, { [_hH]: _CL_ }],
+    [0, { [_hH]: _CR_ }],
+    [0, { [_hH]: _CT_ }],
+    [4, { [_hH]: _Ex }],
+    [0, { [_hH]: _ES }],
+    [0, { [_hH]: _xawrl }],
+    [0, { [_hH]: _xasse }],
+    [128 | 0, { [_hPH]: _xam }],
+    [0, { [_hH]: _xasseca }],
+    [0, { [_hH]: _xasseckM }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [2, { [_hH]: _xassebke }],
+    [0, { [_hH]: _xasc }],
+    [0, { [_hH]: _xarc }],
+    [0, { [_hH]: _xars }],
+    [1, { [_hH]: _xampc }],
+    [1, { [_hH]: _xatc }],
+    [0, { [_hH]: _xaolm }],
+    [5, { [_hH]: _xaolrud }],
+    [0, { [_hH]: _xaollh }]
+  ]
+];
+var GetObjectRequest = [
+  3,
+  n0,
+  _GOR,
+  0,
+  [
+    _B,
+    _IM,
+    _IMSf,
+    _INM,
+    _IUS,
+    _K,
+    _Ra,
+    _RCC,
+    _RCD,
+    _RCE,
+    _RCL,
+    _RCT,
+    _RE,
+    _VI,
+    _SSECA,
+    _SSECK,
+    _SSECKMD,
+    _RP,
+    _PN,
+    _EBO,
+    _CMh
+  ],
+  [
+    [0, 1],
+    [0, { [_hH]: _IM_ }],
+    [4, { [_hH]: _IMS_ }],
+    [0, { [_hH]: _INM_ }],
+    [4, { [_hH]: _IUS_ }],
+    [0, 1],
+    [0, { [_hH]: _Ra }],
+    [0, { [_hQ]: _rcc }],
+    [0, { [_hQ]: _rcd }],
+    [0, { [_hQ]: _rce }],
+    [0, { [_hQ]: _rcl }],
+    [0, { [_hQ]: _rct }],
+    [6, { [_hQ]: _re }],
+    [0, { [_hQ]: _vI }],
+    [0, { [_hH]: _xasseca }],
+    [() => SSECustomerKey, { [_hH]: _xasseck }],
+    [0, { [_hH]: _xasseckM }],
+    [0, { [_hH]: _xarp }],
+    [1, { [_hQ]: _pN }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xacm }]
+  ]
+];
+var GetObjectRetentionOutput = [
+  3,
+  n0,
+  _GORO,
+  0,
+  [_Ret],
+  [[() => ObjectLockRetention, { [_xN]: _Ret, [_hP]: 1 }]]
+];
+var GetObjectRetentionRequest = [
+  3,
+  n0,
+  _GORR,
+  0,
+  [_B, _K, _VI, _RP, _EBO],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hQ]: _vI }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetObjectTaggingOutput = [
+  3,
+  n0,
+  _GOTO,
+  { [_xN]: _Tag },
+  [_VI, _TS],
+  [
+    [0, { [_hH]: _xavi }],
+    [() => TagSet, 0]
+  ]
+];
+var GetObjectTaggingRequest = [
+  3,
+  n0,
+  _GOTR,
+  0,
+  [_B, _K, _VI, _EBO, _RP],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hQ]: _vI }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xarp }]
+  ]
+];
+var GetObjectTorrentOutput = [
+  3,
+  n0,
+  _GOTOe,
+  0,
+  [_Bo, _RC],
+  [
+    [() => StreamingBlob, 16],
+    [0, { [_hH]: _xarc }]
+  ]
+];
+var GetObjectTorrentRequest = [
+  3,
+  n0,
+  _GOTRe,
+  0,
+  [_B, _K, _RP, _EBO],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GetPublicAccessBlockOutput = [
+  3,
+  n0,
+  _GPABO,
+  0,
+  [_PABC],
+  [[() => PublicAccessBlockConfiguration, 16]]
+];
+var GetPublicAccessBlockRequest = [
+  3,
+  n0,
+  _GPABR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var GlacierJobParameters = [3, n0, _GJP, 0, [_Ti], [0]];
+var Grant = [3, n0, _Gr, 0, [_Gra, _Pe], [[() => Grantee, { [_xNm]: [_x, _hi] }], 0]];
+var Grantee = [
+  3,
+  n0,
+  _Gra,
+  0,
+  [_DN, _EA, _ID, _URI, _Ty],
+  [0, 0, 0, 0, [0, { [_xN]: _xs, [_xA]: 1 }]]
+];
+var HeadBucketOutput = [
+  3,
+  n0,
+  _HBO,
+  0,
+  [_BA, _BLT, _BLN, _BR, _APA],
+  [
+    [0, { [_hH]: _xaba }],
+    [0, { [_hH]: _xablt }],
+    [0, { [_hH]: _xabln }],
+    [0, { [_hH]: _xabr }],
+    [2, { [_hH]: _xaapa }]
+  ]
+];
+var HeadBucketRequest = [
+  3,
+  n0,
+  _HBR,
+  0,
+  [_B, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var HeadObjectOutput = [
+  3,
+  n0,
+  _HOO,
+  0,
+  [
+    _DM,
+    _AR,
+    _E,
+    _Re,
+    _ASr,
+    _LM,
+    _CLo,
+    _CCRC,
+    _CCRCC,
+    _CCRCNVME,
+    _CSHA,
+    _CSHAh,
+    _CT,
+    _ETa,
+    _MM,
+    _VI,
+    _CC,
+    _CDo,
+    _CEo,
+    _CL,
+    _CTo,
+    _CR,
+    _Ex,
+    _ES,
+    _WRL,
+    _SSE,
+    _M,
+    _SSECA,
+    _SSECKMD,
+    _SSEKMSKI,
+    _BKE,
+    _SC,
+    _RC,
+    _RS,
+    _PC,
+    _TC,
+    _OLM,
+    _OLRUD,
+    _OLLHS
+  ],
+  [
+    [2, { [_hH]: _xadm }],
+    [0, { [_hH]: _ar }],
+    [0, { [_hH]: _xae }],
+    [0, { [_hH]: _xar }],
+    [0, { [_hH]: _xaas }],
+    [4, { [_hH]: _LM_ }],
+    [1, { [_hH]: _CL__ }],
+    [0, { [_hH]: _xacc }],
+    [0, { [_hH]: _xacc_ }],
+    [0, { [_hH]: _xacc__ }],
+    [0, { [_hH]: _xacs }],
+    [0, { [_hH]: _xacs_ }],
+    [0, { [_hH]: _xact }],
+    [0, { [_hH]: _ETa }],
+    [1, { [_hH]: _xamm }],
+    [0, { [_hH]: _xavi }],
+    [0, { [_hH]: _CC_ }],
+    [0, { [_hH]: _CD_ }],
+    [0, { [_hH]: _CE_ }],
+    [0, { [_hH]: _CL_ }],
+    [0, { [_hH]: _CT_ }],
+    [0, { [_hH]: _CR_ }],
+    [4, { [_hH]: _Ex }],
+    [0, { [_hH]: _ES }],
+    [0, { [_hH]: _xawrl }],
+    [0, { [_hH]: _xasse }],
+    [128 | 0, { [_hPH]: _xam }],
+    [0, { [_hH]: _xasseca }],
+    [0, { [_hH]: _xasseckM }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [2, { [_hH]: _xassebke }],
+    [0, { [_hH]: _xasc }],
+    [0, { [_hH]: _xarc }],
+    [0, { [_hH]: _xars }],
+    [1, { [_hH]: _xampc }],
+    [1, { [_hH]: _xatc }],
+    [0, { [_hH]: _xaolm }],
+    [5, { [_hH]: _xaolrud }],
+    [0, { [_hH]: _xaollh }]
+  ]
+];
+var HeadObjectRequest = [
+  3,
+  n0,
+  _HOR,
+  0,
+  [
+    _B,
+    _IM,
+    _IMSf,
+    _INM,
+    _IUS,
+    _K,
+    _Ra,
+    _RCC,
+    _RCD,
+    _RCE,
+    _RCL,
+    _RCT,
+    _RE,
+    _VI,
+    _SSECA,
+    _SSECK,
+    _SSECKMD,
+    _RP,
+    _PN,
+    _EBO,
+    _CMh
+  ],
+  [
+    [0, 1],
+    [0, { [_hH]: _IM_ }],
+    [4, { [_hH]: _IMS_ }],
+    [0, { [_hH]: _INM_ }],
+    [4, { [_hH]: _IUS_ }],
+    [0, 1],
+    [0, { [_hH]: _Ra }],
+    [0, { [_hQ]: _rcc }],
+    [0, { [_hQ]: _rcd }],
+    [0, { [_hQ]: _rce }],
+    [0, { [_hQ]: _rcl }],
+    [0, { [_hQ]: _rct }],
+    [6, { [_hQ]: _re }],
+    [0, { [_hQ]: _vI }],
+    [0, { [_hH]: _xasseca }],
+    [() => SSECustomerKey, { [_hH]: _xasseck }],
+    [0, { [_hH]: _xasseckM }],
+    [0, { [_hH]: _xarp }],
+    [1, { [_hQ]: _pN }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xacm }]
+  ]
+];
+var IdempotencyParameterMismatch2 = [-3, n0, _IPM, { [_e]: _c, [_hE]: 400 }, [], []];
+TypeRegistry.for(n0).registerError(IdempotencyParameterMismatch2, IdempotencyParameterMismatch);
+var IndexDocument = [3, n0, _IDn, 0, [_Su], [0]];
+var Initiator = [3, n0, _In, 0, [_ID, _DN], [0, 0]];
+var InputSerialization = [
+  3,
+  n0,
+  _IS,
+  0,
+  [_CSV, _CTom, _JSON, _Parq],
+  [() => CSVInput, 0, () => JSONInput, () => ParquetInput]
+];
+var IntelligentTieringAndOperator = [
+  3,
+  n0,
+  _ITAO,
+  0,
+  [_P, _T],
+  [0, [() => TagSet, { [_xN]: _Ta, [_xF]: 1 }]]
+];
+var IntelligentTieringConfiguration = [
+  3,
+  n0,
+  _ITC,
+  0,
+  [_I, _F, _S, _Tie],
+  [0, [() => IntelligentTieringFilter, 0], 0, [() => TieringList, { [_xN]: _Tier, [_xF]: 1 }]]
+];
+var IntelligentTieringFilter = [
+  3,
+  n0,
+  _ITF,
+  0,
+  [_P, _Ta, _An],
+  [0, () => Tag, [() => IntelligentTieringAndOperator, 0]]
+];
+var InvalidObjectState2 = [-3, n0, _IOS, { [_e]: _c, [_hE]: 403 }, [_SC, _AT], [0, 0]];
+TypeRegistry.for(n0).registerError(InvalidObjectState2, InvalidObjectState);
+var InvalidRequest2 = [-3, n0, _IR, { [_e]: _c, [_hE]: 400 }, [], []];
+TypeRegistry.for(n0).registerError(InvalidRequest2, InvalidRequest);
+var InvalidWriteOffset2 = [-3, n0, _IWO, { [_e]: _c, [_hE]: 400 }, [], []];
+TypeRegistry.for(n0).registerError(InvalidWriteOffset2, InvalidWriteOffset);
+var InventoryConfiguration = [
+  3,
+  n0,
+  _IC,
+  0,
+  [_Des, _IE, _F, _I, _IOV, _OF, _Sc],
+  [
+    [() => InventoryDestination, 0],
+    2,
+    () => InventoryFilter,
+    0,
+    0,
+    [() => InventoryOptionalFields, 0],
+    () => InventorySchedule
+  ]
+];
+var InventoryDestination = [
+  3,
+  n0,
+  _IDnv,
+  0,
+  [_SBD],
+  [[() => InventoryS3BucketDestination, 0]]
+];
+var InventoryEncryption = [
+  3,
+  n0,
+  _IEn,
+  0,
+  [_SSES, _SSEKMS],
+  [
+    [() => SSES3, { [_xN]: _SS }],
+    [() => SSEKMS, { [_xN]: _SK }]
+  ]
+];
+var InventoryFilter = [3, n0, _IF, 0, [_P], [0]];
+var InventoryS3BucketDestination = [
+  3,
+  n0,
+  _ISBD,
+  0,
+  [_AI, _B, _Fo, _P, _En],
+  [0, 0, 0, 0, [() => InventoryEncryption, 0]]
+];
+var InventorySchedule = [3, n0, _ISn, 0, [_Fr], [0]];
+var InventoryTableConfiguration = [
+  3,
+  n0,
+  _ITCn,
+  0,
+  [_CSo, _EC],
+  [0, () => MetadataTableEncryptionConfiguration]
+];
+var InventoryTableConfigurationResult = [
+  3,
+  n0,
+  _ITCR,
+  0,
+  [_CSo, _TSa, _Err, _TNa, _TA],
+  [0, 0, () => ErrorDetails, 0, 0]
+];
+var InventoryTableConfigurationUpdates = [
+  3,
+  n0,
+  _ITCU,
+  0,
+  [_CSo, _EC],
+  [0, () => MetadataTableEncryptionConfiguration]
+];
+var JournalTableConfiguration = [
+  3,
+  n0,
+  _JTC,
+  0,
+  [_REe, _EC],
+  [() => RecordExpiration, () => MetadataTableEncryptionConfiguration]
+];
+var JournalTableConfigurationResult = [
+  3,
+  n0,
+  _JTCR,
+  0,
+  [_TSa, _Err, _TNa, _TA, _REe],
+  [0, () => ErrorDetails, 0, 0, () => RecordExpiration]
+];
+var JournalTableConfigurationUpdates = [
+  3,
+  n0,
+  _JTCU,
+  0,
+  [_REe],
+  [() => RecordExpiration]
+];
+var JSONInput = [3, n0, _JSONI, 0, [_Ty], [0]];
+var JSONOutput = [3, n0, _JSONO, 0, [_RD], [0]];
+var LambdaFunctionConfiguration = [
+  3,
+  n0,
+  _LFC,
+  0,
+  [_I, _LFA, _Ev, _F],
+  [0, [0, { [_xN]: _CF }], [64 | 0, { [_xN]: _Eve, [_xF]: 1 }], [() => NotificationConfigurationFilter, 0]]
+];
+var LifecycleExpiration = [3, n0, _LEi, 0, [_Da, _D, _EODM], [5, 1, 2]];
+var LifecycleRule = [
+  3,
+  n0,
+  _LR,
+  0,
+  [_E, _ID, _P, _F, _S, _Tr, _NVT, _NVE, _AIMU],
+  [
+    () => LifecycleExpiration,
+    0,
+    0,
+    [() => LifecycleRuleFilter, 0],
+    0,
+    [() => TransitionList, { [_xN]: _Tra, [_xF]: 1 }],
+    [() => NoncurrentVersionTransitionList, { [_xN]: _NVTo, [_xF]: 1 }],
+    () => NoncurrentVersionExpiration,
+    () => AbortIncompleteMultipartUpload
+  ]
+];
+var LifecycleRuleAndOperator = [
+  3,
+  n0,
+  _LRAO,
+  0,
+  [_P, _T, _OSGT, _OSLT],
+  [0, [() => TagSet, { [_xN]: _Ta, [_xF]: 1 }], 1, 1]
+];
+var LifecycleRuleFilter = [
+  3,
+  n0,
+  _LRF,
+  0,
+  [_P, _Ta, _OSGT, _OSLT, _An],
+  [0, () => Tag, 1, 1, [() => LifecycleRuleAndOperator, 0]]
+];
+var ListBucketAnalyticsConfigurationsOutput = [
+  3,
+  n0,
+  _LBACO,
+  { [_xN]: _LBACR },
+  [_IT, _CTon, _NCT, _ACLn],
+  [2, 0, 0, [() => AnalyticsConfigurationList, { [_xN]: _ACn, [_xF]: 1 }]]
+];
+var ListBucketAnalyticsConfigurationsRequest = [
+  3,
+  n0,
+  _LBACRi,
+  0,
+  [_B, _CTon, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _ct }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var ListBucketIntelligentTieringConfigurationsOutput = [
+  3,
+  n0,
+  _LBITCO,
+  0,
+  [_IT, _CTon, _NCT, _ITCL],
+  [2, 0, 0, [() => IntelligentTieringConfigurationList, { [_xN]: _ITC, [_xF]: 1 }]]
+];
+var ListBucketIntelligentTieringConfigurationsRequest = [
+  3,
+  n0,
+  _LBITCR,
+  0,
+  [_B, _CTon, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _ct }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var ListBucketInventoryConfigurationsOutput = [
+  3,
+  n0,
+  _LBICO,
+  { [_xN]: _LICR },
+  [_CTon, _ICL, _IT, _NCT],
+  [0, [() => InventoryConfigurationList, { [_xN]: _IC, [_xF]: 1 }], 2, 0]
+];
+var ListBucketInventoryConfigurationsRequest = [
+  3,
+  n0,
+  _LBICR,
+  0,
+  [_B, _CTon, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _ct }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var ListBucketMetricsConfigurationsOutput = [
+  3,
+  n0,
+  _LBMCO,
+  { [_xN]: _LMCR },
+  [_IT, _CTon, _NCT, _MCL],
+  [2, 0, 0, [() => MetricsConfigurationList, { [_xN]: _MCe, [_xF]: 1 }]]
+];
+var ListBucketMetricsConfigurationsRequest = [
+  3,
+  n0,
+  _LBMCR,
+  0,
+  [_B, _CTon, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _ct }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var ListBucketsOutput = [
+  3,
+  n0,
+  _LBO,
+  { [_xN]: _LAMBR },
+  [_Bu, _O, _CTon, _P],
+  [[() => Buckets, 0], () => Owner, 0, 0]
+];
+var ListBucketsRequest = [
+  3,
+  n0,
+  _LBR,
+  0,
+  [_MB, _CTon, _P, _BR],
+  [
+    [1, { [_hQ]: _mb }],
+    [0, { [_hQ]: _ct }],
+    [0, { [_hQ]: _p }],
+    [0, { [_hQ]: _br }]
+  ]
+];
+var ListDirectoryBucketsOutput = [
+  3,
+  n0,
+  _LDBO,
+  { [_xN]: _LAMDBR },
+  [_Bu, _CTon],
+  [[() => Buckets, 0], 0]
+];
+var ListDirectoryBucketsRequest = [
+  3,
+  n0,
+  _LDBR,
+  0,
+  [_CTon, _MDB],
+  [
+    [0, { [_hQ]: _ct }],
+    [1, { [_hQ]: _mdb }]
+  ]
+];
+var ListMultipartUploadsOutput = [
+  3,
+  n0,
+  _LMUO,
+  { [_xN]: _LMUR },
+  [_B, _KM, _UIM, _NKM, _P, _Deli, _NUIM, _MUa, _IT, _U, _CPom, _ETn, _RC],
+  [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    2,
+    [() => MultipartUploadList, { [_xN]: _Up, [_xF]: 1 }],
+    [() => CommonPrefixList, { [_xF]: 1 }],
+    0,
+    [0, { [_hH]: _xarc }]
+  ]
+];
+var ListMultipartUploadsRequest = [
+  3,
+  n0,
+  _LMURi,
+  0,
+  [_B, _Deli, _ETn, _KM, _MUa, _P, _UIM, _EBO, _RP],
+  [
+    [0, 1],
+    [0, { [_hQ]: _d }],
+    [0, { [_hQ]: _et }],
+    [0, { [_hQ]: _km }],
+    [1, { [_hQ]: _mu }],
+    [0, { [_hQ]: _p }],
+    [0, { [_hQ]: _uim }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xarp }]
+  ]
+];
+var ListObjectsOutput = [
+  3,
+  n0,
+  _LOO,
+  { [_xN]: _LBRi },
+  [_IT, _Ma, _NM, _Con, _N, _P, _Deli, _MK, _CPom, _ETn, _RC],
+  [
+    2,
+    0,
+    0,
+    [() => ObjectList, { [_xF]: 1 }],
+    0,
+    0,
+    0,
+    1,
+    [() => CommonPrefixList, { [_xF]: 1 }],
+    0,
+    [0, { [_hH]: _xarc }]
+  ]
+];
+var ListObjectsRequest = [
+  3,
+  n0,
+  _LOR,
+  0,
+  [_B, _Deli, _ETn, _Ma, _MK, _P, _RP, _EBO, _OOA],
+  [
+    [0, 1],
+    [0, { [_hQ]: _d }],
+    [0, { [_hQ]: _et }],
+    [0, { [_hQ]: _m }],
+    [1, { [_hQ]: _mk }],
+    [0, { [_hQ]: _p }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }],
+    [64 | 0, { [_hH]: _xaooa }]
+  ]
+];
+var ListObjectsV2Output = [
+  3,
+  n0,
+  _LOVO,
+  { [_xN]: _LBRi },
+  [_IT, _Con, _N, _P, _Deli, _MK, _CPom, _ETn, _KC, _CTon, _NCT, _SA, _RC],
+  [
+    2,
+    [() => ObjectList, { [_xF]: 1 }],
+    0,
+    0,
+    0,
+    1,
+    [() => CommonPrefixList, { [_xF]: 1 }],
+    0,
+    1,
+    0,
+    0,
+    0,
+    [0, { [_hH]: _xarc }]
+  ]
+];
+var ListObjectsV2Request = [
+  3,
+  n0,
+  _LOVR,
+  0,
+  [_B, _Deli, _ETn, _MK, _P, _CTon, _FO, _SA, _RP, _EBO, _OOA],
+  [
+    [0, 1],
+    [0, { [_hQ]: _d }],
+    [0, { [_hQ]: _et }],
+    [1, { [_hQ]: _mk }],
+    [0, { [_hQ]: _p }],
+    [0, { [_hQ]: _ct }],
+    [2, { [_hQ]: _fo }],
+    [0, { [_hQ]: _sa }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }],
+    [64 | 0, { [_hH]: _xaooa }]
+  ]
+];
+var ListObjectVersionsOutput = [
+  3,
+  n0,
+  _LOVOi,
+  { [_xN]: _LVR },
+  [_IT, _KM, _VIM, _NKM, _NVIM, _Ve, _DMe, _N, _P, _Deli, _MK, _CPom, _ETn, _RC],
+  [
+    2,
+    0,
+    0,
+    0,
+    0,
+    [() => ObjectVersionList, { [_xN]: _Ver, [_xF]: 1 }],
+    [() => DeleteMarkers, { [_xN]: _DM, [_xF]: 1 }],
+    0,
+    0,
+    0,
+    1,
+    [() => CommonPrefixList, { [_xF]: 1 }],
+    0,
+    [0, { [_hH]: _xarc }]
+  ]
+];
+var ListObjectVersionsRequest = [
+  3,
+  n0,
+  _LOVRi,
+  0,
+  [_B, _Deli, _ETn, _KM, _MK, _P, _VIM, _EBO, _RP, _OOA],
+  [
+    [0, 1],
+    [0, { [_hQ]: _d }],
+    [0, { [_hQ]: _et }],
+    [0, { [_hQ]: _km }],
+    [1, { [_hQ]: _mk }],
+    [0, { [_hQ]: _p }],
+    [0, { [_hQ]: _vim }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xarp }],
+    [64 | 0, { [_hH]: _xaooa }]
+  ]
+];
+var ListPartsOutput = [
+  3,
+  n0,
+  _LPO,
+  { [_xN]: _LPR },
+  [_AD, _ARI, _B, _K, _UI, _PNM, _NPNM, _MP, _IT, _Pa, _In, _O, _SC, _RC, _CA, _CT],
+  [
+    [4, { [_hH]: _xaad }],
+    [0, { [_hH]: _xaari }],
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    2,
+    [() => Parts, { [_xN]: _Par, [_xF]: 1 }],
+    () => Initiator,
+    () => Owner,
+    0,
+    [0, { [_hH]: _xarc }],
+    0,
+    0
+  ]
+];
+var ListPartsRequest = [
+  3,
+  n0,
+  _LPRi,
+  0,
+  [_B, _K, _MP, _PNM, _UI, _RP, _EBO, _SSECA, _SSECK, _SSECKMD],
+  [
+    [0, 1],
+    [0, 1],
+    [1, { [_hQ]: _mp }],
+    [0, { [_hQ]: _pnm }],
+    [0, { [_hQ]: _uI }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xasseca }],
+    [() => SSECustomerKey, { [_hH]: _xasseck }],
+    [0, { [_hH]: _xasseckM }]
+  ]
+];
+var LocationInfo = [3, n0, _LI, 0, [_Ty, _N], [0, 0]];
+var LoggingEnabled = [
+  3,
+  n0,
+  _LE,
+  0,
+  [_TB, _TG, _TP, _TOKF],
+  [0, [() => TargetGrants, 0], 0, [() => TargetObjectKeyFormat, 0]]
+];
+var MetadataConfiguration = [
+  3,
+  n0,
+  _MC,
+  0,
+  [_JTC, _ITCn],
+  [() => JournalTableConfiguration, () => InventoryTableConfiguration]
+];
+var MetadataConfigurationResult = [
+  3,
+  n0,
+  _MCR,
+  0,
+  [_DRes, _JTCR, _ITCR],
+  [() => DestinationResult, () => JournalTableConfigurationResult, () => InventoryTableConfigurationResult]
+];
+var MetadataEntry = [3, n0, _ME, 0, [_N, _V], [0, 0]];
+var MetadataTableConfiguration = [3, n0, _MTC, 0, [_STD], [() => S3TablesDestination]];
+var MetadataTableConfigurationResult = [
+  3,
+  n0,
+  _MTCR,
+  0,
+  [_STDR],
+  [() => S3TablesDestinationResult]
+];
+var MetadataTableEncryptionConfiguration = [3, n0, _MTEC, 0, [_SAs, _KKA], [0, 0]];
+var Metrics = [3, n0, _Me, 0, [_S, _ETv], [0, () => ReplicationTimeValue]];
+var MetricsAndOperator = [
+  3,
+  n0,
+  _MAO,
+  0,
+  [_P, _T, _APAc],
+  [0, [() => TagSet, { [_xN]: _Ta, [_xF]: 1 }], 0]
+];
+var MetricsConfiguration = [3, n0, _MCe, 0, [_I, _F], [0, [() => MetricsFilter, 0]]];
+var MultipartUpload = [
+  3,
+  n0,
+  _MU,
+  0,
+  [_UI, _K, _Ini, _SC, _O, _In, _CA, _CT],
+  [0, 0, 4, 0, () => Owner, () => Initiator, 0, 0]
+];
+var NoncurrentVersionExpiration = [3, n0, _NVE, 0, [_ND, _NNV], [1, 1]];
+var NoncurrentVersionTransition = [3, n0, _NVTo, 0, [_ND, _SC, _NNV], [1, 0, 1]];
+var NoSuchBucket2 = [-3, n0, _NSB, { [_e]: _c, [_hE]: 404 }, [], []];
+TypeRegistry.for(n0).registerError(NoSuchBucket2, NoSuchBucket);
+var NoSuchKey2 = [-3, n0, _NSK, { [_e]: _c, [_hE]: 404 }, [], []];
+TypeRegistry.for(n0).registerError(NoSuchKey2, NoSuchKey);
+var NoSuchUpload2 = [-3, n0, _NSU, { [_e]: _c, [_hE]: 404 }, [], []];
+TypeRegistry.for(n0).registerError(NoSuchUpload2, NoSuchUpload);
+var NotFound2 = [-3, n0, _NF, { [_e]: _c }, [], []];
+TypeRegistry.for(n0).registerError(NotFound2, NotFound);
+var NotificationConfiguration = [
+  3,
+  n0,
+  _NC,
+  0,
+  [_TCo, _QCu, _LFCa, _EBC],
+  [
+    [() => TopicConfigurationList, { [_xN]: _TCop, [_xF]: 1 }],
+    [() => QueueConfigurationList, { [_xN]: _QCue, [_xF]: 1 }],
+    [() => LambdaFunctionConfigurationList, { [_xN]: _CFC, [_xF]: 1 }],
+    () => EventBridgeConfiguration
+  ]
+];
+var NotificationConfigurationFilter = [
+  3,
+  n0,
+  _NCF,
+  0,
+  [_K],
+  [[() => S3KeyFilter, { [_xN]: _SKe }]]
+];
+var _Object = [
+  3,
+  n0,
+  _Obj,
+  0,
+  [_K, _LM, _ETa, _CA, _CT, _Si, _SC, _O, _RSe],
+  [0, 4, 0, [64 | 0, { [_xF]: 1 }], 0, 1, 0, () => Owner, () => RestoreStatus]
+];
+var ObjectAlreadyInActiveTierError2 = [-3, n0, _OAIATE, { [_e]: _c, [_hE]: 403 }, [], []];
+TypeRegistry.for(n0).registerError(ObjectAlreadyInActiveTierError2, ObjectAlreadyInActiveTierError);
+var ObjectIdentifier = [3, n0, _OI, 0, [_K, _VI, _ETa, _LMT, _Si], [0, 0, 0, 6, 1]];
+var ObjectLockConfiguration = [3, n0, _OLC, 0, [_OLE, _Ru], [0, () => ObjectLockRule]];
+var ObjectLockLegalHold = [3, n0, _OLLH, 0, [_S], [0]];
+var ObjectLockRetention = [3, n0, _OLR, 0, [_Mo, _RUD], [0, 5]];
+var ObjectLockRule = [3, n0, _OLRb, 0, [_DRe], [() => DefaultRetention]];
+var ObjectNotInActiveTierError2 = [-3, n0, _ONIATE, { [_e]: _c, [_hE]: 403 }, [], []];
+TypeRegistry.for(n0).registerError(ObjectNotInActiveTierError2, ObjectNotInActiveTierError);
+var ObjectPart = [
+  3,
+  n0,
+  _OPb,
+  0,
+  [_PN, _Si, _CCRC, _CCRCC, _CCRCNVME, _CSHA, _CSHAh],
+  [1, 1, 0, 0, 0, 0, 0]
+];
+var ObjectVersion = [
+  3,
+  n0,
+  _OV,
+  0,
+  [_ETa, _CA, _CT, _Si, _SC, _K, _VI, _IL, _LM, _O, _RSe],
+  [0, [64 | 0, { [_xF]: 1 }], 0, 1, 0, 0, 0, 2, 4, () => Owner, () => RestoreStatus]
+];
+var OutputLocation = [3, n0, _OL, 0, [_S_], [[() => S3Location, 0]]];
+var OutputSerialization = [
+  3,
+  n0,
+  _OSu,
+  0,
+  [_CSV, _JSON],
+  [() => CSVOutput, () => JSONOutput]
+];
+var Owner = [3, n0, _O, 0, [_DN, _ID], [0, 0]];
+var OwnershipControls = [
+  3,
+  n0,
+  _OC,
+  0,
+  [_R],
+  [[() => OwnershipControlsRules, { [_xN]: _Ru, [_xF]: 1 }]]
+];
+var OwnershipControlsRule = [3, n0, _OCR, 0, [_OO], [0]];
+var ParquetInput = [3, n0, _PI, 0, [], []];
+var Part = [
+  3,
+  n0,
+  _Par,
+  0,
+  [_PN, _LM, _ETa, _Si, _CCRC, _CCRCC, _CCRCNVME, _CSHA, _CSHAh],
+  [1, 4, 0, 1, 0, 0, 0, 0, 0]
+];
+var PartitionedPrefix = [3, n0, _PP, { [_xN]: _PP }, [_PDS], [0]];
+var PolicyStatus = [3, n0, _PS, 0, [_IP], [[2, { [_xN]: _IP }]]];
+var Progress = [3, n0, _Pr, 0, [_BS, _BP, _BRy], [1, 1, 1]];
+var ProgressEvent = [3, n0, _PE, 0, [_Det], [[() => Progress, { [_eP]: 1 }]]];
+var PublicAccessBlockConfiguration = [
+  3,
+  n0,
+  _PABC,
+  0,
+  [_BPA, _IPA, _BPP, _RPB],
+  [
+    [2, { [_xN]: _BPA }],
+    [2, { [_xN]: _IPA }],
+    [2, { [_xN]: _BPP }],
+    [2, { [_xN]: _RPB }]
+  ]
+];
+var PutBucketAbacRequest = [
+  3,
+  n0,
+  _PBAR,
+  0,
+  [_B, _CMD, _CA, _EBO, _AS],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xaebo }],
+    [() => AbacStatus, { [_xN]: _AS, [_hP]: 1 }]
+  ]
+];
+var PutBucketAccelerateConfigurationRequest = [
+  3,
+  n0,
+  _PBACR,
+  0,
+  [_B, _AC, _EBO, _CA],
+  [
+    [0, 1],
+    [() => AccelerateConfiguration, { [_xN]: _AC, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xasca }]
+  ]
+];
+var PutBucketAclRequest = [
+  3,
+  n0,
+  _PBARu,
+  0,
+  [_ACL_, _ACP, _B, _CMD, _CA, _GFC, _GR, _GRACP, _GW, _GWACP, _EBO],
+  [
+    [0, { [_hH]: _xaa }],
+    [() => AccessControlPolicy, { [_xN]: _ACP, [_hP]: 1 }],
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xagfc }],
+    [0, { [_hH]: _xagr }],
+    [0, { [_hH]: _xagra }],
+    [0, { [_hH]: _xagw }],
+    [0, { [_hH]: _xagwa }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketAnalyticsConfigurationRequest = [
+  3,
+  n0,
+  _PBACRu,
+  0,
+  [_B, _I, _ACn, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [() => AnalyticsConfiguration, { [_xN]: _ACn, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketCorsRequest = [
+  3,
+  n0,
+  _PBCR,
+  0,
+  [_B, _CORSC, _CMD, _CA, _EBO],
+  [
+    [0, 1],
+    [() => CORSConfiguration, { [_xN]: _CORSC, [_hP]: 1 }],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketEncryptionRequest = [
+  3,
+  n0,
+  _PBER,
+  0,
+  [_B, _CMD, _CA, _SSEC, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [() => ServerSideEncryptionConfiguration, { [_xN]: _SSEC, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketIntelligentTieringConfigurationRequest = [
+  3,
+  n0,
+  _PBITCR,
+  0,
+  [_B, _I, _EBO, _ITC],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [0, { [_hH]: _xaebo }],
+    [() => IntelligentTieringConfiguration, { [_xN]: _ITC, [_hP]: 1 }]
+  ]
+];
+var PutBucketInventoryConfigurationRequest = [
+  3,
+  n0,
+  _PBICR,
+  0,
+  [_B, _I, _IC, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [() => InventoryConfiguration, { [_xN]: _IC, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketLifecycleConfigurationOutput = [
+  3,
+  n0,
+  _PBLCO,
+  0,
+  [_TDMOS],
+  [[0, { [_hH]: _xatdmos }]]
+];
+var PutBucketLifecycleConfigurationRequest = [
+  3,
+  n0,
+  _PBLCR,
+  0,
+  [_B, _CA, _LCi, _EBO, _TDMOS],
+  [
+    [0, 1],
+    [0, { [_hH]: _xasca }],
+    [() => BucketLifecycleConfiguration, { [_xN]: _LCi, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xatdmos }]
+  ]
+];
+var PutBucketLoggingRequest = [
+  3,
+  n0,
+  _PBLR,
+  0,
+  [_B, _BLS, _CMD, _CA, _EBO],
+  [
+    [0, 1],
+    [() => BucketLoggingStatus, { [_xN]: _BLS, [_hP]: 1 }],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketMetricsConfigurationRequest = [
+  3,
+  n0,
+  _PBMCR,
+  0,
+  [_B, _I, _MCe, _EBO],
+  [
+    [0, 1],
+    [0, { [_hQ]: _i }],
+    [() => MetricsConfiguration, { [_xN]: _MCe, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketNotificationConfigurationRequest = [
+  3,
+  n0,
+  _PBNCR,
+  0,
+  [_B, _NC, _EBO, _SDV],
+  [
+    [0, 1],
+    [() => NotificationConfiguration, { [_xN]: _NC, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }],
+    [2, { [_hH]: _xasdv }]
+  ]
+];
+var PutBucketOwnershipControlsRequest = [
+  3,
+  n0,
+  _PBOCR,
+  0,
+  [_B, _CMD, _EBO, _OC, _CA],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xaebo }],
+    [() => OwnershipControls, { [_xN]: _OC, [_hP]: 1 }],
+    [0, { [_hH]: _xasca }]
+  ]
+];
+var PutBucketPolicyRequest = [
+  3,
+  n0,
+  _PBPR,
+  0,
+  [_B, _CMD, _CA, _CRSBA, _Po, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [2, { [_hH]: _xacrsba }],
+    [0, 16],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketReplicationRequest = [
+  3,
+  n0,
+  _PBRR,
+  0,
+  [_B, _CMD, _CA, _RCe, _To, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [() => ReplicationConfiguration, { [_xN]: _RCe, [_hP]: 1 }],
+    [0, { [_hH]: _xabolt }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketRequestPaymentRequest = [
+  3,
+  n0,
+  _PBRPR,
+  0,
+  [_B, _CMD, _CA, _RPC, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [() => RequestPaymentConfiguration, { [_xN]: _RPC, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketTaggingRequest = [
+  3,
+  n0,
+  _PBTR,
+  0,
+  [_B, _CMD, _CA, _Tag, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [() => Tagging, { [_xN]: _Tag, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketVersioningRequest = [
+  3,
+  n0,
+  _PBVR,
+  0,
+  [_B, _CMD, _CA, _MFA, _VC, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xam_ }],
+    [() => VersioningConfiguration, { [_xN]: _VC, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutBucketWebsiteRequest = [
+  3,
+  n0,
+  _PBWR,
+  0,
+  [_B, _CMD, _CA, _WC, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [() => WebsiteConfiguration, { [_xN]: _WC, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutObjectAclOutput = [3, n0, _POAO, 0, [_RC], [[0, { [_hH]: _xarc }]]];
+var PutObjectAclRequest = [
+  3,
+  n0,
+  _POAR,
+  0,
+  [_ACL_, _ACP, _B, _CMD, _CA, _GFC, _GR, _GRACP, _GW, _GWACP, _K, _RP, _VI, _EBO],
+  [
+    [0, { [_hH]: _xaa }],
+    [() => AccessControlPolicy, { [_xN]: _ACP, [_hP]: 1 }],
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xagfc }],
+    [0, { [_hH]: _xagr }],
+    [0, { [_hH]: _xagra }],
+    [0, { [_hH]: _xagw }],
+    [0, { [_hH]: _xagwa }],
+    [0, 1],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hQ]: _vI }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutObjectLegalHoldOutput = [3, n0, _POLHO, 0, [_RC], [[0, { [_hH]: _xarc }]]];
+var PutObjectLegalHoldRequest = [
+  3,
+  n0,
+  _POLHR,
+  0,
+  [_B, _K, _LH, _RP, _VI, _CMD, _CA, _EBO],
+  [
+    [0, 1],
+    [0, 1],
+    [() => ObjectLockLegalHold, { [_xN]: _LH, [_hP]: 1 }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hQ]: _vI }],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutObjectLockConfigurationOutput = [3, n0, _POLCO, 0, [_RC], [[0, { [_hH]: _xarc }]]];
+var PutObjectLockConfigurationRequest = [
+  3,
+  n0,
+  _POLCR,
+  0,
+  [_B, _OLC, _RP, _To, _CMD, _CA, _EBO],
+  [
+    [0, 1],
+    [() => ObjectLockConfiguration, { [_xN]: _OLC, [_hP]: 1 }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xabolt }],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutObjectOutput = [
+  3,
+  n0,
+  _POO,
+  0,
+  [
+    _E,
+    _ETa,
+    _CCRC,
+    _CCRCC,
+    _CCRCNVME,
+    _CSHA,
+    _CSHAh,
+    _CT,
+    _SSE,
+    _VI,
+    _SSECA,
+    _SSECKMD,
+    _SSEKMSKI,
+    _SSEKMSEC,
+    _BKE,
+    _Si,
+    _RC
+  ],
+  [
+    [0, { [_hH]: _xae }],
+    [0, { [_hH]: _ETa }],
+    [0, { [_hH]: _xacc }],
+    [0, { [_hH]: _xacc_ }],
+    [0, { [_hH]: _xacc__ }],
+    [0, { [_hH]: _xacs }],
+    [0, { [_hH]: _xacs_ }],
+    [0, { [_hH]: _xact }],
+    [0, { [_hH]: _xasse }],
+    [0, { [_hH]: _xavi }],
+    [0, { [_hH]: _xasseca }],
+    [0, { [_hH]: _xasseckM }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [() => SSEKMSEncryptionContext, { [_hH]: _xassec }],
+    [2, { [_hH]: _xassebke }],
+    [1, { [_hH]: _xaos }],
+    [0, { [_hH]: _xarc }]
+  ]
+];
+var PutObjectRequest = [
+  3,
+  n0,
+  _POR,
+  0,
+  [
+    _ACL_,
+    _Bo,
+    _B,
+    _CC,
+    _CDo,
+    _CEo,
+    _CL,
+    _CLo,
+    _CMD,
+    _CTo,
+    _CA,
+    _CCRC,
+    _CCRCC,
+    _CCRCNVME,
+    _CSHA,
+    _CSHAh,
+    _Ex,
+    _IM,
+    _INM,
+    _GFC,
+    _GR,
+    _GRACP,
+    _GWACP,
+    _K,
+    _WOB,
+    _M,
+    _SSE,
+    _SC,
+    _WRL,
+    _SSECA,
+    _SSECK,
+    _SSECKMD,
+    _SSEKMSKI,
+    _SSEKMSEC,
+    _BKE,
+    _RP,
+    _Tag,
+    _OLM,
+    _OLRUD,
+    _OLLHS,
+    _EBO
+  ],
+  [
+    [0, { [_hH]: _xaa }],
+    [() => StreamingBlob, 16],
+    [0, 1],
+    [0, { [_hH]: _CC_ }],
+    [0, { [_hH]: _CD_ }],
+    [0, { [_hH]: _CE_ }],
+    [0, { [_hH]: _CL_ }],
+    [1, { [_hH]: _CL__ }],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _CT_ }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xacc }],
+    [0, { [_hH]: _xacc_ }],
+    [0, { [_hH]: _xacc__ }],
+    [0, { [_hH]: _xacs }],
+    [0, { [_hH]: _xacs_ }],
+    [4, { [_hH]: _Ex }],
+    [0, { [_hH]: _IM_ }],
+    [0, { [_hH]: _INM_ }],
+    [0, { [_hH]: _xagfc }],
+    [0, { [_hH]: _xagr }],
+    [0, { [_hH]: _xagra }],
+    [0, { [_hH]: _xagwa }],
+    [0, 1],
+    [1, { [_hH]: _xawob }],
+    [128 | 0, { [_hPH]: _xam }],
+    [0, { [_hH]: _xasse }],
+    [0, { [_hH]: _xasc }],
+    [0, { [_hH]: _xawrl }],
+    [0, { [_hH]: _xasseca }],
+    [() => SSECustomerKey, { [_hH]: _xasseck }],
+    [0, { [_hH]: _xasseckM }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [() => SSEKMSEncryptionContext, { [_hH]: _xassec }],
+    [2, { [_hH]: _xassebke }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xat }],
+    [0, { [_hH]: _xaolm }],
+    [5, { [_hH]: _xaolrud }],
+    [0, { [_hH]: _xaollh }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutObjectRetentionOutput = [3, n0, _PORO, 0, [_RC], [[0, { [_hH]: _xarc }]]];
+var PutObjectRetentionRequest = [
+  3,
+  n0,
+  _PORR,
+  0,
+  [_B, _K, _Ret, _RP, _VI, _BGR, _CMD, _CA, _EBO],
+  [
+    [0, 1],
+    [0, 1],
+    [() => ObjectLockRetention, { [_xN]: _Ret, [_hP]: 1 }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hQ]: _vI }],
+    [2, { [_hH]: _xabgr }],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var PutObjectTaggingOutput = [3, n0, _POTO, 0, [_VI], [[0, { [_hH]: _xavi }]]];
+var PutObjectTaggingRequest = [
+  3,
+  n0,
+  _POTR,
+  0,
+  [_B, _K, _VI, _CMD, _CA, _Tag, _EBO, _RP],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hQ]: _vI }],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [() => Tagging, { [_xN]: _Tag, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xarp }]
+  ]
+];
+var PutPublicAccessBlockRequest = [
+  3,
+  n0,
+  _PPABR,
+  0,
+  [_B, _CMD, _CA, _PABC, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [() => PublicAccessBlockConfiguration, { [_xN]: _PABC, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var QueueConfiguration = [
+  3,
+  n0,
+  _QCue,
+  0,
+  [_I, _QA, _Ev, _F],
+  [0, [0, { [_xN]: _Qu }], [64 | 0, { [_xN]: _Eve, [_xF]: 1 }], [() => NotificationConfigurationFilter, 0]]
+];
+var RecordExpiration = [3, n0, _REe, 0, [_E, _D], [0, 1]];
+var RecordsEvent = [3, n0, _REec, 0, [_Payl], [[21, { [_eP]: 1 }]]];
+var Redirect = [3, n0, _Red, 0, [_HN, _HRC, _Pro, _RKPW, _RKW], [0, 0, 0, 0, 0]];
+var RedirectAllRequestsTo = [3, n0, _RART, 0, [_HN, _Pro], [0, 0]];
+var RenameObjectOutput = [3, n0, _ROO, 0, [], []];
+var RenameObjectRequest = [
+  3,
+  n0,
+  _ROR,
+  0,
+  [_B, _K, _RSen, _DIM, _DINM, _DIMS, _DIUS, _SIM, _SINM, _SIMS, _SIUS, _CTl],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hH]: _xars_ }],
+    [0, { [_hH]: _IM_ }],
+    [0, { [_hH]: _INM_ }],
+    [4, { [_hH]: _IMS_ }],
+    [4, { [_hH]: _IUS_ }],
+    [0, { [_hH]: _xarsim }],
+    [0, { [_hH]: _xarsinm }],
+    [6, { [_hH]: _xarsims }],
+    [6, { [_hH]: _xarsius }],
+    [0, { [_hH]: _xact_, [_iT]: 1 }]
+  ]
+];
+var ReplicaModifications = [3, n0, _RM, 0, [_S], [0]];
+var ReplicationConfiguration = [
+  3,
+  n0,
+  _RCe,
+  0,
+  [_Ro, _R],
+  [0, [() => ReplicationRules, { [_xN]: _Ru, [_xF]: 1 }]]
+];
+var ReplicationRule = [
+  3,
+  n0,
+  _RRe,
+  0,
+  [_ID, _Pri, _P, _F, _S, _SSC, _EOR, _Des, _DMR],
+  [
+    0,
+    1,
+    0,
+    [() => ReplicationRuleFilter, 0],
+    0,
+    () => SourceSelectionCriteria,
+    () => ExistingObjectReplication,
+    () => Destination,
+    () => DeleteMarkerReplication
+  ]
+];
+var ReplicationRuleAndOperator = [
+  3,
+  n0,
+  _RRAO,
+  0,
+  [_P, _T],
+  [0, [() => TagSet, { [_xN]: _Ta, [_xF]: 1 }]]
+];
+var ReplicationRuleFilter = [
+  3,
+  n0,
+  _RRF,
+  0,
+  [_P, _Ta, _An],
+  [0, () => Tag, [() => ReplicationRuleAndOperator, 0]]
+];
+var ReplicationTime = [3, n0, _RT, 0, [_S, _Tim], [0, () => ReplicationTimeValue]];
+var ReplicationTimeValue = [3, n0, _RTV, 0, [_Mi], [1]];
+var RequestPaymentConfiguration = [3, n0, _RPC, 0, [_Pay], [0]];
+var RequestProgress = [3, n0, _RPe, 0, [_Ena], [2]];
+var RestoreObjectOutput = [
+  3,
+  n0,
+  _ROOe,
+  0,
+  [_RC, _ROP],
+  [
+    [0, { [_hH]: _xarc }],
+    [0, { [_hH]: _xarop }]
+  ]
+];
+var RestoreObjectRequest = [
+  3,
+  n0,
+  _RORe,
+  0,
+  [_B, _K, _VI, _RRes, _RP, _CA, _EBO],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hQ]: _vI }],
+    [() => RestoreRequest, { [_hP]: 1, [_xN]: _RRes }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var RestoreRequest = [
+  3,
+  n0,
+  _RRes,
+  0,
+  [_D, _GJP, _Ty, _Ti, _Desc, _SP, _OL],
+  [1, () => GlacierJobParameters, 0, 0, 0, () => SelectParameters, [() => OutputLocation, 0]]
+];
+var RestoreStatus = [3, n0, _RSe, 0, [_IRIP, _RED], [2, 4]];
+var RoutingRule = [3, n0, _RRo, 0, [_Co, _Red], [() => Condition, () => Redirect]];
+var S3KeyFilter = [
+  3,
+  n0,
+  _SKF,
+  0,
+  [_FRi],
+  [[() => FilterRuleList, { [_xN]: _FR, [_xF]: 1 }]]
+];
+var S3Location = [
+  3,
+  n0,
+  _SL,
+  0,
+  [_BN, _P, _En, _CACL, _ACL, _Tag, _UM, _SC],
+  [0, 0, [() => Encryption, 0], 0, [() => Grants, 0], [() => Tagging, 0], [() => UserMetadata, 0], 0]
+];
+var S3TablesDestination = [3, n0, _STD, 0, [_TBA, _TNa], [0, 0]];
+var S3TablesDestinationResult = [3, n0, _STDR, 0, [_TBA, _TNa, _TA, _TN], [0, 0, 0, 0]];
+var ScanRange = [3, n0, _SR, 0, [_St, _End], [1, 1]];
+var SelectObjectContentOutput = [
+  3,
+  n0,
+  _SOCO,
+  0,
+  [_Payl],
+  [[() => SelectObjectContentEventStream, 16]]
+];
+var SelectObjectContentRequest = [
+  3,
+  n0,
+  _SOCR,
+  0,
+  [_B, _K, _SSECA, _SSECK, _SSECKMD, _Exp, _ETx, _RPe, _IS, _OSu, _SR, _EBO],
+  [
+    [0, 1],
+    [0, 1],
+    [0, { [_hH]: _xasseca }],
+    [() => SSECustomerKey, { [_hH]: _xasseck }],
+    [0, { [_hH]: _xasseckM }],
+    0,
+    0,
+    () => RequestProgress,
+    () => InputSerialization,
+    () => OutputSerialization,
+    () => ScanRange,
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var SelectParameters = [
+  3,
+  n0,
+  _SP,
+  0,
+  [_IS, _ETx, _Exp, _OSu],
+  [() => InputSerialization, 0, 0, () => OutputSerialization]
+];
+var ServerSideEncryptionByDefault = [
+  3,
+  n0,
+  _SSEBD,
+  0,
+  [_SSEA, _KMSMKID],
+  [0, [() => SSEKMSKeyId, 0]]
+];
+var ServerSideEncryptionConfiguration = [
+  3,
+  n0,
+  _SSEC,
+  0,
+  [_R],
+  [[() => ServerSideEncryptionRules, { [_xN]: _Ru, [_xF]: 1 }]]
+];
+var ServerSideEncryptionRule = [
+  3,
+  n0,
+  _SSER,
+  0,
+  [_ASSEBD, _BKE, _BET],
+  [[() => ServerSideEncryptionByDefault, 0], 2, [() => BlockedEncryptionTypes, 0]]
+];
+var SessionCredentials = [
+  3,
+  n0,
+  _SCe,
+  0,
+  [_AKI, _SAK, _ST, _E],
+  [
+    [0, { [_xN]: _AKI }],
+    [() => SessionCredentialValue, { [_xN]: _SAK }],
+    [() => SessionCredentialValue, { [_xN]: _ST }],
+    [4, { [_xN]: _E }]
+  ]
+];
+var SimplePrefix = [3, n0, _SPi, { [_xN]: _SPi }, [], []];
+var SourceSelectionCriteria = [
+  3,
+  n0,
+  _SSC,
+  0,
+  [_SKEO, _RM],
+  [() => SseKmsEncryptedObjects, () => ReplicaModifications]
+];
+var SSEKMS = [3, n0, _SSEKMS, { [_xN]: _SK }, [_KI], [[() => SSEKMSKeyId, 0]]];
+var SseKmsEncryptedObjects = [3, n0, _SKEO, 0, [_S], [0]];
+var SSES3 = [3, n0, _SSES, { [_xN]: _SS }, [], []];
+var Stats = [3, n0, _Sta, 0, [_BS, _BP, _BRy], [1, 1, 1]];
+var StatsEvent = [3, n0, _SE, 0, [_Det], [[() => Stats, { [_eP]: 1 }]]];
+var StorageClassAnalysis = [
+  3,
+  n0,
+  _SCA,
+  0,
+  [_DE],
+  [() => StorageClassAnalysisDataExport]
+];
+var StorageClassAnalysisDataExport = [
+  3,
+  n0,
+  _SCADE,
+  0,
+  [_OSV, _Des],
+  [0, () => AnalyticsExportDestination]
+];
+var Tag = [3, n0, _Ta, 0, [_K, _V], [0, 0]];
+var Tagging = [3, n0, _Tag, 0, [_TS], [[() => TagSet, 0]]];
+var TargetGrant = [
+  3,
+  n0,
+  _TGa,
+  0,
+  [_Gra, _Pe],
+  [[() => Grantee, { [_xNm]: [_x, _hi] }], 0]
+];
+var TargetObjectKeyFormat = [
+  3,
+  n0,
+  _TOKF,
+  0,
+  [_SPi, _PP],
+  [
+    [() => SimplePrefix, { [_xN]: _SPi }],
+    [() => PartitionedPrefix, { [_xN]: _PP }]
+  ]
+];
+var Tiering = [3, n0, _Tier, 0, [_D, _AT], [1, 0]];
+var TooManyParts2 = [-3, n0, _TMP, { [_e]: _c, [_hE]: 400 }, [], []];
+TypeRegistry.for(n0).registerError(TooManyParts2, TooManyParts);
+var TopicConfiguration = [
+  3,
+  n0,
+  _TCop,
+  0,
+  [_I, _TAo, _Ev, _F],
+  [0, [0, { [_xN]: _Top }], [64 | 0, { [_xN]: _Eve, [_xF]: 1 }], [() => NotificationConfigurationFilter, 0]]
+];
+var Transition = [3, n0, _Tra, 0, [_Da, _D, _SC], [5, 1, 0]];
+var UpdateBucketMetadataInventoryTableConfigurationRequest = [
+  3,
+  n0,
+  _UBMITCR,
+  0,
+  [_B, _CMD, _CA, _ITCn, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [() => InventoryTableConfigurationUpdates, { [_xN]: _ITCn, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var UpdateBucketMetadataJournalTableConfigurationRequest = [
+  3,
+  n0,
+  _UBMJTCR,
+  0,
+  [_B, _CMD, _CA, _JTC, _EBO],
+  [
+    [0, 1],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [() => JournalTableConfigurationUpdates, { [_xN]: _JTC, [_hP]: 1 }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var UploadPartCopyOutput = [
+  3,
+  n0,
+  _UPCO,
+  0,
+  [_CSVI, _CPR, _SSE, _SSECA, _SSECKMD, _SSEKMSKI, _BKE, _RC],
+  [
+    [0, { [_hH]: _xacsvi }],
+    [() => CopyPartResult, 16],
+    [0, { [_hH]: _xasse }],
+    [0, { [_hH]: _xasseca }],
+    [0, { [_hH]: _xasseckM }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [2, { [_hH]: _xassebke }],
+    [0, { [_hH]: _xarc }]
+  ]
+];
+var UploadPartCopyRequest = [
+  3,
+  n0,
+  _UPCR,
+  0,
+  [
+    _B,
+    _CS,
+    _CSIM,
+    _CSIMS,
+    _CSINM,
+    _CSIUS,
+    _CSRo,
+    _K,
+    _PN,
+    _UI,
+    _SSECA,
+    _SSECK,
+    _SSECKMD,
+    _CSSSECA,
+    _CSSSECK,
+    _CSSSECKMD,
+    _RP,
+    _EBO,
+    _ESBO
+  ],
+  [
+    [0, 1],
+    [0, { [_hH]: _xacs__ }],
+    [0, { [_hH]: _xacsim }],
+    [4, { [_hH]: _xacsims }],
+    [0, { [_hH]: _xacsinm }],
+    [4, { [_hH]: _xacsius }],
+    [0, { [_hH]: _xacsr }],
+    [0, 1],
+    [1, { [_hQ]: _pN }],
+    [0, { [_hQ]: _uI }],
+    [0, { [_hH]: _xasseca }],
+    [() => SSECustomerKey, { [_hH]: _xasseck }],
+    [0, { [_hH]: _xasseckM }],
+    [0, { [_hH]: _xacssseca }],
+    [() => CopySourceSSECustomerKey, { [_hH]: _xacssseck }],
+    [0, { [_hH]: _xacssseckM }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }],
+    [0, { [_hH]: _xasebo }]
+  ]
+];
+var UploadPartOutput = [
+  3,
+  n0,
+  _UPO,
+  0,
+  [_SSE, _ETa, _CCRC, _CCRCC, _CCRCNVME, _CSHA, _CSHAh, _SSECA, _SSECKMD, _SSEKMSKI, _BKE, _RC],
+  [
+    [0, { [_hH]: _xasse }],
+    [0, { [_hH]: _ETa }],
+    [0, { [_hH]: _xacc }],
+    [0, { [_hH]: _xacc_ }],
+    [0, { [_hH]: _xacc__ }],
+    [0, { [_hH]: _xacs }],
+    [0, { [_hH]: _xacs_ }],
+    [0, { [_hH]: _xasseca }],
+    [0, { [_hH]: _xasseckM }],
+    [() => SSEKMSKeyId, { [_hH]: _xasseakki }],
+    [2, { [_hH]: _xassebke }],
+    [0, { [_hH]: _xarc }]
+  ]
+];
+var UploadPartRequest = [
+  3,
+  n0,
+  _UPR,
+  0,
+  [
+    _Bo,
+    _B,
+    _CLo,
+    _CMD,
+    _CA,
+    _CCRC,
+    _CCRCC,
+    _CCRCNVME,
+    _CSHA,
+    _CSHAh,
+    _K,
+    _PN,
+    _UI,
+    _SSECA,
+    _SSECK,
+    _SSECKMD,
+    _RP,
+    _EBO
+  ],
+  [
+    [() => StreamingBlob, 16],
+    [0, 1],
+    [1, { [_hH]: _CL__ }],
+    [0, { [_hH]: _CM }],
+    [0, { [_hH]: _xasca }],
+    [0, { [_hH]: _xacc }],
+    [0, { [_hH]: _xacc_ }],
+    [0, { [_hH]: _xacc__ }],
+    [0, { [_hH]: _xacs }],
+    [0, { [_hH]: _xacs_ }],
+    [0, 1],
+    [1, { [_hQ]: _pN }],
+    [0, { [_hQ]: _uI }],
+    [0, { [_hH]: _xasseca }],
+    [() => SSECustomerKey, { [_hH]: _xasseck }],
+    [0, { [_hH]: _xasseckM }],
+    [0, { [_hH]: _xarp }],
+    [0, { [_hH]: _xaebo }]
+  ]
+];
+var VersioningConfiguration = [3, n0, _VC, 0, [_MFAD, _S], [[0, { [_xN]: _MDf }], 0]];
+var WebsiteConfiguration = [
+  3,
+  n0,
+  _WC,
+  0,
+  [_EDr, _IDn, _RART, _RR],
+  [() => ErrorDocument, () => IndexDocument, () => RedirectAllRequestsTo, [() => RoutingRules, 0]]
+];
+var WriteGetObjectResponseRequest = [
+  3,
+  n0,
+  _WGORR,
+  0,
+  [
+    _RReq,
+    _RTe,
+    _Bo,
+    _SCt,
+    _ECr,
+    _EM,
+    _AR,
+    _CC,
+    _CDo,
+    _CEo,
+    _CL,
+    _CLo,
+    _CR,
+    _CTo,
+    _CCRC,
+    _CCRCC,
+    _CCRCNVME,
+    _CSHA,
+    _CSHAh,
+    _DM,
+    _ETa,
+    _Ex,
+    _E,
+    _LM,
+    _MM,
+    _M,
+    _OLM,
+    _OLLHS,
+    _OLRUD,
+    _PC,
+    _RS,
+    _RC,
+    _Re,
+    _SSE,
+    _SSECA,
+    _SSEKMSKI,
+    _SSECKMD,
+    _SC,
+    _TC,
+    _VI,
+    _BKE
+  ],
+  [
+    [0, { [_hL]: 1, [_hH]: _xarr }],
+    [0, { [_hH]: _xart }],
+    [() => StreamingBlob, 16],
+    [1, { [_hH]: _xafs }],
+    [0, { [_hH]: _xafec }],
+    [0, { [_hH]: _xafem }],
+    [0, { [_hH]: _xafhar }],
+    [0, { [_hH]: _xafhCC }],
+    [0, { [_hH]: _xafhCD }],
+    [0, { [_hH]: _xafhCE }],
+    [0, { [_hH]: _xafhCL }],
+    [1, { [_hH]: _CL__ }],
+    [0, { [_hH]: _xafhCR }],
+    [0, { [_hH]: _xafhCT }],
+    [0, { [_hH]: _xafhxacc }],
+    [0, { [_hH]: _xafhxacc_ }],
+    [0, { [_hH]: _xafhxacc__ }],
+    [0, { [_hH]: _xafhxacs }],
+    [0, { [_hH]: _xafhxacs_ }],
+    [2, { [_hH]: _xafhxadm }],
+    [0, { [_hH]: _xafhE }],
+    [4, { [_hH]: _xafhE_ }],
+    [0, { [_hH]: _xafhxae }],
+    [4, { [_hH]: _xafhLM }],
+    [1, { [_hH]: _xafhxamm }],
+    [128 | 0, { [_hPH]: _xam }],
+    [0, { [_hH]: _xafhxaolm }],
+    [0, { [_hH]: _xafhxaollh }],
+    [5, { [_hH]: _xafhxaolrud }],
+    [1, { [_hH]: _xafhxampc }],
+    [0, { [_hH]: _xafhxars }],
+    [0, { [_hH]: _xafhxarc }],
+    [0, { [_hH]: _xafhxar }],
+    [0, { [_hH]: _xafhxasse }],
+    [0, { [_hH]: _xafhxasseca }],
+    [() => SSEKMSKeyId, { [_hH]: _xafhxasseakki }],
+    [0, { [_hH]: _xafhxasseckM }],
+    [0, { [_hH]: _xafhxasc }],
+    [1, { [_hH]: _xafhxatc }],
+    [0, { [_hH]: _xafhxavi }],
+    [2, { [_hH]: _xafhxassebke }]
+  ]
+];
+var __Unit = "unit";
+var S3ServiceException2 = [-3, _sm, "S3ServiceException", 0, [], []];
+TypeRegistry.for(_sm).registerError(S3ServiceException2, S3ServiceException);
+var AllowedHeaders = 64 | 0;
+var AllowedMethods = 64 | 0;
+var AllowedOrigins = 64 | 0;
+var AnalyticsConfigurationList = [1, n0, _ACLn, 0, [() => AnalyticsConfiguration, 0]];
+var Buckets = [1, n0, _Bu, 0, [() => Bucket, { [_xN]: _B }]];
+var ChecksumAlgorithmList = 64 | 0;
+var CommonPrefixList = [1, n0, _CPL, 0, () => CommonPrefix];
+var CompletedPartList = [1, n0, _CPLo, 0, () => CompletedPart];
+var CORSRules = [1, n0, _CORSR, 0, [() => CORSRule, 0]];
+var DeletedObjects = [1, n0, _DOe, 0, () => DeletedObject];
+var DeleteMarkers = [1, n0, _DMe, 0, () => DeleteMarkerEntry];
+var EncryptionTypeList = [1, n0, _ETL, 0, [0, { [_xN]: _ET }]];
+var Errors = [1, n0, _Er, 0, () => _Error];
+var EventList = 64 | 0;
+var ExposeHeaders = 64 | 0;
+var FilterRuleList = [1, n0, _FRL, 0, () => FilterRule];
+var Grants = [1, n0, _G, 0, [() => Grant, { [_xN]: _Gr }]];
+var IntelligentTieringConfigurationList = [
+  1,
+  n0,
+  _ITCL,
+  0,
+  [() => IntelligentTieringConfiguration, 0]
+];
+var InventoryConfigurationList = [1, n0, _ICL, 0, [() => InventoryConfiguration, 0]];
+var InventoryOptionalFields = [1, n0, _IOF, 0, [0, { [_xN]: _Fi }]];
+var LambdaFunctionConfigurationList = [
+  1,
+  n0,
+  _LFCL,
+  0,
+  [() => LambdaFunctionConfiguration, 0]
+];
+var LifecycleRules = [1, n0, _LRi, 0, [() => LifecycleRule, 0]];
+var MetricsConfigurationList = [1, n0, _MCL, 0, [() => MetricsConfiguration, 0]];
+var MultipartUploadList = [1, n0, _MUL, 0, () => MultipartUpload];
+var NoncurrentVersionTransitionList = [1, n0, _NVTL, 0, () => NoncurrentVersionTransition];
+var ObjectAttributesList = 64 | 0;
+var ObjectIdentifierList = [1, n0, _OIL, 0, () => ObjectIdentifier];
+var ObjectList = [1, n0, _OLb, 0, [() => _Object, 0]];
+var ObjectVersionList = [1, n0, _OVL, 0, [() => ObjectVersion, 0]];
+var OptionalObjectAttributesList = 64 | 0;
+var OwnershipControlsRules = [1, n0, _OCRw, 0, () => OwnershipControlsRule];
+var Parts = [1, n0, _Pa, 0, () => Part];
+var PartsList = [1, n0, _PL, 0, () => ObjectPart];
+var QueueConfigurationList = [1, n0, _QCL, 0, [() => QueueConfiguration, 0]];
+var ReplicationRules = [1, n0, _RRep, 0, [() => ReplicationRule, 0]];
+var RoutingRules = [1, n0, _RR, 0, [() => RoutingRule, { [_xN]: _RRo }]];
+var ServerSideEncryptionRules = [1, n0, _SSERe, 0, [() => ServerSideEncryptionRule, 0]];
+var TagSet = [1, n0, _TS, 0, [() => Tag, { [_xN]: _Ta }]];
+var TargetGrants = [1, n0, _TG, 0, [() => TargetGrant, { [_xN]: _Gr }]];
+var TieringList = [1, n0, _TL, 0, () => Tiering];
+var TopicConfigurationList = [1, n0, _TCL, 0, [() => TopicConfiguration, 0]];
+var TransitionList = [1, n0, _TLr, 0, () => Transition];
+var UserMetadata = [1, n0, _UM, 0, [() => MetadataEntry, { [_xN]: _ME }]];
+var Metadata = 128 | 0;
+var AnalyticsFilter = [
+  3,
+  n0,
+  _AF,
+  0,
+  [_P, _Ta, _An],
+  [0, () => Tag, [() => AnalyticsAndOperator, 0]]
+];
+var MetricsFilter = [
+  3,
+  n0,
+  _MF,
+  0,
+  [_P, _Ta, _APAc, _An],
+  [0, () => Tag, 0, [() => MetricsAndOperator, 0]]
+];
+var SelectObjectContentEventStream = [
+  3,
+  n0,
+  _SOCES,
+  { [_s]: 1 },
+  [_Rec, _Sta, _Pr, _Cont, _End],
+  [[() => RecordsEvent, 0], [() => StatsEvent, 0], [() => ProgressEvent, 0], () => ContinuationEvent, () => EndEvent]
+];
+var AbortMultipartUpload = [
+  9,
+  n0,
+  _AMU,
+  { [_h]: ["DELETE", "/{Key+}?x-id=AbortMultipartUpload", 204] },
+  () => AbortMultipartUploadRequest,
+  () => AbortMultipartUploadOutput
+];
+var CompleteMultipartUpload = [
+  9,
+  n0,
+  _CMUo,
+  { [_h]: ["POST", "/{Key+}", 200] },
+  () => CompleteMultipartUploadRequest,
+  () => CompleteMultipartUploadOutput
+];
+var CopyObject = [
+  9,
+  n0,
+  _CO,
+  { [_h]: ["PUT", "/{Key+}?x-id=CopyObject", 200] },
+  () => CopyObjectRequest,
+  () => CopyObjectOutput
+];
+var CreateBucket = [
+  9,
+  n0,
+  _CB,
+  { [_h]: ["PUT", "/", 200] },
+  () => CreateBucketRequest,
+  () => CreateBucketOutput
+];
+var CreateBucketMetadataConfiguration = [
+  9,
+  n0,
+  _CBMC,
+  { [_h]: ["POST", "/?metadataConfiguration", 200] },
+  () => CreateBucketMetadataConfigurationRequest,
+  () => __Unit
+];
+var CreateBucketMetadataTableConfiguration = [
+  9,
+  n0,
+  _CBMTC,
+  { [_h]: ["POST", "/?metadataTable", 200] },
+  () => CreateBucketMetadataTableConfigurationRequest,
+  () => __Unit
+];
+var CreateMultipartUpload = [
+  9,
+  n0,
+  _CMUr,
+  { [_h]: ["POST", "/{Key+}?uploads", 200] },
+  () => CreateMultipartUploadRequest,
+  () => CreateMultipartUploadOutput
+];
+var CreateSession = [
+  9,
+  n0,
+  _CSr,
+  { [_h]: ["GET", "/?session", 200] },
+  () => CreateSessionRequest,
+  () => CreateSessionOutput
+];
+var DeleteBucket = [
+  9,
+  n0,
+  _DB,
+  { [_h]: ["DELETE", "/", 204] },
+  () => DeleteBucketRequest,
+  () => __Unit
+];
+var DeleteBucketAnalyticsConfiguration = [
+  9,
+  n0,
+  _DBAC,
+  { [_h]: ["DELETE", "/?analytics", 204] },
+  () => DeleteBucketAnalyticsConfigurationRequest,
+  () => __Unit
+];
+var DeleteBucketCors = [
+  9,
+  n0,
+  _DBC,
+  { [_h]: ["DELETE", "/?cors", 204] },
+  () => DeleteBucketCorsRequest,
+  () => __Unit
+];
+var DeleteBucketEncryption = [
+  9,
+  n0,
+  _DBE,
+  { [_h]: ["DELETE", "/?encryption", 204] },
+  () => DeleteBucketEncryptionRequest,
+  () => __Unit
+];
+var DeleteBucketIntelligentTieringConfiguration = [
+  9,
+  n0,
+  _DBITC,
+  { [_h]: ["DELETE", "/?intelligent-tiering", 204] },
+  () => DeleteBucketIntelligentTieringConfigurationRequest,
+  () => __Unit
+];
+var DeleteBucketInventoryConfiguration = [
+  9,
+  n0,
+  _DBIC,
+  { [_h]: ["DELETE", "/?inventory", 204] },
+  () => DeleteBucketInventoryConfigurationRequest,
+  () => __Unit
+];
+var DeleteBucketLifecycle = [
+  9,
+  n0,
+  _DBL,
+  { [_h]: ["DELETE", "/?lifecycle", 204] },
+  () => DeleteBucketLifecycleRequest,
+  () => __Unit
+];
+var DeleteBucketMetadataConfiguration = [
+  9,
+  n0,
+  _DBMC,
+  { [_h]: ["DELETE", "/?metadataConfiguration", 204] },
+  () => DeleteBucketMetadataConfigurationRequest,
+  () => __Unit
+];
+var DeleteBucketMetadataTableConfiguration = [
+  9,
+  n0,
+  _DBMTC,
+  { [_h]: ["DELETE", "/?metadataTable", 204] },
+  () => DeleteBucketMetadataTableConfigurationRequest,
+  () => __Unit
+];
+var DeleteBucketMetricsConfiguration = [
+  9,
+  n0,
+  _DBMCe,
+  { [_h]: ["DELETE", "/?metrics", 204] },
+  () => DeleteBucketMetricsConfigurationRequest,
+  () => __Unit
+];
+var DeleteBucketOwnershipControls = [
+  9,
+  n0,
+  _DBOC,
+  { [_h]: ["DELETE", "/?ownershipControls", 204] },
+  () => DeleteBucketOwnershipControlsRequest,
+  () => __Unit
+];
+var DeleteBucketPolicy = [
+  9,
+  n0,
+  _DBP,
+  { [_h]: ["DELETE", "/?policy", 204] },
+  () => DeleteBucketPolicyRequest,
+  () => __Unit
+];
+var DeleteBucketReplication = [
+  9,
+  n0,
+  _DBRe,
+  { [_h]: ["DELETE", "/?replication", 204] },
+  () => DeleteBucketReplicationRequest,
+  () => __Unit
+];
+var DeleteBucketTagging = [
+  9,
+  n0,
+  _DBT,
+  { [_h]: ["DELETE", "/?tagging", 204] },
+  () => DeleteBucketTaggingRequest,
+  () => __Unit
+];
+var DeleteBucketWebsite = [
+  9,
+  n0,
+  _DBW,
+  { [_h]: ["DELETE", "/?website", 204] },
+  () => DeleteBucketWebsiteRequest,
+  () => __Unit
+];
+var DeleteObject = [
+  9,
+  n0,
+  _DOel,
+  { [_h]: ["DELETE", "/{Key+}?x-id=DeleteObject", 204] },
+  () => DeleteObjectRequest,
+  () => DeleteObjectOutput
+];
+var DeleteObjects = [
+  9,
+  n0,
+  _DOele,
+  { [_h]: ["POST", "/?delete", 200] },
+  () => DeleteObjectsRequest,
+  () => DeleteObjectsOutput
+];
+var DeleteObjectTagging = [
+  9,
+  n0,
+  _DOT,
+  { [_h]: ["DELETE", "/{Key+}?tagging", 204] },
+  () => DeleteObjectTaggingRequest,
+  () => DeleteObjectTaggingOutput
+];
+var DeletePublicAccessBlock = [
+  9,
+  n0,
+  _DPAB,
+  { [_h]: ["DELETE", "/?publicAccessBlock", 204] },
+  () => DeletePublicAccessBlockRequest,
+  () => __Unit
+];
+var GetBucketAbac = [
+  9,
+  n0,
+  _GBA,
+  { [_h]: ["GET", "/?abac", 200] },
+  () => GetBucketAbacRequest,
+  () => GetBucketAbacOutput
+];
+var GetBucketAccelerateConfiguration = [
+  9,
+  n0,
+  _GBAC,
+  { [_h]: ["GET", "/?accelerate", 200] },
+  () => GetBucketAccelerateConfigurationRequest,
+  () => GetBucketAccelerateConfigurationOutput
+];
+var GetBucketAcl = [
+  9,
+  n0,
+  _GBAe,
+  { [_h]: ["GET", "/?acl", 200] },
+  () => GetBucketAclRequest,
+  () => GetBucketAclOutput
+];
+var GetBucketAnalyticsConfiguration = [
+  9,
+  n0,
+  _GBACe,
+  { [_h]: ["GET", "/?analytics&x-id=GetBucketAnalyticsConfiguration", 200] },
+  () => GetBucketAnalyticsConfigurationRequest,
+  () => GetBucketAnalyticsConfigurationOutput
+];
+var GetBucketCors = [
+  9,
+  n0,
+  _GBC,
+  { [_h]: ["GET", "/?cors", 200] },
+  () => GetBucketCorsRequest,
+  () => GetBucketCorsOutput
+];
+var GetBucketEncryption = [
+  9,
+  n0,
+  _GBE,
+  { [_h]: ["GET", "/?encryption", 200] },
+  () => GetBucketEncryptionRequest,
+  () => GetBucketEncryptionOutput
+];
+var GetBucketIntelligentTieringConfiguration = [
+  9,
+  n0,
+  _GBITC,
+  { [_h]: ["GET", "/?intelligent-tiering&x-id=GetBucketIntelligentTieringConfiguration", 200] },
+  () => GetBucketIntelligentTieringConfigurationRequest,
+  () => GetBucketIntelligentTieringConfigurationOutput
+];
+var GetBucketInventoryConfiguration = [
+  9,
+  n0,
+  _GBIC,
+  { [_h]: ["GET", "/?inventory&x-id=GetBucketInventoryConfiguration", 200] },
+  () => GetBucketInventoryConfigurationRequest,
+  () => GetBucketInventoryConfigurationOutput
+];
+var GetBucketLifecycleConfiguration = [
+  9,
+  n0,
+  _GBLC,
+  { [_h]: ["GET", "/?lifecycle", 200] },
+  () => GetBucketLifecycleConfigurationRequest,
+  () => GetBucketLifecycleConfigurationOutput
+];
+var GetBucketLocation = [
+  9,
+  n0,
+  _GBL,
+  { [_h]: ["GET", "/?location", 200] },
+  () => GetBucketLocationRequest,
+  () => GetBucketLocationOutput
+];
+var GetBucketLogging = [
+  9,
+  n0,
+  _GBLe,
+  { [_h]: ["GET", "/?logging", 200] },
+  () => GetBucketLoggingRequest,
+  () => GetBucketLoggingOutput
+];
+var GetBucketMetadataConfiguration = [
+  9,
+  n0,
+  _GBMC,
+  { [_h]: ["GET", "/?metadataConfiguration", 200] },
+  () => GetBucketMetadataConfigurationRequest,
+  () => GetBucketMetadataConfigurationOutput
+];
+var GetBucketMetadataTableConfiguration = [
+  9,
+  n0,
+  _GBMTC,
+  { [_h]: ["GET", "/?metadataTable", 200] },
+  () => GetBucketMetadataTableConfigurationRequest,
+  () => GetBucketMetadataTableConfigurationOutput
+];
+var GetBucketMetricsConfiguration = [
+  9,
+  n0,
+  _GBMCe,
+  { [_h]: ["GET", "/?metrics&x-id=GetBucketMetricsConfiguration", 200] },
+  () => GetBucketMetricsConfigurationRequest,
+  () => GetBucketMetricsConfigurationOutput
+];
+var GetBucketNotificationConfiguration = [
+  9,
+  n0,
+  _GBNC,
+  { [_h]: ["GET", "/?notification", 200] },
+  () => GetBucketNotificationConfigurationRequest,
+  () => NotificationConfiguration
+];
+var GetBucketOwnershipControls = [
+  9,
+  n0,
+  _GBOC,
+  { [_h]: ["GET", "/?ownershipControls", 200] },
+  () => GetBucketOwnershipControlsRequest,
+  () => GetBucketOwnershipControlsOutput
+];
+var GetBucketPolicy = [
+  9,
+  n0,
+  _GBP,
+  { [_h]: ["GET", "/?policy", 200] },
+  () => GetBucketPolicyRequest,
+  () => GetBucketPolicyOutput
+];
+var GetBucketPolicyStatus = [
+  9,
+  n0,
+  _GBPS,
+  { [_h]: ["GET", "/?policyStatus", 200] },
+  () => GetBucketPolicyStatusRequest,
+  () => GetBucketPolicyStatusOutput
+];
+var GetBucketReplication = [
+  9,
+  n0,
+  _GBR,
+  { [_h]: ["GET", "/?replication", 200] },
+  () => GetBucketReplicationRequest,
+  () => GetBucketReplicationOutput
+];
+var GetBucketRequestPayment = [
+  9,
+  n0,
+  _GBRP,
+  { [_h]: ["GET", "/?requestPayment", 200] },
+  () => GetBucketRequestPaymentRequest,
+  () => GetBucketRequestPaymentOutput
+];
+var GetBucketTagging = [
+  9,
+  n0,
+  _GBT,
+  { [_h]: ["GET", "/?tagging", 200] },
+  () => GetBucketTaggingRequest,
+  () => GetBucketTaggingOutput
+];
+var GetBucketVersioning = [
+  9,
+  n0,
+  _GBV,
+  { [_h]: ["GET", "/?versioning", 200] },
+  () => GetBucketVersioningRequest,
+  () => GetBucketVersioningOutput
+];
+var GetBucketWebsite = [
+  9,
+  n0,
+  _GBW,
+  { [_h]: ["GET", "/?website", 200] },
+  () => GetBucketWebsiteRequest,
+  () => GetBucketWebsiteOutput
+];
+var GetObject = [
+  9,
+  n0,
+  _GO,
+  { [_h]: ["GET", "/{Key+}?x-id=GetObject", 200] },
+  () => GetObjectRequest,
+  () => GetObjectOutput
+];
+var GetObjectAcl = [
+  9,
+  n0,
+  _GOA,
+  { [_h]: ["GET", "/{Key+}?acl", 200] },
+  () => GetObjectAclRequest,
+  () => GetObjectAclOutput
+];
+var GetObjectAttributes = [
+  9,
+  n0,
+  _GOAe,
+  { [_h]: ["GET", "/{Key+}?attributes", 200] },
+  () => GetObjectAttributesRequest,
+  () => GetObjectAttributesOutput
+];
+var GetObjectLegalHold = [
+  9,
+  n0,
+  _GOLH,
+  { [_h]: ["GET", "/{Key+}?legal-hold", 200] },
+  () => GetObjectLegalHoldRequest,
+  () => GetObjectLegalHoldOutput
+];
+var GetObjectLockConfiguration = [
+  9,
+  n0,
+  _GOLC,
+  { [_h]: ["GET", "/?object-lock", 200] },
+  () => GetObjectLockConfigurationRequest,
+  () => GetObjectLockConfigurationOutput
+];
+var GetObjectRetention = [
+  9,
+  n0,
+  _GORe,
+  { [_h]: ["GET", "/{Key+}?retention", 200] },
+  () => GetObjectRetentionRequest,
+  () => GetObjectRetentionOutput
+];
+var GetObjectTagging = [
+  9,
+  n0,
+  _GOT,
+  { [_h]: ["GET", "/{Key+}?tagging", 200] },
+  () => GetObjectTaggingRequest,
+  () => GetObjectTaggingOutput
+];
+var GetObjectTorrent = [
+  9,
+  n0,
+  _GOTe,
+  { [_h]: ["GET", "/{Key+}?torrent", 200] },
+  () => GetObjectTorrentRequest,
+  () => GetObjectTorrentOutput
+];
+var GetPublicAccessBlock = [
+  9,
+  n0,
+  _GPAB,
+  { [_h]: ["GET", "/?publicAccessBlock", 200] },
+  () => GetPublicAccessBlockRequest,
+  () => GetPublicAccessBlockOutput
+];
+var HeadBucket = [
+  9,
+  n0,
+  _HB,
+  { [_h]: ["HEAD", "/", 200] },
+  () => HeadBucketRequest,
+  () => HeadBucketOutput
+];
+var HeadObject = [
+  9,
+  n0,
+  _HO,
+  { [_h]: ["HEAD", "/{Key+}", 200] },
+  () => HeadObjectRequest,
+  () => HeadObjectOutput
+];
+var ListBucketAnalyticsConfigurations = [
+  9,
+  n0,
+  _LBAC,
+  { [_h]: ["GET", "/?analytics&x-id=ListBucketAnalyticsConfigurations", 200] },
+  () => ListBucketAnalyticsConfigurationsRequest,
+  () => ListBucketAnalyticsConfigurationsOutput
+];
+var ListBucketIntelligentTieringConfigurations = [
+  9,
+  n0,
+  _LBITC,
+  { [_h]: ["GET", "/?intelligent-tiering&x-id=ListBucketIntelligentTieringConfigurations", 200] },
+  () => ListBucketIntelligentTieringConfigurationsRequest,
+  () => ListBucketIntelligentTieringConfigurationsOutput
+];
+var ListBucketInventoryConfigurations = [
+  9,
+  n0,
+  _LBIC,
+  { [_h]: ["GET", "/?inventory&x-id=ListBucketInventoryConfigurations", 200] },
+  () => ListBucketInventoryConfigurationsRequest,
+  () => ListBucketInventoryConfigurationsOutput
+];
+var ListBucketMetricsConfigurations = [
+  9,
+  n0,
+  _LBMC,
+  { [_h]: ["GET", "/?metrics&x-id=ListBucketMetricsConfigurations", 200] },
+  () => ListBucketMetricsConfigurationsRequest,
+  () => ListBucketMetricsConfigurationsOutput
+];
+var ListBuckets = [
+  9,
+  n0,
+  _LB,
+  { [_h]: ["GET", "/?x-id=ListBuckets", 200] },
+  () => ListBucketsRequest,
+  () => ListBucketsOutput
+];
+var ListDirectoryBuckets = [
+  9,
+  n0,
+  _LDB,
+  { [_h]: ["GET", "/?x-id=ListDirectoryBuckets", 200] },
+  () => ListDirectoryBucketsRequest,
+  () => ListDirectoryBucketsOutput
+];
+var ListMultipartUploads = [
+  9,
+  n0,
+  _LMU,
+  { [_h]: ["GET", "/?uploads", 200] },
+  () => ListMultipartUploadsRequest,
+  () => ListMultipartUploadsOutput
+];
+var ListObjects = [
+  9,
+  n0,
+  _LO,
+  { [_h]: ["GET", "/", 200] },
+  () => ListObjectsRequest,
+  () => ListObjectsOutput
+];
+var ListObjectsV2 = [
+  9,
+  n0,
+  _LOV,
+  { [_h]: ["GET", "/?list-type=2", 200] },
+  () => ListObjectsV2Request,
+  () => ListObjectsV2Output
+];
+var ListObjectVersions = [
+  9,
+  n0,
+  _LOVi,
+  { [_h]: ["GET", "/?versions", 200] },
+  () => ListObjectVersionsRequest,
+  () => ListObjectVersionsOutput
+];
+var ListParts = [
+  9,
+  n0,
+  _LP,
+  { [_h]: ["GET", "/{Key+}?x-id=ListParts", 200] },
+  () => ListPartsRequest,
+  () => ListPartsOutput
+];
+var PutBucketAbac = [
+  9,
+  n0,
+  _PBA,
+  { [_h]: ["PUT", "/?abac", 200] },
+  () => PutBucketAbacRequest,
+  () => __Unit
+];
+var PutBucketAccelerateConfiguration = [
+  9,
+  n0,
+  _PBAC,
+  { [_h]: ["PUT", "/?accelerate", 200] },
+  () => PutBucketAccelerateConfigurationRequest,
+  () => __Unit
+];
+var PutBucketAcl = [
+  9,
+  n0,
+  _PBAu,
+  { [_h]: ["PUT", "/?acl", 200] },
+  () => PutBucketAclRequest,
+  () => __Unit
+];
+var PutBucketAnalyticsConfiguration = [
+  9,
+  n0,
+  _PBACu,
+  { [_h]: ["PUT", "/?analytics", 200] },
+  () => PutBucketAnalyticsConfigurationRequest,
+  () => __Unit
+];
+var PutBucketCors = [
+  9,
+  n0,
+  _PBC,
+  { [_h]: ["PUT", "/?cors", 200] },
+  () => PutBucketCorsRequest,
+  () => __Unit
+];
+var PutBucketEncryption = [
+  9,
+  n0,
+  _PBE,
+  { [_h]: ["PUT", "/?encryption", 200] },
+  () => PutBucketEncryptionRequest,
+  () => __Unit
+];
+var PutBucketIntelligentTieringConfiguration = [
+  9,
+  n0,
+  _PBITC,
+  { [_h]: ["PUT", "/?intelligent-tiering", 200] },
+  () => PutBucketIntelligentTieringConfigurationRequest,
+  () => __Unit
+];
+var PutBucketInventoryConfiguration = [
+  9,
+  n0,
+  _PBIC,
+  { [_h]: ["PUT", "/?inventory", 200] },
+  () => PutBucketInventoryConfigurationRequest,
+  () => __Unit
+];
+var PutBucketLifecycleConfiguration = [
+  9,
+  n0,
+  _PBLC,
+  { [_h]: ["PUT", "/?lifecycle", 200] },
+  () => PutBucketLifecycleConfigurationRequest,
+  () => PutBucketLifecycleConfigurationOutput
+];
+var PutBucketLogging = [
+  9,
+  n0,
+  _PBL,
+  { [_h]: ["PUT", "/?logging", 200] },
+  () => PutBucketLoggingRequest,
+  () => __Unit
+];
+var PutBucketMetricsConfiguration = [
+  9,
+  n0,
+  _PBMC,
+  { [_h]: ["PUT", "/?metrics", 200] },
+  () => PutBucketMetricsConfigurationRequest,
+  () => __Unit
+];
+var PutBucketNotificationConfiguration = [
+  9,
+  n0,
+  _PBNC,
+  { [_h]: ["PUT", "/?notification", 200] },
+  () => PutBucketNotificationConfigurationRequest,
+  () => __Unit
+];
+var PutBucketOwnershipControls = [
+  9,
+  n0,
+  _PBOC,
+  { [_h]: ["PUT", "/?ownershipControls", 200] },
+  () => PutBucketOwnershipControlsRequest,
+  () => __Unit
+];
+var PutBucketPolicy = [
+  9,
+  n0,
+  _PBP,
+  { [_h]: ["PUT", "/?policy", 200] },
+  () => PutBucketPolicyRequest,
+  () => __Unit
+];
+var PutBucketReplication = [
+  9,
+  n0,
+  _PBR,
+  { [_h]: ["PUT", "/?replication", 200] },
+  () => PutBucketReplicationRequest,
+  () => __Unit
+];
+var PutBucketRequestPayment = [
+  9,
+  n0,
+  _PBRP,
+  { [_h]: ["PUT", "/?requestPayment", 200] },
+  () => PutBucketRequestPaymentRequest,
+  () => __Unit
+];
+var PutBucketTagging = [
+  9,
+  n0,
+  _PBT,
+  { [_h]: ["PUT", "/?tagging", 200] },
+  () => PutBucketTaggingRequest,
+  () => __Unit
+];
+var PutBucketVersioning = [
+  9,
+  n0,
+  _PBV,
+  { [_h]: ["PUT", "/?versioning", 200] },
+  () => PutBucketVersioningRequest,
+  () => __Unit
+];
+var PutBucketWebsite = [
+  9,
+  n0,
+  _PBW,
+  { [_h]: ["PUT", "/?website", 200] },
+  () => PutBucketWebsiteRequest,
+  () => __Unit
+];
+var PutObject = [
+  9,
+  n0,
+  _PO,
+  { [_h]: ["PUT", "/{Key+}?x-id=PutObject", 200] },
+  () => PutObjectRequest,
+  () => PutObjectOutput
+];
+var PutObjectAcl = [
+  9,
+  n0,
+  _POA,
+  { [_h]: ["PUT", "/{Key+}?acl", 200] },
+  () => PutObjectAclRequest,
+  () => PutObjectAclOutput
+];
+var PutObjectLegalHold = [
+  9,
+  n0,
+  _POLH,
+  { [_h]: ["PUT", "/{Key+}?legal-hold", 200] },
+  () => PutObjectLegalHoldRequest,
+  () => PutObjectLegalHoldOutput
+];
+var PutObjectLockConfiguration = [
+  9,
+  n0,
+  _POLC,
+  { [_h]: ["PUT", "/?object-lock", 200] },
+  () => PutObjectLockConfigurationRequest,
+  () => PutObjectLockConfigurationOutput
+];
+var PutObjectRetention = [
+  9,
+  n0,
+  _PORu,
+  { [_h]: ["PUT", "/{Key+}?retention", 200] },
+  () => PutObjectRetentionRequest,
+  () => PutObjectRetentionOutput
+];
+var PutObjectTagging = [
+  9,
+  n0,
+  _POT,
+  { [_h]: ["PUT", "/{Key+}?tagging", 200] },
+  () => PutObjectTaggingRequest,
+  () => PutObjectTaggingOutput
+];
+var PutPublicAccessBlock = [
+  9,
+  n0,
+  _PPAB,
+  { [_h]: ["PUT", "/?publicAccessBlock", 200] },
+  () => PutPublicAccessBlockRequest,
+  () => __Unit
+];
+var RenameObject = [
+  9,
+  n0,
+  _RO,
+  { [_h]: ["PUT", "/{Key+}?renameObject", 200] },
+  () => RenameObjectRequest,
+  () => RenameObjectOutput
+];
+var RestoreObject = [
+  9,
+  n0,
+  _ROe,
+  { [_h]: ["POST", "/{Key+}?restore", 200] },
+  () => RestoreObjectRequest,
+  () => RestoreObjectOutput
+];
+var SelectObjectContent = [
+  9,
+  n0,
+  _SOC,
+  { [_h]: ["POST", "/{Key+}?select&select-type=2", 200] },
+  () => SelectObjectContentRequest,
+  () => SelectObjectContentOutput
+];
+var UpdateBucketMetadataInventoryTableConfiguration = [
+  9,
+  n0,
+  _UBMITC,
+  { [_h]: ["PUT", "/?metadataInventoryTable", 200] },
+  () => UpdateBucketMetadataInventoryTableConfigurationRequest,
+  () => __Unit
+];
+var UpdateBucketMetadataJournalTableConfiguration = [
+  9,
+  n0,
+  _UBMJTC,
+  { [_h]: ["PUT", "/?metadataJournalTable", 200] },
+  () => UpdateBucketMetadataJournalTableConfigurationRequest,
+  () => __Unit
+];
+var UploadPart = [
+  9,
+  n0,
+  _UP,
+  { [_h]: ["PUT", "/{Key+}?x-id=UploadPart", 200] },
+  () => UploadPartRequest,
+  () => UploadPartOutput
+];
+var UploadPartCopy = [
+  9,
+  n0,
+  _UPC,
+  { [_h]: ["PUT", "/{Key+}?x-id=UploadPartCopy", 200] },
+  () => UploadPartCopyRequest,
+  () => UploadPartCopyOutput
+];
+var WriteGetObjectResponse = [
+  9,
+  n0,
+  _WGOR,
+  { [_en]: ["{RequestRoute}."], [_h]: ["POST", "/WriteGetObjectResponse", 200] },
+  () => WriteGetObjectResponseRequest,
+  () => __Unit
+];
 
 // node_modules/@aws-sdk/client-s3/dist-es/commands/CreateSessionCommand.js
 var CreateSessionCommand = class extends Command.classBuilder().ep({
@@ -10440,19 +15399,15 @@ var CreateSessionCommand = class extends Command.classBuilder().ep({
   DisableS3ExpressSessionAuth: { type: "staticContextParams", value: true },
   Bucket: { type: "contextParams", name: "Bucket" }
 }).m(function(Command2, cs2, config, o2) {
-  return [
-    getSerdePlugin(config, this.serialize, this.deserialize),
-    getEndpointPlugin(config, Command2.getEndpointParameterInstructions()),
-    getThrow200ExceptionsPlugin(config)
-  ];
-}).s("AmazonS3", "CreateSession", {}).n("S3Client", "CreateSessionCommand").f(CreateSessionRequestFilterSensitiveLog, CreateSessionOutputFilterSensitiveLog).ser(se_CreateSessionCommand).de(de_CreateSessionCommand).build() {
+  return [getEndpointPlugin(config, Command2.getEndpointParameterInstructions()), getThrow200ExceptionsPlugin(config)];
+}).s("AmazonS3", "CreateSession", {}).n("S3Client", "CreateSessionCommand").sc(CreateSession).build() {
 };
 
 // node_modules/@aws-sdk/client-s3/package.json
 var package_default = {
   name: "@aws-sdk/client-s3",
   description: "AWS SDK for JavaScript S3 Client for Node.js, Browser and React Native",
-  version: "3.857.0",
+  version: "3.948.0",
   scripts: {
     build: "concurrently 'yarn:build:cjs' 'yarn:build:es' 'yarn:build:types'",
     "build:cjs": "node ../../scripts/compilation/inline client-s3",
@@ -10464,12 +15419,13 @@ var package_default = {
     "extract:docs": "api-extractor run --local",
     "generate:client": "node ../../scripts/generate-clients/single-service --solo s3",
     test: "yarn g:vitest run",
-    "test:browser": "node ./test/browser-build/esbuild && yarn g:vitest run -c vitest.config.browser.ts",
-    "test:browser:watch": "node ./test/browser-build/esbuild && yarn g:vitest watch -c vitest.config.browser.ts",
-    "test:e2e": "yarn g:vitest run -c vitest.config.e2e.ts && yarn test:browser",
-    "test:e2e:watch": "yarn g:vitest watch -c vitest.config.e2e.ts",
-    "test:integration": "yarn g:vitest run -c vitest.config.integ.ts",
-    "test:integration:watch": "yarn g:vitest watch -c vitest.config.integ.ts",
+    "test:browser": "node ./test/browser-build/esbuild && yarn g:vitest run -c vitest.config.browser.mts",
+    "test:browser:watch": "node ./test/browser-build/esbuild && yarn g:vitest watch -c vitest.config.browser.mts",
+    "test:e2e": "yarn g:vitest run -c vitest.config.e2e.mts && yarn test:browser",
+    "test:e2e:watch": "yarn g:vitest watch -c vitest.config.e2e.mts",
+    "test:index": "tsc --noEmit ./test/index-types.ts && node ./test/index-objects.spec.mjs",
+    "test:integration": "yarn g:vitest run -c vitest.config.integ.mts",
+    "test:integration:watch": "yarn g:vitest watch -c vitest.config.integ.mts",
     "test:watch": "yarn g:vitest watch"
   },
   main: "./dist-cjs/index.js",
@@ -10480,64 +15436,61 @@ var package_default = {
     "@aws-crypto/sha1-browser": "5.2.0",
     "@aws-crypto/sha256-browser": "5.2.0",
     "@aws-crypto/sha256-js": "5.2.0",
-    "@aws-sdk/core": "3.857.0",
-    "@aws-sdk/credential-provider-node": "3.857.0",
-    "@aws-sdk/middleware-bucket-endpoint": "3.840.0",
-    "@aws-sdk/middleware-expect-continue": "3.840.0",
-    "@aws-sdk/middleware-flexible-checksums": "3.857.0",
-    "@aws-sdk/middleware-host-header": "3.840.0",
-    "@aws-sdk/middleware-location-constraint": "3.840.0",
-    "@aws-sdk/middleware-logger": "3.840.0",
-    "@aws-sdk/middleware-recursion-detection": "3.840.0",
-    "@aws-sdk/middleware-sdk-s3": "3.857.0",
-    "@aws-sdk/middleware-ssec": "3.840.0",
-    "@aws-sdk/middleware-user-agent": "3.857.0",
-    "@aws-sdk/region-config-resolver": "3.840.0",
-    "@aws-sdk/signature-v4-multi-region": "3.857.0",
-    "@aws-sdk/types": "3.840.0",
-    "@aws-sdk/util-endpoints": "3.848.0",
-    "@aws-sdk/util-user-agent-browser": "3.840.0",
-    "@aws-sdk/util-user-agent-node": "3.857.0",
-    "@aws-sdk/xml-builder": "3.821.0",
-    "@smithy/config-resolver": "^4.1.4",
-    "@smithy/core": "^3.7.2",
-    "@smithy/eventstream-serde-browser": "^4.0.4",
-    "@smithy/eventstream-serde-config-resolver": "^4.1.2",
-    "@smithy/eventstream-serde-node": "^4.0.4",
-    "@smithy/fetch-http-handler": "^5.1.0",
-    "@smithy/hash-blob-browser": "^4.0.4",
-    "@smithy/hash-node": "^4.0.4",
-    "@smithy/hash-stream-node": "^4.0.4",
-    "@smithy/invalid-dependency": "^4.0.4",
-    "@smithy/md5-js": "^4.0.4",
-    "@smithy/middleware-content-length": "^4.0.4",
-    "@smithy/middleware-endpoint": "^4.1.17",
-    "@smithy/middleware-retry": "^4.1.18",
-    "@smithy/middleware-serde": "^4.0.8",
-    "@smithy/middleware-stack": "^4.0.4",
-    "@smithy/node-config-provider": "^4.1.3",
-    "@smithy/node-http-handler": "^4.1.0",
-    "@smithy/protocol-http": "^5.1.2",
-    "@smithy/smithy-client": "^4.4.9",
-    "@smithy/types": "^4.3.1",
-    "@smithy/url-parser": "^4.0.4",
-    "@smithy/util-base64": "^4.0.0",
-    "@smithy/util-body-length-browser": "^4.0.0",
-    "@smithy/util-body-length-node": "^4.0.0",
-    "@smithy/util-defaults-mode-browser": "^4.0.25",
-    "@smithy/util-defaults-mode-node": "^4.0.25",
-    "@smithy/util-endpoints": "^3.0.6",
-    "@smithy/util-middleware": "^4.0.4",
-    "@smithy/util-retry": "^4.0.6",
-    "@smithy/util-stream": "^4.2.3",
-    "@smithy/util-utf8": "^4.0.0",
-    "@smithy/util-waiter": "^4.0.6",
-    "@types/uuid": "^9.0.1",
-    tslib: "^2.6.2",
-    uuid: "^9.0.1"
+    "@aws-sdk/core": "3.947.0",
+    "@aws-sdk/credential-provider-node": "3.948.0",
+    "@aws-sdk/middleware-bucket-endpoint": "3.936.0",
+    "@aws-sdk/middleware-expect-continue": "3.936.0",
+    "@aws-sdk/middleware-flexible-checksums": "3.947.0",
+    "@aws-sdk/middleware-host-header": "3.936.0",
+    "@aws-sdk/middleware-location-constraint": "3.936.0",
+    "@aws-sdk/middleware-logger": "3.936.0",
+    "@aws-sdk/middleware-recursion-detection": "3.948.0",
+    "@aws-sdk/middleware-sdk-s3": "3.947.0",
+    "@aws-sdk/middleware-ssec": "3.936.0",
+    "@aws-sdk/middleware-user-agent": "3.947.0",
+    "@aws-sdk/region-config-resolver": "3.936.0",
+    "@aws-sdk/signature-v4-multi-region": "3.947.0",
+    "@aws-sdk/types": "3.936.0",
+    "@aws-sdk/util-endpoints": "3.936.0",
+    "@aws-sdk/util-user-agent-browser": "3.936.0",
+    "@aws-sdk/util-user-agent-node": "3.947.0",
+    "@smithy/config-resolver": "^4.4.3",
+    "@smithy/core": "^3.18.7",
+    "@smithy/eventstream-serde-browser": "^4.2.5",
+    "@smithy/eventstream-serde-config-resolver": "^4.3.5",
+    "@smithy/eventstream-serde-node": "^4.2.5",
+    "@smithy/fetch-http-handler": "^5.3.6",
+    "@smithy/hash-blob-browser": "^4.2.6",
+    "@smithy/hash-node": "^4.2.5",
+    "@smithy/hash-stream-node": "^4.2.5",
+    "@smithy/invalid-dependency": "^4.2.5",
+    "@smithy/md5-js": "^4.2.5",
+    "@smithy/middleware-content-length": "^4.2.5",
+    "@smithy/middleware-endpoint": "^4.3.14",
+    "@smithy/middleware-retry": "^4.4.14",
+    "@smithy/middleware-serde": "^4.2.6",
+    "@smithy/middleware-stack": "^4.2.5",
+    "@smithy/node-config-provider": "^4.3.5",
+    "@smithy/node-http-handler": "^4.4.5",
+    "@smithy/protocol-http": "^5.3.5",
+    "@smithy/smithy-client": "^4.9.10",
+    "@smithy/types": "^4.9.0",
+    "@smithy/url-parser": "^4.2.5",
+    "@smithy/util-base64": "^4.3.0",
+    "@smithy/util-body-length-browser": "^4.2.0",
+    "@smithy/util-body-length-node": "^4.2.1",
+    "@smithy/util-defaults-mode-browser": "^4.3.13",
+    "@smithy/util-defaults-mode-node": "^4.2.16",
+    "@smithy/util-endpoints": "^3.2.5",
+    "@smithy/util-middleware": "^4.2.5",
+    "@smithy/util-retry": "^4.2.5",
+    "@smithy/util-stream": "^4.5.6",
+    "@smithy/util-utf8": "^4.2.0",
+    "@smithy/util-waiter": "^4.2.5",
+    tslib: "^2.6.2"
   },
   devDependencies: {
-    "@aws-sdk/signature-v4-crt": "3.857.0",
+    "@aws-sdk/signature-v4-crt": "3.947.0",
     "@tsconfig/node18": "18.2.4",
     "@types/node": "^18.19.69",
     concurrently: "7.0.0",
@@ -10631,7 +15584,7 @@ function locateWindow() {
 // node_modules/@aws-crypto/sha1-browser/build/module/webCryptoSha1.js
 var Sha1 = (
   /** @class */
-  function() {
+  (function() {
     function Sha13(secret) {
       this.toHash = new Uint8Array(0);
       if (secret !== void 0) {
@@ -10674,7 +15627,7 @@ var Sha1 = (
       this.toHash = new Uint8Array(0);
     };
     return Sha13;
-  }()
+  })()
 );
 function convertToBuffer2(data) {
   if (typeof data === "string") {
@@ -10706,8 +15659,8 @@ function supportsWebCrypto(window2) {
 }
 function supportsSecureRandom(window2) {
   if (typeof window2 === "object" && typeof window2.crypto === "object") {
-    var getRandomValues3 = window2.crypto.getRandomValues;
-    return typeof getRandomValues3 === "function";
+    var getRandomValues2 = window2.crypto.getRandomValues;
+    return typeof getRandomValues2 === "function";
   }
   return false;
 }
@@ -10720,7 +15673,7 @@ function supportsSubtleCrypto(subtle) {
 // node_modules/@aws-crypto/sha1-browser/build/module/crossPlatformSha1.js
 var Sha12 = (
   /** @class */
-  function() {
+  (function() {
     function Sha13(secret) {
       if (supportsWebCrypto(locateWindow())) {
         this.hash = new Sha1(secret);
@@ -10738,7 +15691,7 @@ var Sha12 = (
       this.hash.reset();
     };
     return Sha13;
-  }()
+  })()
 );
 
 // node_modules/@aws-crypto/sha256-browser/build/module/constants.js
@@ -10785,7 +15738,7 @@ var EMPTY_DATA_SHA_256 = new Uint8Array([
 // node_modules/@aws-crypto/sha256-browser/build/module/webCryptoSha256.js
 var Sha256 = (
   /** @class */
-  function() {
+  (function() {
     function Sha2564(secret) {
       this.toHash = new Uint8Array(0);
       this.secret = secret;
@@ -10831,7 +15784,7 @@ var Sha256 = (
       }
     };
     return Sha2564;
-  }()
+  })()
 );
 
 // node_modules/@aws-crypto/sha256-js/node_modules/tslib/tslib.es6.mjs
@@ -11016,7 +15969,7 @@ var MAX_HASHABLE_LENGTH = Math.pow(2, 53) - 1;
 // node_modules/@aws-crypto/sha256-js/build/module/RawSha256.js
 var RawSha256 = (
   /** @class */
-  function() {
+  (function() {
     function RawSha2562() {
       this.state = Int32Array.from(INIT);
       this.temp = new Int32Array(64);
@@ -11108,13 +16061,13 @@ var RawSha256 = (
       state[7] += state7;
     };
     return RawSha2562;
-  }()
+  })()
 );
 
 // node_modules/@aws-crypto/sha256-js/build/module/jsSha256.js
 var Sha2562 = (
   /** @class */
-  function() {
+  (function() {
     function Sha2564(secret) {
       this.secret = secret;
       this.hash = new RawSha256();
@@ -11168,7 +16121,7 @@ var Sha2562 = (
       }
     };
     return Sha2564;
-  }()
+  })()
 );
 function bufferFromSecret(secret) {
   var input = convertToBuffer(secret);
@@ -11185,7 +16138,7 @@ function bufferFromSecret(secret) {
 // node_modules/@aws-crypto/sha256-browser/build/module/crossPlatformSha256.js
 var Sha2563 = (
   /** @class */
-  function() {
+  (function() {
     function Sha2564(secret) {
       if (supportsWebCrypto(locateWindow())) {
         this.hash = new Sha256(secret);
@@ -11203,19 +16156,25 @@ var Sha2563 = (
       this.hash.reset();
     };
     return Sha2564;
-  }()
+  })()
 );
 
 // node_modules/@aws-sdk/util-user-agent-browser/dist-es/index.js
-var import_bowser = __toESM(require_es5());
 var createDefaultUserAgentProvider = ({ serviceId, clientVersion }) => async (config) => {
-  const parsedUA = typeof window !== "undefined" && window?.navigator?.userAgent ? import_bowser.default.parse(window.navigator.userAgent) : void 0;
+  const navigator = typeof window !== "undefined" ? window.navigator : void 0;
+  const uaString = navigator?.userAgent ?? "";
+  const osName = navigator?.userAgentData?.platform ?? fallback.os(uaString) ?? "other";
+  const osVersion = void 0;
+  const brands = navigator?.userAgentData?.brands ?? [];
+  const brand = brands[brands.length - 1];
+  const browserName = brand?.brand ?? fallback.browser(uaString) ?? "unknown";
+  const browserVersion = brand?.version ?? "unknown";
   const sections = [
     ["aws-sdk-js", clientVersion],
     ["ua", "2.1"],
-    [`os/${parsedUA?.os?.name || "other"}`, parsedUA?.os?.version],
+    [`os/${osName}`, osVersion],
     ["lang/js"],
-    ["md/browser", `${parsedUA?.browser?.name ?? "unknown"}_${parsedUA?.browser?.version ?? "unknown"}`]
+    ["md/browser", `${browserName}_${browserVersion}`]
   ];
   if (serviceId) {
     sections.push([`api/${serviceId}`, clientVersion]);
@@ -11226,10 +16185,37 @@ var createDefaultUserAgentProvider = ({ serviceId, clientVersion }) => async (co
   }
   return sections;
 };
+var fallback = {
+  os(ua) {
+    if (/iPhone|iPad|iPod/.test(ua))
+      return "iOS";
+    if (/Macintosh|Mac OS X/.test(ua))
+      return "macOS";
+    if (/Windows NT/.test(ua))
+      return "Windows";
+    if (/Android/.test(ua))
+      return "Android";
+    if (/Linux/.test(ua))
+      return "Linux";
+    return void 0;
+  },
+  browser(ua) {
+    if (/EdgiOS|EdgA|Edg\//.test(ua))
+      return "Microsoft Edge";
+    if (/Firefox\//.test(ua))
+      return "Firefox";
+    if (/Chrome\//.test(ua))
+      return "Chrome";
+    if (/Safari\//.test(ua))
+      return "Safari";
+    return void 0;
+  }
+};
 
 // node_modules/@smithy/eventstream-codec/dist-es/Int64.js
 var Int642 = class _Int64 {
   constructor(bytes) {
+    __publicField(this, "bytes");
     this.bytes = bytes;
     if (bytes.byteLength !== 8) {
       throw new Error("Int64 buffers must be exactly 8 bytes");
@@ -11274,6 +16260,8 @@ function negate2(bytes) {
 // node_modules/@smithy/eventstream-codec/dist-es/HeaderMarshaller.js
 var HeaderMarshaller = class {
   constructor(toUtf82, fromUtf85) {
+    __publicField(this, "toUtf8");
+    __publicField(this, "fromUtf8");
     this.toUtf8 = toUtf82;
     this.fromUtf8 = fromUtf85;
   }
@@ -11487,6 +16475,9 @@ function splitMessage({ byteLength, byteOffset, buffer }) {
 // node_modules/@smithy/eventstream-codec/dist-es/EventStreamCodec.js
 var EventStreamCodec = class {
   constructor(toUtf82, fromUtf85) {
+    __publicField(this, "headerMarshaller");
+    __publicField(this, "messageBuffer");
+    __publicField(this, "isEndOfStream");
     this.headerMarshaller = new HeaderMarshaller(toUtf82, fromUtf85);
     this.messageBuffer = [];
     this.isEndOfStream = false;
@@ -11548,6 +16539,7 @@ var EventStreamCodec = class {
 // node_modules/@smithy/eventstream-codec/dist-es/MessageDecoderStream.js
 var MessageDecoderStream = class {
   constructor(options) {
+    __publicField(this, "options");
     this.options = options;
   }
   [Symbol.asyncIterator]() {
@@ -11564,6 +16556,7 @@ var MessageDecoderStream = class {
 // node_modules/@smithy/eventstream-codec/dist-es/MessageEncoderStream.js
 var MessageEncoderStream = class {
   constructor(options) {
+    __publicField(this, "options");
     this.options = options;
   }
   [Symbol.asyncIterator]() {
@@ -11583,6 +16576,7 @@ var MessageEncoderStream = class {
 // node_modules/@smithy/eventstream-codec/dist-es/SmithyMessageDecoderStream.js
 var SmithyMessageDecoderStream = class {
   constructor(options) {
+    __publicField(this, "options");
     this.options = options;
   }
   [Symbol.asyncIterator]() {
@@ -11601,6 +16595,7 @@ var SmithyMessageDecoderStream = class {
 // node_modules/@smithy/eventstream-codec/dist-es/SmithyMessageEncoderStream.js
 var SmithyMessageEncoderStream = class {
   constructor(options) {
+    __publicField(this, "options");
     this.options = options;
   }
   [Symbol.asyncIterator]() {
@@ -11715,6 +16710,8 @@ function getMessageUnmarshaller(deserializer, toUtf82) {
 // node_modules/@smithy/eventstream-serde-universal/dist-es/EventStreamMarshaller.js
 var EventStreamMarshaller = class {
   constructor({ utf8Encoder, utf8Decoder }) {
+    __publicField(this, "eventStreamCodec");
+    __publicField(this, "utfEncoder");
     this.eventStreamCodec = new EventStreamCodec(utf8Encoder, utf8Decoder);
     this.utfEncoder = utf8Encoder;
   }
@@ -11766,6 +16763,7 @@ var iterableToReadableStream = (asyncIterable) => {
 // node_modules/@smithy/eventstream-serde-browser/dist-es/EventStreamMarshaller.js
 var EventStreamMarshaller2 = class {
   constructor({ utf8Encoder, utf8Decoder }) {
+    __publicField(this, "universalMarshaller");
     this.universalMarshaller = new EventStreamMarshaller({
       utf8Decoder,
       utf8Encoder
@@ -11808,6 +16806,9 @@ var blobHasher = async function blobHasher2(hashCtor, blob) {
 // node_modules/@smithy/invalid-dependency/dist-es/invalidProvider.js
 var invalidProvider = (message) => () => Promise.reject(message);
 
+// node_modules/@smithy/md5-js/dist-es/index.js
+init_dist_es();
+
 // node_modules/@smithy/md5-js/dist-es/constants.js
 var BLOCK_SIZE2 = 64;
 var DIGEST_LENGTH2 = 16;
@@ -11816,6 +16817,11 @@ var INIT2 = [1732584193, 4023233417, 2562383102, 271733878];
 // node_modules/@smithy/md5-js/dist-es/index.js
 var Md5 = class {
   constructor() {
+    __publicField(this, "state");
+    __publicField(this, "buffer");
+    __publicField(this, "bufferLength");
+    __publicField(this, "bytesHashed");
+    __publicField(this, "finished");
     this.reset();
   }
   update(sourceData) {
@@ -11975,7 +16981,41 @@ function convertToBuffer3(data) {
   return new Uint8Array(data);
 }
 
+// node_modules/@smithy/util-defaults-mode-browser/dist-es/constants.js
+var DEFAULTS_MODE_OPTIONS = ["in-region", "cross-region", "mobile", "standard", "legacy"];
+
+// node_modules/@smithy/util-defaults-mode-browser/dist-es/resolveDefaultsModeConfig.js
+var resolveDefaultsModeConfig = ({ defaultsMode } = {}) => memoize(async () => {
+  const mode = typeof defaultsMode === "function" ? await defaultsMode() : defaultsMode;
+  switch (mode?.toLowerCase()) {
+    case "auto":
+      return Promise.resolve(useMobileConfiguration() ? "mobile" : "standard");
+    case "mobile":
+    case "in-region":
+    case "cross-region":
+    case "standard":
+    case "legacy":
+      return Promise.resolve(mode?.toLocaleLowerCase());
+    case void 0:
+      return Promise.resolve("legacy");
+    default:
+      throw new Error(`Invalid parameter for "defaultsMode", expect ${DEFAULTS_MODE_OPTIONS.join(", ")}, got ${mode}`);
+  }
+});
+var useMobileConfiguration = () => {
+  const navigator = window?.navigator;
+  if (navigator?.connection) {
+    const { effectiveType, rtt, downlink } = navigator?.connection;
+    const slow = typeof effectiveType === "string" && effectiveType !== "4g" || Number(rtt) > 100 || Number(downlink) < 10;
+    if (slow) {
+      return true;
+    }
+  }
+  return navigator?.userAgentData?.mobile || typeof navigator?.maxTouchPoints === "number" && navigator?.maxTouchPoints > 1;
+};
+
 // node_modules/@aws-sdk/client-s3/dist-es/runtimeConfig.shared.js
+init_dist_es();
 var getRuntimeConfig = (config) => {
   return {
     apiVersion: "2006-03-01",
@@ -11999,6 +17039,10 @@ var getRuntimeConfig = (config) => {
       }
     ],
     logger: config?.logger ?? new NoOpLogger(),
+    protocol: config?.protocol ?? new AwsRestXmlProtocol({
+      defaultNamespace: "com.amazonaws.s3",
+      xmlNamespace: "http://s3.amazonaws.com/doc/2006-03-01/"
+    }),
     sdkStreamMixin: config?.sdkStreamMixin ?? sdkStreamMixin,
     serviceId: config?.serviceId ?? "S3",
     signerConstructor: config?.signerConstructor ?? SignatureV4MultiRegion,
@@ -12008,36 +17052,6 @@ var getRuntimeConfig = (config) => {
     utf8Decoder: config?.utf8Decoder ?? fromUtf8,
     utf8Encoder: config?.utf8Encoder ?? toUtf8
   };
-};
-
-// node_modules/@smithy/util-defaults-mode-browser/dist-es/resolveDefaultsModeConfig.js
-var import_bowser2 = __toESM(require_es5());
-
-// node_modules/@smithy/util-defaults-mode-browser/dist-es/constants.js
-var DEFAULTS_MODE_OPTIONS = ["in-region", "cross-region", "mobile", "standard", "legacy"];
-
-// node_modules/@smithy/util-defaults-mode-browser/dist-es/resolveDefaultsModeConfig.js
-var resolveDefaultsModeConfig = ({ defaultsMode } = {}) => memoize(async () => {
-  const mode = typeof defaultsMode === "function" ? await defaultsMode() : defaultsMode;
-  switch (mode?.toLowerCase()) {
-    case "auto":
-      return Promise.resolve(isMobileBrowser() ? "mobile" : "standard");
-    case "mobile":
-    case "in-region":
-    case "cross-region":
-    case "standard":
-    case "legacy":
-      return Promise.resolve(mode?.toLocaleLowerCase());
-    case void 0:
-      return Promise.resolve("legacy");
-    default:
-      throw new Error(`Invalid parameter for "defaultsMode", expect ${DEFAULTS_MODE_OPTIONS.join(", ")}, got ${mode}`);
-  }
-});
-var isMobileBrowser = () => {
-  const parsedUA = typeof window !== "undefined" && window?.navigator?.userAgent ? import_bowser2.default.parse(window.navigator.userAgent) : void 0;
-  const platform = parsedUA?.platform?.type;
-  return platform === "tablet" || platform === "mobile";
 };
 
 // node_modules/@aws-sdk/client-s3/dist-es/runtimeConfig.browser.js
@@ -12150,6 +17164,7 @@ var S3Client = class extends Client {
     const _config_10 = resolveS3Config(_config_9, { session: [() => this, CreateSessionCommand] });
     const _config_11 = resolveRuntimeExtensions(_config_10, configuration?.extensions || []);
     this.config = _config_11;
+    this.middlewareStack.use(getSchemaSerdePlugin(this.config));
     this.middlewareStack.use(getUserAgentPlugin(this.config));
     this.middlewareStack.use(getRetryPlugin(this.config));
     this.middlewareStack.use(getContentLengthPlugin(this.config));
@@ -12245,7 +17260,6 @@ var PutObjectCommand = class extends Command.classBuilder().ep({
   Key: { type: "contextParams", name: "Key" }
 }).m(function(Command2, cs2, config, o2) {
   return [
-    getSerdePlugin(config, this.serialize, this.deserialize),
     getEndpointPlugin(config, Command2.getEndpointParameterInstructions()),
     getFlexibleChecksumsPlugin(config, {
       requestAlgorithmMember: { httpHeader: "x-amz-sdk-checksum-algorithm", name: "ChecksumAlgorithm" },
@@ -12255,17 +17269,14 @@ var PutObjectCommand = class extends Command.classBuilder().ep({
     getThrow200ExceptionsPlugin(config),
     getSsecPlugin(config)
   ];
-}).s("AmazonS3", "PutObject", {}).n("S3Client", "PutObjectCommand").f(PutObjectRequestFilterSensitiveLog, PutObjectOutputFilterSensitiveLog).ser(se_PutObjectCommand).de(de_PutObjectCommand).build() {
+}).s("AmazonS3", "PutObject", {}).n("S3Client", "PutObjectCommand").sc(PutObject).build() {
 };
 
-// src/services/r2-s3-service.ts
-var R2S3Service = class {
-  /**
-   * 构造函数
-   */
+// src/providers/r2s3.provider.ts
+var _R2S3Service = class _R2S3Service extends BaseStorageProvider {
   constructor(settings) {
+    super();
     this.settings = settings;
-    this.logger = Logger.getInstance();
     this.s3Client = new S3Client({
       region: "auto",
       endpoint: `https://${settings.accountId}.r2.cloudflarestorage.com`,
@@ -12273,165 +17284,88 @@ var R2S3Service = class {
         accessKeyId: settings.accessKeyId,
         secretAccessKey: settings.secretAccessKey
       },
-      // R2 需要使用 path-style 访问
       forcePathStyle: true
     });
   }
-  /**
-   * 获取提供者类型
-   */
   getType() {
     return "r2_s3_api" /* R2_S3_API */;
   }
+  validateSettings() {
+    if (!this.settings.bucketName) {
+      throw new Error("R2 S3 API \u914D\u7F6E\u4E0D\u5B8C\u6574\uFF1A\u7F3A\u5C11\u5B58\u50A8\u6876\u540D\u79F0");
+    }
+  }
+  getUploadSettings() {
+    return {
+      folderName: this.settings.folderName,
+      customDomain: this.settings.customDomain
+    };
+  }
   /**
-   * 上传图片到 R2
+   * Returns the fallback base URL for R2 storage.
+   *
+   * Note: This URL includes the bucket name as a path segment because R2's
+   * public URL format is: https://{accountId}.r2.cloudflarestorage.com/{bucket}/{key}
+   *
+   * The buildPublicUrl in base class will append filePath to this, resulting in:
+   * https://{accountId}.r2.cloudflarestorage.com/{bucket}/{folder}/{file}
+   *
+   * Do NOT add bucket to filePath separately - it's already included here.
    */
-  async uploadImage(fileContent, fileName, onProgress, options) {
-    try {
-      const { bucketName, folderName, customDomain } = this.settings;
-      if (!bucketName) {
-        throw new Error("R2 S3 API \u914D\u7F6E\u4E0D\u5B8C\u6574\uFF1A\u7F3A\u5C11\u5B58\u50A8\u6876\u540D\u79F0");
-      }
-      const uniqueFileName = generateUniqueFileName(fileName);
-      const cleanFolderName = folderName ? folderName.replace(/\/$/, "") : "";
-      const filePath = cleanFolderName ? `${cleanFolderName}/${uniqueFileName}` : uniqueFileName;
-      const mimeType = getMimeType(fileName);
-      this.logger.info(`\u4E0A\u4F20\u6587\u4EF6: ${fileName} -> ${filePath}, \u7C7B\u578B: ${mimeType}`);
-      const uploadParams = {
-        Bucket: bucketName,
+  getFallbackBaseUrl() {
+    const { accountId, bucketName } = this.settings;
+    return `https://${accountId}.r2.cloudflarestorage.com/${bucketName}`;
+  }
+  getErrorClassifier() {
+    return _R2S3Service.ERROR_CLASSIFIER;
+  }
+  async executeUpload(fileContent, filePath, mimeType, signal) {
+    const response = await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: this.settings.bucketName,
         Key: filePath,
         Body: new Uint8Array(fileContent),
         ContentType: mimeType,
         ContentLength: fileContent.byteLength
-      };
-      if (onProgress) {
-        onProgress(0.1);
-      }
-      const abortController = new AbortController();
-      const timeoutId = options?.timeout ? setTimeout(() => abortController.abort(), options.timeout) : null;
-      try {
-        const command = new PutObjectCommand(uploadParams);
-        const response = await this.s3Client.send(command, {
-          abortSignal: abortController.signal
-        });
-        if (timeoutId) clearTimeout(timeoutId);
-        if (onProgress) {
-          onProgress(0.9);
-        }
-        let imageUrl;
-        if (customDomain && customDomain.trim() !== "") {
-          const domainBase = customDomain.startsWith("http") ? customDomain : `https://${customDomain}`;
-          const formattedDomain = domainBase.endsWith("/") ? domainBase.slice(0, -1) : domainBase;
-          imageUrl = `${formattedDomain}/${filePath}`;
-        } else {
-          imageUrl = `https://${this.settings.accountId}.r2.cloudflarestorage.com/${bucketName}/${filePath}`;
-        }
-        if (onProgress) {
-          onProgress(1);
-        }
-        this.logger.info(`\u6587\u4EF6\u4E0A\u4F20\u6210\u529F: ${fileName} -> ${imageUrl}`);
-        return {
-          url: imageUrl,
-          etag: response.ETag
-        };
-      } catch (error) {
-        if (timeoutId) clearTimeout(timeoutId);
-        if (error.name === "AbortError") {
-          throw {
-            type: "timeout",
-            message: "\u4E0A\u4F20\u8D85\u65F6",
-            code: "TIMEOUT"
-          };
-        }
-        throw error;
-      }
-    } catch (error) {
-      this.logger.error(`\u4E0A\u4F20\u6587\u4EF6\u5931\u8D25 ${fileName}:`, error);
-      if (error.type) {
-        throw error;
-      }
-      let type = "unknown";
-      const message = error.message || String(error);
-      const errorName = error.name || "";
-      if (errorName === "CredentialsProviderError" || errorName === "InvalidSignatureException" || message.includes("\u914D\u7F6E\u4E0D\u5B8C\u6574") || message.includes("403") || message.includes("Access Denied")) {
-        type = "auth";
-      } else if (errorName === "NetworkError" || message.includes("Failed to fetch") || message.includes("\u7F51\u7EDC") || message.includes("CORS")) {
-        type = "network";
-      } else if (error.$metadata?.httpStatusCode && error.$metadata.httpStatusCode >= 500) {
-        type = "server";
-      }
-      throw {
-        type,
-        message,
-        code: error.Code || error.name || error.$metadata?.httpStatusCode
-      };
-    }
+      }),
+      { abortSignal: signal }
+    );
+    return { etag: response.ETag };
   }
 };
-
-// src/services/image-service.ts
-var ImageService = class {
-  /**
-   * 构造函数
-   */
-  constructor(app, storageProvider) {
-    this.app = app;
-    this.storageProvider = storageProvider;
-    this.logger = Logger.getInstance();
-  }
-  /**
-   * 查找所有笔记中需要上传的图片
-   */
-  async findImagesToUpload() {
-    const markdownFiles = this.app.vault.getMarkdownFiles();
-    const imagePathsToUpload = /* @__PURE__ */ new Set();
-    for (const file of markdownFiles) {
-      const content = await this.app.vault.cachedRead(file);
-      const standardRegex = IMAGE_PATTERNS.STANDARD_MARKDOWN;
-      let match;
-      while ((match = standardRegex.exec(content)) !== null) {
-        const imagePath = match[2];
-        if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
-          continue;
-        }
-        const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
-        if (absolutePath && await this.app.vault.adapter.exists(absolutePath)) {
-          imagePathsToUpload.add(absolutePath);
-        }
-      }
-      const obsidianRegex = IMAGE_PATTERNS.OBSIDIAN_INTERNAL;
-      while ((match = obsidianRegex.exec(content)) !== null) {
-        const imagePath = match[1];
-        const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
-        if (absolutePath && await this.app.vault.adapter.exists(absolutePath)) {
-          imagePathsToUpload.add(absolutePath);
-        }
-      }
-    }
-    this.logger.info(`\u627E\u5230 ${imagePathsToUpload.size} \u5F20\u56FE\u7247\u9700\u8981\u4E0A\u4F20`);
-    return imagePathsToUpload;
-  }
+_R2S3Service.ERROR_CLASSIFIER = {
+  isAuthError: (err, msg) => ["CredentialsProviderError", "InvalidSignatureException"].includes(err.name) || msg.includes("\u914D\u7F6E\u4E0D\u5B8C\u6574") || msg.includes("403") || msg.includes("Access Denied"),
+  isNetworkError: (err, msg) => isCommonNetworkError(err) || err.name === "NetworkError" || ["Failed to fetch", "\u7F51\u7EDC", "CORS"].some((s2) => msg.includes(s2)),
+  isServerError: (err) => err.$metadata?.httpStatusCode >= 500,
+  getErrorCode: (err) => err.Code || err.name || err.$metadata?.httpStatusCode
 };
+var R2S3Service = _R2S3Service;
 
-// src/services/paste-handler.ts
+// src/handlers/paste.handler.ts
 var import_obsidian2 = require("obsidian");
+var MIME_TO_EXT = Object.entries(MIME_TYPES).reduce(
+  (acc, [ext, mime]) => {
+    if (!acc[mime]) {
+      acc[mime] = `.${ext}`;
+    }
+    return acc;
+  },
+  {}
+);
 var PasteHandler = class {
-  /**
-   * 构造函数
-   */
-  constructor(app, storageProvider, plugin) {
+  constructor(app, getStorageProvider, plugin) {
     this.app = app;
-    this.storageProvider = storageProvider;
+    this.getStorageProvider = getStorageProvider;
     this.plugin = plugin;
     this.eventRefs = [];
     this.logger = Logger.getInstance();
     this.handlePasteEvent = this.handlePasteEvent.bind(this);
   }
   /**
-   * 注册粘贴事件处理
+   * Register paste event handler
    */
-  registerPasteEvent() {
-    this.unregisterPasteEvent();
+  register() {
+    this.unregister();
     try {
       const handler = this.handlePasteEvent;
       const eventName = "editor-paste";
@@ -12444,26 +17378,39 @@ var PasteHandler = class {
     }
   }
   /**
-   * 取消注册粘贴事件
+   * Unregister paste event handler
    */
-  unregisterPasteEvent() {
-    this.eventRefs.forEach((ref) => {
+  unregister() {
+    for (const ref of this.eventRefs) {
       if (ref) {
         this.app.workspace.offref(ref);
       }
-    });
+    }
     this.eventRefs = [];
     this.logger.info("\u5DF2\u53D6\u6D88\u6CE8\u518C\u7C98\u8D34\u4E8B\u4EF6");
   }
   /**
-   * 处理粘贴事件
+   * Handle paste event
    */
-  async handlePasteEvent(evt, editor, view) {
-    if (!evt.clipboardData || !evt.clipboardData.items) {
+  async handlePasteEvent(evt, editor, _view) {
+    if (!evt.clipboardData?.items) {
       return;
     }
-    const items = evt.clipboardData.items;
-    const imagesToProcess = [];
+    const images = this.extractImages(evt.clipboardData.items);
+    if (images.length === 0) {
+      return;
+    }
+    evt.preventDefault();
+    evt.stopPropagation();
+    for (const { file, mimeType } of images) {
+      await this.uploadImage(file, editor, mimeType);
+    }
+  }
+  /**
+   * Extract image files from clipboard items
+   */
+  extractImages(items) {
+    const images = [];
     for (let i2 = 0; i2 < items.length; i2++) {
       const item = items[i2];
       if (!item.type.startsWith("image/")) {
@@ -12471,141 +17418,512 @@ var PasteHandler = class {
       }
       const file = item.getAsFile();
       if (file) {
-        imagesToProcess.push({ file, type: item.type });
+        images.push({ file, mimeType: item.type });
       }
     }
-    if (imagesToProcess.length > 0) {
-      evt.preventDefault();
-      evt.stopPropagation();
-      for (const { file, type } of imagesToProcess) {
-        await this.processImageUpload(file, editor, type);
-      }
-    }
+    return images;
   }
   /**
-   * 处理图片上传
+   * Upload a single image and insert link into editor
    */
-  async processImageUpload(file, editor, mimeType) {
+  async uploadImage(file, editor, mimeType) {
+    const ext = this.getExtensionFromMime(mimeType);
+    const filename = `pasted-image-${v4_default()}${ext}`;
+    this.logger.info("\u5F00\u59CB\u4E0A\u4F20\u7C98\u8D34\u7684\u56FE\u7247...");
+    new import_obsidian2.Notice("\u6B63\u5728\u4E0A\u4F20\u56FE\u7247...", 2e3);
+    const placeholder = `![\u4E0A\u4F20\u4E2D...](${filename})`;
+    const startPos = editor.getCursor();
+    editor.replaceSelection(placeholder);
+    const endPos = {
+      line: startPos.line,
+      ch: startPos.ch + placeholder.length
+    };
     try {
-      this.logger.info("\u5F00\u59CB\u4E0A\u4F20\u7C98\u8D34\u7684\u56FE\u7247...");
-      new import_obsidian2.Notice("\u6B63\u5728\u4E0A\u4F20\u56FE\u7247...", 2e3);
-      const ext = this.getExtensionFromMime(mimeType);
-      const filename = `pasted-image-${v4_default()}${ext}`;
       const arrayBuffer = await file.arrayBuffer();
-      const placeholder = `![\u4E0A\u4F20\u4E2D...](${filename})`;
-      const cursor = editor.getCursor();
-      editor.replaceSelection(placeholder);
-      try {
-        const result = await this.storageProvider.uploadImage(
-          arrayBuffer,
-          filename,
-          void 0,
-          { timeout: 3e4 }
-        );
-        const markdownText = `![${file.name || "\u56FE\u7247"}](${result.url})`;
-        const content = editor.getValue();
-        const newContent = content.replace(placeholder, markdownText);
-        editor.setValue(newContent);
-        editor.setCursor(cursor);
-        this.logger.info(`\u7C98\u8D34\u56FE\u7247\u4E0A\u4F20\u6210\u529F: ${filename}`);
-        new import_obsidian2.Notice("\u56FE\u7247\u4E0A\u4F20\u6210\u529F!", 2e3);
-      } catch (error) {
-        const content = editor.getValue();
-        const newContent = content.replace(placeholder, "");
-        editor.setValue(newContent);
-        editor.setCursor(cursor);
-        const errorMessage = error.message || "\u672A\u77E5\u9519\u8BEF";
-        this.logger.error(`\u7C98\u8D34\u56FE\u7247\u4E0A\u4F20\u5931\u8D25: ${filename}`, error);
-        new import_obsidian2.Notice(`\u56FE\u7247\u4E0A\u4F20\u5931\u8D25: ${errorMessage}`, 5e3);
-      }
+      const storageProvider = this.getStorageProvider();
+      const result = await storageProvider.uploadImage(
+        arrayBuffer,
+        filename,
+        void 0,
+        { timeout: 3e4 }
+      );
+      const altText = file.name || "\u56FE\u7247";
+      const markdownLink = `![${altText}](${result.url})`;
+      this.replaceRange(editor, placeholder, markdownLink, startPos, endPos);
+      this.logger.info(`\u7C98\u8D34\u56FE\u7247\u4E0A\u4F20\u6210\u529F: ${filename}`);
+      new import_obsidian2.Notice("\u56FE\u7247\u4E0A\u4F20\u6210\u529F!", 2e3);
     } catch (error) {
-      this.logger.error("\u5904\u7406\u7C98\u8D34\u56FE\u7247\u65F6\u51FA\u9519", error);
-      new import_obsidian2.Notice("\u5904\u7406\u7C98\u8D34\u56FE\u7247\u65F6\u51FA\u9519", 5e3);
+      this.replaceRange(editor, placeholder, "", startPos, endPos);
+      const errorMessage = error.message || "\u672A\u77E5\u9519\u8BEF";
+      this.logger.error(`\u7C98\u8D34\u56FE\u7247\u4E0A\u4F20\u5931\u8D25: ${filename}`, error);
+      new import_obsidian2.Notice(`\u56FE\u7247\u4E0A\u4F20\u5931\u8D25: ${errorMessage}`, 5e3);
     }
   }
   /**
-   * 根据MIME类型获取文件扩展名
+   * Replace text in editor using targeted range replacement.
+   *
+   * This avoids overwriting concurrent user edits by:
+   * 1. Finding the placeholder within the expected range
+   * 2. Using replaceRange() for surgical replacement
+   * 3. Falling back to full content search only if range doesn't match
+   */
+  replaceRange(editor, oldText, newText, expectedStart, expectedEnd) {
+    const textAtRange = editor.getRange(expectedStart, expectedEnd);
+    if (textAtRange === oldText) {
+      editor.replaceRange(newText, expectedStart, expectedEnd);
+    } else {
+      const content = editor.getValue();
+      const index = content.indexOf(oldText);
+      if (index !== -1) {
+        const beforeText = content.substring(0, index);
+        const lines = beforeText.split("\n");
+        const startLine = lines.length - 1;
+        const startCh = lines[startLine].length;
+        const start = { line: startLine, ch: startCh };
+        const end = { line: startLine, ch: startCh + oldText.length };
+        editor.replaceRange(newText, start, end);
+      }
+    }
+  }
+  /**
+   * Get file extension from MIME type
    */
   getExtensionFromMime(mimeType) {
-    const mimeToExt = {
-      "image/png": ".png",
-      "image/jpeg": ".jpg",
-      "image/jpg": ".jpg",
-      "image/gif": ".gif",
-      "image/webp": ".webp",
-      "image/svg+xml": ".svg",
-      "image/bmp": ".bmp",
-      "image/x-icon": ".ico",
-      "image/tiff": ".tiff"
-    };
-    return mimeToExt[mimeType] || ".png";
+    return MIME_TO_EXT[mimeType] || ".png";
   }
 };
 
-// src/services/current-file-uploader.ts
-var import_obsidian4 = require("obsidian");
-var path2 = __toESM(require("path"));
-
-// src/services/upload-manager.ts
-var import_events = require("events");
-var import_obsidian3 = require("obsidian");
-var _UploadManager = class _UploadManager extends import_events.EventEmitter {
-  constructor(app, storageProvider, config) {
-    super();
-    this.deleteAfterUpload = false;
-    // 任务队列
-    this.queue = [];
-    this.activeTasks = /* @__PURE__ */ new Map();
-    this.completedTasks = /* @__PURE__ */ new Map();
-    this.uploadedFiles = /* @__PURE__ */ new Set();
-    // 记录已上传的文件路径
-    // 任务计数器
-    this.taskIdCounter = 0;
-    // 控制标志
-    this.isProcessing = false;
-    this.isPaused = false;
-    // 防抖定时器
-    this.processQueueTimeout = null;
-    this.app = app;
-    this.storageProvider = storageProvider;
-    this.config = config;
+// src/handlers/command.handler.ts
+var CommandHandler = class {
+  constructor(deps) {
+    this.deps = deps;
     this.logger = Logger.getInstance();
   }
   /**
-   * 获取单例实例
+   * Register all plugin commands
    */
+  registerCommands() {
+    const commands = this.getCommandDefinitions();
+    for (const cmd of commands) {
+      this.deps.plugin.addCommand({
+        id: cmd.id,
+        name: cmd.name,
+        callback: cmd.callback
+      });
+    }
+    this.logger.info(`\u5DF2\u6CE8\u518C ${commands.length} \u4E2A\u547D\u4EE4`);
+  }
+  /**
+   * Get all command definitions
+   */
+  getCommandDefinitions() {
+    return [
+      {
+        id: "upload-images-to-cloudflare",
+        name: "\u4E0A\u4F20\u6240\u6709\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247",
+        callback: () => this.uploadAllImages()
+      },
+      {
+        id: "upload-current-note-images",
+        name: "\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247",
+        callback: () => this.uploadCurrentNoteImages()
+      },
+      {
+        id: "cancel-all-uploads",
+        name: "\u53D6\u6D88\u6240\u6709\u4E0A\u4F20\u4EFB\u52A1",
+        callback: () => this.cancelAllUploads()
+      },
+      {
+        id: "retry-failed-uploads",
+        name: "\u91CD\u8BD5\u5931\u8D25\u7684\u4E0A\u4F20\u4EFB\u52A1",
+        callback: () => this.retryFailedUploads()
+      }
+    ];
+  }
+  // ===== Command Callbacks =====
+  /**
+   * Upload all images in vault
+   */
+  async uploadAllImages() {
+    this.logger.info("\u5F00\u59CB\u6267\u884C\u4E0A\u4F20\u8FC7\u7A0B");
+    if (!this.validateSettings()) {
+      return;
+    }
+    try {
+      const uploader = this.deps.getVaultUploader();
+      const result = await uploader.processVault();
+      if (!result) {
+        return;
+      }
+      const deletionSummary = result.deletionEnabled ? result.skippedDeletionDueToScanErrors ? "\u5220\u9664\u5DF2\u8DF3\u8FC7\uFF1A\u9A8C\u8BC1\u626B\u63CF\u51FA\u73B0\u9519\u8BEF" : `\u5220\u9664=${result.deletedLocalFiles}\uFF0C\u4ECD\u88AB\u5F15\u7528\u8DF3\u8FC7=${result.stillReferencedAfterRewrite}\uFF0C\u5220\u9664\u5931\u8D25=${result.deleteErrors}` : "\u5220\u9664\u672A\u542F\u7528";
+      this.logger.notify(
+        `\u5168\u5E93\u5904\u7406\u5B8C\u6210\uFF1A\u7B14\u8BB0=${result.totalNotes}\uFF0C\u56FE\u7247\u5F15\u7528=${result.referencedLocalImages}\uFF0C\u66FF\u6362\u94FE\u63A5=${result.replacedLinks}\uFF0C\u4E0A\u4F20\u6210\u529F=${result.successfulUploads}\uFF0C\u5931\u8D25=${result.failedUploads}\uFF0C\u53D6\u6D88=${result.cancelledUploads}\uFF0C${deletionSummary}`,
+        5e3
+      );
+    } catch (error) {
+      this.logger.error("\u6267\u884C\u4E0A\u4F20\u8FC7\u7A0B\u65F6\u51FA\u9519", error);
+      this.logger.notify("\u4E0A\u4F20\u8FC7\u7A0B\u4E2D\u51FA\u73B0\u9519\u8BEF\uFF0C\u8BF7\u67E5\u770B\u63A7\u5236\u53F0\u65E5\u5FD7\u3002", 5e3);
+    }
+  }
+  /**
+   * Upload images in current note
+   * Public to allow Ribbon icon to use the same validation path
+   */
+  async uploadCurrentNoteImages() {
+    this.logger.info("\u5F00\u59CB\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247");
+    if (!this.validateSettings()) {
+      return;
+    }
+    try {
+      const uploader = this.deps.getCurrentFileUploader();
+      const result = await uploader.processCurrentFile();
+      if (result) {
+        if (result.totalImages > 0) {
+          this.logger.notify(
+            `\u5904\u7406\u5B8C\u6210: \u6210\u529F\u4E0A\u4F20 ${result.successCount} \u5F20\u56FE\u7247, \u5931\u8D25 ${result.failureCount} \u5F20`,
+            3e3
+          );
+        } else {
+          this.logger.notify("\u5F53\u524D\u7B14\u8BB0\u4E2D\u6CA1\u6709\u9700\u8981\u4E0A\u4F20\u7684\u56FE\u7247", 3e3);
+        }
+      }
+    } catch (error) {
+      this.logger.error("\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u56FE\u7247\u65F6\u51FA\u9519", error);
+      this.logger.notify("\u4E0A\u4F20\u8FC7\u7A0B\u4E2D\u51FA\u73B0\u9519\u8BEF\uFF0C\u8BF7\u67E5\u770B\u63A7\u5236\u53F0\u65E5\u5FD7\u3002", 5e3);
+    }
+  }
+  /**
+   * Cancel all upload tasks
+   */
+  cancelAllUploads() {
+    const uploadManager = this.deps.getUploadManager();
+    uploadManager.cancelAll();
+    this.logger.notify("\u5DF2\u53D6\u6D88\u6240\u6709\u4E0A\u4F20\u4EFB\u52A1", 3e3);
+  }
+  /**
+   * Retry failed upload tasks
+   */
+  retryFailedUploads() {
+    const uploadManager = this.deps.getUploadManager();
+    uploadManager.retryFailed();
+    this.logger.notify("\u5DF2\u91CD\u65B0\u52A0\u5165\u5931\u8D25\u7684\u4EFB\u52A1\u5230\u961F\u5217", 3e3);
+  }
+  // ===== Settings Validation =====
+  /**
+   * Validate settings before upload operations.
+   * Uses type guards for type-safe provider-specific validation.
+   */
+  validateSettings() {
+    const settings = this.deps.getSettings();
+    if (isR2S3Provider(settings)) {
+      return this.validateR2S3Settings(settings);
+    }
+    if (isWorkerProvider(settings)) {
+      return this.validateWorkerSettings(settings);
+    }
+    this.logger.notify("\u672A\u77E5\u7684\u5B58\u50A8\u63D0\u4F9B\u8005\u7C7B\u578B", 5e3);
+    return false;
+  }
+  /**
+   * Validate R2 S3 API settings.
+   * Type guard ensures settings.r2S3Settings is defined.
+   */
+  validateR2S3Settings(settings) {
+    const { accountId, accessKeyId, secretAccessKey, bucketName } = settings.r2S3Settings;
+    if (!accountId || !accessKeyId || !secretAccessKey || !bucketName) {
+      this.logger.notify("\u8BF7\u5148\u5728\u63D2\u4EF6\u8BBE\u7F6E\u4E2D\u5B8C\u6210 R2 S3 API \u7684\u914D\u7F6E\u3002", 5e3);
+      return false;
+    }
+    return true;
+  }
+  /**
+   * Validate Cloudflare Worker settings.
+   */
+  validateWorkerSettings(settings) {
+    const { workerUrl, apiKey } = settings.workerSettings;
+    if (!workerUrl || !apiKey) {
+      this.logger.notify("\u8BF7\u5148\u5728\u63D2\u4EF6\u8BBE\u7F6E\u4E2D\u5B8C\u6210 Cloudflare Worker \u7684\u914D\u7F6E\u3002", 5e3);
+      return false;
+    }
+    return true;
+  }
+};
+
+// src/upload/retry-strategy.ts
+var NON_RETRYABLE_ERRORS = /* @__PURE__ */ new Set(["auth"]);
+var RETRYABLE_ERRORS = /* @__PURE__ */ new Set([
+  "timeout",
+  "network",
+  "server",
+  "unknown"
+]);
+var ExponentialBackoffStrategy = class _ExponentialBackoffStrategy {
+  constructor(config) {
+    this.config = { ...config };
+  }
+  /**
+   * Create from UploadConfig
+   */
+  static fromUploadConfig(config) {
+    return new _ExponentialBackoffStrategy({
+      maxRetries: config.maxRetries,
+      retryDelay: config.retryDelay,
+      maxRetryDelay: config.maxRetryDelay
+    });
+  }
+  decide(error, retryCount) {
+    if (NON_RETRYABLE_ERRORS.has(error.type)) {
+      return {
+        shouldRetry: false,
+        delay: 0,
+        reason: `Error type '${error.type}' is not retryable`
+      };
+    }
+    if (retryCount >= this.config.maxRetries) {
+      return {
+        shouldRetry: false,
+        delay: 0,
+        reason: `Max retries (${this.config.maxRetries}) exceeded`
+      };
+    }
+    if (!RETRYABLE_ERRORS.has(error.type)) {
+      return {
+        shouldRetry: false,
+        delay: 0,
+        reason: `Unknown error type '${error.type}'`
+      };
+    }
+    const delay = this.calculateDelay(retryCount);
+    return {
+      shouldRetry: true,
+      delay,
+      reason: `Retry ${retryCount + 1}/${this.config.maxRetries} after ${delay}ms`
+    };
+  }
+  /**
+   * Calculate delay using exponential backoff with jitter
+   *
+   * Formula: min(maxDelay, baseDelay * 2^retryCount)
+   */
+  calculateDelay(retryCount) {
+    const exponentialDelay = this.config.retryDelay * Math.pow(2, retryCount);
+    return Math.min(exponentialDelay, this.config.maxRetryDelay);
+  }
+  updateConfig(config) {
+    this.config = { ...this.config, ...config };
+  }
+  /**
+   * Get current configuration
+   */
+  getConfig() {
+    return { ...this.config };
+  }
+};
+
+// src/upload/task-runner.ts
+var import_obsidian3 = require("obsidian");
+var VaultFileReader = class {
+  constructor(app) {
+    this.app = app;
+  }
+  getFile(filePath) {
+    const file = this.app.vault.getAbstractFileByPath(filePath);
+    return file instanceof import_obsidian3.TFile ? file : null;
+  }
+  async readBinary(file) {
+    return this.app.vault.readBinary(file);
+  }
+};
+var TaskRunner = class {
+  constructor(fileReader, storageProvider) {
+    this.fileReader = fileReader;
+    this.storageProvider = storageProvider;
+    this.logger = Logger.getInstance();
+  }
+  /**
+   * Execute a single upload task
+   *
+   * @param task The task to execute (will be mutated with progress info)
+   * @param options Execution options (timeout, abort signal)
+   * @param onProgress Optional callback for progress updates
+   */
+  async execute(task, options, onProgress) {
+    try {
+      if (options?.signal?.aborted) {
+        return this.createErrorResult("unknown", "\u4EFB\u52A1\u5DF2\u53D6\u6D88");
+      }
+      const file = this.fileReader.getFile(task.filePath);
+      if (!file) {
+        return this.createErrorResult("unknown", `\u6587\u4EF6\u4E0D\u5B58\u5728: ${task.filePath}`);
+      }
+      const arrayBuffer = await this.fileReader.readBinary(file);
+      if (options?.signal?.aborted) {
+        return this.createErrorResult("unknown", "\u4EFB\u52A1\u5DF2\u53D6\u6D88");
+      }
+      const startTime = Date.now();
+      const progressCallback = (progress) => {
+        const uploadedSize = Math.floor(task.fileSize * progress);
+        const elapsedSeconds = (Date.now() - startTime) / 1e3;
+        const speed = elapsedSeconds > 0 ? uploadedSize / elapsedSeconds : void 0;
+        onProgress?.({ progress, uploadedSize, speed });
+      };
+      const result = await this.storageProvider.uploadImage(
+        arrayBuffer,
+        task.fileName,
+        progressCallback,
+        options?.timeout || options?.signal ? { timeout: options.timeout, signal: options.signal } : void 0
+      );
+      this.logger.info(`\u4E0A\u4F20\u6210\u529F: ${task.fileName} -> ${result.url}`);
+      return {
+        success: true,
+        url: result.url,
+        etag: result.etag
+      };
+    } catch (error) {
+      return this.handleError(error, task.fileName);
+    }
+  }
+  /**
+   * Handle and normalize errors
+   */
+  handleError(error, fileName) {
+    this.logger.error(`\u4E0A\u4F20\u5931\u8D25: ${fileName}`, error);
+    if (error.type) {
+      return {
+        success: false,
+        error
+      };
+    }
+    const normalizedError = this.normalizeError(error);
+    return {
+      success: false,
+      error: normalizedError
+    };
+  }
+  /**
+   * Normalize error to UploadError format
+   */
+  normalizeError(error) {
+    const message = error.message || String(error);
+    let type = "unknown";
+    if (message.includes("timeout") || message.includes("\u8D85\u65F6")) {
+      type = "timeout";
+    } else if (message.includes("network") || message.includes("\u7F51\u7EDC") || message.includes("Failed to fetch")) {
+      type = "network";
+    } else if (error.code === "AUTH_ERROR" || message.includes("\u8BA4\u8BC1") || message.includes("\u6388\u6743")) {
+      type = "auth";
+    } else if (error.code === "SERVER_ERROR" || error.status && error.status >= 500) {
+      type = "server";
+    }
+    return {
+      type,
+      message,
+      code: error.code || error.status,
+      details: error
+    };
+  }
+  /**
+   * Create error result helper
+   */
+  createErrorResult(type, message) {
+    return {
+      success: false,
+      error: { type, message }
+    };
+  }
+};
+
+// src/upload/upload-manager.ts
+var import_events = require("events");
+var import_obsidian4 = require("obsidian");
+var _UploadManager = class _UploadManager extends import_events.EventEmitter {
+  constructor(app, storageProvider, config) {
+    super();
+    // Task queues
+    this.queue = [];
+    this.activeTasks = /* @__PURE__ */ new Map();
+    this.retryingTasks = /* @__PURE__ */ new Map();
+    this.completedTasks = /* @__PURE__ */ new Map();
+    this.uploadedFiles = /* @__PURE__ */ new Set();
+    // Abort controllers for active uploads (allows true cancellation)
+    this.abortControllers = /* @__PURE__ */ new Map();
+    this.retryTimers = /* @__PURE__ */ new Map();
+    // Counters and flags
+    this.taskIdCounter = 0;
+    this.isProcessing = false;
+    this.isPaused = false;
+    this.processQueueTimeout = null;
+    this.cleanupInterval = null;
+    this.app = app;
+    this.config = config;
+    this.logger = Logger.getInstance();
+    this.fileReader = new VaultFileReader(app);
+    this.taskRunner = new TaskRunner(this.fileReader, storageProvider);
+    this.retryStrategy = ExponentialBackoffStrategy.fromUploadConfig(config);
+    this.startAutoCleanup();
+  }
+  // ===== Singleton Pattern =====
   static getInstance(app, storageProvider, config) {
     if (!_UploadManager.instance) {
       _UploadManager.instance = new _UploadManager(app, storageProvider, config);
     }
     return _UploadManager.instance;
   }
-  /**
-   * 销毁单例实例
-   */
   static destroyInstance() {
     if (_UploadManager.instance) {
+      _UploadManager.instance.stopAutoCleanup();
       _UploadManager.instance.cancelAll();
       _UploadManager.instance.removeAllListeners();
       _UploadManager.instance = null;
     }
   }
-  /**
-   * 更新配置
-   */
+  // ===== Configuration =====
   updateConfig(config) {
     this.config = { ...this.config, ...config };
+    if (this.retryStrategy instanceof ExponentialBackoffStrategy) {
+      this.retryStrategy.updateConfig({
+        maxRetries: this.config.maxRetries,
+        retryDelay: this.config.retryDelay,
+        maxRetryDelay: this.config.maxRetryDelay
+      });
+    }
     this.logger.info("\u4E0A\u4F20\u7BA1\u7406\u5668\u914D\u7F6E\u5DF2\u66F4\u65B0", config);
   }
   /**
-   * 设置是否在上传成功后删除本地文件
+   * Update the storage provider.
+   *
+   * IMPORTANT: This should be called when switching between Worker and R2 S3 providers.
+   * The method will:
+   * 1. Abort any active uploads (interrupt network requests)
+   * 2. Cancel any pending tasks
+   * 3. Create a new TaskRunner with the new provider
+   * 4. Clear upload history and reset state for a clean session
    */
-  setDeleteAfterUpload(value) {
-    this.deleteAfterUpload = value;
+  updateStorageProvider(storageProvider) {
+    this.abortAllActiveUploads();
+    const hasPendingTasks = this.queue.length > 0 || this.activeTasks.size > 0 || this.retryingTasks.size > 0;
+    if (hasPendingTasks) {
+      this.cancelAll();
+      this.logger.warn("\u5207\u6362\u5B58\u50A8\u63D0\u4F9B\u8005\uFF0C\u5DF2\u53D6\u6D88\u6240\u6709\u5F85\u5904\u7406\u4EFB\u52A1");
+    }
+    this.taskRunner = new TaskRunner(this.fileReader, storageProvider);
+    this.uploadedFiles.clear();
+    this.completedTasks.clear();
+    this.taskIdCounter = 0;
+    this.logger.info(`\u5B58\u50A8\u63D0\u4F9B\u8005\u5DF2\u5207\u6362: ${storageProvider.getType()}`);
+    this.emitStatsUpdate();
   }
   /**
-   * 添加单个任务到队列
+   * Abort all active upload requests
    */
+  abortAllActiveUploads() {
+    for (const [taskId, controller] of this.abortControllers) {
+      controller.abort();
+      this.logger.info(`\u5DF2\u4E2D\u6B62\u4E0A\u4F20\u8BF7\u6C42: ${taskId}`);
+    }
+    this.abortControllers.clear();
+  }
+  // ===== Task Addition =====
   async addTask(filePath) {
     if (this.uploadedFiles.has(filePath)) {
       this.logger.info(`\u6587\u4EF6\u5DF2\u7ECF\u4E0A\u4F20\u8FC7\uFF0C\u8DF3\u8FC7: ${filePath}`);
@@ -12617,7 +17935,7 @@ var _UploadManager = class _UploadManager extends import_events.EventEmitter {
       return existingTask;
     }
     const file = this.app.vault.getAbstractFileByPath(filePath);
-    if (!(file instanceof import_obsidian3.TFile)) {
+    if (!(file instanceof import_obsidian4.TFile)) {
       throw new Error(`\u6587\u4EF6\u4E0D\u5B58\u5728: ${filePath}`);
     }
     const task = {
@@ -12636,9 +17954,6 @@ var _UploadManager = class _UploadManager extends import_events.EventEmitter {
     this.scheduleProcessQueue();
     return task;
   }
-  /**
-   * 批量添加任务
-   */
   async addTasks(filePaths) {
     const tasks = [];
     for (const filePath of filePaths) {
@@ -12651,20 +17966,13 @@ var _UploadManager = class _UploadManager extends import_events.EventEmitter {
     }
     return tasks;
   }
-  /**
-   * 安排处理队列（防抖）
-   */
+  // ===== Queue Processing =====
   scheduleProcessQueue() {
     if (this.processQueueTimeout) {
       clearTimeout(this.processQueueTimeout);
     }
-    this.processQueueTimeout = setTimeout(() => {
-      this.processQueue();
-    }, 100);
+    this.processQueueTimeout = setTimeout(() => this.processQueue(), 100);
   }
-  /**
-   * 处理队列
-   */
   async processQueue() {
     if (this.isProcessing || this.isPaused) {
       return;
@@ -12674,88 +17982,94 @@ var _UploadManager = class _UploadManager extends import_events.EventEmitter {
       while (this.queue.length > 0 && this.activeTasks.size < this.config.maxConcurrency && !this.isPaused) {
         const task = this.queue.shift();
         if (task) {
-          this.startTask(task);
+          this.executeTask(task).catch((err) => {
+            this.logger.error(`\u4EFB\u52A1\u6267\u884C\u5F02\u5E38: ${task.fileName}`, err);
+          });
         }
       }
-      if (this.queue.length === 0 && this.activeTasks.size === 0) {
+      if (this.queue.length === 0 && this.activeTasks.size === 0 && this.retryingTasks.size === 0) {
         this.emit(_UploadManager.EVENTS.QUEUE_EMPTY);
       }
     } finally {
       this.isProcessing = false;
     }
   }
-  /**
-   * 开始任务
-   */
-  async startTask(task) {
+  // ===== Task Execution =====
+  async executeTask(task) {
     task.status = "uploading";
     task.startedAt = Date.now();
     this.activeTasks.set(task.id, task);
     this.emit(_UploadManager.EVENTS.TASK_STARTED, task);
     this.emitStatsUpdate();
-    try {
-      const file = this.app.vault.getAbstractFileByPath(task.filePath);
-      if (!(file instanceof import_obsidian3.TFile)) {
-        throw new Error(`\u6587\u4EF6\u4E0D\u5B58\u5728: ${task.filePath}`);
-      }
-      const arrayBuffer = await this.app.vault.readBinary(file);
-      const onProgress = (progress) => {
-        task.progress = progress;
-        task.uploadedSize = Math.floor(task.fileSize * progress);
-        if (task.startedAt) {
-          const elapsedSeconds = (Date.now() - task.startedAt) / 1e3;
-          if (elapsedSeconds > 0 && task.uploadedSize) {
-            task.speed = task.uploadedSize / elapsedSeconds;
-          }
-        }
-        this.emit(_UploadManager.EVENTS.TASK_PROGRESS, task);
-      };
-      const result = await this.storageProvider.uploadImage(
-        arrayBuffer,
-        task.fileName,
-        onProgress,
-        { timeout: this.config.timeout }
-      );
-      task.status = "completed";
-      task.completedAt = Date.now();
-      task.url = result.url;
-      task.progress = 1;
-      task.uploadedSize = task.fileSize;
-      this.uploadedFiles.add(task.filePath);
-      this.activeTasks.delete(task.id);
-      this.completedTasks.set(task.id, task);
-      this.emit(_UploadManager.EVENTS.TASK_COMPLETED, task);
-      this.emitStatsUpdate();
-      this.logger.info(`\u4E0A\u4F20\u6210\u529F: ${task.fileName} -> ${result.url}`);
-    } catch (error) {
-      await this.handleTaskError(task, error);
-    } finally {
+    const abortController = new AbortController();
+    this.abortControllers.set(task.id, abortController);
+    const onProgress = (info) => {
+      task.progress = info.progress;
+      task.uploadedSize = info.uploadedSize;
+      task.speed = info.speed;
+      this.emit(_UploadManager.EVENTS.TASK_PROGRESS, task);
+    };
+    const options = {
+      timeout: this.config.timeout,
+      signal: abortController.signal
+    };
+    const result = await this.taskRunner.execute(task, options, onProgress);
+    this.abortControllers.delete(task.id);
+    if (abortController.signal.aborted) {
+      this.logger.info(`\u4EFB\u52A1\u5DF2\u53D6\u6D88\uFF0C\u8DF3\u8FC7\u7ED3\u679C\u5904\u7406: ${task.fileName}`);
       this.scheduleProcessQueue();
+      return;
     }
+    if (result.success) {
+      this.handleTaskSuccess(task, result.url);
+    } else {
+      await this.handleTaskError(task, result.error);
+    }
+    this.scheduleProcessQueue();
   }
-  /**
-   * 处理任务错误
-   */
+  handleTaskSuccess(task, url) {
+    task.status = "completed";
+    task.completedAt = Date.now();
+    task.url = url;
+    task.progress = 1;
+    task.uploadedSize = task.fileSize;
+    this.uploadedFiles.add(task.filePath);
+    this.activeTasks.delete(task.id);
+    this.completedTasks.set(task.id, task);
+    this.emit(_UploadManager.EVENTS.TASK_COMPLETED, task);
+    this.emitStatsUpdate();
+    this.logger.info(`\u4E0A\u4F20\u6210\u529F: ${task.fileName} -> ${url}`);
+  }
   async handleTaskError(task, error) {
-    task.error = this.normalizeError(error);
+    task.error = error;
     task.retryCount = (task.retryCount || 0) + 1;
-    if (task.retryCount < this.config.maxRetries && this.shouldRetry(task.error)) {
-      const delay = Math.min(
-        this.config.retryDelay * Math.pow(2, task.retryCount - 1),
-        this.config.maxRetryDelay
-      );
+    const decision = this.retryStrategy.decide(error, task.retryCount);
+    if (decision.shouldRetry) {
       task.status = "retrying";
-      task.nextRetryAt = Date.now() + delay;
-      this.logger.warn(`\u4EFB\u52A1\u5931\u8D25\uFF0C${delay}ms \u540E\u91CD\u8BD5 (${task.retryCount}/${this.config.maxRetries}): ${task.fileName}`, error);
+      task.nextRetryAt = Date.now() + decision.delay;
+      this.logger.warn(
+        `\u4EFB\u52A1\u5931\u8D25\uFF0C\u7B2C ${task.retryCount}/${this.config.maxRetries} \u6B21\u91CD\u8BD5\uFF0C${decision.delay}ms \u540E\u6267\u884C: ${task.fileName}`,
+        error
+      );
       this.activeTasks.delete(task.id);
-      setTimeout(() => {
-        if (task.status === "retrying") {
-          task.status = "pending";
-          delete task.nextRetryAt;
-          this.queue.unshift(task);
-          this.scheduleProcessQueue();
+      this.retryingTasks.set(task.id, task);
+      const existingTimer = this.retryTimers.get(task.id);
+      if (existingTimer) {
+        clearTimeout(existingTimer);
+      }
+      const timer = setTimeout(() => {
+        this.retryTimers.delete(task.id);
+        if (task.status !== "retrying") {
+          this.retryingTasks.delete(task.id);
+          return;
         }
-      }, delay);
+        task.status = "pending";
+        delete task.nextRetryAt;
+        this.retryingTasks.delete(task.id);
+        this.queue.unshift(task);
+        this.scheduleProcessQueue();
+      }, decision.delay);
+      this.retryTimers.set(task.id, timer);
     } else {
       task.status = "failed";
       task.completedAt = Date.now();
@@ -12769,100 +18083,78 @@ var _UploadManager = class _UploadManager extends import_events.EventEmitter {
     }
     this.emitStatsUpdate();
   }
-  /**
-   * 规范化错误对象
-   */
-  normalizeError(error) {
-    if (error.type) {
-      return error;
-    }
-    let type = "unknown";
-    const message = error.message || String(error);
-    if (message.includes("timeout") || message.includes("\u8D85\u65F6")) {
-      type = "timeout";
-    } else if (message.includes("network") || message.includes("\u7F51\u7EDC")) {
-      type = "network";
-    } else if (error.code === "AUTH_ERROR" || message.includes("\u8BA4\u8BC1") || message.includes("\u6388\u6743")) {
-      type = "auth";
-    } else if (error.code === "SERVER_ERROR" || error.status && error.status >= 500) {
-      type = "server";
-    }
-    return {
-      type,
-      message,
-      code: error.code || error.status,
-      details: error
-    };
-  }
-  /**
-   * 判断是否应该重试
-   */
-  shouldRetry(error) {
-    if (error.type === "auth") {
-      return false;
-    }
-    return ["timeout", "network", "server", "unknown"].includes(error.type);
-  }
-  /**
-   * 取消任务
-   */
+  // ===== Task Control =====
   cancelTask(taskId) {
     const queueIndex = this.queue.findIndex((t2) => t2.id === taskId);
     if (queueIndex !== -1) {
       const task = this.queue.splice(queueIndex, 1)[0];
-      task.status = "cancelled";
-      task.completedAt = Date.now();
-      this.completedTasks.set(task.id, task);
-      this.emit(_UploadManager.EVENTS.TASK_CANCELLED, task);
-      this.emitStatsUpdate();
+      this.markAsCancelled(task);
+      return;
+    }
+    const retryingTask = this.retryingTasks.get(taskId);
+    if (retryingTask) {
+      const timer = this.retryTimers.get(taskId);
+      if (timer) {
+        clearTimeout(timer);
+        this.retryTimers.delete(taskId);
+      }
+      this.retryingTasks.delete(taskId);
+      this.markAsCancelled(retryingTask);
+      this.logger.info(`\u5DF2\u53D6\u6D88\u4EFB\u52A1: ${retryingTask.fileName}`);
       return;
     }
     const activeTask = this.activeTasks.get(taskId);
     if (activeTask) {
-      activeTask.status = "cancelled";
-      activeTask.completedAt = Date.now();
+      const controller = this.abortControllers.get(taskId);
+      if (controller) {
+        controller.abort();
+        this.abortControllers.delete(taskId);
+      }
       this.activeTasks.delete(taskId);
-      this.completedTasks.set(activeTask.id, activeTask);
-      this.emit(_UploadManager.EVENTS.TASK_CANCELLED, activeTask);
-      this.emitStatsUpdate();
+      this.markAsCancelled(activeTask);
       this.logger.info(`\u5DF2\u53D6\u6D88\u4EFB\u52A1: ${activeTask.fileName}`);
     }
   }
-  /**
-   * 取消所有任务
-   */
+  markAsCancelled(task) {
+    task.status = "cancelled";
+    task.completedAt = Date.now();
+    delete task.nextRetryAt;
+    this.completedTasks.set(task.id, task);
+    this.emit(_UploadManager.EVENTS.TASK_CANCELLED, task);
+    this.emitStatsUpdate();
+  }
   cancelAll() {
+    this.abortAllActiveUploads();
+    for (const [taskId, timer] of this.retryTimers) {
+      clearTimeout(timer);
+      this.logger.info(`\u5DF2\u53D6\u6D88\u91CD\u8BD5\u5B9A\u65F6\u5668: ${taskId}`);
+    }
+    this.retryTimers.clear();
+    for (const task of this.retryingTasks.values()) {
+      this.markAsCancelled(task);
+    }
+    this.retryingTasks.clear();
     while (this.queue.length > 0) {
       const task = this.queue.shift();
-      task.status = "cancelled";
-      task.completedAt = Date.now();
-      this.completedTasks.set(task.id, task);
-      this.emit(_UploadManager.EVENTS.TASK_CANCELLED, task);
+      this.markAsCancelled(task);
     }
     for (const task of this.activeTasks.values()) {
-      task.status = "cancelled";
-      task.completedAt = Date.now();
-      this.completedTasks.set(task.id, task);
-      this.emit(_UploadManager.EVENTS.TASK_CANCELLED, task);
+      this.markAsCancelled(task);
     }
     this.activeTasks.clear();
-    this.emitStatsUpdate();
     this.logger.info("\u5DF2\u53D6\u6D88\u6240\u6709\u4E0A\u4F20\u4EFB\u52A1");
   }
-  /**
-   * 重试失败的任务
-   */
   retryFailed() {
     const failedTasks = Array.from(this.completedTasks.values()).filter((t2) => t2.status === "failed");
     for (const task of failedTasks) {
       task.status = "pending";
       task.retryCount = 0;
+      task.progress = 0;
       delete task.error;
       delete task.startedAt;
       delete task.completedAt;
       delete task.uploadedSize;
       delete task.speed;
-      task.progress = 0;
       this.completedTasks.delete(task.id);
       this.queue.push(task);
     }
@@ -12872,9 +18164,6 @@ var _UploadManager = class _UploadManager extends import_events.EventEmitter {
       this.scheduleProcessQueue();
     }
   }
-  /**
-   * 暂停/恢复处理
-   */
   togglePause() {
     this.isPaused = !this.isPaused;
     if (!this.isPaused) {
@@ -12882,15 +18171,9 @@ var _UploadManager = class _UploadManager extends import_events.EventEmitter {
     }
     this.logger.info(this.isPaused ? "\u5DF2\u6682\u505C\u4E0A\u4F20" : "\u5DF2\u6062\u590D\u4E0A\u4F20");
   }
-  /**
-   * 获取任务统计信息
-   */
+  // ===== Statistics & Queries =====
   getStats() {
-    const allTasks = [
-      ...this.queue,
-      ...Array.from(this.activeTasks.values()),
-      ...Array.from(this.completedTasks.values())
-    ];
+    const allTasks = this.getAllTasks();
     const stats = {
       total: allTasks.length,
       pending: this.queue.length,
@@ -12904,35 +18187,39 @@ var _UploadManager = class _UploadManager extends import_events.EventEmitter {
     };
     for (const task of allTasks) {
       stats.totalSize += task.fileSize;
-      if (task.status === "completed") {
-        stats.completed++;
-        stats.uploadedSize += task.fileSize;
-      } else if (task.status === "failed") {
-        stats.failed++;
-      } else if (task.status === "cancelled") {
-        stats.cancelled++;
-      } else if (task.uploadedSize) {
-        stats.uploadedSize += task.uploadedSize;
+      switch (task.status) {
+        case "completed":
+          stats.completed++;
+          stats.uploadedSize += task.fileSize;
+          break;
+        case "failed":
+          stats.failed++;
+          break;
+        case "cancelled":
+          stats.cancelled++;
+          break;
+        default:
+          if (task.uploadedSize) {
+            stats.uploadedSize += task.uploadedSize;
+          }
       }
     }
     return stats;
   }
-  /**
-   * 获取所有任务
-   */
   getAllTasks() {
     return [
       ...this.queue,
       ...Array.from(this.activeTasks.values()),
+      ...Array.from(this.retryingTasks.values()),
       ...Array.from(this.completedTasks.values())
     ];
   }
-  /**
-   * 根据路径查找任务
-   */
   findTaskByPath(filePath) {
     let task = this.queue.find((t2) => t2.filePath === filePath);
     if (task) return task;
+    for (const t2 of this.retryingTasks.values()) {
+      if (t2.filePath === filePath) return t2;
+    }
     for (const t2 of this.activeTasks.values()) {
       if (t2.filePath === filePath) return t2;
     }
@@ -12941,113 +18228,545 @@ var _UploadManager = class _UploadManager extends import_events.EventEmitter {
     }
     return void 0;
   }
+  // ===== Cleanup =====
   /**
-   * 发送统计更新事件
+   * Start periodic auto-cleanup of old tasks
    */
+  startAutoCleanup() {
+    this.stopAutoCleanup();
+    this.cleanupInterval = setInterval(() => {
+      this.cleanupOldTasks();
+    }, _UploadManager.CLEANUP_INTERVAL_MS);
+  }
+  /**
+   * Stop auto-cleanup interval
+   */
+  stopAutoCleanup() {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
+    }
+  }
+  /**
+   * Remove old completed/failed/cancelled tasks from memory
+   * Called automatically by cleanup interval
+   */
+  cleanupOldTasks() {
+    const now = Date.now();
+    const maxAge = _UploadManager.CLEANUP_MAX_AGE_MS;
+    let cleanedCount = 0;
+    for (const [id, task] of this.completedTasks) {
+      const taskAge = now - (task.completedAt || task.createdAt);
+      if (taskAge > maxAge) {
+        this.completedTasks.delete(id);
+        if (task.status === "completed") {
+          this.uploadedFiles.delete(task.filePath);
+        }
+        cleanedCount++;
+      }
+    }
+    if (cleanedCount > 0) {
+      this.logger.info(`\u81EA\u52A8\u6E05\u7406\u4E86 ${cleanedCount} \u4E2A\u65E7\u4EFB\u52A1`);
+      this.emitStatsUpdate();
+    }
+  }
+  /**
+   * Manually clear completed tasks
+   * @param includeFailedAndCancelled If true, also clears failed and cancelled tasks
+   */
+  clearCompleted(includeFailedAndCancelled = false) {
+    const tasksToRemove = Array.from(this.completedTasks.entries()).filter(([_, task]) => {
+      if (task.status === "completed") return true;
+      if (includeFailedAndCancelled && (task.status === "failed" || task.status === "cancelled")) return true;
+      return false;
+    });
+    for (const [id, task] of tasksToRemove) {
+      this.completedTasks.delete(id);
+      if (task.status === "completed") {
+        this.uploadedFiles.delete(task.filePath);
+      }
+    }
+    this.logger.info(`\u5DF2\u6E05\u7406 ${tasksToRemove.length} \u4E2A\u4EFB\u52A1`);
+    this.emitStatsUpdate();
+  }
+  // ===== Event Helpers =====
   emitStatsUpdate() {
     this.emit(_UploadManager.EVENTS.STATS_UPDATED, this.getStats());
   }
-  /**
-   * 清理完成的任务
-   */
-  clearCompleted() {
-    const completedIds = Array.from(this.completedTasks.entries()).filter(([_, task]) => task.status === "completed").map(([id]) => id);
-    for (const id of completedIds) {
-      this.completedTasks.delete(id);
-    }
-    this.logger.info(`\u5DF2\u6E05\u7406 ${completedIds.length} \u4E2A\u5DF2\u5B8C\u6210\u4EFB\u52A1`);
-    this.emitStatsUpdate();
-  }
 };
 _UploadManager.instance = null;
+// Auto-cleanup configuration
+// Tasks older than this will be automatically removed from completedTasks
+_UploadManager.CLEANUP_MAX_AGE_MS = 30 * 60 * 1e3;
+// 30 minutes
+_UploadManager.CLEANUP_INTERVAL_MS = 5 * 60 * 1e3;
+// Check every 5 minutes
+// Event constants
 _UploadManager.EVENTS = UPLOAD_EVENTS;
 var UploadManager = _UploadManager;
 
-// src/services/current-file-uploader.ts
-var CurrentFileUploader = class {
-  // 添加设置引用
+// src/upload/current-file-uploader.ts
+var import_obsidian5 = require("obsidian");
+
+// src/image/parser.ts
+var ImageLinkParser = class {
   /**
-   * 构造函数
+   * Parse content and extract all image links
+   *
+   * @param content Markdown content to parse
+   * @returns Array of parsed image links with metadata
    */
-  constructor(app, storageProvider, uploadManager, settings) {
+  parse(content) {
+    const links = [];
+    this.parseStandardFormat(content, links);
+    this.parseObsidianFormat(content, links);
+    links.sort((a2, b2) => a2.index - b2.index);
+    return links;
+  }
+  /**
+   * Parse only local (non-remote) image links
+   *
+   * @param content Markdown content to parse
+   * @returns Array of local image links
+   */
+  parseLocalImages(content) {
+    return this.parse(content).filter((link) => !link.isRemote);
+  }
+  /**
+   * Check if a path is a remote URL
+   */
+  isRemoteUrl(path) {
+    return path.startsWith("http://") || path.startsWith("https://");
+  }
+  /**
+   * Parse standard markdown image format: ![alt](path)
+   *
+   * Handles:
+   * - Basic: ![alt](path)
+   * - With title: ![alt](path "title")
+   * - With angle brackets: ![alt](<path with spaces.png>)
+   * - Combined: ![alt](<path> "title")
+   */
+  parseStandardFormat(content, links) {
+    const regex = new RegExp(IMAGE_PATTERNS.STANDARD_MARKDOWN.source, "g");
+    let match;
+    while ((match = regex.exec(content)) !== null) {
+      const fullMatch = match[0];
+      const altText = match[1];
+      const rawDestination = match[2];
+      const { path, title } = this.parseStandardDestination(rawDestination);
+      const link = {
+        fullMatch,
+        index: match.index,
+        length: fullMatch.length,
+        format: "standard",
+        altText,
+        path,
+        isRemote: this.isRemoteUrl(path)
+      };
+      if (title) {
+        link.title = title;
+      }
+      links.push(link);
+    }
+  }
+  /**
+   * Parse the destination part of a standard markdown image link
+   *
+   * Markdown spec allows:
+   * - <url> (angle brackets, allows spaces)
+   * - url (no brackets, ends at whitespace)
+   * - Followed by optional "title" or 'title' or (title)
+   */
+  parseStandardDestination(raw) {
+    const trimmed = raw.trim();
+    if (trimmed.startsWith("<")) {
+      const closeIndex = trimmed.indexOf(">");
+      if (closeIndex !== -1) {
+        const path2 = trimmed.substring(1, closeIndex);
+        const rest2 = trimmed.substring(closeIndex + 1).trim();
+        const title2 = this.extractTitle(rest2);
+        return { path: path2, title: title2 };
+      }
+    }
+    const spaceIndex = trimmed.search(/\s/);
+    if (spaceIndex === -1) {
+      return { path: trimmed };
+    }
+    const path = trimmed.substring(0, spaceIndex);
+    const rest = trimmed.substring(spaceIndex).trim();
+    const title = this.extractTitle(rest);
+    return { path, title };
+  }
+  /**
+   * Extract title from the rest of the destination string
+   * Title can be in "quotes", 'quotes', or (parentheses)
+   */
+  extractTitle(rest) {
+    if (!rest) return void 0;
+    const match = rest.match(/^["'(](.*)["')]$/);
+    if (match) {
+      return match[1];
+    }
+    if (rest.startsWith('"') || rest.startsWith("'")) {
+      const quote = rest[0];
+      const endIndex = rest.lastIndexOf(quote);
+      if (endIndex > 0) {
+        return rest.substring(1, endIndex);
+      }
+    }
+    if (rest.startsWith("(")) {
+      const endIndex = rest.lastIndexOf(")");
+      if (endIndex > 0) {
+        return rest.substring(1, endIndex);
+      }
+    }
+    return void 0;
+  }
+  /**
+   * Parse Obsidian internal image format: ![[path]]
+   *
+   * Handles:
+   * - Basic: ![[image.png]]
+   * - With alias/size: ![[image.png|100]] or ![[image.png|alt text]]
+   * - With heading: ![[image.png#section]] (strip the heading part)
+   * - Combined: ![[folder/image.png|100]]
+   */
+  parseObsidianFormat(content, links) {
+    const regex = new RegExp(IMAGE_PATTERNS.OBSIDIAN_INTERNAL.source, "g");
+    let match;
+    while ((match = regex.exec(content)) !== null) {
+      const fullMatch = match[0];
+      const rawPath = match[1];
+      const { path, alias } = this.parseObsidianPath(rawPath);
+      const link = {
+        fullMatch,
+        index: match.index,
+        length: fullMatch.length,
+        format: "obsidian",
+        altText: "",
+        // Obsidian format doesn't have explicit alt text
+        path,
+        isRemote: false
+        // Obsidian internal links are never remote
+      };
+      if (alias) {
+        link.obsidianAlias = alias;
+      }
+      links.push(link);
+    }
+  }
+  /**
+   * Parse Obsidian path to extract the actual file path
+   *
+   * Format: path[#heading][|alias]
+   * Examples:
+   * - image.png -> {path: "image.png"}
+   * - image.png|100 -> {path: "image.png", alias: "100"}
+   * - image.png#section -> {path: "image.png"}
+   * - image.png#section|alt -> {path: "image.png", alias: "alt"}
+   */
+  parseObsidianPath(raw) {
+    let path = raw;
+    let alias;
+    const pipeIndex = path.indexOf("|");
+    if (pipeIndex !== -1) {
+      alias = path.substring(pipeIndex + 1);
+      path = path.substring(0, pipeIndex);
+    }
+    const hashIndex = path.indexOf("#");
+    if (hashIndex !== -1) {
+      path = path.substring(0, hashIndex);
+    }
+    return { path: path.trim(), alias: alias?.trim() };
+  }
+};
+
+// src/image/finder.ts
+var ImageFinder = class {
+  constructor(app, adapter) {
     this.app = app;
-    this.storageProvider = storageProvider;
+    this.adapter = adapter;
+    this.parser = new ImageLinkParser();
+  }
+  /**
+   * Find all local images in file content
+   *
+   * @param content Markdown content
+   * @param basePath Path of the file (for resolving relative paths)
+   * @param options Finder options
+   * @returns Array of resolved images
+   */
+  async findInContent(content, basePath, options = {}) {
+    const links = this.parser.parseLocalImages(content);
+    return this.resolveImages(links, basePath, options);
+  }
+  /**
+   * Find all local images in a file
+   *
+   * @param file The markdown file to search
+   * @param options Finder options
+   * @returns Array of resolved images
+   */
+  async findInFile(file, options = {}) {
+    const content = await this.app.vault.cachedRead(file);
+    return this.findInContent(content, file.path, options);
+  }
+  /**
+   * Resolve parsed image links to absolute paths with existence check
+   */
+  async resolveImages(links, basePath, options) {
+    const results = [];
+    const seenPaths = /* @__PURE__ */ new Set();
+    for (const link of links) {
+      const absolutePath = await resolveAbsolutePath(basePath, link.path, this.adapter);
+      if (!absolutePath) {
+        if (options.includeNonExistent) {
+          results.push({
+            originalPath: link.path,
+            absolutePath: "",
+            exists: false
+          });
+        }
+        continue;
+      }
+      if (seenPaths.has(absolutePath)) {
+        continue;
+      }
+      seenPaths.add(absolutePath);
+      const exists = await this.adapter.exists(absolutePath);
+      if (!exists && !options.includeNonExistent) {
+        continue;
+      }
+      const resolved = {
+        originalPath: link.path,
+        absolutePath,
+        exists
+      };
+      if (exists) {
+        const stat = await this.adapter.stat(absolutePath);
+        if (stat) {
+          resolved.size = stat.size;
+        }
+      }
+      results.push(resolved);
+    }
+    return results;
+  }
+};
+
+// src/image/updater.ts
+var LinkUpdater = class {
+  constructor(adapter) {
+    this.adapter = adapter;
+    this.parser = new ImageLinkParser();
+  }
+  /**
+   * Update image links in content with new URLs
+   *
+   * @param content Original markdown content
+   * @param basePath Path of the file (for resolving relative paths)
+   * @param replacements Map of absolute paths to new URLs
+   * @returns Updated content and stats
+   */
+  async updateLinks(content, basePath, replacements) {
+    if (Object.keys(replacements).length === 0) {
+      return { content, replacedCount: 0, modified: false };
+    }
+    const links = this.parser.parseLocalImages(content);
+    if (links.length === 0) {
+      return { content, replacedCount: 0, modified: false };
+    }
+    const replacementInfo = await this.buildReplacementInfo(links, basePath, replacements);
+    let newContent = content;
+    let replacedCount = 0;
+    const sortedInfo = [...replacementInfo].sort((a2, b2) => b2.link.index - a2.link.index);
+    for (const { link, newUrl } of sortedInfo) {
+      if (!newUrl) continue;
+      const replacement = this.buildReplacement(link, newUrl);
+      newContent = newContent.substring(0, link.index) + replacement + newContent.substring(link.index + link.length);
+      replacedCount++;
+    }
+    return {
+      content: newContent,
+      replacedCount,
+      modified: replacedCount > 0
+    };
+  }
+  /**
+   * Build replacement info for each link
+   */
+  async buildReplacementInfo(links, basePath, replacements) {
+    const result = [];
+    for (const link of links) {
+      const absolutePath = await resolveAbsolutePath(basePath, link.path, this.adapter);
+      if (!absolutePath) {
+        result.push({ link, newUrl: null });
+        continue;
+      }
+      const newUrl = replacements[absolutePath] || null;
+      result.push({ link, newUrl });
+    }
+    return result;
+  }
+  /**
+   * Build replacement string for a link
+   *
+   * Standard format: ![alt](path) -> ![alt](newUrl) or ![alt](newUrl "title")
+   * Obsidian format: ![[path]] or ![[path|alias]] -> ![alias or filename](newUrl)
+   */
+  buildReplacement(link, newUrl) {
+    if (link.format === "standard") {
+      if (link.title) {
+        const escapedTitle = link.title.replace(/"/g, '\\"');
+        return `![${link.altText}](${newUrl} "${escapedTitle}")`;
+      }
+      return `![${link.altText}](${newUrl})`;
+    }
+    let altText;
+    if (link.obsidianAlias) {
+      if (/^\d+$/.test(link.obsidianAlias)) {
+        altText = posixBasename(link.path, posixExtname(link.path));
+      } else {
+        altText = link.obsidianAlias;
+      }
+    } else {
+      altText = posixBasename(link.path, posixExtname(link.path));
+    }
+    return `![${altText}](${newUrl})`;
+  }
+};
+
+// src/upload/current-file-uploader.ts
+var CurrentFileUploader = class {
+  constructor(app, uploadManager, settings) {
+    this.app = app;
     this.uploadManager = uploadManager;
+    this.settings = settings;
     this.isProcessing = false;
     this.lastProcessTime = 0;
     this.debounceDelay = 1e3;
     this.logger = Logger.getInstance();
-    this.settings = settings;
+    this.finder = new ImageFinder(app, app.vault.adapter);
+    this.updater = new LinkUpdater(app.vault.adapter);
   }
   /**
-   * 处理当前活动文件中的图片（带防抖）
+   * Process images in the current active file
    */
   async processCurrentFile() {
-    const now = Date.now();
-    if (now - this.lastProcessTime < this.debounceDelay) {
-      this.logger.info("\u64CD\u4F5C\u8FC7\u4E8E\u9891\u7E41\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5");
-      new import_obsidian4.Notice("\u64CD\u4F5C\u8FC7\u4E8E\u9891\u7E41\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5", 2e3);
+    if (!this.checkDebounce()) {
       return null;
     }
-    this.lastProcessTime = now;
     if (this.isProcessing) {
       this.logger.info("\u6B63\u5728\u5904\u7406\u4E2D\uFF0C\u8BF7\u7B49\u5F85\u5F53\u524D\u64CD\u4F5C\u5B8C\u6210");
-      new import_obsidian4.Notice("\u6B63\u5728\u5904\u7406\u4E2D\uFF0C\u8BF7\u7B49\u5F85\u5F53\u524D\u64CD\u4F5C\u5B8C\u6210", 2e3);
+      new import_obsidian5.Notice("\u6B63\u5728\u5904\u7406\u4E2D\uFF0C\u8BF7\u7B49\u5F85\u5F53\u524D\u64CD\u4F5C\u5B8C\u6210", 2e3);
       return null;
     }
-    const activeFile = this.app.workspace.getActiveFile();
-    if (!activeFile || activeFile.extension !== "md") {
-      new import_obsidian4.Notice("\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A Markdown \u7B14\u8BB0\u6587\u4EF6", 3e3);
+    const activeFile = this.getActiveMarkdownFile();
+    if (!activeFile) {
       return null;
     }
     try {
       this.isProcessing = true;
       this.logger.info(`\u5F00\u59CB\u5904\u7406\u5F53\u524D\u7B14\u8BB0\u6587\u4EF6\uFF1A${activeFile.path}`);
-      const progressNotice = new import_obsidian4.Notice("\u6B63\u5728\u5206\u6790\u56FE\u7247...", 0);
-      const imagesToUpload = await this.findImagesInFile(activeFile);
-      if (imagesToUpload.size === 0) {
+      const progressNotice = new import_obsidian5.Notice("\u6B63\u5728\u5206\u6790\u56FE\u7247...", 0);
+      const images = await this.finder.findInFile(activeFile);
+      const imagePaths = images.filter((img) => img.exists).map((img) => img.absolutePath);
+      if (imagePaths.length === 0) {
         progressNotice.hide();
         this.logger.info("\u5F53\u524D\u7B14\u8BB0\u4E2D\u6CA1\u6709\u9700\u8981\u4E0A\u4F20\u7684\u56FE\u7247");
-        new import_obsidian4.Notice("\u5F53\u524D\u7B14\u8BB0\u4E2D\u6CA1\u6709\u627E\u5230\u9700\u8981\u4E0A\u4F20\u7684\u56FE\u7247", 3e3);
-        return {
-          totalImages: 0,
-          successCount: 0,
-          failureCount: 0,
-          newMappings: {}
-        };
+        new import_obsidian5.Notice("\u5F53\u524D\u7B14\u8BB0\u4E2D\u6CA1\u6709\u627E\u5230\u9700\u8981\u4E0A\u4F20\u7684\u56FE\u7247", 3e3);
+        return this.createEmptyResult();
       }
-      this.logger.info(`\u627E\u5230 ${imagesToUpload.size} \u5F20\u56FE\u7247\u9700\u8981\u4E0A\u4F20.`);
-      progressNotice.setMessage(`\u627E\u5230 ${imagesToUpload.size} \u5F20\u56FE\u7247\uFF0C\u6B63\u5728\u51C6\u5907\u4E0A\u4F20...`);
-      const imagePaths = Array.from(imagesToUpload);
+      this.logFoundImages(images);
+      progressNotice.setMessage(`\u627E\u5230 ${imagePaths.length} \u5F20\u56FE\u7247\uFF0C\u6B63\u5728\u51C6\u5907\u4E0A\u4F20...`);
       const tasks = await this.uploadManager.addTasks(imagePaths);
-      const taskResults = /* @__PURE__ */ new Map();
-      let completedCount = 0;
-      const handleTaskComplete = (task) => {
-        if (tasks.some((t2) => t2.id === task.id)) {
-          taskResults.set(task.filePath, task);
-          completedCount++;
-          const progress = Math.round(completedCount / tasks.length * 100);
-          progressNotice.setMessage(`\u4E0A\u4F20\u8FDB\u5EA6: ${progress}% (${completedCount}/${tasks.length})`);
-        }
-      };
-      const handleTaskFailed = (task) => {
-        if (tasks.some((t2) => t2.id === task.id)) {
-          taskResults.set(task.filePath, task);
-          completedCount++;
-          const progress = Math.round(completedCount / tasks.length * 100);
-          progressNotice.setMessage(`\u4E0A\u4F20\u8FDB\u5EA6: ${progress}% (${completedCount}/${tasks.length})`);
-        }
-      };
-      const handleTaskCancelled = (task) => {
-        if (tasks.some((t2) => t2.id === task.id)) {
-          taskResults.set(task.filePath, task);
-          completedCount++;
-        }
-      };
-      this.uploadManager.on(UploadManager.EVENTS.TASK_COMPLETED, handleTaskComplete);
-      this.uploadManager.on(UploadManager.EVENTS.TASK_FAILED, handleTaskFailed);
-      this.uploadManager.on(UploadManager.EVENTS.TASK_CANCELLED, handleTaskCancelled);
-      const completionPromise = new Promise((resolve) => {
+      const taskResults = await this.waitForTasks(tasks, progressNotice);
+      progressNotice.hide();
+      const result = this.buildResult(taskResults);
+      if (Object.keys(result.newMappings).length > 0) {
+        await this.updateFileAndCleanup(activeFile, result.newMappings);
+      }
+      this.logger.info("\u5F53\u524D\u7B14\u8BB0\u56FE\u7247\u5904\u7406\u5B8C\u6210");
+      return result;
+    } catch (error) {
+      this.logger.error("\u5904\u7406\u5F53\u524D\u7B14\u8BB0\u56FE\u7247\u65F6\u51FA\u9519", error);
+      new import_obsidian5.Notice(`\u5904\u7406\u56FE\u7247\u65F6\u51FA\u9519: ${error.message}`, 5e3);
+      return null;
+    } finally {
+      this.isProcessing = false;
+    }
+  }
+  /**
+   * Cancel all upload tasks
+   */
+  cancelAll() {
+    this.uploadManager.cancelAll();
+    this.isProcessing = false;
+  }
+  // ===== Private Helper Methods =====
+  checkDebounce() {
+    const now = Date.now();
+    if (now - this.lastProcessTime < this.debounceDelay) {
+      this.logger.info("\u64CD\u4F5C\u8FC7\u4E8E\u9891\u7E41\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5");
+      new import_obsidian5.Notice("\u64CD\u4F5C\u8FC7\u4E8E\u9891\u7E41\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5", 2e3);
+      return false;
+    }
+    this.lastProcessTime = now;
+    return true;
+  }
+  getActiveMarkdownFile() {
+    const activeFile = this.app.workspace.getActiveFile();
+    if (!activeFile || activeFile.extension !== "md") {
+      new import_obsidian5.Notice("\u8BF7\u5148\u6253\u5F00\u4E00\u4E2A Markdown \u7B14\u8BB0\u6587\u4EF6", 3e3);
+      return null;
+    }
+    return activeFile;
+  }
+  logFoundImages(images) {
+    for (const img of images) {
+      if (img.size) {
+        this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${img.absolutePath} (${formatFileSize(img.size)})`);
+      }
+    }
+    this.logger.info(`\u627E\u5230 ${images.length} \u5F20\u56FE\u7247\u9700\u8981\u4E0A\u4F20.`);
+  }
+  createEmptyResult() {
+    return {
+      totalImages: 0,
+      successCount: 0,
+      failureCount: 0,
+      newMappings: {}
+    };
+  }
+  async waitForTasks(tasks, progressNotice) {
+    const taskResults = /* @__PURE__ */ new Map();
+    let completedCount = 0;
+    const handleTaskComplete = (task) => {
+      if (tasks.some((t2) => t2.id === task.id)) {
+        taskResults.set(task.filePath, task);
+        completedCount++;
+        this.updateProgress(progressNotice, completedCount, tasks.length);
+      }
+    };
+    const handleTaskFailed = (task) => {
+      if (tasks.some((t2) => t2.id === task.id)) {
+        taskResults.set(task.filePath, task);
+        completedCount++;
+        this.updateProgress(progressNotice, completedCount, tasks.length);
+      }
+    };
+    const handleTaskCancelled = (task) => {
+      if (tasks.some((t2) => t2.id === task.id)) {
+        taskResults.set(task.filePath, task);
+        completedCount++;
+      }
+    };
+    this.uploadManager.on(UploadManager.EVENTS.TASK_COMPLETED, handleTaskComplete);
+    this.uploadManager.on(UploadManager.EVENTS.TASK_FAILED, handleTaskFailed);
+    this.uploadManager.on(UploadManager.EVENTS.TASK_CANCELLED, handleTaskCancelled);
+    try {
+      await new Promise((resolve) => {
         const checkCompletion = setInterval(() => {
           if (completedCount >= tasks.length) {
             clearInterval(checkCompletion);
@@ -13055,178 +18774,790 @@ var CurrentFileUploader = class {
           }
         }, 100);
       });
+    } finally {
+      this.uploadManager.off(UploadManager.EVENTS.TASK_COMPLETED, handleTaskComplete);
+      this.uploadManager.off(UploadManager.EVENTS.TASK_FAILED, handleTaskFailed);
+      this.uploadManager.off(UploadManager.EVENTS.TASK_CANCELLED, handleTaskCancelled);
+    }
+    return taskResults;
+  }
+  updateProgress(notice, completed, total) {
+    const progress = Math.round(completed / total * 100);
+    notice.setMessage(`\u4E0A\u4F20\u8FDB\u5EA6: ${progress}% (${completed}/${total})`);
+  }
+  buildResult(taskResults) {
+    let successCount = 0;
+    let failureCount = 0;
+    const newMappings = {};
+    for (const [filePath, task] of taskResults) {
+      if (task.status === "completed" && task.url) {
+        successCount++;
+        newMappings[filePath] = task.url;
+      } else {
+        failureCount++;
+      }
+    }
+    return {
+      totalImages: taskResults.size,
+      successCount,
+      failureCount,
+      newMappings
+    };
+  }
+  async updateFileAndCleanup(file, newMappings) {
+    this.logger.info(`\u51C6\u5907\u66F4\u65B0\u94FE\u63A5\uFF0C\u6620\u5C04\u5173\u7CFB:`, newMappings);
+    const content = await this.app.vault.cachedRead(file);
+    const result = await this.updater.updateLinks(content, file.path, newMappings);
+    if (result.modified) {
+      await this.app.vault.modify(file, result.content);
+      this.logger.info(`\u5DF2\u66F4\u65B0\u6587\u4EF6\u4E2D\u7684\u56FE\u7247\u94FE\u63A5: ${file.path}`);
+      this.logger.info(`\u66F4\u65B0\u7684\u94FE\u63A5\u6570\u91CF: ${result.replacedCount}`);
+      if (this.settings?.deleteAfterUpload) {
+        await this.deleteUploadedFiles(newMappings);
+      }
+    } else {
+      this.logger.warn(`\u6587\u4EF6\u5185\u5BB9\u672A\u53D1\u751F\u53D8\u5316\uFF0C\u53EF\u80FD\u94FE\u63A5\u66FF\u6362\u5931\u8D25: ${file.path}`);
+    }
+  }
+  async deleteUploadedFiles(mappings) {
+    for (const filePath of Object.keys(mappings)) {
       try {
-        await completionPromise;
+        await this.app.vault.adapter.remove(filePath);
+        this.logger.info(`\u5DF2\u5220\u9664\u672C\u5730\u6587\u4EF6: ${filePath}`);
+      } catch (error) {
+        this.logger.warn(`\u5220\u9664\u672C\u5730\u6587\u4EF6\u5931\u8D25: ${filePath}`, error);
+      }
+    }
+  }
+};
+
+// src/upload/vault-uploader.ts
+var import_obsidian6 = require("obsidian");
+function isTerminalStatus(status) {
+  return status === "completed" || status === "failed" || status === "cancelled";
+}
+var VaultUploader = class {
+  /**
+   * Create a vault-level uploader.
+   *
+   * @param app Obsidian App instance
+   * @param uploadManager Shared UploadManager singleton (queue + concurrency + retry)
+   * @param getSettings Lazy settings getter so this component always reads the latest persisted settings
+   */
+  constructor(app, uploadManager, getSettings) {
+    this.app = app;
+    this.uploadManager = uploadManager;
+    this.getSettings = getSettings;
+    this.isProcessing = false;
+    this.lastProcessTime = 0;
+    this.debounceDelayMs = 1e3;
+    this.logger = Logger.getInstance();
+    this.finder = new ImageFinder(app, app.vault.adapter);
+    this.updater = new LinkUpdater(app.vault.adapter);
+  }
+  /**
+   * Process the entire vault with a closed-loop pipeline:
+   * - Scan: collect all local images referenced by markdown notes
+   * - Upload: enqueue and upload the discovered images
+   * - Rewrite: replace local links with cloud URLs in all notes
+   * - Verify: rescan the vault to validate remaining references
+   * - Delete (optional): remove only those uploaded files that are no longer referenced
+   *
+   * User-facing messages are emitted via Notice. Errors are logged and surfaced to users as a single
+   * localized failure notice.
+   */
+  async processVault() {
+    if (!this.checkDebounce()) {
+      return null;
+    }
+    if (this.isProcessing) {
+      new import_obsidian6.Notice("\u5DF2\u6709\u4E00\u4E2A\u5168\u5E93\u5904\u7406\u4EFB\u52A1\u5728\u8FD0\u884C\uFF0C\u8BF7\u7B49\u5F85\u5B8C\u6210\u3002", 3e3);
+      return null;
+    }
+    this.isProcessing = true;
+    const progressNotice = new import_obsidian6.Notice("\u6B63\u5728\u51C6\u5907\u5168\u5E93\u5904\u7406...", 0);
+    try {
+      const markdownFiles = this.app.vault.getMarkdownFiles();
+      progressNotice.setMessage(`\u6B63\u5728\u626B\u63CF\u7B14\u8BB0... (0/${markdownFiles.length})`);
+      const initialScan = await this.scanReferencedImages(markdownFiles, progressNotice, "\u6B63\u5728\u626B\u63CF\u7B14\u8BB0");
+      if (initialScan.paths.size === 0) {
         progressNotice.hide();
-      } finally {
-        this.uploadManager.off(UploadManager.EVENTS.TASK_COMPLETED, handleTaskComplete);
-        this.uploadManager.off(UploadManager.EVENTS.TASK_FAILED, handleTaskFailed);
-        this.uploadManager.off(UploadManager.EVENTS.TASK_CANCELLED, handleTaskCancelled);
+        new import_obsidian6.Notice("Vault \u4E2D\u672A\u53D1\u73B0\u9700\u8981\u4E0A\u4F20\u7684\u672C\u5730\u56FE\u7247\u3002", 3e3);
+        return {
+          totalNotes: markdownFiles.length,
+          referencedLocalImages: 0,
+          queuedTasks: 0,
+          successfulUploads: 0,
+          failedUploads: 0,
+          cancelledUploads: 0,
+          modifiedNotes: 0,
+          replacedLinks: 0,
+          deletionEnabled: this.getSettings().deleteAfterUpload,
+          verifiedNotes: 0,
+          skippedDeletionDueToScanErrors: false,
+          stillReferencedAfterRewrite: 0,
+          deletedLocalFiles: 0,
+          deleteErrors: 0
+        };
       }
-      let successCount = 0;
-      let failureCount = 0;
-      const newMappings = {};
-      for (const [filePath, task] of taskResults) {
-        if (task.status === "completed" && task.url) {
-          successCount++;
-          newMappings[filePath] = task.url;
+      progressNotice.setMessage(`\u6B63\u5728\u5C06 ${initialScan.paths.size} \u5F20\u56FE\u7247\u52A0\u5165\u4E0A\u4F20\u961F\u5217...`);
+      const tasks = await this.uploadManager.addTasks(Array.from(initialScan.paths));
+      progressNotice.setMessage(`\u6B63\u5728\u4E0A\u4F20\u56FE\u7247... (0/${tasks.length})`);
+      await this.waitForTerminalTasks(tasks, progressNotice, "\u6B63\u5728\u4E0A\u4F20\u56FE\u7247");
+      const completedTasks = this.getCompletedTasksForPaths(initialScan.paths);
+      const replacements = this.buildReplacementMap(completedTasks);
+      progressNotice.setMessage(`\u6B63\u5728\u66FF\u6362\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247\u94FE\u63A5... (0/${markdownFiles.length})`);
+      const rewriteStats = await this.rewriteLinks(markdownFiles, replacements, progressNotice);
+      const settings = this.getSettings();
+      const deletionEnabled = settings.deleteAfterUpload;
+      let skippedDeletionDueToScanErrors = false;
+      let stillReferencedAfterRewrite = 0;
+      let deletedLocalFiles = 0;
+      let deleteErrors = 0;
+      let verifiedNotes = 0;
+      if (deletionEnabled && Object.keys(replacements).length > 0) {
+        progressNotice.setMessage(`\u6B63\u5728\u9A8C\u8BC1\u5220\u9664\u524D\u7684\u5F15\u7528\u60C5\u51B5... (0/${markdownFiles.length})`);
+        const verificationScan = await this.scanReferencedImages(
+          markdownFiles,
+          progressNotice,
+          "\u6B63\u5728\u9A8C\u8BC1\u5F15\u7528"
+        );
+        verifiedNotes = markdownFiles.length;
+        if (verificationScan.errorCount > 0) {
+          skippedDeletionDueToScanErrors = true;
+          this.logger.warn(
+            `Skipping deletion because verification scan had ${verificationScan.errorCount} errors`
+          );
         } else {
-          failureCount++;
-        }
-      }
-      if (Object.keys(newMappings).length > 0) {
-        this.logger.info(`\u51C6\u5907\u66F4\u65B0\u94FE\u63A5\uFF0C\u6620\u5C04\u5173\u7CFB:`, newMappings);
-        await this.updateFileLinks(activeFile, newMappings);
-        if (this.settings?.deleteAfterUpload) {
-          for (const [filePath, url] of Object.entries(newMappings)) {
-            try {
-              await this.app.vault.adapter.remove(filePath);
-              this.logger.info(`\u5DF2\u5220\u9664\u672C\u5730\u6587\u4EF6: ${filePath}`);
-            } catch (deleteError) {
-              this.logger.warn(`\u5220\u9664\u672C\u5730\u6587\u4EF6\u5931\u8D25: ${filePath}`, deleteError);
-            }
+          const uploadedPaths = Object.keys(replacements);
+          const referencedAfterRewrite = verificationScan.paths;
+          const deletable = uploadedPaths.filter((p2) => !referencedAfterRewrite.has(p2));
+          stillReferencedAfterRewrite = uploadedPaths.length - deletable.length;
+          if (stillReferencedAfterRewrite > 0) {
+            this.logger.warn(
+              `Skipping deletion for ${stillReferencedAfterRewrite} files still referenced after rewrite`
+            );
+          }
+          if (deletable.length > 0) {
+            progressNotice.setMessage(`\u6B63\u5728\u5220\u9664\u672C\u5730\u6587\u4EF6... (0/${deletable.length})`);
+            const deletionStats = await this.deleteLocalFiles(deletable, progressNotice);
+            deletedLocalFiles = deletionStats.deletedCount;
+            deleteErrors = deletionStats.errorCount;
           }
         }
       }
-      this.logger.info("\u5F53\u524D\u7B14\u8BB0\u56FE\u7247\u5904\u7406\u5B8C\u6210");
+      progressNotice.hide();
+      const summary = this.summarizeTasks(tasks);
       return {
-        totalImages: imagesToUpload.size,
-        successCount,
-        failureCount,
-        newMappings
+        totalNotes: markdownFiles.length,
+        referencedLocalImages: initialScan.paths.size,
+        queuedTasks: tasks.length,
+        successfulUploads: completedTasks.length,
+        failedUploads: summary.failed,
+        cancelledUploads: summary.cancelled,
+        modifiedNotes: rewriteStats.modifiedNotes,
+        replacedLinks: rewriteStats.replacedLinks,
+        deletionEnabled,
+        verifiedNotes,
+        skippedDeletionDueToScanErrors,
+        stillReferencedAfterRewrite,
+        deletedLocalFiles,
+        deleteErrors
       };
     } catch (error) {
-      this.logger.error("\u5904\u7406\u5F53\u524D\u7B14\u8BB0\u56FE\u7247\u65F6\u51FA\u9519", error);
-      new import_obsidian4.Notice(`\u5904\u7406\u56FE\u7247\u65F6\u51FA\u9519: ${error.message}`, 5e3);
+      progressNotice.hide();
+      this.logger.error("Vault upload failed", error);
+      new import_obsidian6.Notice(`\u5168\u5E93\u5904\u7406\u5931\u8D25\uFF1A${error.message}`, 5e3);
       return null;
     } finally {
       this.isProcessing = false;
     }
   }
   /**
-   * 在文件中查找需要上传的图片
+   * Prevent accidental repeated triggers.
+   *
+   * This is intentionally a lightweight guard, separate from the "isProcessing" mutex.
    */
-  async findImagesInFile(file) {
-    const imagePathsToUpload = /* @__PURE__ */ new Set();
-    const tmpImgPaths = /* @__PURE__ */ new Set();
-    const content = await this.app.vault.cachedRead(file);
-    const standardRegex = IMAGE_PATTERNS.STANDARD_MARKDOWN;
-    let standardMatch;
-    while ((standardMatch = standardRegex.exec(content)) !== null) {
-      const imagePath = standardMatch[2];
-      if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
-        continue;
-      }
-      tmpImgPaths.add(imagePath);
+  checkDebounce() {
+    const now = Date.now();
+    if (now - this.lastProcessTime < this.debounceDelayMs) {
+      new import_obsidian6.Notice("\u64CD\u4F5C\u8FC7\u4E8E\u9891\u7E41\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002", 2e3);
+      return false;
     }
-    const obsidianRegex = IMAGE_PATTERNS.OBSIDIAN_INTERNAL;
-    let obsidianMatch;
-    while ((obsidianMatch = obsidianRegex.exec(content)) !== null) {
-      const imagePath = obsidianMatch[1];
-      tmpImgPaths.add(imagePath);
-    }
-    for (const imagePath of tmpImgPaths) {
-      let absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
-      if (!absolutePath) {
-        this.logger.warn(`\u65E0\u6CD5\u89E3\u6790\u56FE\u7247\u8DEF\u5F84: ${imagePath}`);
-        continue;
-      }
-      const exists = await this.app.vault.adapter.exists(absolutePath);
-      if (!exists) {
-        this.logger.warn(`\u56FE\u7247\u6587\u4EF6\u4E0D\u5B58\u5728: ${absolutePath}`);
-        continue;
-      }
-      const stat = await this.app.vault.adapter.stat(absolutePath);
-      if (stat && stat.size) {
-        imagePathsToUpload.add(absolutePath);
-        this.logger.info(`\u627E\u5230\u56FE\u7247\uFF1A${absolutePath} (${formatFileSize(stat.size)})`);
-      }
-    }
-    return imagePathsToUpload;
+    this.lastProcessTime = now;
+    return true;
   }
   /**
-   * 更新当前文件中的图片链接
+   * Scan all markdown files and collect local image references.
+   *
+   * The returned paths are vault-absolute paths (the same format used by UploadManager tasks).
+   *
+   * @returns paths The set of referenced, existing local image paths
+   * @returns errorCount Number of files that failed to scan (used to abort deletion for safety)
    */
-  async updateFileLinks(file, uploadResults) {
-    const content = await this.app.vault.cachedRead(file);
-    let modified = false;
-    let newContent = content;
-    const standardRegex = IMAGE_PATTERNS.STANDARD_MARKDOWN;
-    let standardMatch;
-    let lastIndex = 0;
-    let standardNewContent = "";
-    while ((standardMatch = standardRegex.exec(content)) !== null) {
-      const fullMatch = standardMatch[0];
-      const altText = standardMatch[1];
-      const imagePath = standardMatch[2];
-      if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
-        continue;
+  async scanReferencedImages(markdownFiles, notice, label) {
+    const paths = /* @__PURE__ */ new Set();
+    let errorCount = 0;
+    for (let i2 = 0; i2 < markdownFiles.length; i2++) {
+      const file = markdownFiles[i2];
+      if (i2 % 10 === 0) {
+        notice.setMessage(`${label}... (${i2 + 1}/${markdownFiles.length})`);
       }
-      const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
-      if (!absolutePath) {
-        this.logger.warn(`\u65E0\u6CD5\u89E3\u6790\u56FE\u7247\u8DEF\u5F84: ${imagePath}`);
-        continue;
-      }
-      const newImageUrl = uploadResults[absolutePath];
-      this.logger.info(`\u67E5\u627E\u6807\u51C6\u683C\u5F0F\u6620\u5C04: ${imagePath} -> ${absolutePath} -> ${newImageUrl || "\u672A\u627E\u5230"}`);
-      if (newImageUrl) {
-        standardNewContent += content.substring(lastIndex, standardMatch.index);
-        standardNewContent += `![${altText}](${newImageUrl})`;
-        lastIndex = standardMatch.index + fullMatch.length;
-        modified = true;
+      try {
+        const images = await this.finder.findInFile(file);
+        for (const image of images) {
+          if (image.exists) {
+            paths.add(image.absolutePath);
+          }
+        }
+      } catch (err) {
+        errorCount++;
+        this.logger.warn(`Failed to scan note: ${file.path}`, err);
       }
     }
-    if (modified) {
-      standardNewContent += content.substring(lastIndex);
-      newContent = standardNewContent;
+    return { paths, errorCount };
+  }
+  /**
+   * Wait until all given tasks reach a terminal status (completed/failed/cancelled).
+   *
+   * Uses both:
+   * - event listeners (fast path)
+   * - periodic polling (safety net) because event delivery can be missed in edge cases
+   *
+   * Assumption: the UploadManager is not paused indefinitely; each task has an upload timeout and
+   * a bounded retry policy so it should eventually become terminal.
+   */
+  async waitForTerminalTasks(tasks, notice, label) {
+    if (tasks.length === 0) {
+      return;
     }
-    modified = false;
-    const obsidianRegex = IMAGE_PATTERNS.OBSIDIAN_INTERNAL;
-    let obsidianMatch;
-    lastIndex = 0;
-    let obsidianNewContent = "";
-    while ((obsidianMatch = obsidianRegex.exec(newContent)) !== null) {
-      const fullMatch = obsidianMatch[0];
-      const imagePath = obsidianMatch[1];
-      const absolutePath = await resolveAbsolutePath(file.path, imagePath, this.app.vault.adapter);
-      if (!absolutePath) {
-        this.logger.warn(`\u65E0\u6CD5\u89E3\u6790\u56FE\u7247\u8DEF\u5F84: ${imagePath}`);
-        continue;
+    const targetTaskIds = new Set(tasks.map((t2) => t2.id));
+    const terminalTaskIds = /* @__PURE__ */ new Set();
+    const updateNotice = () => {
+      notice.setMessage(`${label}... (${terminalTaskIds.size}/${targetTaskIds.size})`);
+    };
+    for (const task of tasks) {
+      if (isTerminalStatus(task.status)) {
+        terminalTaskIds.add(task.id);
       }
-      const newImageUrl = uploadResults[absolutePath];
-      this.logger.info(`\u67E5\u627EObsidian\u683C\u5F0F\u6620\u5C04: ${imagePath} -> ${absolutePath} -> ${newImageUrl || "\u672A\u627E\u5230"}`);
-      if (newImageUrl) {
-        obsidianNewContent += newContent.substring(lastIndex, obsidianMatch.index);
-        obsidianNewContent += `![${path2.basename(imagePath, path2.extname(imagePath))}](${newImageUrl})`;
-        lastIndex = obsidianMatch.index + fullMatch.length;
-        modified = true;
+    }
+    updateNotice();
+    const onTerminal = (task) => {
+      if (!targetTaskIds.has(task.id)) return;
+      terminalTaskIds.add(task.id);
+      updateNotice();
+    };
+    this.uploadManager.on(UploadManager.EVENTS.TASK_COMPLETED, onTerminal);
+    this.uploadManager.on(UploadManager.EVENTS.TASK_FAILED, onTerminal);
+    this.uploadManager.on(UploadManager.EVENTS.TASK_CANCELLED, onTerminal);
+    let interval = null;
+    try {
+      await new Promise((resolve) => {
+        if (terminalTaskIds.size >= targetTaskIds.size) {
+          resolve();
+          return;
+        }
+        interval = setInterval(() => {
+          for (const task of tasks) {
+            if (isTerminalStatus(task.status)) {
+              terminalTaskIds.add(task.id);
+            }
+          }
+          if (terminalTaskIds.size >= targetTaskIds.size) {
+            resolve();
+          }
+        }, 250);
+      });
+    } finally {
+      if (interval) {
+        clearInterval(interval);
       }
-    }
-    if (modified) {
-      obsidianNewContent += newContent.substring(lastIndex);
-      newContent = obsidianNewContent;
-    }
-    if (newContent !== content) {
-      await this.app.vault.modify(file, newContent);
-      this.logger.info(`\u5DF2\u66F4\u65B0\u6587\u4EF6\u4E2D\u7684\u56FE\u7247\u94FE\u63A5: ${file.path}`);
-      this.logger.info(`\u66F4\u65B0\u7684\u94FE\u63A5\u6570\u91CF: ${Object.keys(uploadResults).length}`);
-    } else {
-      this.logger.warn(`\u6587\u4EF6\u5185\u5BB9\u672A\u53D1\u751F\u53D8\u5316\uFF0C\u53EF\u80FD\u94FE\u63A5\u66FF\u6362\u5931\u8D25: ${file.path}`);
+      this.uploadManager.off(UploadManager.EVENTS.TASK_COMPLETED, onTerminal);
+      this.uploadManager.off(UploadManager.EVENTS.TASK_FAILED, onTerminal);
+      this.uploadManager.off(UploadManager.EVENTS.TASK_CANCELLED, onTerminal);
     }
   }
-  // formatFileSize now comes from shared utils
   /**
-   * 取消所有上传任务
+   * Collect successful tasks for the specific set of scanned image paths.
+   *
+   * This reads UploadManager.getAllTasks() (including previously completed tasks within the same session)
+   * so that link rewriting can still happen even if some paths were deduplicated at enqueue time.
    */
-  cancelAll() {
-    this.uploadManager.cancelAll();
-    this.isProcessing = false;
+  getCompletedTasksForPaths(targetPaths) {
+    const tasks = this.uploadManager.getAllTasks().filter((t2) => t2.status === "completed" && !!t2.url && targetPaths.has(t2.filePath));
+    return tasks;
+  }
+  /**
+   * Build a replacement map: absolutePath -> public URL.
+   *
+   * Keys must match LinkUpdater's resolution output, which is the vault-absolute path.
+   */
+  buildReplacementMap(tasks) {
+    const replacements = {};
+    for (const task of tasks) {
+      if (task.url) {
+        replacements[task.filePath] = task.url;
+      }
+    }
+    return replacements;
+  }
+  /**
+   * Rewrite image links for all markdown files using the provided replacements map.
+   *
+   * Notes:
+   * - Only local images are targeted (LinkUpdater ignores remote URLs).
+   * - Obsidian-style embeds (![[...]] and variants) are rewritten to standard markdown links.
+   *
+   * Failure mode: a per-file update error is logged and skipped; the pipeline continues for other files.
+   */
+  async rewriteLinks(markdownFiles, replacements, notice) {
+    let modifiedNotes = 0;
+    let replacedLinks = 0;
+    if (Object.keys(replacements).length === 0) {
+      return { modifiedNotes, replacedLinks };
+    }
+    for (let i2 = 0; i2 < markdownFiles.length; i2++) {
+      const file = markdownFiles[i2];
+      if (i2 % 10 === 0) {
+        notice.setMessage(`\u6B63\u5728\u66FF\u6362\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247\u94FE\u63A5... (${i2 + 1}/${markdownFiles.length})`);
+      }
+      try {
+        const content = await this.app.vault.cachedRead(file);
+        const result = await this.updater.updateLinks(content, file.path, replacements);
+        if (!result.modified) {
+          continue;
+        }
+        await this.app.vault.modify(file, result.content);
+        modifiedNotes++;
+        replacedLinks += result.replacedCount;
+      } catch (err) {
+        this.logger.warn(`Failed to update note: ${file.path}`, err);
+      }
+    }
+    return { modifiedNotes, replacedLinks };
+  }
+  /**
+   * Delete local files by vault path.
+   *
+   * This should only be invoked after:
+   * 1) successful rewrite
+   * 2) verification scan that proves the file is no longer referenced by any markdown note
+   *
+   * Defensive behavior:
+   * - Checks existence before removal
+   * - Logs and counts errors but continues deleting other files
+   */
+  async deleteLocalFiles(filePaths, notice) {
+    let deletedCount = 0;
+    let errorCount = 0;
+    for (let i2 = 0; i2 < filePaths.length; i2++) {
+      const filePath = filePaths[i2];
+      if (i2 % 10 === 0) {
+        notice.setMessage(`\u6B63\u5728\u5220\u9664\u672C\u5730\u6587\u4EF6... (${i2 + 1}/${filePaths.length})`);
+      }
+      try {
+        const exists = await this.app.vault.adapter.exists(filePath);
+        if (!exists) {
+          this.logger.debug(`File already deleted: ${filePath}`);
+          continue;
+        }
+        await this.app.vault.adapter.remove(filePath);
+        deletedCount++;
+      } catch (err) {
+        errorCount++;
+        this.logger.warn(`Failed to delete local file: ${filePath}`, err);
+      }
+    }
+    return { deletedCount, errorCount };
+  }
+  /**
+   * Produce a minimal status summary for the tasks returned from addTasks().
+   *
+   * This intentionally only summarizes the tasks created in this run (not the full session history).
+   */
+  summarizeTasks(tasks) {
+    let failed = 0;
+    let cancelled = 0;
+    for (const task of tasks) {
+      if (task.status === "failed") failed++;
+      if (task.status === "cancelled") cancelled++;
+    }
+    return { failed, cancelled };
   }
 };
 
 // src/ui/settings-tab.ts
-var import_obsidian5 = require("obsidian");
-var SettingsTab = class extends import_obsidian5.PluginSettingTab {
+var import_obsidian9 = require("obsidian");
+
+// src/ui/sections/base-section.ts
+var BaseSection = class {
+  constructor(deps) {
+    this.deps = deps;
+  }
+  /**
+   * Get current settings
+   */
+  get settings() {
+    return this.deps.getSettings();
+  }
+  /**
+   * Save settings
+   */
+  async save() {
+    await this.deps.saveSettings();
+  }
+  /**
+   * Create a section heading
+   */
+  createHeading(container, text) {
+    return container.createEl("h2", { text });
+  }
+  /**
+   * Create a horizontal rule
+   */
+  createDivider(container) {
+    return container.createEl("hr");
+  }
+  /**
+   * Create a description div
+   */
+  createDescription(container) {
+    return container.createDiv({ cls: "setting-item-description" });
+  }
+};
+
+// src/ui/sections/basic-section.ts
+var import_obsidian8 = require("obsidian");
+
+// src/ui/helpers/setting-helpers.ts
+var import_obsidian7 = require("obsidian");
+function createPasswordInput(container, config) {
+  return new import_obsidian7.Setting(container).setName(config.name).setDesc(config.desc).addText((text) => {
+    text.inputEl.type = "password";
+    text.inputEl.autocomplete = "off";
+    text.setPlaceholder(config.placeholder).setValue(config.getValue()).onChange(async (value) => {
+      await config.setValue(value.trim());
+    });
+  });
+}
+function createTextInput(container, config) {
+  return new import_obsidian7.Setting(container).setName(config.name).setDesc(config.desc).addText((text) => text.setPlaceholder(config.placeholder).setValue(config.getValue()).onChange(async (value) => {
+    await config.setValue(value.trim());
+  }));
+}
+function createNumericInput(container, config) {
+  return new import_obsidian7.Setting(container).setName(config.name).setDesc(config.desc).addText((text) => text.setPlaceholder(config.placeholder).setValue(String(config.getValue())).onChange(async (value) => {
+    const num = parseInt(value);
+    if (!isNaN(num) && num >= config.min && num <= config.max) {
+      await config.setValue(num);
+    }
+  }));
+}
+function createToggleInput(container, config) {
+  return new import_obsidian7.Setting(container).setName(config.name).setDesc(config.desc).addToggle((toggle) => {
+    toggle.setValue(config.getValue()).onChange(async (value) => {
+      await config.setValue(value);
+    });
+  });
+}
+
+// src/ui/sections/basic-section.ts
+var BasicSection = class extends BaseSection {
+  constructor(deps) {
+    super(deps);
+    this.deps = deps;
+  }
+  render(container) {
+    this.createHeading(container, "\u57FA\u7840\u8BBE\u7F6E");
+    new import_obsidian8.Setting(container).setName("\u5B58\u50A8\u63D0\u4F9B\u8005").setDesc("\u9009\u62E9\u56FE\u7247\u4E0A\u4F20\u7684\u5B58\u50A8\u670D\u52A1").addDropdown((dropdown) => {
+      dropdown.addOption("cloudflare_worker" /* CLOUDFLARE_WORKER */, "Cloudflare Worker").addOption("r2_s3_api" /* R2_S3_API */, "R2 S3 API (\u76F4\u8FDE)").setValue(this.settings.storageProvider).onChange(async (value) => {
+        const newProvider = value;
+        if (newProvider !== this.settings.storageProvider) {
+          const newSettings = this.createSettingsForProvider(newProvider);
+          this.deps.setSettings(newSettings);
+          await this.save();
+          this.deps.onProviderChange();
+        }
+      });
+    });
+    createToggleInput(container, {
+      name: "\u542F\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20",
+      desc: "\u542F\u7528\u540E\uFF0C\u7C98\u8D34\u56FE\u7247\u65F6\u81EA\u52A8\u4E0A\u4F20\u5230 Cloudflare R2",
+      getValue: () => this.settings.enableAutoPaste,
+      setValue: async (value) => {
+        this.settings.enableAutoPaste = value;
+        await this.save();
+      }
+    });
+    createToggleInput(container, {
+      name: "\u4E0A\u4F20\u6210\u529F\u540E\u5220\u9664\u672C\u5730\u56FE\u7247",
+      desc: "\u542F\u7528\u540E\uFF0C\u56FE\u7247\u4E0A\u4F20\u6210\u529F\u540E\u4F1A\u81EA\u52A8\u5220\u9664\u672C\u5730\u56FE\u7247\u6587\u4EF6",
+      getValue: () => this.settings.deleteAfterUpload,
+      setValue: async (value) => {
+        this.settings.deleteAfterUpload = value;
+        await this.save();
+      }
+    });
+  }
+  /**
+   * Create new settings object for the given provider type.
+   * Preserves base settings (toggles, limits, etc.) while creating provider-specific defaults.
+   */
+  createSettingsForProvider(provider) {
+    const baseSettings = {
+      enableAutoPaste: this.settings.enableAutoPaste,
+      deleteAfterUpload: this.settings.deleteAfterUpload,
+      maxConcurrentUploads: this.settings.maxConcurrentUploads,
+      maxRetries: this.settings.maxRetries,
+      retryDelay: this.settings.retryDelay,
+      maxRetryDelay: this.settings.maxRetryDelay,
+      uploadTimeout: this.settings.uploadTimeout,
+      showDetailedLogs: this.settings.showDetailedLogs,
+      showProgressNotifications: this.settings.showProgressNotifications
+    };
+    if (provider === "r2_s3_api" /* R2_S3_API */) {
+      return createR2S3Settings(baseSettings);
+    }
+    return createWorkerSettings(baseSettings);
+  }
+};
+
+// src/ui/sections/worker-section.ts
+var WorkerSection = class extends BaseSection {
+  render(container) {
+    this.createHeading(container, "Cloudflare Worker \u8BBE\u7F6E");
+    if (!isWorkerProvider(this.settings)) {
+      container.createEl("p", { text: "\u9519\u8BEF\uFF1A\u5F53\u524D\u4E0D\u662F Worker \u5B58\u50A8\u63D0\u4F9B\u8005" });
+      return;
+    }
+    const workerSettings = this.settings.workerSettings;
+    createTextInput(container, {
+      name: "Worker URL",
+      desc: "\u60A8\u90E8\u7F72\u7684 Cloudflare R2 Worker \u7684 URL",
+      placeholder: "https://your-worker.your-subdomain.workers.dev",
+      getValue: () => workerSettings.workerUrl,
+      setValue: async (value) => {
+        workerSettings.workerUrl = value;
+        await this.save();
+      }
+    });
+    createPasswordInput(container, {
+      name: "API Key",
+      desc: "Worker \u7684 API \u5BC6\u94A5\uFF08\u5728 Worker \u73AF\u5883\u53D8\u91CF\u4E2D\u8BBE\u7F6E\uFF09",
+      placeholder: "\u8F93\u5165\u60A8\u7684 API Key",
+      getValue: () => workerSettings.apiKey,
+      setValue: async (value) => {
+        workerSettings.apiKey = value;
+        await this.save();
+      }
+    });
+    createTextInput(container, {
+      name: "\u5B58\u50A8\u6876\u540D\u79F0",
+      desc: "Cloudflare R2 \u5B58\u50A8\u6876\u7684\u540D\u79F0",
+      placeholder: "\u8F93\u5165\u60A8\u7684\u5B58\u50A8\u6876\u540D\u79F0",
+      getValue: () => workerSettings.bucketName,
+      setValue: async (value) => {
+        workerSettings.bucketName = value;
+        await this.save();
+      }
+    });
+    createTextInput(container, {
+      name: "\u6587\u4EF6\u5939\u540D\u79F0\uFF08\u53EF\u9009\uFF09",
+      desc: "\u4E0A\u4F20\u56FE\u7247\u5230\u6307\u5B9A\u6587\u4EF6\u5939\uFF0C\u7559\u7A7A\u5219\u4E0A\u4F20\u5230\u6839\u76EE\u5F55",
+      placeholder: "\u8BF7\u8F93\u5165\u4E0A\u4F20\u7684\u6587\u4EF6\u5939\u540D\u79F0",
+      getValue: () => workerSettings.folderName || "",
+      setValue: async (value) => {
+        workerSettings.folderName = value;
+        await this.save();
+      }
+    });
+    createTextInput(container, {
+      name: "\u81EA\u5B9A\u4E49\u57DF\u540D\uFF08\u53EF\u9009\uFF09",
+      desc: "\u5982\u679C\u60A8\u4E3A R2 \u914D\u7F6E\u4E86\u81EA\u5B9A\u4E49\u57DF\u540D\uFF0C\u8BF7\u5728\u6B64\u8F93\u5165",
+      placeholder: "https://images.yourdomain.com",
+      getValue: () => workerSettings.customDomain || "",
+      setValue: async (value) => {
+        workerSettings.customDomain = value;
+        await this.save();
+      }
+    });
+  }
+};
+
+// src/ui/sections/r2s3-section.ts
+var R2S3Section = class extends BaseSection {
+  render(container) {
+    this.createHeading(container, "R2 S3 API \u8BBE\u7F6E");
+    if (!isR2S3Provider(this.settings)) {
+      container.createEl("p", { text: "\u9519\u8BEF\uFF1A\u5F53\u524D\u4E0D\u662F R2 S3 API \u5B58\u50A8\u63D0\u4F9B\u8005" });
+      return;
+    }
+    const r2Settings = this.settings.r2S3Settings;
+    const helpDiv = this.createDescription(container);
+    helpDiv.createEl("p", {
+      text: '\u63D0\u793A\uFF1A\u5728 Cloudflare \u63A7\u5236\u53F0\u53F3\u4FA7\u53EF\u4EE5\u627E\u5230\u8D26\u6237 ID\u3002\u521B\u5EFA R2 API \u4EE4\u724C\u65F6\uFF0C\u8BF7\u9009\u62E9 "\u5BF9\u8C61\u8BFB\u548C\u5199" \u6743\u9650\u3002'
+    });
+    const corsDiv = this.createDescription(container);
+    corsDiv.createEl("p", {
+      text: "\u6CE8\u610F\uFF1A\u5982\u679C\u9047\u5230 CORS \u9519\u8BEF\uFF0C\u8FD9\u662F\u6B63\u5E38\u73B0\u8C61\u3002\u63D2\u4EF6\u4F1A\u81EA\u52A8\u91CD\u8BD5\uFF0C\u901A\u5E38\u7B2C\u4E8C\u6B21\u5C31\u80FD\u6210\u529F\u3002\u8FD9\u662F\u7531\u4E8E R2 \u7684 CORS \u7B56\u7565\u5BFC\u81F4\u7684\u3002"
+    });
+    createTextInput(container, {
+      name: "\u8D26\u6237 ID",
+      desc: "\u60A8\u7684 Cloudflare \u8D26\u6237 ID\uFF08\u5728\u63A7\u5236\u53F0\u53F3\u4FA7\u53EF\u627E\u5230\uFF09",
+      placeholder: "\u8F93\u5165\u60A8\u7684\u8D26\u6237 ID",
+      getValue: () => r2Settings.accountId,
+      setValue: async (value) => {
+        r2Settings.accountId = value;
+        await this.save();
+      }
+    });
+    createTextInput(container, {
+      name: "Access Key ID",
+      desc: "R2 API \u4EE4\u724C\u7684 Access Key ID",
+      placeholder: "\u8F93\u5165\u60A8\u7684 Access Key ID",
+      getValue: () => r2Settings.accessKeyId,
+      setValue: async (value) => {
+        r2Settings.accessKeyId = value;
+        await this.save();
+      }
+    });
+    createPasswordInput(container, {
+      name: "Secret Access Key",
+      desc: "R2 API \u4EE4\u724C\u7684 Secret Access Key",
+      placeholder: "\u8F93\u5165\u60A8\u7684 Secret Access Key",
+      getValue: () => r2Settings.secretAccessKey,
+      setValue: async (value) => {
+        r2Settings.secretAccessKey = value;
+        await this.save();
+      }
+    });
+    createTextInput(container, {
+      name: "\u5B58\u50A8\u6876\u540D\u79F0",
+      desc: "Cloudflare R2 \u5B58\u50A8\u6876\u7684\u540D\u79F0",
+      placeholder: "\u8F93\u5165\u60A8\u7684\u5B58\u50A8\u6876\u540D\u79F0",
+      getValue: () => r2Settings.bucketName,
+      setValue: async (value) => {
+        r2Settings.bucketName = value;
+        await this.save();
+      }
+    });
+    createTextInput(container, {
+      name: "\u6587\u4EF6\u5939\u540D\u79F0\uFF08\u53EF\u9009\uFF09",
+      desc: "\u4E0A\u4F20\u56FE\u7247\u5230\u6307\u5B9A\u6587\u4EF6\u5939\uFF0C\u7559\u7A7A\u5219\u4E0A\u4F20\u5230\u6839\u76EE\u5F55",
+      placeholder: "\u8BF7\u8F93\u5165\u4E0A\u4F20\u7684\u6587\u4EF6\u5939\u540D\u79F0",
+      getValue: () => r2Settings.folderName || "",
+      setValue: async (value) => {
+        r2Settings.folderName = value;
+        await this.save();
+      }
+    });
+    createTextInput(container, {
+      name: "\u81EA\u5B9A\u4E49\u57DF\u540D\uFF08\u53EF\u9009\uFF09",
+      desc: "\u5982\u679C\u60A8\u4E3A R2 \u914D\u7F6E\u4E86\u81EA\u5B9A\u4E49\u57DF\u540D\uFF0C\u8BF7\u5728\u6B64\u8F93\u5165",
+      placeholder: "https://images.yourdomain.com",
+      getValue: () => r2Settings.customDomain || "",
+      setValue: async (value) => {
+        r2Settings.customDomain = value;
+        await this.save();
+      }
+    });
+  }
+};
+
+// src/ui/sections/advanced-section.ts
+var AdvancedSection = class extends BaseSection {
+  render(container) {
+    this.createHeading(container, "\u9AD8\u7EA7\u8BBE\u7F6E");
+    createNumericInput(container, {
+      name: "\u6700\u5927\u5E76\u53D1\u4E0A\u4F20\u6570",
+      desc: "\u540C\u65F6\u4E0A\u4F20\u7684\u6700\u5927\u6587\u4EF6\u6570\u91CF\uFF081-50\uFF09",
+      placeholder: "3",
+      min: 1,
+      max: 50,
+      getValue: () => this.settings.maxConcurrentUploads || 3,
+      setValue: async (value) => {
+        this.settings.maxConcurrentUploads = value;
+        await this.save();
+      }
+    });
+    createNumericInput(container, {
+      name: "\u6700\u5927\u91CD\u8BD5\u6B21\u6570",
+      desc: "\u4E0A\u4F20\u5931\u8D25\u65F6\u7684\u6700\u5927\u91CD\u8BD5\u6B21\u6570\uFF080-5\uFF09",
+      placeholder: "3",
+      min: 0,
+      max: 5,
+      getValue: () => this.settings.maxRetries || 3,
+      setValue: async (value) => {
+        this.settings.maxRetries = value;
+        await this.save();
+      }
+    });
+    createNumericInput(container, {
+      name: "\u91CD\u8BD5\u5EF6\u8FDF\uFF08\u6BEB\u79D2\uFF09",
+      desc: "\u9996\u6B21\u91CD\u8BD5\u524D\u7684\u7B49\u5F85\u65F6\u95F4\uFF08100-10000\uFF09",
+      placeholder: "1000",
+      min: 100,
+      max: 1e4,
+      getValue: () => this.settings.retryDelay || 1e3,
+      setValue: async (value) => {
+        this.settings.retryDelay = value;
+        await this.save();
+      }
+    });
+    createNumericInput(container, {
+      name: "\u6700\u5927\u91CD\u8BD5\u5EF6\u8FDF\uFF08\u6BEB\u79D2\uFF09",
+      desc: "\u6307\u6570\u9000\u907F\u7684\u6700\u5927\u5EF6\u8FDF\u4E0A\u9650\uFF081000-60000\uFF09",
+      placeholder: "30000",
+      min: 1e3,
+      max: 6e4,
+      getValue: () => this.settings.maxRetryDelay || 3e4,
+      setValue: async (value) => {
+        this.settings.maxRetryDelay = value;
+        await this.save();
+      }
+    });
+    createNumericInput(container, {
+      name: "\u4E0A\u4F20\u8D85\u65F6\uFF08\u6BEB\u79D2\uFF09",
+      desc: "\u5355\u4E2A\u6587\u4EF6\u4E0A\u4F20\u7684\u8D85\u65F6\u65F6\u95F4\uFF0810000-300000\uFF09",
+      placeholder: "60000",
+      min: 1e4,
+      max: 3e5,
+      getValue: () => this.settings.uploadTimeout || 6e4,
+      setValue: async (value) => {
+        this.settings.uploadTimeout = value;
+        await this.save();
+      }
+    });
+  }
+};
+
+// src/ui/sections/logging-section.ts
+var LoggingSection = class extends BaseSection {
+  render(container) {
+    this.createHeading(container, "\u65E5\u5FD7\u8BBE\u7F6E");
+    createToggleInput(container, {
+      name: "\u663E\u793A\u8BE6\u7EC6\u65E5\u5FD7",
+      desc: "\u5728\u63A7\u5236\u53F0\u8F93\u51FA\u8BE6\u7EC6\u7684\u8C03\u8BD5\u65E5\u5FD7",
+      getValue: () => this.settings.showDetailedLogs || false,
+      setValue: async (value) => {
+        this.settings.showDetailedLogs = value;
+        await this.save();
+      }
+    });
+    createToggleInput(container, {
+      name: "\u663E\u793A\u4E0A\u4F20\u8FDB\u5EA6\u901A\u77E5",
+      desc: "\u663E\u793A\u6587\u4EF6\u4E0A\u4F20\u8FDB\u5EA6\u7684\u901A\u77E5",
+      getValue: () => this.settings.showProgressNotifications ?? true,
+      setValue: async (value) => {
+        this.settings.showProgressNotifications = value;
+        await this.save();
+      }
+    });
+  }
+};
+
+// src/ui/settings-tab.ts
+var SettingsTab = class extends import_obsidian9.PluginSettingTab {
   constructor(app, plugin) {
     super(app, plugin);
     this.plugin = plugin;
@@ -13234,8 +19565,30 @@ var SettingsTab = class extends import_obsidian5.PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h1", { text: "Cloudflare R2 Uploader \u8BBE\u7F6E" });
-    const introDiv = containerEl.createDiv({ cls: "setting-item-description" });
+    const deps = {
+      getSettings: () => this.plugin.settings,
+      saveSettings: () => this.plugin.saveSettings()
+    };
+    this.renderIntro(containerEl);
+    containerEl.createEl("hr");
+    new BasicSection({
+      ...deps,
+      onProviderChange: () => this.display(),
+      setSettings: (settings) => {
+        this.plugin.settings = settings;
+      }
+    }).render(containerEl);
+    this.renderProviderSection(containerEl, deps);
+    new AdvancedSection(deps).render(containerEl);
+    new LoggingSection(deps).render(containerEl);
+    this.renderHelp(containerEl);
+  }
+  /**
+   * Render intro section with welcome and setup instructions
+   */
+  renderIntro(container) {
+    container.createEl("h1", { text: "Cloudflare R2 Uploader \u8BBE\u7F6E" });
+    const introDiv = container.createDiv({ cls: "setting-item-description" });
     introDiv.createEl("p", {
       text: "\u8BF7\u6309\u7167\u4EE5\u4E0B\u6B65\u9AA4\u914D\u7F6E\u60A8\u7684 Cloudflare R2 \u5B58\u50A8\uFF1A"
     });
@@ -13252,209 +19605,25 @@ var SettingsTab = class extends import_obsidian5.PluginSettingTab {
       ol.createEl("li", { text: "\u5728\u4E0B\u65B9\u586B\u5199\u76F8\u5173\u914D\u7F6E\u4FE1\u606F" });
       ol.createEl("li", { text: "\u4FDD\u5B58\u8BBE\u7F6E\u540E\u5373\u53EF\u5F00\u59CB\u4F7F\u7528" });
     }
-    containerEl.createEl("hr");
-    containerEl.createEl("h2", { text: "\u57FA\u7840\u8BBE\u7F6E" });
-    new import_obsidian5.Setting(containerEl).setName("\u5B58\u50A8\u63D0\u4F9B\u8005").setDesc("\u9009\u62E9\u56FE\u7247\u4E0A\u4F20\u7684\u5B58\u50A8\u670D\u52A1").addDropdown((dropdown) => {
-      dropdown.addOption("cloudflare_worker" /* CLOUDFLARE_WORKER */, "Cloudflare Worker").addOption("r2_s3_api" /* R2_S3_API */, "R2 S3 API (\u76F4\u8FDE)").setValue(this.plugin.settings.storageProvider).onChange(async (value) => {
-        this.plugin.settings.storageProvider = value;
-        await this.plugin.saveSettings();
-        this.display();
-      });
-    });
-    new import_obsidian5.Setting(containerEl).setName("\u542F\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20").setDesc("\u542F\u7528\u540E\uFF0C\u7C98\u8D34\u56FE\u7247\u65F6\u81EA\u52A8\u4E0A\u4F20\u5230 Cloudflare R2").addToggle((toggle) => {
-      toggle.setValue(this.plugin.settings.enableAutoPaste).onChange(async (value) => {
-        this.plugin.settings.enableAutoPaste = value;
-        await this.plugin.saveSettings();
-      });
-    });
-    new import_obsidian5.Setting(containerEl).setName("\u4E0A\u4F20\u6210\u529F\u540E\u5220\u9664\u672C\u5730\u56FE\u7247").setDesc("\u542F\u7528\u540E\uFF0C\u56FE\u7247\u4E0A\u4F20\u6210\u529F\u540E\u4F1A\u81EA\u52A8\u5220\u9664\u672C\u5730\u56FE\u7247\u6587\u4EF6").addToggle((toggle) => {
-      toggle.setValue(this.plugin.settings.deleteAfterUpload).onChange(async (value) => {
-        this.plugin.settings.deleteAfterUpload = value;
-        await this.plugin.saveSettings();
-      });
-    });
+  }
+  /**
+   * Render provider-specific section based on current selection
+   */
+  renderProviderSection(container, deps) {
     if (this.plugin.settings.storageProvider === "cloudflare_worker" /* CLOUDFLARE_WORKER */) {
-      containerEl.createEl("h2", { text: "Cloudflare Worker \u8BBE\u7F6E" });
-      new import_obsidian5.Setting(containerEl).setName("Worker URL").setDesc("\u60A8\u90E8\u7F72\u7684 Cloudflare R2 Worker \u7684 URL").addText((text) => text.setPlaceholder("https://your-worker.your-subdomain.workers.dev").setValue(this.plugin.settings.workerSettings.workerUrl).onChange(async (value) => {
-        this.plugin.settings.workerSettings.workerUrl = value.trim();
-        await this.plugin.saveSettings();
-      }));
-      new import_obsidian5.Setting(containerEl).setName("API Key").setDesc("Worker \u7684 API \u5BC6\u94A5\uFF08\u5728 Worker \u73AF\u5883\u53D8\u91CF\u4E2D\u8BBE\u7F6E\uFF09").addText((text) => {
-        const wrapTextWithPasswordHide = (text2) => {
-          text2.inputEl.type = "password";
-          text2.inputEl.autocomplete = "off";
-        };
-        wrapTextWithPasswordHide(text);
-        text.setPlaceholder("\u8F93\u5165\u60A8\u7684 API Key").setValue(this.plugin.settings.workerSettings.apiKey).onChange(async (value) => {
-          this.plugin.settings.workerSettings.apiKey = value.trim();
-          await this.plugin.saveSettings();
-        });
-      });
-      new import_obsidian5.Setting(containerEl).setName("\u5B58\u50A8\u6876\u540D\u79F0").setDesc("Cloudflare R2 \u5B58\u50A8\u6876\u7684\u540D\u79F0").addText((text) => text.setPlaceholder("\u8F93\u5165\u60A8\u7684\u5B58\u50A8\u6876\u540D\u79F0").setValue(this.plugin.settings.workerSettings.bucketName).onChange(async (value) => {
-        this.plugin.settings.workerSettings.bucketName = value.trim();
-        await this.plugin.saveSettings();
-      }));
-      new import_obsidian5.Setting(containerEl).setName("\u6587\u4EF6\u5939\u540D\u79F0\uFF08\u53EF\u9009\uFF09").setDesc("\u4E0A\u4F20\u56FE\u7247\u5230\u6307\u5B9A\u6587\u4EF6\u5939\uFF0C\u7559\u7A7A\u5219\u4E0A\u4F20\u5230\u6839\u76EE\u5F55").addText((text) => text.setPlaceholder("\u8BF7\u8F93\u5165\u4E0A\u4F20\u7684\u6587\u4EF6\u5939\u540D\u79F0").setValue(this.plugin.settings.workerSettings.folderName || "").onChange(async (value) => {
-        this.plugin.settings.workerSettings.folderName = value.trim();
-        await this.plugin.saveSettings();
-      }));
-      new import_obsidian5.Setting(containerEl).setName("\u81EA\u5B9A\u4E49\u57DF\u540D\uFF08\u53EF\u9009\uFF09").setDesc("\u5982\u679C\u60A8\u4E3A R2 \u914D\u7F6E\u4E86\u81EA\u5B9A\u4E49\u57DF\u540D\uFF0C\u8BF7\u5728\u6B64\u8F93\u5165").addText((text) => text.setPlaceholder("https://images.yourdomain.com").setValue(this.plugin.settings.workerSettings.customDomain || "").onChange(async (value) => {
-        this.plugin.settings.workerSettings.customDomain = value.trim();
-        await this.plugin.saveSettings();
-      }));
-    } else if (this.plugin.settings.storageProvider === "r2_s3_api" /* R2_S3_API */) {
-      containerEl.createEl("h2", { text: "R2 S3 API \u8BBE\u7F6E" });
-      const helpDiv2 = containerEl.createDiv({ cls: "setting-item-description" });
-      helpDiv2.createEl("p", {
-        text: '\u63D0\u793A\uFF1A\u5728 Cloudflare \u63A7\u5236\u53F0\u53F3\u4FA7\u53EF\u4EE5\u627E\u5230\u8D26\u6237 ID\u3002\u521B\u5EFA R2 API \u4EE4\u724C\u65F6\uFF0C\u8BF7\u9009\u62E9 "\u5BF9\u8C61\u8BFB\u548C\u5199" \u6743\u9650\u3002'
-      });
-      const corsDiv = containerEl.createDiv({ cls: "setting-item-description" });
-      corsDiv.createEl("p", {
-        text: "\u6CE8\u610F\uFF1A\u5982\u679C\u9047\u5230 CORS \u9519\u8BEF\uFF0C\u8FD9\u662F\u6B63\u5E38\u73B0\u8C61\u3002\u63D2\u4EF6\u4F1A\u81EA\u52A8\u91CD\u8BD5\uFF0C\u901A\u5E38\u7B2C\u4E8C\u6B21\u5C31\u80FD\u6210\u529F\u3002\u8FD9\u662F\u7531\u4E8E R2 \u7684 CORS \u7B56\u7565\u5BFC\u81F4\u7684\u3002"
-      });
-      new import_obsidian5.Setting(containerEl).setName("\u8D26\u6237 ID").setDesc("\u60A8\u7684 Cloudflare \u8D26\u6237 ID\uFF08\u5728\u63A7\u5236\u53F0\u53F3\u4FA7\u53EF\u627E\u5230\uFF09").addText((text) => text.setPlaceholder("\u8F93\u5165\u60A8\u7684\u8D26\u6237 ID").setValue(this.plugin.settings.r2S3Settings?.accountId || "").onChange(async (value) => {
-        if (!this.plugin.settings.r2S3Settings) {
-          this.plugin.settings.r2S3Settings = {
-            accountId: "",
-            accessKeyId: "",
-            secretAccessKey: "",
-            bucketName: "",
-            folderName: "",
-            customDomain: "",
-            region: "auto"
-          };
-        }
-        this.plugin.settings.r2S3Settings.accountId = value.trim();
-        await this.plugin.saveSettings();
-      }));
-      new import_obsidian5.Setting(containerEl).setName("Access Key ID").setDesc("R2 API \u4EE4\u724C\u7684 Access Key ID").addText((text) => text.setPlaceholder("\u8F93\u5165\u60A8\u7684 Access Key ID").setValue(this.plugin.settings.r2S3Settings?.accessKeyId || "").onChange(async (value) => {
-        if (!this.plugin.settings.r2S3Settings) {
-          this.plugin.settings.r2S3Settings = {
-            accountId: "",
-            accessKeyId: "",
-            secretAccessKey: "",
-            bucketName: "",
-            folderName: "",
-            customDomain: "",
-            region: "auto"
-          };
-        }
-        this.plugin.settings.r2S3Settings.accessKeyId = value.trim();
-        await this.plugin.saveSettings();
-      }));
-      new import_obsidian5.Setting(containerEl).setName("Secret Access Key").setDesc("R2 API \u4EE4\u724C\u7684 Secret Access Key").addText((text) => {
-        text.inputEl.type = "password";
-        text.inputEl.autocomplete = "off";
-        text.setPlaceholder("\u8F93\u5165\u60A8\u7684 Secret Access Key").setValue(this.plugin.settings.r2S3Settings?.secretAccessKey || "").onChange(async (value) => {
-          if (!this.plugin.settings.r2S3Settings) {
-            this.plugin.settings.r2S3Settings = {
-              accountId: "",
-              accessKeyId: "",
-              secretAccessKey: "",
-              bucketName: "",
-              folderName: "",
-              customDomain: "",
-              region: "auto"
-            };
-          }
-          this.plugin.settings.r2S3Settings.secretAccessKey = value.trim();
-          await this.plugin.saveSettings();
-        });
-      });
-      new import_obsidian5.Setting(containerEl).setName("\u5B58\u50A8\u6876\u540D\u79F0").setDesc("Cloudflare R2 \u5B58\u50A8\u6876\u7684\u540D\u79F0").addText((text) => text.setPlaceholder("\u8F93\u5165\u60A8\u7684\u5B58\u50A8\u6876\u540D\u79F0").setValue(this.plugin.settings.r2S3Settings?.bucketName || "").onChange(async (value) => {
-        if (!this.plugin.settings.r2S3Settings) {
-          this.plugin.settings.r2S3Settings = {
-            accountId: "",
-            accessKeyId: "",
-            secretAccessKey: "",
-            bucketName: "",
-            folderName: "",
-            customDomain: "",
-            region: "auto"
-          };
-        }
-        this.plugin.settings.r2S3Settings.bucketName = value.trim();
-        await this.plugin.saveSettings();
-      }));
-      new import_obsidian5.Setting(containerEl).setName("\u6587\u4EF6\u5939\u540D\u79F0\uFF08\u53EF\u9009\uFF09").setDesc("\u4E0A\u4F20\u56FE\u7247\u5230\u6307\u5B9A\u6587\u4EF6\u5939\uFF0C\u7559\u7A7A\u5219\u4E0A\u4F20\u5230\u6839\u76EE\u5F55").addText((text) => text.setPlaceholder("\u8BF7\u8F93\u5165\u4E0A\u4F20\u7684\u6587\u4EF6\u5939\u540D\u79F0").setValue(this.plugin.settings.r2S3Settings?.folderName || "").onChange(async (value) => {
-        if (!this.plugin.settings.r2S3Settings) {
-          this.plugin.settings.r2S3Settings = {
-            accountId: "",
-            accessKeyId: "",
-            secretAccessKey: "",
-            bucketName: "",
-            folderName: "",
-            customDomain: "",
-            region: "auto"
-          };
-        }
-        this.plugin.settings.r2S3Settings.folderName = value.trim();
-        await this.plugin.saveSettings();
-      }));
-      new import_obsidian5.Setting(containerEl).setName("\u81EA\u5B9A\u4E49\u57DF\u540D\uFF08\u53EF\u9009\uFF09").setDesc("\u5982\u679C\u60A8\u4E3A R2 \u914D\u7F6E\u4E86\u81EA\u5B9A\u4E49\u57DF\u540D\uFF0C\u8BF7\u5728\u6B64\u8F93\u5165").addText((text) => text.setPlaceholder("https://images.yourdomain.com").setValue(this.plugin.settings.r2S3Settings?.customDomain || "").onChange(async (value) => {
-        if (!this.plugin.settings.r2S3Settings) {
-          this.plugin.settings.r2S3Settings = {
-            accountId: "",
-            accessKeyId: "",
-            secretAccessKey: "",
-            bucketName: "",
-            folderName: "",
-            customDomain: "",
-            region: "auto"
-          };
-        }
-        this.plugin.settings.r2S3Settings.customDomain = value.trim();
-        await this.plugin.saveSettings();
-      }));
+      new WorkerSection(deps).render(container);
+    } else {
+      new R2S3Section(deps).render(container);
     }
-    containerEl.createEl("h2", { text: "\u9AD8\u7EA7\u8BBE\u7F6E" });
-    new import_obsidian5.Setting(containerEl).setName("\u6700\u5927\u5E76\u53D1\u4E0A\u4F20\u6570").setDesc("\u540C\u65F6\u4E0A\u4F20\u7684\u6700\u5927\u6587\u4EF6\u6570\u91CF\uFF081-50\uFF09").addText((text) => text.setPlaceholder("3").setValue(String(this.plugin.settings.maxConcurrentUploads || 3)).onChange(async (value) => {
-      const num = parseInt(value);
-      if (!isNaN(num) && num >= 1 && num <= 50) {
-        this.plugin.settings.maxConcurrentUploads = num;
-        await this.plugin.saveSettings();
-      }
-    }));
-    new import_obsidian5.Setting(containerEl).setName("\u6700\u5927\u91CD\u8BD5\u6B21\u6570").setDesc("\u4E0A\u4F20\u5931\u8D25\u65F6\u7684\u6700\u5927\u91CD\u8BD5\u6B21\u6570\uFF080-5\uFF09").addText((text) => text.setPlaceholder("3").setValue(String(this.plugin.settings.maxRetries || 3)).onChange(async (value) => {
-      const num = parseInt(value);
-      if (!isNaN(num) && num >= 0 && num <= 5) {
-        this.plugin.settings.maxRetries = num;
-        await this.plugin.saveSettings();
-      }
-    }));
-    new import_obsidian5.Setting(containerEl).setName("\u91CD\u8BD5\u5EF6\u8FDF\uFF08\u6BEB\u79D2\uFF09").setDesc("\u91CD\u8BD5\u524D\u7684\u7B49\u5F85\u65F6\u95F4\uFF08100-10000\uFF09").addText((text) => text.setPlaceholder("1000").setValue(String(this.plugin.settings.retryDelay || 1e3)).onChange(async (value) => {
-      const num = parseInt(value);
-      if (!isNaN(num) && num >= 100 && num <= 1e4) {
-        this.plugin.settings.retryDelay = num;
-        await this.plugin.saveSettings();
-      }
-    }));
-    new import_obsidian5.Setting(containerEl).setName("\u4E0A\u4F20\u8D85\u65F6\uFF08\u6BEB\u79D2\uFF09").setDesc("\u5355\u4E2A\u6587\u4EF6\u4E0A\u4F20\u7684\u8D85\u65F6\u65F6\u95F4\uFF0810000-300000\uFF09").addText((text) => text.setPlaceholder("60000").setValue(String(this.plugin.settings.uploadTimeout || 6e4)).onChange(async (value) => {
-      const num = parseInt(value);
-      if (!isNaN(num) && num >= 1e4 && num <= 3e5) {
-        this.plugin.settings.uploadTimeout = num;
-        await this.plugin.saveSettings();
-      }
-    }));
-    containerEl.createEl("h2", { text: "\u65E5\u5FD7\u8BBE\u7F6E" });
-    new import_obsidian5.Setting(containerEl).setName("\u663E\u793A\u8BE6\u7EC6\u65E5\u5FD7").setDesc("\u5728\u63A7\u5236\u53F0\u8F93\u51FA\u8BE6\u7EC6\u7684\u8C03\u8BD5\u65E5\u5FD7").addToggle((toggle) => {
-      toggle.setValue(this.plugin.settings.showDetailedLogs || false).onChange(async (value) => {
-        this.plugin.settings.showDetailedLogs = value;
-        await this.plugin.saveSettings();
-      });
-    });
-    new import_obsidian5.Setting(containerEl).setName("\u663E\u793A\u4E0A\u4F20\u8FDB\u5EA6\u901A\u77E5").setDesc("\u663E\u793A\u6587\u4EF6\u4E0A\u4F20\u8FDB\u5EA6\u7684\u901A\u77E5").addToggle((toggle) => {
-      toggle.setValue(this.plugin.settings.showProgressNotifications ?? true).onChange(async (value) => {
-        this.plugin.settings.showProgressNotifications = value;
-        await this.plugin.saveSettings();
-      });
-    });
-    containerEl.createEl("hr");
-    containerEl.createEl("h2", { text: "\u5E2E\u52A9" });
-    const helpDiv = containerEl.createDiv({ cls: "setting-item-description" });
-    helpDiv.createEl("p", {
-      text: "\u5982\u9700\u5E2E\u52A9\uFF0C\u8BF7\u8BBF\u95EE\uFF1A"
-    });
+  }
+  /**
+   * Render help section with links and validate button
+   */
+  renderHelp(container) {
+    container.createEl("hr");
+    container.createEl("h2", { text: "\u5E2E\u52A9" });
+    const helpDiv = container.createDiv({ cls: "setting-item-description" });
+    helpDiv.createEl("p", { text: "\u5982\u9700\u5E2E\u52A9\uFF0C\u8BF7\u8BBF\u95EE\uFF1A" });
     const helpList = helpDiv.createEl("ul");
     helpList.createEl("li").createEl("a", {
       text: "GitHub \u9879\u76EE\u4E3B\u9875",
@@ -13464,78 +19633,130 @@ var SettingsTab = class extends import_obsidian5.PluginSettingTab {
       text: "Cloudflare R2 Worker \u90E8\u7F72\u6307\u5357",
       href: "https://github.com/wangweiX/cloudflare-r2-worker"
     });
-    new import_obsidian5.Setting(containerEl).setName("\u9A8C\u8BC1\u914D\u7F6E").setDesc("\u6D4B\u8BD5\u4E0E Cloudflare Worker \u7684\u8FDE\u63A5").addButton((button) => button.setButtonText("\u9A8C\u8BC1\u8FDE\u63A5").onClick(async () => {
-      const { workerUrl, apiKey, bucketName } = this.plugin.settings.workerSettings;
-      if (!workerUrl || !apiKey || !bucketName) {
-        new import_obsidian5.Notice("\u8BF7\u5148\u586B\u5199\u6240\u6709\u5FC5\u9700\u7684\u914D\u7F6E\u9879");
-        return;
-      }
-      const urlRegex = /^https?:\/\/.+/;
-      if (!urlRegex.test(workerUrl)) {
-        new import_obsidian5.Notice("Worker URL \u683C\u5F0F\u4E0D\u6B63\u786E\uFF0C\u5E94\u4EE5 http:// \u6216 https:// \u5F00\u5934");
-        return;
-      }
-      new import_obsidian5.Notice("\u914D\u7F6E\u9A8C\u8BC1\u6210\u529F\uFF01\u53EF\u4EE5\u5F00\u59CB\u4F7F\u7528\u4E86\u3002");
+    new import_obsidian9.Setting(container).setName("\u9A8C\u8BC1\u914D\u7F6E\u683C\u5F0F").setDesc("\u68C0\u67E5\u5F53\u524D\u5B58\u50A8\u63D0\u4F9B\u8005\u7684\u914D\u7F6E\u662F\u5426\u5B8C\u6574").addButton((button) => button.setButtonText("\u9A8C\u8BC1\u914D\u7F6E").onClick(async () => {
+      this.validateConfiguration();
     }));
+  }
+  /**
+   * Validate the current configuration based on selected provider
+   */
+  validateConfiguration() {
+    const provider = this.plugin.settings.storageProvider;
+    if (provider === "cloudflare_worker" /* CLOUDFLARE_WORKER */) {
+      this.validateWorkerConfig();
+    } else {
+      this.validateR2S3Config();
+    }
+  }
+  /**
+   * Validate Worker configuration
+   */
+  validateWorkerConfig() {
+    if (!isWorkerProvider(this.plugin.settings)) {
+      new import_obsidian9.Notice("\u5F53\u524D\u672A\u9009\u62E9 Worker \u5B58\u50A8\u63D0\u4F9B\u8005");
+      return;
+    }
+    const { workerUrl, apiKey, bucketName } = this.plugin.settings.workerSettings;
+    if (!workerUrl || !apiKey || !bucketName) {
+      new import_obsidian9.Notice("\u8BF7\u5148\u586B\u5199\u6240\u6709\u5FC5\u9700\u7684 Worker \u914D\u7F6E\u9879\uFF08URL\u3001API Key\u3001\u5B58\u50A8\u6876\u540D\u79F0\uFF09");
+      return;
+    }
+    const urlRegex = /^https?:\/\/.+/;
+    if (!urlRegex.test(workerUrl)) {
+      new import_obsidian9.Notice("Worker URL \u683C\u5F0F\u4E0D\u6B63\u786E\uFF0C\u5E94\u4EE5 http:// \u6216 https:// \u5F00\u5934");
+      return;
+    }
+    new import_obsidian9.Notice("Worker \u914D\u7F6E\u9A8C\u8BC1\u6210\u529F\uFF01");
+  }
+  /**
+   * Validate R2 S3 API configuration
+   */
+  validateR2S3Config() {
+    if (!isR2S3Provider(this.plugin.settings)) {
+      new import_obsidian9.Notice("\u5F53\u524D\u672A\u9009\u62E9 R2 S3 API \u5B58\u50A8\u63D0\u4F9B\u8005");
+      return;
+    }
+    const { accountId, accessKeyId, secretAccessKey, bucketName } = this.plugin.settings.r2S3Settings;
+    if (!accountId || !accessKeyId || !secretAccessKey || !bucketName) {
+      new import_obsidian9.Notice("\u8BF7\u5148\u586B\u5199\u6240\u6709\u5FC5\u9700\u7684 R2 \u914D\u7F6E\u9879\uFF08\u8D26\u6237 ID\u3001Access Key\u3001Secret Key\u3001\u5B58\u50A8\u6876\u540D\u79F0\uFF09");
+      return;
+    }
+    new import_obsidian9.Notice("R2 S3 API \u914D\u7F6E\u9A8C\u8BC1\u6210\u529F\uFF01");
   }
 };
 
 // src/core/main.ts
-var CloudflareImagesUploader = class extends import_obsidian6.Plugin {
+var CloudflareImagesUploader = class extends import_obsidian10.Plugin {
   constructor() {
     super(...arguments);
     this.settings = DEFAULT_SETTINGS;
   }
-  /**
-   * 插件加载
-   */
+  // ===== Plugin Lifecycle =====
   async onload() {
     this.logger = Logger.getInstance();
     this.logger.info("\u52A0\u8F7D Cloudflare Images Uploader \u63D2\u4EF6");
     await this.loadSettings();
-    this.logger.setShowDetailedLogs(this.settings.showDetailedLogs || false);
-    this.logger.setShowProgressNotifications(this.settings.showProgressNotifications ?? true);
+    this.applyLoggerSettings();
     this.initializeServices();
-    this.addSettingTab(new SettingsTab(this.app, this));
-    (0, import_obsidian6.addIcon)("upload-images", UPLOAD_ICON);
-    this.registerCommands();
-    this.addRibbonIcon("upload-images", "\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247", () => {
-      this.uploadCurrentNoteImages();
-    });
+    this.setupUI();
     if (this.settings.enableAutoPaste) {
-      this.pasteHandler.registerPasteEvent();
+      this.pasteHandler.register();
       this.logger.info("\u5DF2\u542F\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20\u529F\u80FD");
     }
   }
-  /**
-   * 插件卸载
-   */
   async onunload() {
     this.logger.info("\u5378\u8F7D Cloudflare Images Uploader \u63D2\u4EF6");
-    if (this.uploadManager) {
-      this.uploadManager.cancelAll();
-    }
-    if (this.pasteHandler) {
-      this.pasteHandler.unregisterPasteEvent();
-    }
+    this.uploadManager?.cancelAll();
+    this.pasteHandler?.unregister();
     UploadManager.destroyInstance();
   }
-  /**
-   * 加载设置
-   */
+  // ===== Settings =====
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const savedData = await this.loadData();
+    this.settings = this.migrateSettings(savedData);
   }
   /**
-   * 保存设置
+   * Migrate settings from old format (both providers stored) to new format (discriminated union).
+   * Also handles first-time initialization when no saved data exists.
    */
+  migrateSettings(savedData) {
+    if (!savedData) {
+      return DEFAULT_SETTINGS;
+    }
+    const baseSettings = {
+      enableAutoPaste: savedData.enableAutoPaste ?? DEFAULT_BASE_SETTINGS.enableAutoPaste,
+      deleteAfterUpload: savedData.deleteAfterUpload ?? DEFAULT_BASE_SETTINGS.deleteAfterUpload,
+      maxConcurrentUploads: savedData.maxConcurrentUploads ?? DEFAULT_BASE_SETTINGS.maxConcurrentUploads,
+      maxRetries: savedData.maxRetries ?? DEFAULT_BASE_SETTINGS.maxRetries,
+      retryDelay: savedData.retryDelay ?? DEFAULT_BASE_SETTINGS.retryDelay,
+      maxRetryDelay: savedData.maxRetryDelay ?? DEFAULT_BASE_SETTINGS.maxRetryDelay,
+      uploadTimeout: savedData.uploadTimeout ?? DEFAULT_BASE_SETTINGS.uploadTimeout,
+      showDetailedLogs: savedData.showDetailedLogs ?? DEFAULT_BASE_SETTINGS.showDetailedLogs,
+      showProgressNotifications: savedData.showProgressNotifications ?? DEFAULT_BASE_SETTINGS.showProgressNotifications
+    };
+    const providerType = savedData.storageProvider ?? "cloudflare_worker" /* CLOUDFLARE_WORKER */;
+    if (providerType === "r2_s3_api" /* R2_S3_API */) {
+      return {
+        storageProvider: "r2_s3_api" /* R2_S3_API */,
+        r2S3Settings: savedData.r2S3Settings ?? { ...DEFAULT_R2S3_SETTINGS },
+        ...baseSettings
+      };
+    }
+    return {
+      storageProvider: "cloudflare_worker" /* CLOUDFLARE_WORKER */,
+      workerSettings: savedData.workerSettings ?? { ...DEFAULT_WORKER_SETTINGS },
+      ...baseSettings
+    };
+  }
   async saveSettings() {
     await this.saveData(this.settings);
     this.handleSettingsChange();
   }
-  /**
-   * 初始化服务
-   */
+  applyLoggerSettings() {
+    this.logger.setShowDetailedLogs(this.settings.showDetailedLogs || false);
+    this.logger.setShowProgressNotifications(this.settings.showProgressNotifications ?? true);
+  }
+  // ===== Service Initialization =====
   initializeServices() {
     this.storageProvider = this.createStorageProvider();
     this.uploadManager = UploadManager.getInstance(
@@ -13549,49 +19770,58 @@ var CloudflareImagesUploader = class extends import_obsidian6.Plugin {
         timeout: this.settings.uploadTimeout || 6e4
       }
     );
-    this.uploadManager.setDeleteAfterUpload(this.settings.deleteAfterUpload || false);
-    this.imageService = new ImageService(this.app, this.storageProvider);
-    this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider, this.uploadManager, this.settings);
-    this.pasteHandler = new PasteHandler(this.app, this.storageProvider, this);
-  }
-  /**
-   * 注册命令
-   */
-  registerCommands() {
-    this.addCommand({
-      id: "upload-images-to-cloudflare",
-      name: "\u4E0A\u4F20\u6240\u6709\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247",
-      callback: () => this.executeUpload()
-    });
-    this.addCommand({
-      id: "upload-current-note-images",
-      name: "\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247",
-      callback: () => this.uploadCurrentNoteImages()
-    });
-    this.addCommand({
-      id: "cancel-all-uploads",
-      name: "\u53D6\u6D88\u6240\u6709\u4E0A\u4F20\u4EFB\u52A1",
-      callback: () => {
-        this.uploadManager.cancelAll();
-        this.logger.notify("\u5DF2\u53D6\u6D88\u6240\u6709\u4E0A\u4F20\u4EFB\u52A1", 3e3);
-      }
-    });
-    this.addCommand({
-      id: "retry-failed-uploads",
-      name: "\u91CD\u8BD5\u5931\u8D25\u7684\u4E0A\u4F20\u4EFB\u52A1",
-      callback: () => {
-        this.uploadManager.retryFailed();
-        this.logger.notify("\u5DF2\u91CD\u65B0\u52A0\u5165\u5931\u8D25\u7684\u4EFB\u52A1\u5230\u961F\u5217", 3e3);
-      }
+    this.currentFileUploader = new CurrentFileUploader(
+      this.app,
+      this.uploadManager,
+      this.settings
+    );
+    this.vaultUploader = new VaultUploader(
+      this.app,
+      this.uploadManager,
+      () => this.settings
+    );
+    this.pasteHandler = new PasteHandler(
+      this.app,
+      () => this.storageProvider,
+      this
+    );
+    this.commandHandler = new CommandHandler({
+      plugin: this,
+      getSettings: () => this.settings,
+      getUploadManager: () => this.uploadManager,
+      getCurrentFileUploader: () => this.currentFileUploader,
+      getVaultUploader: () => this.vaultUploader
     });
   }
-  /**
-   * 处理设置变更
-   */
+  createStorageProvider() {
+    if (isR2S3Provider(this.settings)) {
+      return new R2S3Service(this.settings.r2S3Settings);
+    }
+    if (isWorkerProvider(this.settings)) {
+      return new CloudflareWorkerService(this.settings);
+    }
+    throw new Error(`Unknown storage provider type: ${this.settings.storageProvider}`);
+  }
+  // ===== UI Setup =====
+  setupUI() {
+    this.addSettingTab(new SettingsTab(this.app, this));
+    (0, import_obsidian10.addIcon)("upload-images", UPLOAD_ICON);
+    this.commandHandler.registerCommands();
+    this.addRibbonIcon("upload-images", "\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247", () => {
+      this.commandHandler.uploadCurrentNoteImages().catch((err) => {
+        this.logger.error("\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247\u5931\u8D25", err);
+      });
+    });
+  }
+  // ===== Settings Change Handler =====
   handleSettingsChange() {
-    this.logger.setShowDetailedLogs(this.settings.showDetailedLogs || false);
-    this.logger.setShowProgressNotifications(this.settings.showProgressNotifications ?? true);
+    this.applyLoggerSettings();
+    const previousProviderType = this.storageProvider.getType();
+    const newProviderType = this.settings.storageProvider;
     this.storageProvider = this.createStorageProvider();
+    if (previousProviderType !== newProviderType) {
+      this.uploadManager.updateStorageProvider(this.storageProvider);
+    }
     this.uploadManager.updateConfig({
       maxConcurrency: this.settings.maxConcurrentUploads || 3,
       maxRetries: this.settings.maxRetries || 3,
@@ -13599,101 +19829,17 @@ var CloudflareImagesUploader = class extends import_obsidian6.Plugin {
       maxRetryDelay: this.settings.maxRetryDelay || 3e4,
       timeout: this.settings.uploadTimeout || 6e4
     });
-    this.uploadManager.setDeleteAfterUpload(this.settings.deleteAfterUpload || false);
-    this.imageService = new ImageService(this.app, this.storageProvider);
-    this.currentFileUploader = new CurrentFileUploader(this.app, this.storageProvider, this.uploadManager, this.settings);
+    this.currentFileUploader = new CurrentFileUploader(
+      this.app,
+      this.uploadManager,
+      this.settings
+    );
     if (this.settings.enableAutoPaste) {
-      this.pasteHandler.registerPasteEvent();
+      this.pasteHandler.register();
       this.logger.info("\u5DF2\u542F\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20\u529F\u80FD");
     } else {
-      this.pasteHandler.unregisterPasteEvent();
+      this.pasteHandler.unregister();
       this.logger.info("\u5DF2\u7981\u7528\u81EA\u52A8\u7C98\u8D34\u4E0A\u4F20\u529F\u80FD");
-    }
-  }
-  /**
-   * 创建存储提供者
-   */
-  createStorageProvider() {
-    switch (this.settings.storageProvider) {
-      case "r2_s3_api" /* R2_S3_API */:
-        if (!this.settings.r2S3Settings) {
-          throw new Error("R2 S3 API \u8BBE\u7F6E\u672A\u914D\u7F6E");
-        }
-        return new R2S3Service(this.settings.r2S3Settings);
-      case "cloudflare_worker" /* CLOUDFLARE_WORKER */:
-      default:
-        return new CloudflareWorkerService(this.settings);
-    }
-  }
-  /**
-   * 执行上传过程（所有笔记）
-   */
-  async executeUpload() {
-    this.logger.info("\u5F00\u59CB\u6267\u884C\u4E0A\u4F20\u8FC7\u7A0B");
-    if (!this.validateSettings()) {
-      return;
-    }
-    try {
-      const imagePathsToUpload = await this.imageService.findImagesToUpload();
-      this.logger.info(`\u627E\u5230 ${imagePathsToUpload.size} \u5F20\u56FE\u7247\u9700\u8981\u4E0A\u4F20`);
-      if (imagePathsToUpload.size === 0) {
-        this.logger.notify("\u6CA1\u6709\u65B0\u7684\u56FE\u7247\u9700\u8981\u4E0A\u4F20", 3e3);
-        return;
-      }
-      const imagePaths = Array.from(imagePathsToUpload);
-      await this.uploadManager.addTasks(imagePaths);
-      this.logger.notify(`\u5DF2\u6DFB\u52A0 ${imagePaths.length} \u5F20\u56FE\u7247\u5230\u4E0A\u4F20\u961F\u5217`, 3e3);
-    } catch (error) {
-      this.logger.error("\u6267\u884C\u4E0A\u4F20\u8FC7\u7A0B\u65F6\u51FA\u9519", error);
-      this.logger.notify("\u4E0A\u4F20\u8FC7\u7A0B\u4E2D\u51FA\u73B0\u9519\u8BEF\uFF0C\u8BF7\u67E5\u770B\u63A7\u5236\u53F0\u65E5\u5FD7\u3002", 5e3);
-    }
-  }
-  /**
-   * 上传当前笔记中的图片
-   */
-  async uploadCurrentNoteImages() {
-    this.logger.info("\u5F00\u59CB\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u4E2D\u7684\u56FE\u7247");
-    if (!this.validateSettings()) {
-      return;
-    }
-    try {
-      const result = await this.currentFileUploader.processCurrentFile();
-      if (result) {
-        if (result.totalImages > 0) {
-          this.logger.notify(`\u5904\u7406\u5B8C\u6210: \u6210\u529F\u4E0A\u4F20 ${result.successCount} \u5F20\u56FE\u7247, \u5931\u8D25 ${result.failureCount} \u5F20`, 3e3);
-        } else {
-          this.logger.notify("\u5F53\u524D\u7B14\u8BB0\u4E2D\u6CA1\u6709\u9700\u8981\u4E0A\u4F20\u7684\u56FE\u7247", 3e3);
-        }
-      }
-    } catch (error) {
-      this.logger.error("\u4E0A\u4F20\u5F53\u524D\u7B14\u8BB0\u56FE\u7247\u65F6\u51FA\u9519", error);
-      this.logger.notify("\u4E0A\u4F20\u8FC7\u7A0B\u4E2D\u51FA\u73B0\u9519\u8BEF\uFF0C\u8BF7\u67E5\u770B\u63A7\u5236\u53F0\u65E5\u5FD7\u3002", 5e3);
-    }
-  }
-  /**
-   * 验证设置
-   */
-  validateSettings() {
-    switch (this.settings.storageProvider) {
-      case "r2_s3_api" /* R2_S3_API */:
-        if (!this.settings.r2S3Settings) {
-          this.logger.notify("\u8BF7\u5148\u5728\u63D2\u4EF6\u8BBE\u7F6E\u4E2D\u5B8C\u6210 R2 S3 API \u7684\u914D\u7F6E\u3002", 5e3);
-          return false;
-        }
-        const { accountId, accessKeyId, secretAccessKey, bucketName } = this.settings.r2S3Settings;
-        if (!accountId || !accessKeyId || !secretAccessKey || !bucketName) {
-          this.logger.notify("\u8BF7\u5148\u5728\u63D2\u4EF6\u8BBE\u7F6E\u4E2D\u5B8C\u6210 R2 S3 API \u7684\u914D\u7F6E\u3002", 5e3);
-          return false;
-        }
-        return true;
-      case "cloudflare_worker" /* CLOUDFLARE_WORKER */:
-      default:
-        const { workerUrl, apiKey } = this.settings.workerSettings;
-        if (!workerUrl || !apiKey) {
-          this.logger.notify("\u8BF7\u5148\u5728\u63D2\u4EF6\u8BBE\u7F6E\u4E2D\u5B8C\u6210 Cloudflare Worker \u7684\u914D\u7F6E\u3002", 5e3);
-          return false;
-        }
-        return true;
     }
   }
 };
