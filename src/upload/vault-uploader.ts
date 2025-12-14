@@ -66,7 +66,9 @@ export class VaultUploader {
     ) {
         this.logger = Logger.getInstance();
         this.finder = new ImageFinder(app, app.vault.adapter);
-        this.updater = new LinkUpdater(app.vault.adapter);
+        this.updater = new LinkUpdater(app.vault.adapter, (linkpath, sourcePath) =>
+            this.app.metadataCache.getFirstLinkpathDest(linkpath, sourcePath)
+        );
     }
 
     /**

@@ -12,7 +12,7 @@
  */
 
 import {DataAdapter} from 'obsidian';
-import {resolveAbsolutePath, posixBasename, posixExtname} from '../utils';
+import {resolveAbsolutePath, posixBasename, posixExtname, type LinkpathResolver} from '../utils';
 import {ImageLinkParser} from './parser';
 import {LinkUpdateResult, ParsedImageLink} from './types';
 
@@ -24,7 +24,16 @@ export type ReplacementMap = Record<string, string>;
 export class LinkUpdater {
     private readonly parser: ImageLinkParser;
 
-    constructor(private readonly adapter: DataAdapter) {
+    /**
+     * Create a link updater for markdown content.
+     *
+     * @param adapter Vault adapter for existence checks and file operations
+     * @param linkpathResolver Optional resolver to match Obsidian's link resolution behavior
+     */
+    constructor(
+        private readonly adapter: DataAdapter,
+        private readonly linkpathResolver?: LinkpathResolver
+    ) {
         this.parser = new ImageLinkParser();
     }
 
@@ -91,7 +100,12 @@ export class LinkUpdater {
         const result: Array<{link: ParsedImageLink; newUrl: string | null}> = [];
 
         for (const link of links) {
-            const absolutePath = await resolveAbsolutePath(basePath, link.path, this.adapter);
+            const absolutePath = await resolveAbsolutePath(
+                basePath,
+                link.path,
+                this.adapter,
+                this.linkpathResolver
+            );
 
             if (!absolutePath) {
                 result.push({link, newUrl: null});

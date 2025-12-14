@@ -10,10 +10,48 @@
  * This is a pure utility class with no external dependencies.
  */
 
-import {IMAGE_PATTERNS} from '../config';
+import {IMAGE_PATTERNS, MIME_TYPES} from '../config';
 import {ParsedImageLink} from './types';
 
+/**
+ * Supported image extensions derived from `MIME_TYPES`.
+ *
+ * This is used to filter out non-image embeds/links from regex parsing results.
+ */
+const supportedImageExtensions = new Set(Object.keys(MIME_TYPES));
+
 export class ImageLinkParser {
+    /**
+     * Extract a lowercase extension from a path, ignoring query and fragment parts.
+     *
+     * Examples:
+     * - `foo/bar.png` -> `png`
+     * - `bar.JPG?x=1` -> `jpg`
+     * - `noext` -> ``
+     */
+    private getImageExtension(path: string): string {
+        const withoutQueryOrFragment = path.split(/[?#]/, 1)[0];
+        const normalized = withoutQueryOrFragment.replace(/\\/g, '/');
+        const lastSlash = normalized.lastIndexOf('/');
+        const filename = lastSlash === -1 ? normalized : normalized.substring(lastSlash + 1);
+        const dotIndex = filename.lastIndexOf('.');
+        if (dotIndex <= 0 || dotIndex === filename.length - 1) {
+            return '';
+        }
+        return filename.substring(dotIndex + 1).toLowerCase();
+    }
+
+    /**
+     * Check whether a link destination should be treated as an image based on file extension.
+     *
+     * This is applied only to local links; remote URLs are allowed even when the extension
+     * is missing (e.g. `https://example.com/image?id=123`).
+     */
+    private isSupportedImagePath(path: string): boolean {
+        const ext = this.getImageExtension(path);
+        return ext.length > 0 && supportedImageExtensions.has(ext);
+    }
+
     /**
      * Parse content and extract all image links
      *
@@ -74,6 +112,7 @@ export class ImageLinkParser {
             // Normalize the destination (handle <>, title, etc.)
             const {path, title} = this.parseStandardDestination(rawDestination);
 
+            const isRemote = this.isRemoteUrl(path);
             const link: ParsedImageLink = {
                 fullMatch,
                 index: match.index,
@@ -81,8 +120,12 @@ export class ImageLinkParser {
                 format: 'standard',
                 altText,
                 path,
-                isRemote: this.isRemoteUrl(path)
+                isRemote
             };
+
+            if (!isRemote && !this.isSupportedImagePath(path)) {
+                continue;
+            }
 
             if (title) {
                 link.title = title;
@@ -190,6 +233,10 @@ export class ImageLinkParser {
                 path,
                 isRemote: false // Obsidian internal links are never remote
             };
+
+            if (!this.isSupportedImagePath(path)) {
+                continue;
+            }
 
             if (alias) {
                 link.obsidianAlias = alias;

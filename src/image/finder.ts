@@ -12,7 +12,7 @@
  */
 
 import {App, DataAdapter, TFile} from 'obsidian';
-import {resolveAbsolutePath} from '../utils';
+import {resolveAbsolutePath, type LinkpathResolver} from '../utils';
 import {ImageLinkParser} from './parser';
 import {ParsedImageLink, ResolvedImage} from './types';
 
@@ -26,12 +26,21 @@ export interface FinderOptions {
 
 export class ImageFinder {
     private readonly parser: ImageLinkParser;
+    /**
+     * Resolver powered by Obsidian's metadata cache.
+     *
+     * This matches Obsidian's own link resolution behavior (including resolving
+     * filename-only links across the entire vault).
+     */
+    private readonly linkpathResolver: LinkpathResolver;
 
     constructor(
         private readonly app: App,
         private readonly adapter: DataAdapter
     ) {
         this.parser = new ImageLinkParser();
+        this.linkpathResolver = (linkpath, sourcePath) =>
+            this.app.metadataCache.getFirstLinkpathDest(linkpath, sourcePath);
     }
 
     /**
@@ -78,7 +87,7 @@ export class ImageFinder {
         const seenPaths = new Set<string>();
 
         for (const link of links) {
-            const absolutePath = await resolveAbsolutePath(basePath, link.path, this.adapter);
+            const absolutePath = await resolveAbsolutePath(basePath, link.path, this.adapter, this.linkpathResolver);
 
             if (!absolutePath) {
                 if (options.includeNonExistent) {
